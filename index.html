@@ -2,10 +2,13 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.10                             ║
+║                          Versión actual: v4.11                             ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.10 (manual)
+ÚLTIMA ACTUALIZACIÓN: v4.11 (manual)
+- Cabecera: el icono de editar (que no hacía nada en PC) pasa a ser un icono de información (i)
+  que abre el README en una ventana nueva
+ANTERIOR: v4.10 (manual)
 - Clic en una burbuja de electrónica o mediaserver para elegirla manualmente: se resalta y el
   esquema de conexiones y el material se generan (o actualizan) con ese equipo; otro clic la quita
 ANTERIOR: v4.9 (manual)
@@ -4548,12 +4551,14 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                  </a>
                  <div>
                    <h1 className="text-white font-days text-xl tracking-wider title-halo">SCREENCALC</h1>
-                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.10</div>
+                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.11</div>
                  </div>
                </div>
                
                <div className="flex items-center gap-2">
-                 <button onClick={() => setActiveTab('config')} className={`p-2 rounded hover:bg-white/10 text-white transition ${activeTab==='config' ? 'bg-white/20 text-corp-lime' : ''}`} title="Configurar"><Icon path={Icons.Edit} /></button>
+                 <button onClick={() => window.open('https://github.com/mediaservi/SCREENCALC/blob/main/README.md', '_blank', 'noopener')} className="p-2 rounded hover:bg-white/10 text-white transition" title="Información (README)" aria-label="Información: abrir el README">
+                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{minWidth:'unset',minHeight:'unset'}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                 </button>
                  <button onClick={() => generarPDFConAppsScript('lite')} className="flex items-center gap-2 px-3 py-1.5 bg-white/10 border border-white/20 rounded text-xs font-bold text-white hover:bg-white/20 uppercase tracking-wide"><Icon path={Icons.FileText} size={14} /> PDF</button>
                </div>
             </header>
@@ -6803,7 +6808,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none', fontWeight: 800, letterSpacing: '0.04em', color: '#94a3b8', textShadow: '0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(0,0,0,0.28)'}}>VJSHOW</a>
                       <span>(visuales audio-reactivos) que estamos desarrollando.</span>
                     </div>
-                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.10 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.11 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}

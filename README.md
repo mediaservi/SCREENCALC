@@ -1,10 +1,10 @@
 # SCREENCALC
 
-Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto, con simulación, electrónica de control, mediaserver y PDF.
+Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.4**
+**Versión actual: v4.11**
 
-Web pública: https://mediaservi.github.io/screencalc/ · Otra copia: https://screencalcx.netlify.app/
+Web pública: https://mediaservi.github.io/SCREENCALC/ · Otra copia: https://screencalcx.netlify.app/
 
 ## Para qué sirve
 
@@ -12,17 +12,20 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 
 ## Funciones
 
-- **Petición en lenguaje natural (📝):** se pega el texto del cliente y la app propone una pantalla. Si falta un dato, pregunta con un popup, incluidas las preguntas de electrónica (solo línea o con backup, con o sin escalador, conexión RJ45 o rack con fibra) y de mediaserver (ninguno, cualquier marca, NovaStar, PixelHue o con Dante), para dar un proyecto completo. Lo que ya viene en el texto no se vuelve a preguntar. Se interpreta con reglas locales, sin servicios externos de IA.
-- **Panel de entrada manual:** INSTALL / RENTAL, INDOOR / OUTDOOR / ESCAPARATE, pitch y nits (valores de la tabla con flechas ▲▼), columnas y filas, ancho y alto con selector de unidad m / cm / mm (por defecto cm; el PDF sigue la unidad elegida), resolución mínima (HD / FHD / UHD 4K) y altura sobre el suelo. Muestra en vivo las medidas, los cabinets y la resolución.
-- **Modo resumen:** si la petición se hizo en texto, el panel solo muestra lo elegido. Con "Editar a mano" se vuelve al panel completo.
-- **Resultados:** características de la pantalla y del cabinet, distancias de visión mínima y óptima, peso, consumo, líneas de señal (con backup) y simulación a escala con figura humana.
-- **Esquema de conexiones y material (llave en mano):** diagrama con símbolos AV y colores por señal más listado de material, en pantalla y en la página 2 de ambos PDF.
+- **Petición en lenguaje natural (📝):** se pega el texto del cliente y la app propone una pantalla. Si falta un dato, pregunta con un popup; lo que ya viene en el texto no se vuelve a preguntar. Se interpreta con reglas locales, sin servicios externos de IA.
+- **Preguntas de proyecto llave en mano:** uso (interior, exterior, escaparate), instalación o alquiler, distancia del público, ¿cerca del mar o mucha humedad? (variante tropicalizada con contactos de oro), electrónica sí/no (con o sin backup, con o sin escalador, conexión RJ45 o rack con fibra), mediaserver (marca, Dante), número, tipo y resolución de las fuentes de vídeo y distancia de las fuentes.
+- **Panel de entrada manual:** INSTALL / RENTAL, INDOOR / OUTDOOR / ESCAPARATE, pitch y nits (valores de la tabla con flechas ▲▼), COLUMNAS y FILAS, ancho y alto con selector de unidad m / cm / mm (por defecto cm; el PDF sigue la unidad elegida), resolución mínima (HD / FHD / UHD 4K) y altura sobre el suelo. Muestra en vivo medidas, cabinets y resolución.
+- **Modo resumen:** si la petición se hizo en texto, el panel solo muestra lo elegido. Con "Editar a mano" se vuelve al panel completo. En móvil, el botón flotante ⚙ PANEL vuelve al panel desde los resultados.
+- **Resultados:** características de la pantalla en tarjetas (dimensiones, resolución con niveles HD / FHD / 4K / 8K, distancia de visión mínima y óptima, cabinets, instalación, señal y alimentación), en hasta 3 columnas en PC y apiladas en móvil.
+- **Simulación a escala:** figura humana, cotas, cuadros de resolución y resumen, con layout dinámico que aprovecha el espacio sin desbordes en PC y móvil. El vídeo de la pantalla es por defecto el último subido al canal de YouTube @MEDIASERVI.
+- **Electrónica de control:** motor propio basado en especificaciones del fabricante (NovaStar MCTRL, VX Pro, NovaPro, COEX MX y H Series, con tarjetas de salida y de entrada). Admite con o sin backup y conexión directa por RJ45 o rack con fibra y convertidores CVT10 Pro.
+- **Mediaserver:** NovaStar (ET) y PixelHue, con filtro por marca, audio Dante y número de entradas, y un resumen de características en cada opción.
+- **Elección manual de equipos:** clic en una burbuja de electrónica o de mediaserver para elegirla; otro clic la quita.
+- **Esquema de conexiones y material (llave en mano):** diagrama con símbolos AV y colores por señal (vídeo, Ethernet, fibra, alimentación, control, backup) y listado de material, que incluye el cable HDMI PureLink FlexInstall más adecuado a la distancia de las fuentes. Se muestra en resultados y es la página 2 de ambos PDF.
+- **Enlaces e imágenes de producto:** icono de enlace (a la ficha o a la búsqueda de Charmex por modelo) y, en electrónica, pila de logo, vista frontal y trasera con visor al 80 % de la pantalla. Se leen de la hoja ELECTRONICAS (columnas `url`, `front`, `back`, `logo`) cada vez que se abre la app; las imágenes no van al PDF.
 - **Esquemas de cableado:** propuesta de cableado de señal y eléctrico.
-- **Electrónica de control:** motor propio basado en especificaciones del fabricante (NovaStar MCTRL, VX Pro, NovaPro, COEX MX y H Series). Admite con o sin backup y conexión directa por RJ45 o rack con fibra y convertidores CVT10 Pro.
-- **Mediaserver:** NovaStar (ET) y PixelHue, con filtro por marca y audio Dante, y un resumen de características en cada opción.
-- **Enlaces e imágenes de producto** en las opciones de electrónica y mediaserver: icono de enlace y, a la izquierda de cada burbuja de electrónica, una pila con logo, vista frontal y trasera (clic para ampliar al 80 % de la pantalla). Solo aparecen si hay dato; las imágenes no van al PDF. Se leen de la hoja ELECTRONICAS (columnas `url`, `front`, `back`, `logo`) cada vez que se abre la app.
-- **Vídeo de la simulación:** por defecto el último vídeo subido al canal de YouTube @MEDIASERVI.
-- **PDF:** "PDF pantalla" y "PDF cableado", cada uno en una sola hoja A4.
+- **PDF:** "PDF pantalla" y "PDF cableado", cada uno en una hoja A4 más la página 2 del esquema cuando hay electrónica o mediaserver.
+- **Información (ⓘ):** el icono de la cabecera abre este README en una ventana nueva.
 - **Adaptada a PC y móvil.**
 
 ## Datos
@@ -38,12 +41,14 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 - `main`: versión oficial y pública, aprobada.
 - Dos ramas de versión más recientes (`v4.x`) para pruebas. Las anteriores se eliminan.
 
-## Cambios de la versión actual (v4.10)
+## Cambios de la versión actual (v4.11)
 
-- **Elección manual de equipos:** al hacer clic en una burbuja de electrónica o de mediaserver se elige para el proyecto (se resalta con "Elegida para el esquema"). El esquema de conexiones y el listado de material se generan o actualizan con ese equipo, aunque no se haya pedido electrónica en el texto. Otro clic sobre la misma burbuja la quita. Los iconos de enlace y las imágenes no cambian la elección. Si no se elige ninguna, se usa la primera propuesta.
+- El icono de editar de la cabecera, que no hacía nada en PC, pasa a ser un icono de información (ⓘ) que abre este README en una ventana nueva.
+- README revisado con todas las funciones y el historial completo.
 
 ## Historial de versiones
 
+- **v4.10:** elegir electrónica y mediaserver con clic en la burbuja y generar el esquema con ese equipo.
 - **v4.9:** cable HDMI PureLink FlexInstall en el material según la distancia de las fuentes.
 - **v4.8:** características en rejilla de hasta 3 columnas con iconos, sombras y fondos pastel (solo en pantalla).
 - **v4.7:** cuestionario llave en mano (entradas, humedad), esquema de conexiones y material (también página 2 del PDF), tarjetas de características, simulación dinámica y enlaces de búsqueda Charmex.
