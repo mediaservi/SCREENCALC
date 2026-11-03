@@ -2,7 +2,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.14 (beta)**
+**Versión actual: v4.15 (beta)**
 
 Web pública: https://mediaservi.github.io/SCREENCALC/ · Otra copia: https://screencalcx.netlify.app/
 
@@ -42,14 +42,13 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 - `main`: versión oficial y pública, aprobada.
 - Dos ramas de versión más recientes (`v4.x`) para pruebas. Las anteriores se eliminan.
 
-## Cambios de la versión actual (v4.14)
+## Cambios de la versión actual (v4.15)
 
-- Entorno marino o con mucha humedad: la app propone solo cabinets cuya columna `tech` contiene GOLD (soldadura de oro). Si la tabla no tiene ninguno para esa selección, lo avisa.
-- Botón REINICIAR entre APLICAR y CERRAR en el popup de contenido: deja la pantalla con la imagen de fondo estática inicial.
-- Eliminada la fuente multimedia de prueba 5, que no funcionaba. Quedan la fija y 5 editables.
+- En el listado de material, cabinets, mediaserver, electrónica y sus tarjetas/conversores enlazan a la ficha de Charmex, o a la búsqueda por modelo si no hay ficha directa, igual que los cables HDMI. Los conceptos genéricos (Cat6, distribución eléctrica, PC de control, fuentes del cliente) no llevan enlace.
 
 ## Historial de versiones
 
+- **v4.14:** cabinets GOLD en entorno marino, botón REINICIAR en el popup de contenido y fuente de prueba 5 eliminada.
 - **v4.13:** el vídeo se estira (deformándose) para rellenar toda la pantalla.
 - **v4.12:** popup de contenido con fuentes multimedia de prueba (la primera, la lista del canal, fija), vídeo sin controles y pie siempre al final.
 - **v4.11:** icono de información (ⓘ) que abre el README y README completo.

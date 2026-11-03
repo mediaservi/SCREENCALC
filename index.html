@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.14                             ║
+║                          Versión actual: v4.15                             ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.14 (manual)
+ÚLTIMA ACTUALIZACIÓN: v4.15 (manual)
+- Listado de material: cabinets, mediaserver, electrónica y tarjetas/conversores enlazan a su ficha de Charmex (o a la búsqueda por modelo), como ya hacían los cables HDMI
+ANTERIOR: v4.14 (manual)
 - Entorno marino/húmedo: solo se proponen cabinets con tecnología GOLD (soldadura de oro)
 - Botón REINICIAR en el popup de contenido: vuelve a la imagen de fondo estática inicial
 - Eliminada la fuente multimedia de prueba 5 (no funcionaba); quedan 5 editables
@@ -4379,7 +4381,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           const lines = stats.lines || 0;
           const fibras = cvt * mult;
           const rows = [];
-          rows.push({ c: stats.totalCab, ref: selectedModel.crm, desc: 'Cabinet LED ' + selectedModel.pitch + 'p ' + selectedModel.cabAncho + '×' + selectedModel.cabAlto + ' mm', g: 'pantalla' });
+          rows.push({ c: stats.totalCab, ref: selectedModel.crm, url: selectedModel.urlProd || charmexBusca(selectedModel.crm), desc: 'Cabinet LED ' + selectedModel.pitch + 'p ' + selectedModel.cabAncho + '×' + selectedModel.cabAlto + ' mm', g: 'pantalla' });
           if (proyecto.entradas || proyecto.tipoEntrada) rows.push({ c: proyecto.entradas || '', ref: proyecto.tipoEntrada || 'HDMI', desc: 'Fuentes de vídeo del cliente' + (proyecto.resEntrada ? ' (' + proyecto.resEntrada + ')' : ''), g: 'video' });
           let cableRef = '';
           if (proyecto.tipoEntrada !== 'DP' && proyecto.tipoEntrada !== 'SDI') {
@@ -4389,11 +4391,11 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
               rows.push({ c: proyecto.entradas || 1, ref: cab.ref, url: charmexBusca(cab.ref), desc: 'Cable HDMI PureLink FlexInstall ' + (cab.tipo === 'AOC' ? 'AOC' : 'pasivo') + ' 8K ' + String(cab.m).replace('.', ',') + ' m (fuente → ' + (ms ? 'mediaserver' : 'electrónica') + ')' + (cab.estandar ? ' · estándar, distancia no indicada' : ''), g: 'video' });
             } else rows.push({ c: proyecto.entradas || 1, ref: 'HDMI > 20 m', desc: 'Más de 20 m: consultar con Charmex (extensor HDMI sobre fibra / IP)', g: 'video' });
           }
-          if (ms) rows.push({ c: backup && !ms.backupNativo ? 2 : 1, ref: ms.modelo, desc: 'Mediaserver ' + ms.marca + (ms.backupNativo ? ' (backup nativo)' : ''), g: 'video' });
+          if (ms) rows.push({ c: backup && !ms.backupNativo ? 2 : 1, ref: ms.modelo, url: ms.url || charmexBusca(ms.modelo), desc: 'Mediaserver ' + ms.marca + (ms.backupNativo ? ' (backup nativo)' : ''), g: 'video' });
           if (proyecto.elec) {
             if (el) {
-              rows.push({ c: 1, ref: el.modelo, desc: 'Electrónica ' + el.marca + ' ' + el.serie + (el.escalador ? ' con escalador' : ''), g: 'elec' });
-              (el.equipos || []).filter(q => q.cant > 0).forEach(q => rows.push({ c: q.cant, ref: q.ref, desc: q.desc, g: 'elec' }));
+              rows.push({ c: 1, ref: el.modelo, url: el.url || charmexBusca(el.modelo), desc: 'Electrónica ' + el.marca + ' ' + el.serie + (el.escalador ? ' con escalador' : ''), g: 'elec' });
+              (el.equipos || []).filter(q => q.cant > 0).forEach(q => rows.push({ c: q.cant, ref: q.ref, url: charmexBusca(q.ref), desc: q.desc, g: 'elec' }));
             } else rows.push({ c: '', ref: 'Sin equipo adecuado', desc: 'Cambia backup, escalador o conexión', g: 'elec' });
             if (rack) {
               rows.push({ c: fibras, ref: 'Fibra óptica', desc: 'Latiguillo electrónica → conversor' + (backup ? ' (+ backup)' : ''), g: 'fibra' });
@@ -4623,7 +4625,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                  </a>
                  <div>
                    <h1 className="text-white font-days text-xl tracking-wider title-halo">SCREENCALC</h1>
-                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.14</div>
+                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.15</div>
                  </div>
                </div>
                
@@ -6798,13 +6800,13 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none', fontWeight: 800, letterSpacing: '0.04em', color: '#94a3b8', textShadow: '0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(0,0,0,0.28)'}}>VJSHOW</a>
                       <span>(visuales audio-reactivos) que estamos desarrollando.</span>
                     </div>
-                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.14 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.15 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.14 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.15 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by mediaservi.com
                     </div>
                   </div>
               </main>
