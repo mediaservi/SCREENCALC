@@ -2,7 +2,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.15**
+**Versión actual: v4.16**
 
 Web pública: https://mediaservi.github.io/SCREENCALC/ · Otra copia: https://screencalcx.netlify.app/
 
@@ -27,7 +27,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **Esquemas de cableado:** propuesta de cableado de señal y eléctrico.
 - **PDF:** "PDF pantalla" y "PDF cableado", cada uno en una hoja A4 más la página 2 del esquema cuando hay electrónica o mediaserver.
 - **Información (ⓘ):** el icono de la cabecera abre este README en una ventana nueva.
-- **Adaptada a PC y móvil.**
+- **Adaptada a PC y móvil:** el panel lateral de entrada va en 2 columnas sin scroll en PC y se ve en grande en móvil.
 
 ## Datos
 
@@ -42,12 +42,17 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 - `main`: versión oficial y pública, aprobada.
 - Dos ramas de versión más recientes (`v4.x`) para pruebas. Las anteriores se eliminan.
 
-## Cambios de la versión actual (v4.15)
+## Cambios de la versión actual (v4.16)
 
-- En el listado de material, cabinets, mediaserver, electrónica y sus tarjetas/conversores enlazan a la ficha de Charmex, o a la búsqueda por modelo si no hay ficha directa, igual que los cables HDMI. Los conceptos genéricos (Cat6, distribución eléctrica, PC de control, fuentes del cliente) no llevan enlace.
+- Figura humana de referencia: silueta más realista, de pie y mirando hacia la pantalla (dibujo propio, misma altura de 175 cm).
+- Cuando la app pide un dato, los campos que hay que rellenar parpadean con un color de resalte (ancho y alto al pedir una resolución mínima, y el campo de las preguntas del cuestionario). Dejan de parpadear al rellenarlos.
+- Menú lateral compacto:
+  - PC (1280 px o más): dos columnas y sin scroll en pantallas habituales (1366×768, 1440×900, 1920×1080). El simulador mantiene el diseño de escritorio.
+  - Móvil: textos, campos y botones más grandes (mínimo 44 px de alto); en horizontal, dos columnas.
 
 ## Historial de versiones
 
+- **v4.15:** enlaces a la ficha de Charmex en el listado de material.
 - **v4.14:** cabinets GOLD en entorno marino, botón REINICIAR en el popup de contenido y fuente de prueba 5 eliminada.
 - **v4.13:** el vídeo se estira (deformándose) para rellenar toda la pantalla.
 - **v4.12:** popup de contenido con fuentes multimedia de prueba (la primera, la lista del canal, fija), vídeo sin controles y pie siempre al final.
