@@ -2,10 +2,13 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.8                              ║
+║                          Versión actual: v4.9                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.8 (manual)
+ÚLTIMA ACTUALIZACIÓN: v4.9 (manual)
+- Material y esquema: cable HDMI PureLink FlexInstall (FI-H100 pasivo hasta 3 m, FI-H150 AOC de
+  5 a 20 m) elegido por la distancia fuente → electrónica/mediaserver; sin dato, FI-H100-030
+ANTERIOR: v4.8 (manual)
 - Características Pantalla: rejilla adaptable (3 columnas en pantalla ancha, 2 o 1 si hay menos
   espacio), icono por bloque, sombra y fondo pastel por sección (solo en pantalla, no en PDF);
   nuevo bloque Instalación (peso, mantenimiento, receiving card)
@@ -1617,6 +1620,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         if (/hdmi/.test(t)) r.tipoEntrada = 'HDMI'; else if (/displayport|\bdp\b/.test(t)) r.tipoEntrada = 'DP'; else if (/\bsdi\b/.test(t)) r.tipoEntrada = 'SDI';
         const rs = t.match(/entradas?[^.,;]{0,20}?(4k|uhd|fhd|full ?hd|1080|720|\bhd\b)/);
         if (rs) r.resEntrada = /4k|uhd/.test(rs[1]) ? '4K' : /fhd|full|1080/.test(rs[1]) ? 'FHD' : 'HD';
+        const cm1 = t.replace(/(\d),(\d)/g, '$1.$2').match(/(?:cable|hdmi|fuentes?)[^.;]{0,14}?(\d+(?:\.\d+)?)\s*(?:m|mts?|metros?)(?![a-z])/) || t.replace(/(\d),(\d)/g, '$1.$2').match(/(\d+(?:\.\d+)?)\s*(?:m|mts?|metros?)\s*de\s*(?:cable|hdmi)/);
+        if (cm1) r.cableM = parseFloat(cm1[1]);
         if (/\bmar\b|costa\b|costero|playa|litoral|salin|humedad|humedo|tropical|marin/.test(t)) r.marino = 'si';
         return r;
       };
@@ -1774,7 +1779,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         const conex = []; // [desde, hasta, tipo, etiqueta1, etiqueta2, backup]
         for (let i = 0; i < n - 1; i++) {
           const a = keys[i], b = keys[i + 1];
-          if (a === 'fuentes') conex.push([a, b, 'video', etqTipo + (d.fuentesN ? ' ×' + d.fuentesN : ''), etqRes, false]);
+          if (a === 'fuentes') conex.push([a, b, 'video', etqTipo + (d.fuentesN ? ' ×' + d.fuentesN : ''), (etqRes ? etqRes + ' · ' : '') + (d.cableRef || ''), false]);
           else if (a === 'media') conex.push([a, b, 'video', 'HDMI/DP 4K', '×' + (d.mediaOut || 1), d.backup && !d.mediaBackupNativo]);
           else if (a === 'elec' && b === 'cvt') conex.push([a, b, 'fibra', 'Fibra ×' + d.fibras, 'SM/MM', d.backup]);
           else conex.push([a, b, 'eth', 'Cat6 ×' + d.lines, d.backup ? '+ backup' : '', d.backup]);
@@ -1860,6 +1865,21 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
             </g>
           </svg>
         );
+      };
+
+      // Cables HDMI PureLink gama FlexInstall (Charmex). Longitudes comprobadas en distribuidores europeos.
+      // FI-H100: pasivo HDMI 2.1 8K (hasta 3 m). FI-H150: AOC HDMI 2.1 8K 48 Gbps (3 a 20 m).
+      const PURELINK_FI = [
+        { ref: 'FI-H100-005', m: 0.5, tipo: 'pasivo' }, { ref: 'FI-H100-010', m: 1, tipo: 'pasivo' }, { ref: 'FI-H100-015', m: 1.5, tipo: 'pasivo' },
+        { ref: 'FI-H100-020', m: 2, tipo: 'pasivo' }, { ref: 'FI-H100-030', m: 3, tipo: 'pasivo' },
+        { ref: 'FI-H150-050', m: 5, tipo: 'AOC' }, { ref: 'FI-H150-075', m: 7.5, tipo: 'AOC' }, { ref: 'FI-H150-100', m: 10, tipo: 'AOC' },
+        { ref: 'FI-H150-125', m: 12.5, tipo: 'AOC' }, { ref: 'FI-H150-150', m: 15, tipo: 'AOC' }, { ref: 'FI-H150-200', m: 20, tipo: 'AOC' }
+      ];
+      // Devuelve el cable más corto que cubre la distancia; sin dato, el estándar de instalación (3 m pasivo)
+      const cableHdmiFI = (dist) => {
+        if (!dist) return { ...PURELINK_FI.find(c => c.ref === 'FI-H100-030'), estandar: true };
+        const c = PURELINK_FI.find(x => x.m >= dist);
+        return c ? { ...c, estandar: false } : null;
       };
 
       // Burbuja de equipo (electrónica o mediaserver) con icono de enlace opcional
@@ -3407,7 +3427,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         
         // ===== SOLICITUD EN LENGUAJE NATURAL =====
         const [nlText, setNlText] = useState('');
-        const [proyecto, setProyecto] = useState({ elec: false, media: false, entradas: 0, tipoEntrada: '', resEntrada: '', marino: false });
+        const [proyecto, setProyecto] = useState({ elec: false, media: false, entradas: 0, tipoEntrada: '', resEntrada: '', cableM: 0, marino: false });
         const [nlDialog, setNlDialog] = useState(null);   // { p, queue, idx, valor, error }
         const [nlSummary, setNlSummary] = useState('');
         const [nlPending, setNlPending] = useState(null); // cálculo a ejecutar cuando los filtros ya estén aplicados
@@ -3466,6 +3486,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           if (p.entradas === undefined) q.push({ id: 'entradas', tipo: 'opciones', si: quiereEntradas, titulo: '¿Cuántas fuentes de vídeo (entradas) vas a conectar?', ayuda: 'Ordenadores, cámaras, reproductores... Sirve para elegir las tarjetas de entrada.', opciones: [['1', '1 fuente'], ['2', '2 fuentes'], ['4', '3 o 4 fuentes'], ['8', '5 a 8 fuentes'], ['16', 'Más de 8'], ['0', 'No lo sé']] });
           if (p.tipoEntrada === undefined) q.push({ id: 'tipoEntrada', tipo: 'opciones', si: quiereEntradas, titulo: '¿Qué tipo de señal de entrada usan las fuentes?', opciones: [['HDMI', 'HDMI'], ['DP', 'DisplayPort'], ['SDI', 'SDI (profesional)'], ['MIXTO', 'Varias / mezcla'], ['', 'No lo sé']] });
           if (p.resEntrada === undefined) q.push({ id: 'resEntrada', tipo: 'opciones', si: quiereEntradas, titulo: '¿Qué resolución tiene la señal de entrada?', ayuda: 'La salida se calcula con los píxeles de la pantalla.', opciones: [['HD', 'HD 720p'], ['FHD', 'Full HD 1080p'], ['4K', '4K / UHD'], ['', 'No lo sé']] });
+          if (p.cableM === undefined) q.push({ id: 'cableM', tipo: 'opciones', si: quiereEntradas, titulo: '¿A qué distancia están las fuentes de vídeo de la electrónica o mediaserver?', ayuda: 'Para elegir el cable HDMI PureLink FlexInstall adecuado.', opciones: [['3', 'Hasta 3 m'], ['5', 'De 3 a 5 m'], ['10', 'De 5 a 10 m'], ['15', 'De 10 a 15 m'], ['20', 'De 15 a 20 m'], ['0', 'No lo sé (cable estándar)']] });
           return q;
         };
 
@@ -3497,7 +3518,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           if (p.elecCon) setFiltroElecConexion(p.elecCon);
           if (p.media) setFiltroMedia(p.media);
           setFiltroMediaDante(!!p.dante);
-          setProyecto({ elec: p.elec === 'si', media: !!p.media && p.media !== 'ninguno', entradas: p.entradas || 0, tipoEntrada: p.tipoEntrada || '', resEntrada: p.resEntrada || '', marino: p.marino === 'si' });
+          setProyecto({ elec: p.elec === 'si', media: !!p.media && p.media !== 'ninguno', entradas: p.entradas || 0, tipoEntrada: p.tipoEntrada || '', resEntrada: p.resEntrada || '', cableM: p.cableM || 0, marino: p.marino === 'si' });
           setNlAviso(relajados.length ? 'No hay modelos ' + relajados.join(' / ') + ' en la tabla: se ha ampliado la búsqueda.' : '');
           setNlPending({ pitch: pitchSel, nits: nitsSel, w, h, conRes: !!p.resModo });
 
@@ -3542,6 +3563,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           else if (q.id === 'entradas') p.entradas = parseInt(val, 10) || 0;
           else if (q.id === 'tipoEntrada') p.tipoEntrada = val;
           else if (q.id === 'resEntrada') p.resEntrada = val;
+          else if (q.id === 'cableM') p.cableM = parseFloat(val) || 0;
           else if (q.id === 'media') { if (val === 'dante') { p.media = 'todos'; p.dante = true; } else p.media = val; }
           const ns = sigPregunta(d.queue, d.idx + 1, p);
           if (ns >= 0) setNlDialog({ ...d, p, idx: ns, n: (d.n || 1) + 1, valor: '', sel: '', error: '' });
@@ -4272,6 +4294,14 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           const rows = [];
           rows.push({ c: stats.totalCab, ref: selectedModel.crm, desc: 'Cabinet LED ' + selectedModel.pitch + 'p ' + selectedModel.cabAncho + '×' + selectedModel.cabAlto + ' mm', g: 'pantalla' });
           if (proyecto.entradas || proyecto.tipoEntrada) rows.push({ c: proyecto.entradas || '', ref: proyecto.tipoEntrada || 'HDMI', desc: 'Fuentes de vídeo del cliente' + (proyecto.resEntrada ? ' (' + proyecto.resEntrada + ')' : ''), g: 'video' });
+          let cableRef = '';
+          if (proyecto.tipoEntrada !== 'DP' && proyecto.tipoEntrada !== 'SDI') {
+            const cab = cableHdmiFI(proyecto.cableM);
+            if (cab) {
+              cableRef = cab.ref;
+              rows.push({ c: proyecto.entradas || 1, ref: cab.ref, url: charmexBusca(cab.ref), desc: 'Cable HDMI PureLink FlexInstall ' + (cab.tipo === 'AOC' ? 'AOC' : 'pasivo') + ' 8K ' + String(cab.m).replace('.', ',') + ' m (fuente → ' + (ms ? 'mediaserver' : 'electrónica') + ')' + (cab.estandar ? ' · estándar, distancia no indicada' : ''), g: 'video' });
+            } else rows.push({ c: proyecto.entradas || 1, ref: 'HDMI > 20 m', desc: 'Más de 20 m: consultar con Charmex (extensor HDMI sobre fibra / IP)', g: 'video' });
+          }
           if (ms) rows.push({ c: backup && !ms.backupNativo ? 2 : 1, ref: ms.modelo, desc: 'Mediaserver ' + ms.marca + (ms.backupNativo ? ' (backup nativo)' : ''), g: 'video' });
           if (proyecto.elec) {
             if (el) {
@@ -4287,7 +4317,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           rows.push({ c: 1, ref: 'PC de control', desc: 'Con el software del fabricante y cable USB / Ethernet', g: 'ctrl' });
           if (proyecto.marino) rows.push({ c: '', ref: 'Variante tropicalizada', desc: 'Entorno marino / húmedo: contactos chapados en oro y protección anticorrosión en cabinets, tarjetas y electrónica (consultar disponibilidad por fabricante)', g: 'extra' });
           return {
-            fuentesN: proyecto.entradas, tipoEntrada: proyecto.tipoEntrada, resEntrada: proyecto.resEntrada,
+            cableRef, fuentesN: proyecto.entradas, tipoEntrada: proyecto.tipoEntrada, resEntrada: proyecto.resEntrada,
             media: ms, mediaOut: ms ? ms.need : 1, mediaBackupNativo: ms ? ms.backupNativo : false,
             elecOn: !!proyecto.elec, elec: el, rack, backup, lines, fibras, cvt, cvtRef: ELEC_CVT.ref,
             cols: stats.cols, rows: stats.rows, resW: stats.resW, resH: stats.resH, pitch: selectedModel.pitch,
@@ -4506,7 +4536,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                  </a>
                  <div>
                    <h1 className="text-white font-days text-xl tracking-wider title-halo">SCREENCALC</h1>
-                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.8</div>
+                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.9</div>
                  </div>
                </div>
                
@@ -6757,7 +6787,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none', fontWeight: 800, letterSpacing: '0.04em', color: '#94a3b8', textShadow: '0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(0,0,0,0.28)'}}>VJSHOW</a>
                       <span>(visuales audio-reactivos) que estamos desarrollando.</span>
                     </div>
-                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.8 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.9 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
@@ -6779,7 +6809,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                             {proyectoData.material.map((m, i) => (
                               <tr key={i} style={{ borderTop: '1px solid #e5e7eb' }}>
                                 <td style={{ padding: '3px 6px', fontWeight: 700 }}>{m.c}</td>
-                                <td style={{ padding: '3px 6px', fontWeight: 700 }}><span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', marginRight: '5px', background: ({ pantalla: '#111827', video: COL_SENAL.video, elec: '#082f28', fibra: COL_SENAL.fibra, eth: COL_SENAL.eth, power: COL_SENAL.power, ctrl: COL_SENAL.ctrl, extra: '#a16207' })[m.g] }}></span>{m.ref}</td>
+                                <td style={{ padding: '3px 6px', fontWeight: 700 }}><span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', marginRight: '5px', background: ({ pantalla: '#111827', video: COL_SENAL.video, elec: '#082f28', fibra: COL_SENAL.fibra, eth: COL_SENAL.eth, power: COL_SENAL.power, ctrl: COL_SENAL.ctrl, extra: '#a16207' })[m.g] }}></span>{m.url ? <a href={m.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>{m.ref}</a> : m.ref}</td>
                                 <td style={{ padding: '3px 6px' }}>{m.desc}</td>
                               </tr>
                             ))}

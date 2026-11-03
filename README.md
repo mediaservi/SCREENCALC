@@ -38,12 +38,14 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 - `main`: versión oficial y pública, aprobada.
 - Dos ramas de versión más recientes (`v4.x`) para pruebas. Las anteriores se eliminan.
 
-## Cambios de la versión actual (v4.8)
+## Cambios de la versión actual (v4.9)
 
-- **Características Pantalla:** rejilla adaptable (3 columnas en pantalla ancha, 2 o 1 si hay menos espacio), icono distintivo por bloque, sombra y fondo pastel por sección. Solo en pantalla: el PDF no cambia. Nuevo bloque Instalación con peso, mantenimiento y receiving card.
+- **Cable HDMI en el material:** se añade el cable PureLink FlexInstall de Charmex más adecuado a la distancia entre las fuentes de vídeo y la electrónica o mediaserver: FI-H100 (pasivo, hasta 3 m) y FI-H150 (AOC, de 5 a 20 m). Si el cliente no indica distancia, se propone el estándar FI-H100-030 (3 m). Pasados 20 m se avisa de que hay que consultar con Charmex. No se añade si las fuentes son DisplayPort o SDI. La cantidad es el número de entradas y la referencia enlaza a la búsqueda de Charmex.
+- El cuestionario pregunta la distancia de las fuentes (o la reconoce en el texto, por ejemplo "cable de 8 m").
 
 ## Historial de versiones
 
+- **v4.8:** características en rejilla de hasta 3 columnas con iconos, sombras y fondos pastel (solo en pantalla).
 - **v4.7:** cuestionario llave en mano (entradas, humedad), esquema de conexiones y material (también página 2 del PDF), tarjetas de características, simulación dinámica y enlaces de búsqueda Charmex.
 - **v4.6:** preguntas de electrónica (backup, escalador, conexión) y mediaserver en el cuestionario de texto.
 - **v4.5:** selector de unidades m / cm / mm, cuadro 📝 a todo el ancho, columnas y filas, botón ⚙ PANEL en móvil, imágenes y enlaces de electrónica con visor, vídeo del canal y enlaces a GitHub Pages.
