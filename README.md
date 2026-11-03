@@ -16,6 +16,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **Panel de entrada manual:** INSTALL / RENTAL, INDOOR / OUTDOOR / ESCAPARATE, pitch y nits (valores de la tabla con flechas ▲▼), columnas y filas, ancho y alto con selector de unidad m / cm / mm (por defecto cm; el PDF sigue la unidad elegida), resolución mínima (HD / FHD / UHD 4K) y altura sobre el suelo. Muestra en vivo las medidas, los cabinets y la resolución.
 - **Modo resumen:** si la petición se hizo en texto, el panel solo muestra lo elegido. Con "Editar a mano" se vuelve al panel completo.
 - **Resultados:** características de la pantalla y del cabinet, distancias de visión mínima y óptima, peso, consumo, líneas de señal (con backup) y simulación a escala con figura humana.
+- **Esquema de conexiones y material (llave en mano):** diagrama con símbolos AV y colores por señal más listado de material, en pantalla y en la página 2 de ambos PDF.
 - **Esquemas de cableado:** propuesta de cableado de señal y eléctrico.
 - **Electrónica de control:** motor propio basado en especificaciones del fabricante (NovaStar MCTRL, VX Pro, NovaPro, COEX MX y H Series). Admite con o sin backup y conexión directa por RJ45 o rack con fibra y convertidores CVT10 Pro.
 - **Mediaserver:** NovaStar (ET) y PixelHue, con filtro por marca y audio Dante, y un resumen de características en cada opción.
@@ -37,12 +38,17 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 - `main`: versión oficial y pública, aprobada.
 - Dos ramas de versión más recientes (`v4.x`) para pruebas. Las anteriores se eliminan.
 
-## Cambios de la versión actual (v4.6)
+## Cambios de la versión actual (v4.7)
 
-- El cuestionario de la petición en texto añade preguntas de electrónica (backup, escalador, conexión) y mediaserver (marca, Dante), que se aplican a los filtros de esas secciones y aparecen en el resumen del panel.
+- **Cuestionario llave en mano:** pregunta si se quiere electrónica y, si sí, número de fuentes, tipo y resolución de señal de entrada. Con ello calcula las tarjetas de entrada de la H Series (referencias orientativas, a confirmar) y filtra mediaservers por entradas. En exterior pregunta si es zona de mar o mucha humedad y añade al material la variante tropicalizada con contactos chapados en oro.
+- **Esquema de conexiones y material:** gráfico técnico con símbolos AV y colores por señal (vídeo, Ethernet, fibra, alimentación, control, backup) y listado de material. Se muestra en resultados y es la página 2 del PDF pantalla y del PDF cableado. Solo aparece si se pidió electrónica o mediaserver.
+- **Características Pantalla:** tarjetas agrupadas (dimensiones, resolución con niveles HD/FHD/4K/8K, distancia de visionado con zonas, cabinets, señal y alimentación). 2 columnas en PC y apiladas en móvil; el PDF conserva su lista.
+- **Simulación:** layout dinámico sin desbordes. Datos en columna lateral (PC) o franja superior (móvil), altura adaptada y escala que aprovecha el espacio manteniendo proporción.
+- **Enlaces:** si un equipo no tiene URL directa, el icono lleva a la búsqueda de Charmex por modelo (`charmex.net/productos-search/<modelo>`).
 
 ## Historial de versiones
 
+- **v4.6:** preguntas de electrónica (backup, escalador, conexión) y mediaserver en el cuestionario de texto.
 - **v4.5:** selector de unidades m / cm / mm, cuadro 📝 a todo el ancho, columnas y filas, botón ⚙ PANEL en móvil, imágenes y enlaces de electrónica con visor, vídeo del canal y enlaces a GitHub Pages.
 - **v4.4:** rutas de `assets/` relativas para funcionar en GitHub Pages.
 - **v4.3:** panel de entrada rediseñado con petición en lenguaje natural, modo resumen/manual, pitch y nits con flechas, botones simétricos, y enlace a VJSHOW en el pie.

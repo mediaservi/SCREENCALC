@@ -2,10 +2,21 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.6                              ║
+║                          Versión actual: v4.7                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.6 (manual)
+ÚLTIMA ACTUALIZACIÓN: v4.7 (manual)
+- Cuestionario llave en mano: pregunta si quiere electrónica y, si sí, entradas (nº, tipo y
+  resolución de señal) para calcular tarjetas de entrada H Series y filtrar mediaservers; en
+  exterior pregunta por mar / humedad (variante tropicalizada con contactos de oro)
+- Nuevo bloque ESQUEMA DE CONEXIONES Y MATERIAL (SVG con colores por señal) en resultados y
+  como página 2 del PDF pantalla y del PDF cableado
+- Características Pantalla: tarjetas agrupadas (dimensiones, resolución, visionado, cabinets,
+  señal y alimentación) en 2 columnas en PC y apiladas en móvil; el PDF mantiene su lista
+- Simulación: layout dinámico sin desbordes (datos en columna lateral en PC y franja superior
+  en móvil, escala que llena el área libre manteniendo proporción)
+- Enlaces: búsqueda en Charmex por modelo cuando no hay URL directa
+ANTERIOR: v4.6 (manual)
 - Cuestionario de texto: nuevas preguntas de electrónica (backup, escalador, conexión) y mediaserver
   (marca, Dante) para completar el proyecto; se aplican a los filtros de esas secciones
 ANTERIOR: v4.5 (manual)
@@ -170,6 +181,7 @@ ANTERIOR: v4.1
 
       /* ========== ESTILOS IMPRESIÓN - ROBOTO, COMPACTO ========== */
       /* ========== ESTILOS IMPRESIÓN ========== */
+      .car-print-only { display: none; }
       @media print {
         @page { 
           size: A4 portrait; 
@@ -198,7 +210,7 @@ ANTERIOR: v4.1
         
         /* Cuadro de resolución VISIBLE en PDF - idéntico al frontend */
         .resolution-box-print {
-          display: block !important;
+          display: flex !important;
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
         }
@@ -323,6 +335,9 @@ ANTERIOR: v4.1
           background: white !important;
         }
         
+        /* Vista en pantalla (tarjetas): no se imprime, el PDF usa la lista de filas */
+        .data-table-container > .car-screen { display: none !important; }
+
         /* Alternar gris/blanco por fila */
         .data-table-container > div:nth-child(odd) {
           background: #e8e8e8 !important;
@@ -750,12 +765,22 @@ ANTERIOR: v4.1
         }
         
         .elec-link-ico { display: none !important; }
+        /* Esquema de conexiones y material: página 2 del PDF (pantalla y cableado) */
+        main.printable-area .esquema-sec {
+          display: block !important;
+          page-break-before: always !important; break-before: page !important;
+          page-break-inside: avoid !important; break-inside: avoid !important;
+          order: 100 !important;
+        }
+        main.printable-area .esquema-sec .esquema-bom, main.printable-area .esquema-sec .esquema-bom td, main.printable-area .esquema-sec .esquema-bom th { font-size: 7.5pt !important; }
+        main.printable-area { overflow: visible !important; max-height: none !important; }
+        div.h-screen, div.h-screen > div { height: auto !important; max-height: none !important; overflow: visible !important; }
         main.printable-area .p-4.grid.grid-cols-2.gap-3.elec-grid {
           grid-template-columns: repeat(4, 1fr) !important;
           gap: 3pt !important;
         }
         main.printable-area .elec-bubble .text-xs { font-size: 6pt !important; line-height: 1.15 !important; }
-        main.printable-area .elec-bubble > div:first-child > div { font-size: 7.5pt !important; }
+        main.printable-area .elec-bubble .elec-title { font-size: 7.5pt !important; }
 
         /* ========== 7. SIMULACIÓN ========== */
         main.printable-area .visualizer-container {
@@ -1477,6 +1502,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
       const ELEC_PX_4K = 4096 * 2160;         // píxeles de una salida 4K
       const ELEC_CVT = { ref: 'CVT10 Pro', porCvt: 10, desc: 'Conv. fibra→10 RJ45 (pantalla)' };
       const CHARMEX_NOVASTAR = 'https://charmex.net/novastar-';
+      // Búsqueda en Charmex por modelo: sirve de enlace cuando no hay URL directa de producto
+      const charmexBusca = (modelo) => 'https://charmex.net/productos-search/' + encodeURIComponent(String(modelo).replace(/\s*\(.*\)\s*$/, '').trim());
 
       // rj = salidas RJ45 · opt = salidas ópticas 10G (espejo de los RJ45 salvo equipos solo fibra)
       // ppo = puertos Ethernet que transporta cada salida óptica · capPx = capacidad total en píxeles
@@ -1497,11 +1524,17 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
 
       // H Series: chasis modular + tarjetas de salida. maxTarj = nº máximo de tarjetas de salida.
       const ELEC_H_CHASIS = [
-        { id: 'H2', maxTarj: 2 }, { id: 'H5', maxTarj: 3 }, { id: 'H9', maxTarj: 5 },
-        { id: 'H15', maxTarj: 10 }, { id: 'H20', maxTarj: 20 }
+        { id: 'H2', maxTarj: 2, slots: 2 }, { id: 'H5', maxTarj: 3, slots: 5 }, { id: 'H9', maxTarj: 5, slots: 9 },
+        { id: 'H15', maxTarj: 10, slots: 15 }, { id: 'H20', maxTarj: 20, slots: 20 }
       ];
       const ELEC_H_TARJ_RJ = { ref: 'H_20xRJ45', puertos: 20 };
       const ELEC_H_TARJ_FIB = { ref: 'H_4xFiber', opt: 4, ppo: 8 };
+      // Tarjetas de entrada H Series (n = entradas por tarjeta). Referencias orientativas: confirmar con el fabricante.
+      const ELEC_H_TARJ_IN = {
+        HDMI: { ref: 'H_4xHDMI', n: 4, desc: 'Tarjeta entrada 4×HDMI' },
+        DP:   { ref: 'H_2xDP',   n: 2, desc: 'Tarjeta entrada 2×DP' },
+        SDI:  { ref: 'H_4xSDI',  n: 4, desc: 'Tarjeta entrada 4×SDI' }
+      };
 
       // Mediaservers. out4k = salidas 4K simultáneas. dante = audio Dante declarado por el fabricante.
       const ELEC_MEDIASERVERS = [
@@ -1510,11 +1543,11 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         { id: 'ET4S',   marca: 'NOVASTAR', modelo: 'ET4S-G (A4)',   out4k: 4,  dante: false, backupNativo: false, resumen: '4 salidas 4K60 · 4 capas 4K o 1 capa 8K60 · hasta 12 capas + audio', url: null },
         { id: 'ET16S2', marca: 'NOVASTAR', modelo: 'ET16S-G (2A4)', out4k: 8,  dante: false, backupNativo: true,  resumen: '8 salidas 4K · 8 capas 4K · sincronismo, cascada y backup entre equipos', url: null },
         { id: 'ET16S3', marca: 'NOVASTAR', modelo: 'ET16S-G (3A4)', out4k: 12, dante: false, backupNativo: true,  resumen: '12 salidas 4K · 12 capas 4K · sincronismo, cascada y backup entre equipos', url: null },
-        { id: 'PHP10',  marca: 'PIXELHUE', modelo: 'P10',           out4k: 4,  dante: false, backupNativo: false, resumen: '6 entradas (4 DP/HDMI + 2 12G-SDI) · 8 salidas HDMI · switcher 4K60', url: null },
-        { id: 'PHP20',  marca: 'PIXELHUE', modelo: 'P20',           out4k: 4,  dante: false, backupNativo: false, resumen: '8 entradas + 4 SDI · 8 salidas HDMI 2.0 · 4 capas 4K60 · 8 salidas fibra 10G', url: null },
-        { id: 'PHP20D', marca: 'PIXELHUE', modelo: 'P20-DS',        out4k: 4,  dante: true,  backupNativo: false, resumen: 'Como P20 + salida 12G-SDI y audio Dante 32×32', url: null },
-        { id: 'PHP80',  marca: 'PIXELHUE', modelo: 'P80',           out4k: 4,  dante: false, backupNativo: false, resumen: '12 entradas 4K + ranura · 8 capas 4K + 4 PIP · 8 HDMI + 4 SDI + fibra 10G', url: null },
-        { id: 'PHQ8',   marca: 'PIXELHUE', modelo: 'Q8',            out4k: 16, dante: true,  backupNativo: true,  resumen: 'Hasta 48 entradas / 16 salidas 4K · 32 capas 4K · Dante 64×64 · backup de equipo y entradas', url: null }
+        { id: 'PHP10',  marca: 'PIXELHUE', modelo: 'P10',           out4k: 4,  dante: false, inp: 6, backupNativo: false, resumen: '6 entradas (4 DP/HDMI + 2 12G-SDI) · 8 salidas HDMI · switcher 4K60', url: null },
+        { id: 'PHP20',  marca: 'PIXELHUE', modelo: 'P20',           out4k: 4,  dante: false, inp: 12, backupNativo: false, resumen: '8 entradas + 4 SDI · 8 salidas HDMI 2.0 · 4 capas 4K60 · 8 salidas fibra 10G', url: null },
+        { id: 'PHP20D', marca: 'PIXELHUE', modelo: 'P20-DS',        out4k: 4,  dante: true,  inp: 12, backupNativo: false, resumen: 'Como P20 + salida 12G-SDI y audio Dante 32×32', url: null },
+        { id: 'PHP80',  marca: 'PIXELHUE', modelo: 'P80',           out4k: 4,  dante: false, inp: 12, backupNativo: false, resumen: '12 entradas 4K + ranura · 8 capas 4K + 4 PIP · 8 HDMI + 4 SDI + fibra 10G', url: null },
+        { id: 'PHQ8',   marca: 'PIXELHUE', modelo: 'Q8',            out4k: 16, dante: true,  inp: 48, backupNativo: true,  resumen: 'Hasta 48 entradas / 16 salidas 4K · 32 capas 4K · Dante 64×64 · backup de equipo y entradas', url: null }
       ];
 
       // ======================================================================
@@ -1571,6 +1604,16 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         else if (/pixelhue/.test(t)) r.media = 'pixelhue';
         else if (/mediaserver|media server|servidor de (medios|video)|dante/.test(t)) r.media = 'todos';
         if (/dante/.test(t)) { r.dante = true; if (!r.media) r.media = 'todos'; }
+        // Proyecto llave en mano: electrónica, entradas, humedad (undefined = no mencionado → se preguntará)
+        if (/sin (electronica|controladora)/.test(t)) r.elec = 'no';
+        else if (/electronica|controladora|llave en mano/.test(t)) r.elec = 'si';
+        if (r.elec === undefined && (r.elecTipo || r.elecEsc || r.elecCon)) r.elec = 'si';
+        const en = t.match(/(\d+)\s*(?:entradas|fuentes|inputs|senales)/);
+        if (en) r.entradas = parseInt(en[1], 10);
+        if (/hdmi/.test(t)) r.tipoEntrada = 'HDMI'; else if (/displayport|\bdp\b/.test(t)) r.tipoEntrada = 'DP'; else if (/\bsdi\b/.test(t)) r.tipoEntrada = 'SDI';
+        const rs = t.match(/entradas?[^.,;]{0,20}?(4k|uhd|fhd|full ?hd|1080|720|\bhd\b)/);
+        if (rs) r.resEntrada = /4k|uhd/.test(rs[1]) ? '4K' : /fhd|full|1080/.test(rs[1]) ? 'FHD' : 'HD';
+        if (/\bmar\b|costa\b|costero|playa|litoral|salin|humedad|humedo|tropical|marin/.test(t)) r.marino = 'si';
         return r;
       };
 
@@ -1629,7 +1672,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           res.push({
             key: c.d.id, marca: c.d.marca, serie: c.d.serie, modelo: c.d.modelo, escalador: c.d.escalador,
             puertos: c.det.puertos, capacidad: elecMpx(c.d.capPx) + ' Mpx (proyecto ' + elecMpx(totalPix) + ' Mpx)',
-            equipos: c.det.equipos, url: h.url || c.d.url, enStock: h.enStock,
+            equipos: c.det.equipos, url: h.url || c.d.url || charmexBusca(c.d.modelo), enStock: h.enStock, nota: (o.entradas ? o.entradas + '× ' + (o.tipoEntrada || 'HDMI') + (o.resEntrada ? ' ' + o.resEntrada : '') + ' (verificar entradas en ficha)' : ''),
             front: c.d.front || h.front, back: c.d.back || h.back, logo: c.d.logo || h.logo
           });
         });
@@ -1650,10 +1693,14 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
             ];
             puertos = fibras + ' fibra' + (fibras > 1 ? 's' : '') + (o.backup ? ' (' + cvt + ' + ' + cvt + ' backup)' : '');
           }
-          const ch = ELEC_H_CHASIS.find(c => c.maxTarj >= tarj);
+          const nIn = o.entradas || 0;
+          const tIn = ELEC_H_TARJ_IN[o.tipoEntrada] || ELEC_H_TARJ_IN.HDMI;
+          const tarjIn = nIn > 0 ? Math.ceil(nIn * (o.resEntrada === '4K' ? 2 : 1) / tIn.n) : 0;
+          const ch = ELEC_H_CHASIS.find(c => c.maxTarj >= tarj && c.slots >= tarj + tarjIn);
           if (ch) {
             equipos.unshift({ ref: ch.id, cant: 1, desc: 'Chasis' });
-            equipos.push({ ref: '+ Tarjetas entrada', cant: 0, desc: 'según fuentes' });
+            if (tarjIn > 0) equipos.push({ ref: tIn.ref, cant: tarjIn, desc: tIn.desc + (o.resEntrada === '4K' ? ' (4K cuenta doble)' : '') });
+            else equipos.push({ ref: '+ Tarjetas entrada', cant: 0, desc: 'según fuentes' });
             const capPx = directo ? tarj * ELEC_H_TARJ_RJ.puertos * ELEC_PX_PUERTO : tarj * ELEC_H_TARJ_FIB.opt * ELEC_H_TARJ_FIB.ppo * ELEC_PX_PUERTO;
             if (totalPix <= capPx) {
               hItem = ({
@@ -1673,7 +1720,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         if (!stats) return [];
         const need = Math.max(1, Math.ceil((stats.totalPix || 0) / ELEC_PX_4K));
         const lista = ELEC_MEDIASERVERS.filter(m =>
-          m.out4k >= need &&
+          m.out4k >= need && (!o.entradas || m.inp == null || m.inp >= o.entradas) &&
           (o.marca === 'todos' || m.marca.toLowerCase() === o.marca) &&
           (!o.dante || m.dante)
         );
@@ -1682,6 +1729,133 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           lista.filter(m => m.marca === marca).sort((a, b) => a.out4k - b.out4k).slice(0, 2).forEach(m => out.push({ ...m, need }));
         });
         return out;
+      };
+
+      // ===== ESQUEMA DE CONEXIONES (símbolos AV, colores por tipo de señal) =====
+      const COL_SENAL = { video: '#1d4ed8', eth: '#16a34a', fibra: '#ea580c', power: '#dc2626', ctrl: '#7c3aed' };
+      const EsquemaProyecto = ({ d }) => {
+        const W = 1000, H = 500;
+        const keys = ['fuentes'];
+        if (d.media) keys.push('media');
+        if (d.elecOn) keys.push('elec');
+        if (d.rack && d.elecOn) keys.push('cvt');
+        keys.push('pantalla');
+        const n = keys.length, bw = n >= 5 ? 128 : 150, by = 92, bh = 150, cy = by + bh / 2;
+        const gx = (W - 40 - bw * n) / (n - 1);
+        const X = {}; keys.forEach((k, i) => { X[k] = 20 + i * (bw + gx); });
+        const cx = (k) => X[k] + bw / 2;
+        const T = { fuentes: ['#475569', 'FUENTES DE VÍDEO'], media: ['#0f766e', 'MEDIASERVER'], elec: ['#082f28', 'ELECTRÓNICA'], cvt: ['#ea580c', 'CONVERSOR'], pantalla: ['#111827', 'PANTALLA LED'] };
+        const tx = (x, y, s, o = {}) => <text x={x} y={y} fontSize={o.sz || 11} fontWeight={o.w || 400} fill={o.c || '#111827'} textAnchor={o.a || 'middle'} fontFamily="Roboto, Arial, sans-serif">{s}</text>;
+        const flecha = (c) => 'url(#ar-' + c + ')';
+        const linea = (x1, y1, x2, y2, c, dash) => <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={COL_SENAL[c]} strokeWidth={2.4} strokeDasharray={dash ? '6 4' : undefined} markerEnd={flecha(c)} />;
+        const Caja = ({ k, children }) => (
+          <g>
+            <rect x={X[k]} y={by} width={bw} height={bh} rx={5} fill="#fff" stroke={T[k][0]} strokeWidth={2} />
+            <rect x={X[k]} y={by} width={bw} height={22} rx={5} fill={T[k][0]} />
+            <rect x={X[k]} y={by + 12} width={bw} height={10} fill={T[k][0]} />
+            {tx(cx(k), by + 15, T[k][1], { c: '#fff', w: 700, sz: 11 })}
+            {children}
+          </g>
+        );
+        const monitor = (x, y, s) => (
+          <g>
+            <rect x={x} y={y} width={30} height={20} rx={2} fill="#e2e8f0" stroke="#334155" strokeWidth={1.5} />
+            <rect x={x + 12} y={y + 20} width={6} height={4} fill="#334155" /><rect x={x + 7} y={y + 24} width={16} height={2} fill="#334155" />
+            {tx(x + 40, y + 15, s, { a: 'start', sz: 10, w: 700 })}
+          </g>
+        );
+        const nF = Math.max(1, d.fuentesN || 1), verF = Math.min(nF, 4);
+        const etqTipo = d.tipoEntrada === 'DP' ? 'DisplayPort' : (d.tipoEntrada && d.tipoEntrada !== 'MIXTO' ? d.tipoEntrada : 'HDMI/DP/SDI');
+        const etqRes = d.resEntrada === '4K' ? '4K' : d.resEntrada === 'FHD' ? '1080p' : d.resEntrada === 'HD' ? '720p' : '';
+        const conex = []; // [desde, hasta, tipo, etiqueta1, etiqueta2, backup]
+        for (let i = 0; i < n - 1; i++) {
+          const a = keys[i], b = keys[i + 1];
+          if (a === 'fuentes') conex.push([a, b, 'video', etqTipo + (d.fuentesN ? ' ×' + d.fuentesN : ''), etqRes, false]);
+          else if (a === 'media') conex.push([a, b, 'video', 'HDMI/DP 4K', '×' + (d.mediaOut || 1), d.backup && !d.mediaBackupNativo]);
+          else if (a === 'elec' && b === 'cvt') conex.push([a, b, 'fibra', 'Fibra ×' + d.fibras, 'SM/MM', d.backup]);
+          else conex.push([a, b, 'eth', 'Cat6 ×' + d.lines, d.backup ? '+ backup' : '', d.backup]);
+        }
+        const pcK = d.elecOn ? 'elec' : 'media';
+        const pwX = cx(pcK) - 100, pwY = 318;
+        const cabsC = Math.min(d.cols || 1, 12), cabsR = Math.min(d.rows || 1, 7);
+        const cw = (bw - 24) / cabsC, ch = Math.min(60 / cabsR, cw * 0.75);
+        return (
+          <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block', background: '#fff' }} role="img" aria-label="Esquema de conexiones del proyecto">
+            <defs>
+              {Object.keys(COL_SENAL).map(c => (
+                <marker key={c} id={'ar-' + c} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill={COL_SENAL[c]} /></marker>
+              ))}
+            </defs>
+            {/* PC de control (violeta) */}
+            <rect x={cx(pcK) - 85} y={14} width={170} height={46} rx={5} fill="#f5f3ff" stroke={COL_SENAL.ctrl} strokeWidth={2} />
+            {tx(cx(pcK), 33, 'PC DE CONTROL', { w: 700, c: COL_SENAL.ctrl })}{tx(cx(pcK), 50, 'Software del fabricante', { sz: 10 })}
+            <line x1={cx(pcK)} y1={60} x2={cx(pcK)} y2={by - 2} stroke={COL_SENAL.ctrl} strokeWidth={2.4} markerEnd={flecha('ctrl')} />
+            {tx(cx(pcK) + 8, 78, 'USB / Ethernet', { a: 'start', sz: 10, c: COL_SENAL.ctrl, w: 700 })}
+
+            <Caja k="fuentes">
+              {Array.from({ length: verF }).map((_, i) => monitor(X.fuentes + 14, by + 32 + i * 28, 'FUENTE ' + (i + 1)))}
+              {nF > verF && tx(cx('fuentes'), by + 32 + verF * 28 + 4, '+ ' + (nF - verF) + ' más', { sz: 10, w: 700 })}
+            </Caja>
+            {d.media && (
+              <Caja k="media">
+                {[0, 1, 2].map(i => <g key={i}><rect x={X.media + 14} y={by + 34 + i * 20} width={bw - 28} height={14} fill="#ccfbf1" stroke="#0f766e" /><circle cx={X.media + 24} cy={by + 41 + i * 20} r={2.5} fill="#0f766e" /><line x1={X.media + 36} y1={by + 41 + i * 20} x2={X.media + bw - 24} y2={by + 41 + i * 20} stroke="#0f766e" strokeWidth={1.2} /></g>)}
+                {tx(cx('media'), by + 112, d.media.modelo, { w: 700, sz: 12 })}{tx(cx('media'), by + 128, d.media.marca, { sz: 10 })}
+                {d.backup && !d.mediaBackupNativo && tx(cx('media'), by + 142, '×2 (backup)', { sz: 9, c: '#b45309', w: 700 })}
+              </Caja>
+            )}
+            {d.elecOn && (
+              <Caja k="elec">
+                <rect x={X.elec + 12} y={by + 34} width={bw - 24} height={34} fill="#ecfdf5" stroke="#082f28" />
+                {[0, 1, 2, 3, 4].map(i => <circle key={i} cx={X.elec + 24 + i * 12} cy={by + 44} r={2.6} fill={i < 2 ? '#16a34a' : '#ccff00'} stroke="#082f28" strokeWidth={0.6} />)}
+                {[0, 1, 2, 3, 4, 5].map(i => <rect key={i} x={X.elec + 18 + i * ((bw - 40) / 6)} y={by + 52} width={9} height={8} fill="#fff" stroke="#082f28" />)}
+                {d.elec ? <>{tx(cx('elec'), by + 94, d.elec.modelo, { w: 700, sz: 12 })}{tx(cx('elec'), by + 110, d.elec.marca + ' · ' + d.elec.serie, { sz: 10 })}{tx(cx('elec'), by + 126, d.lines + ' línea' + (d.lines > 1 ? 's' : '') + (d.backup ? ' + backup' : ''), { sz: 10, w: 700 })}</> : tx(cx('elec'), by + 100, 'Sin equipo adecuado', { sz: 10, c: '#b91c1c', w: 700 })}
+              </Caja>
+            )}
+            {d.rack && d.elecOn && (
+              <Caja k="cvt">
+                <rect x={X.cvt + 14} y={by + 36} width={bw - 28} height={30} rx={3} fill="#fff7ed" stroke="#ea580c" strokeWidth={1.5} />
+                <path d={`M${X.cvt + 24},${by + 51} h22 m-5,-4 l5,4 l-5,4`} stroke={COL_SENAL.fibra} strokeWidth={2} fill="none" />
+                <path d={`M${X.cvt + bw - 46},${by + 51} h22 m-5,-4 l5,4 l-5,4`} stroke={COL_SENAL.eth} strokeWidth={2} fill="none" />
+                {tx(cx('cvt'), by + 94, d.cvtRef + ' ×' + d.cvt, { w: 700, sz: 11 })}{tx(cx('cvt'), by + 110, 'Fibra → Ethernet', { sz: 10 })}
+              </Caja>
+            )}
+            <Caja k="pantalla">
+              {Array.from({ length: cabsR }).map((_, r) => Array.from({ length: cabsC }).map((_, c) => <rect key={r + '-' + c} x={X.pantalla + 12 + c * cw} y={by + 32 + r * ch} width={cw - 1} height={ch - 1} fill="#0b1220" stroke="#ccff00" strokeWidth={0.7} />))}
+              {tx(cx('pantalla'), by + 106, d.cols + '×' + d.rows + ' cabinets', { w: 700, sz: 11 })}
+              {tx(cx('pantalla'), by + 122, d.resW + '×' + d.resH + ' px', { sz: 10 })}
+              {tx(cx('pantalla'), by + 138, d.pitch + 'p · ' + d.pantallaDim, { sz: 10 })}
+            </Caja>
+
+            {conex.map(([a, b, c, l1, l2, bk], i) => {
+              const x1 = X[a] + bw + 2, x2 = X[b] - 3, mid = (x1 + x2) / 2;
+              return (
+                <g key={i}>
+                  {linea(x1, cy, x2, cy, c)}
+                  {bk && linea(x1, cy + 26, x2, cy + 26, c, true)}
+                  {tx(mid, cy - 22, l1, { sz: 10, w: 700, c: COL_SENAL[c] })}
+                  {l2 && tx(mid, cy - 10, l2, { sz: 9.5, c: COL_SENAL[c] })}
+                  {bk && tx(mid, cy + 42, 'backup', { sz: 9.5, c: COL_SENAL[c], w: 700 })}
+                </g>
+              );
+            })}
+
+            {/* Alimentación (rojo) */}
+            <rect x={pwX} y={pwY} width={200} height={52} rx={5} fill="#fef2f2" stroke={COL_SENAL.power} strokeWidth={2} />
+            {tx(pwX + 100, pwY + 21, 'DISTRIBUCIÓN ELÉCTRICA', { w: 700, c: COL_SENAL.power, sz: 11 })}{tx(pwX + 100, pwY + 38, d.amps + ' A · ' + d.powerMax + ' kW máx.', { sz: 10 })}
+            <line x1={pwX + 100} y1={pwY} x2={pwX + 100} y2={by + bh + 3} stroke={COL_SENAL.power} strokeWidth={2.4} markerEnd={flecha('power')} />
+            {tx(pwX + 108, pwY - 14, '230 V', { a: 'start', sz: 10, w: 700, c: COL_SENAL.power })}
+            <path d={`M${pwX + 200},${pwY + 26} H${cx('pantalla')} V${by + bh + 3}`} stroke={COL_SENAL.power} strokeWidth={2.4} fill="none" markerEnd={flecha('power')} />
+            {tx((pwX + 200 + cx('pantalla')) / 2, pwY + 20, 'Alimentación cabinets', { sz: 10, w: 700, c: COL_SENAL.power })}
+            {d.marino && <g><rect x={X.pantalla - 10} y={by + bh + 12} width={bw + 20} height={34} rx={4} fill="#fef9c3" stroke="#a16207" />{tx(cx('pantalla'), by + bh + 27, 'ENTORNO MARINO / HÚMEDO', { sz: 9, w: 700, c: '#854d0e' })}{tx(cx('pantalla'), by + bh + 40, 'Tropicalizado · contactos oro', { sz: 9, c: '#854d0e' })}</g>}
+
+            {/* Leyenda */}
+            <g>
+              {[['video', 'Vídeo (' + etqTipo + ')', false], ['eth', 'Ethernet Cat6 / RJ45', false], ['fibra', 'Fibra óptica', false], ['power', 'Alimentación', false], ['ctrl', 'Control (USB/LAN)', false], ['eth', 'Backup (discontinua)', true]].map(([c, l, dash], i) => (
+                <g key={i}><line x1={20 + i * 160} y1={470} x2={52 + i * 160} y2={470} stroke={COL_SENAL[c]} strokeWidth={2.6} strokeDasharray={dash ? '6 4' : undefined} />{tx(58 + i * 160, 474, l, { a: 'start', sz: 10 })}</g>
+              ))}
+            </g>
+          </svg>
+        );
       };
 
       // Burbuja de equipo (electrónica o mediaserver) con icono de enlace opcional
@@ -1715,9 +1889,9 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           )}
           <div style={{ flex: 1, minWidth: 0 }}>
           <div className="flex items-start justify-between gap-2 mb-1">
-            <div className="font-bold text-gray-900" style={{ fontSize: '0.9rem', lineHeight: 1.2, wordBreak: 'break-word' }}>{titulo}</div>
+            <div className="elec-title font-bold text-gray-900" style={{ fontSize: '0.9rem', lineHeight: 1.2, wordBreak: 'break-word' }}>{titulo}</div>
             {url && (
-              <a href={url} target="_blank" rel="noopener noreferrer" title="Ver producto" className="elec-link-ico flex-shrink-0 text-gray-500 hover:text-[#009688]">
+              <a href={url} target="_blank" rel="noopener noreferrer" title={/productos-search/.test(url) ? "Buscar en Charmex" : "Ver producto"} className="elec-link-ico flex-shrink-0 text-gray-500 hover:text-[#009688]">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
               </a>
             )}
@@ -3229,6 +3403,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         
         // ===== SOLICITUD EN LENGUAJE NATURAL =====
         const [nlText, setNlText] = useState('');
+        const [proyecto, setProyecto] = useState({ elec: false, media: false, entradas: 0, tipoEntrada: '', resEntrada: '', marino: false });
         const [nlDialog, setNlDialog] = useState(null);   // { p, queue, idx, valor, error }
         const [nlSummary, setNlSummary] = useState('');
         const [nlPending, setNlPending] = useState(null); // cálculo a ejecutar cuando los filtros ya estén aplicados
@@ -3277,10 +3452,16 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           if (!p.tipo) q.push({ id: 'tipo', tipo: 'opciones', titulo: '¿Dónde se instalará la pantalla?', opciones: [['INDOOR', 'Interior'], ['OUTDOOR', 'Exterior'], ['ESCAPARATE', 'Escaparate'], ['', 'Sin preferencia']] });
           if (!p.clase) q.push({ id: 'clase', tipo: 'opciones', titulo: '¿Es para instalación fija o para alquiler?', opciones: [['INSTALL', 'Instalación fija'], ['RENTAL', 'Alquiler / eventos'], ['', 'Sin preferencia']] });
           if (!p.pitch && !p.dist && !p.resModo) q.push({ id: 'dist', tipo: 'opciones', titulo: '¿A qué distancia mínima estará el público?', opciones: [['1.5', 'Menos de 2 m'], ['2', 'De 2 a 4 m'], ['4', 'De 4 a 8 m'], ['8', 'De 8 a 15 m'], ['15', 'Más de 15 m'], ['', 'No lo sé']] });
-          if (p.elecTipo === undefined) q.push({ id: 'elecTipo', tipo: 'opciones', titulo: '¿Quieres electrónica con backup (redundancia)?', opciones: [['backup', 'Sí, con backup'], ['linea', 'No, solo línea principal'], ['', 'Sin preferencia']] });
-          if (p.elecEsc === undefined) q.push({ id: 'elecEsc', tipo: 'opciones', titulo: '¿La electrónica debe llevar escalador (procesador de vídeo)?', opciones: [['con', 'Sí, con escalador'], ['sin', 'No, sin escalador'], ['', 'Sin preferencia']] });
-          if (p.elecCon === undefined) q.push({ id: 'elecCon', tipo: 'opciones', titulo: '¿Cómo se conecta la electrónica a la pantalla?', opciones: [['directo', 'Directo por cable de red (RJ45)'], ['rack', 'En rack con fibra óptica'], ['', 'Sin preferencia']] });
+          if (p.marino === undefined) q.push({ id: 'marino', tipo: 'opciones', si: (x) => x.tipo === 'OUTDOOR', titulo: '¿La pantalla estará cerca del mar o en una zona con mucha humedad?', ayuda: 'En ambiente marino o muy húmedo hace falta una variante tropicalizada con contactos chapados en oro.', opciones: [['si', 'Sí, costa / mucha humedad'], ['no', 'No']] });
+          if (p.elec === undefined) q.push({ id: 'elec', tipo: 'opciones', titulo: '¿Quieres incluir la electrónica de control (proyecto llave en mano)?', opciones: [['si', 'Sí, con electrónica'], ['no', 'No, solo la pantalla']] });
+          if (p.elecTipo === undefined) q.push({ id: 'elecTipo', tipo: 'opciones', si: (x) => x.elec === 'si', titulo: '¿Quieres electrónica con backup (redundancia)?', opciones: [['backup', 'Sí, con backup'], ['linea', 'No, solo línea principal'], ['', 'Sin preferencia']] });
+          if (p.elecEsc === undefined) q.push({ id: 'elecEsc', tipo: 'opciones', si: (x) => x.elec === 'si', titulo: '¿La electrónica debe llevar escalador (procesador de vídeo)?', opciones: [['con', 'Sí, con escalador'], ['sin', 'No, sin escalador'], ['', 'Sin preferencia']] });
+          if (p.elecCon === undefined) q.push({ id: 'elecCon', tipo: 'opciones', si: (x) => x.elec === 'si', titulo: '¿Cómo se conecta la electrónica a la pantalla?', opciones: [['directo', 'Directo por cable de red (RJ45)'], ['rack', 'En rack con fibra óptica'], ['', 'Sin preferencia']] });
           if (p.media === undefined) q.push({ id: 'media', tipo: 'opciones', titulo: '¿Necesitas mediaserver?', opciones: [['ninguno', 'No lo necesito'], ['todos', 'Sí, cualquier marca'], ['novastar', 'Sí, NovaStar'], ['pixelhue', 'Sí, PixelHue'], ['dante', 'Sí, con audio Dante']] });
+          const quiereEntradas = (x) => x.elec === 'si' || (x.media && x.media !== 'ninguno');
+          if (p.entradas === undefined) q.push({ id: 'entradas', tipo: 'opciones', si: quiereEntradas, titulo: '¿Cuántas fuentes de vídeo (entradas) vas a conectar?', ayuda: 'Ordenadores, cámaras, reproductores... Sirve para elegir las tarjetas de entrada.', opciones: [['1', '1 fuente'], ['2', '2 fuentes'], ['4', '3 o 4 fuentes'], ['8', '5 a 8 fuentes'], ['16', 'Más de 8'], ['0', 'No lo sé']] });
+          if (p.tipoEntrada === undefined) q.push({ id: 'tipoEntrada', tipo: 'opciones', si: quiereEntradas, titulo: '¿Qué tipo de señal de entrada usan las fuentes?', opciones: [['HDMI', 'HDMI'], ['DP', 'DisplayPort'], ['SDI', 'SDI (profesional)'], ['MIXTO', 'Varias / mezcla'], ['', 'No lo sé']] });
+          if (p.resEntrada === undefined) q.push({ id: 'resEntrada', tipo: 'opciones', si: quiereEntradas, titulo: '¿Qué resolución tiene la señal de entrada?', ayuda: 'La salida se calcula con los píxeles de la pantalla.', opciones: [['HD', 'HD 720p'], ['FHD', 'Full HD 1080p'], ['4K', '4K / UHD'], ['', 'No lo sé']] });
           return q;
         };
 
@@ -3312,6 +3493,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           if (p.elecCon) setFiltroElecConexion(p.elecCon);
           if (p.media) setFiltroMedia(p.media);
           setFiltroMediaDante(!!p.dante);
+          setProyecto({ elec: p.elec === 'si', media: !!p.media && p.media !== 'ninguno', entradas: p.entradas || 0, tipoEntrada: p.tipoEntrada || '', resEntrada: p.resEntrada || '', marino: p.marino === 'si' });
           setNlAviso(relajados.length ? 'No hay modelos ' + relajados.join(' / ') + ' en la tabla: se ha ampliado la búsqueda.' : '');
           setNlPending({ pitch: pitchSel, nits: nitsSel, w, h, conRes: !!p.resModo });
 
@@ -3325,12 +3507,15 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           setPanelModo('texto');
         };
 
+        const sigPregunta = (queue, desde, p) => { for (let i = desde; i < queue.length; i++) { if (!queue[i].si || queue[i].si(p)) return i; } return -1; };
+
         const procesarSolicitud = () => {
           const p = parseSolicitud(nlText);
           if (!nlText.trim()) return;
           const queue = construirPreguntas(p);
-          if (queue.length === 0) { aplicarSolicitud(p); return; }
-          setNlDialog({ p, queue, idx: 0, valor: '', sel: '', error: '' });
+          const i0 = sigPregunta(queue, 0, p);
+          if (i0 < 0) { aplicarSolicitud(p); return; }
+          setNlDialog({ p, queue, idx: i0, valor: '', sel: '', error: '' });
         };
 
         const responderDialogo = (valorElegido) => {
@@ -3348,8 +3533,14 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           else if (q.id === 'elecTipo') p.elecTipo = val;
           else if (q.id === 'elecEsc') p.elecEsc = val;
           else if (q.id === 'elecCon') p.elecCon = val;
+          else if (q.id === 'marino') p.marino = val;
+          else if (q.id === 'elec') p.elec = val;
+          else if (q.id === 'entradas') p.entradas = parseInt(val, 10) || 0;
+          else if (q.id === 'tipoEntrada') p.tipoEntrada = val;
+          else if (q.id === 'resEntrada') p.resEntrada = val;
           else if (q.id === 'media') { if (val === 'dante') { p.media = 'todos'; p.dante = true; } else p.media = val; }
-          if (d.idx + 1 < d.queue.length) setNlDialog({ ...d, p, idx: d.idx + 1, valor: '', sel: '', error: '' });
+          const ns = sigPregunta(d.queue, d.idx + 1, p);
+          if (ns >= 0) setNlDialog({ ...d, p, idx: ns, n: (d.n || 1) + 1, valor: '', sel: '', error: '' });
           else { setNlDialog(null); aplicarSolicitud(p); }
         };
 
@@ -3808,7 +3999,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         useEffect(() => {
           const handleResize = () => {
             if(visualizerRef.current) {
-              const w = visualizerRef.current.offsetWidth;
+              const cs = window.getComputedStyle(visualizerRef.current);
+              const w = Math.max(200, visualizerRef.current.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0));
               const vh = window.innerHeight;
               const isLandscape = window.innerWidth > window.innerHeight;
               const isMobileDevice = window.innerWidth < 1024;
@@ -4055,12 +4247,50 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         
         // Electrónicas y hierros sugeridos
         const electronicasSugeridas = useMemo(() => {
-          return stats ? calcularElectronicas(stats, { backup: filtroElecTipo === 'backup', escalador: filtroElecEscalador, conexion: filtroElecConexion }, electronicas) : [];
-        }, [stats, electronicas, filtroElecTipo, filtroElecEscalador, filtroElecConexion]);
+          return stats ? calcularElectronicas(stats, { backup: filtroElecTipo === 'backup', escalador: filtroElecEscalador, conexion: filtroElecConexion, entradas: proyecto.entradas, tipoEntrada: proyecto.tipoEntrada, resEntrada: proyecto.resEntrada }, electronicas) : [];
+        }, [stats, electronicas, filtroElecTipo, filtroElecEscalador, filtroElecConexion, proyecto]);
 
         const mediaserversSugeridos = useMemo(() => {
-          return (stats && filtroMedia !== 'ninguno') ? calcularMediaservers(stats, { marca: filtroMedia, dante: filtroMediaDante }) : [];
-        }, [stats, filtroMedia, filtroMediaDante]);
+          return (stats && filtroMedia !== 'ninguno') ? calcularMediaservers(stats, { marca: filtroMedia, dante: filtroMediaDante, entradas: proyecto.entradas }) : [];
+        }, [stats, filtroMedia, filtroMediaDante, proyecto]);
+
+        // Datos del esquema de conexiones y listado de material (solo si se pidió electrónica o mediaserver)
+        const proyectoData = useMemo(() => {
+          const media = proyecto.media && filtroMedia !== 'ninguno';
+          if (!stats || !selectedModel || !(proyecto.elec || media)) return null;
+          const backup = filtroElecTipo === 'backup', rack = filtroElecConexion === 'rack';
+          const el = proyecto.elec ? (electronicasSugeridas[0] || null) : null;
+          const ms = media ? (mediaserversSugeridos[0] || null) : null;
+          const cvtEq = el && (el.equipos || []).find(q => q.ref === ELEC_CVT.ref);
+          const cvt = cvtEq ? cvtEq.cant : 0, mult = backup ? 2 : 1;
+          const lines = stats.lines || 0;
+          const fibras = cvt * mult;
+          const rows = [];
+          rows.push({ c: stats.totalCab, ref: selectedModel.crm, desc: 'Cabinet LED ' + selectedModel.pitch + 'p ' + selectedModel.cabAncho + '×' + selectedModel.cabAlto + ' mm', g: 'pantalla' });
+          if (proyecto.entradas || proyecto.tipoEntrada) rows.push({ c: proyecto.entradas || '', ref: proyecto.tipoEntrada || 'HDMI', desc: 'Fuentes de vídeo del cliente' + (proyecto.resEntrada ? ' (' + proyecto.resEntrada + ')' : ''), g: 'video' });
+          if (ms) rows.push({ c: backup && !ms.backupNativo ? 2 : 1, ref: ms.modelo, desc: 'Mediaserver ' + ms.marca + (ms.backupNativo ? ' (backup nativo)' : ''), g: 'video' });
+          if (proyecto.elec) {
+            if (el) {
+              rows.push({ c: 1, ref: el.modelo, desc: 'Electrónica ' + el.marca + ' ' + el.serie + (el.escalador ? ' con escalador' : ''), g: 'elec' });
+              (el.equipos || []).filter(q => q.cant > 0).forEach(q => rows.push({ c: q.cant, ref: q.ref, desc: q.desc, g: 'elec' }));
+            } else rows.push({ c: '', ref: 'Sin equipo adecuado', desc: 'Cambia backup, escalador o conexión', g: 'elec' });
+            if (rack) {
+              rows.push({ c: fibras, ref: 'Fibra óptica', desc: 'Latiguillo electrónica → conversor' + (backup ? ' (+ backup)' : ''), g: 'fibra' });
+              rows.push({ c: lines * mult, ref: 'Cat6 (RJ45)', desc: 'Conversor → pantalla' + (backup ? ' (+ backup)' : ''), g: 'eth' });
+            } else rows.push({ c: lines * mult, ref: 'Cat6 (RJ45)', desc: 'Electrónica → pantalla' + (backup ? ' (+ backup)' : ''), g: 'eth' });
+          }
+          rows.push({ c: 1, ref: 'Distribución eléctrica', desc: stats.amps + ' A · ' + stats.powerMax + ' kW máx. + cableado de alimentación', g: 'power' });
+          rows.push({ c: 1, ref: 'PC de control', desc: 'Con el software del fabricante y cable USB / Ethernet', g: 'ctrl' });
+          if (proyecto.marino) rows.push({ c: '', ref: 'Variante tropicalizada', desc: 'Entorno marino / húmedo: contactos chapados en oro y protección anticorrosión en cabinets, tarjetas y electrónica (consultar disponibilidad por fabricante)', g: 'extra' });
+          return {
+            fuentesN: proyecto.entradas, tipoEntrada: proyecto.tipoEntrada, resEntrada: proyecto.resEntrada,
+            media: ms, mediaOut: ms ? ms.need : 1, mediaBackupNativo: ms ? ms.backupNativo : false,
+            elecOn: !!proyecto.elec, elec: el, rack, backup, lines, fibras, cvt, cvtRef: ELEC_CVT.ref,
+            cols: stats.cols, rows: stats.rows, resW: stats.resW, resH: stats.resH, pitch: selectedModel.pitch,
+            pantallaDim: U(stats.widthM) + '×' + U(stats.heightM) + unit,
+            amps: stats.amps, powerMax: stats.powerMax, marino: proyecto.marino, material: rows
+          };
+        }, [stats, selectedModel, proyecto, filtroMedia, filtroElecTipo, filtroElecConexion, electronicasSugeridas, mediaserversSugeridos, unit]);
         
         // Calcular sugerencia de giro 90° (solo si el cabinet lo permite y no está ya girado)
         const sugerenciaGiro90 = useMemo(() => {
@@ -4216,24 +4446,26 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         
         const visualHumanW = humanH * 0.35; 
         
-        // Espacio suficiente para cotas en ambos lados - reducido en móvil
-        const cotaSpaceLeft = isMobile ? 0.1 : 0.3;
-        const cotaSpaceRight = isMobile ? 0.4 : 0.8;
-        const sceneW = cotaSpaceLeft + visualHumanW + separationM + screenW + cotaSpaceRight; 
-        const sceneH = Math.max(humanH, elevation + screenH) + labelMarginM + (isMobile ? 0.2 : 0.4);
-
-        // Factor de escala: Aprovechar contenedor disponible sin perder cotas
+        // ===== LAYOUT DINÁMICO DE LA SIMULACIÓN =====
+        // Reserva zonas fijas (datos, cotas, suelo) y escala la escena para llenar el resto sin solapes.
         const isMobile = containerSize.w < 768;
         const isSmallMobile = containerSize.w < 480;
-        
-        // En móvil, usar más espacio disponible reduciendo márgenes
-        const contentW = isMobile ? containerSize.w * 0.92 : containerSize.w * 0.88;
-        const contentH = isMobile ? containerSize.h * 0.88 : containerSize.h * 0.78;
-        
-        const scaleX = contentW / sceneW;
-        const scaleY = contentH / sceneH;
-        // Escala optimizada para cada dispositivo
-        const scale = Math.min(scaleX, scaleY) * (isMobile ? 1.1 : 0.93);
+        const infoW = isMobile ? 0 : 156;                               // columna lateral de datos (PC)
+        const infoTopH = isMobile ? (isSmallMobile ? 74 : 68) : 0;      // franja superior de datos (móvil)
+        const padX = isMobile ? 6 : 14;
+        const cotaRightSpace = isMobile ? 44 : 64;                      // cota ALTO + rótulo
+        const topPx = isMobile ? 36 : 46;                               // cota ANCHO + rótulo
+        const humanOffsetFromScreen = isMobile ? 8 : 20;
+        const sceneLeft = isMobile ? padX : infoW + padX * 2;
+        const availW = Math.max(120, containerSize.w - sceneLeft - padX - cotaRightSpace - humanOffsetFromScreen);
+        const sceneHm = Math.max(humanH, elevation + screenH) || humanH;
+        const scaleW = availW / Math.max(0.1, visualHumanW + screenW);
+        const winH = (typeof window !== 'undefined' ? window.innerHeight : 800);
+        const maxVizH = Math.max(300, Math.min(isMobile ? 560 : 700, winH * (isMobile ? 0.72 : 0.82)));
+        const minVizH = isMobile ? 290 : 340;
+        const vizH = Math.round(Math.max(minVizH, Math.min(maxVizH, scaleW * sceneHm + topPx + COTA_CERO_BASE_Y + infoTopH + 6)));
+        const scaleH = (vizH - topPx - COTA_CERO_BASE_Y - infoTopH - 6) / sceneHm;
+        const scale = Math.max(1, Math.min(scaleW, scaleH));
 
         // Dimensiones visuales (en píxeles)
         const vScreenW = screenW * scale;
@@ -4242,14 +4474,10 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         const vHumanH = humanH * scale;
         const vHumanW = visualHumanW * scale;
 
-        // POSICIONES (Anclado al bottom: COTA_CERO_BASE_Y)
-        const humanOffsetFromScreen = isMobile ? 8 : 20; // Menos separación en móvil
-        const totalContentW = vScreenW + vHumanW + humanOffsetFromScreen; 
-        
-        const floorY = COTA_CERO_BASE_Y; 
-        // Centrar el contenido compensando espacio de cota ALTO a la derecha
-        const cotaRightSpace = isMobile ? 30 : 50;
-        const groupX = Math.max(isMobile ? 2 : 10, (containerSize.w - totalContentW - cotaRightSpace) / 2);
+        // POSICIONES (anclado al suelo: COTA_CERO_BASE_Y), grupo centrado en el área libre de la escena
+        const totalContentW = vScreenW + vHumanW + humanOffsetFromScreen;
+        const floorY = COTA_CERO_BASE_Y;
+        const groupX = sceneLeft + Math.max(0, (containerSize.w - sceneLeft - padX - cotaRightSpace - totalContentW) / 2);
 
         const screenBottomY = floorY + vFloorH;
         const screenTopY = screenBottomY - vScreenH;
@@ -4274,7 +4502,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                  </a>
                  <div>
                    <h1 className="text-white font-days text-xl tracking-wider title-halo">SCREENCALC</h1>
-                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.6</div>
+                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.7</div>
                  </div>
                </div>
                
@@ -4886,7 +5114,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     className="w-full bg-tech-gray border-b border-gray-300 flex items-center justify-center p-1 sm:p-4 relative visualizer-container" 
                     ref={visualizerRef} 
                     style={{ 
-                        minHeight: containerSize.w < 768 ? '340px' : '500px', 
+                        flexShrink: 0, minHeight: 0, 
                         paddingBottom: containerSize.w < 768 ? '30px' : '80px',
                         paddingTop: containerSize.w < 768 ? '5px' : '16px'
                     }}
@@ -4894,18 +5122,22 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                    
                    <div className="relative" style={{ 
                       width: containerSize.w, 
-                      height: containerSize.h
+                      height: vizH
                    }}>
                       
                       {/* CUADRO DE RESOLUCIÓN + RESUMEN RÁPIDO - Visible en todos los dispositivos y PDF */}
-                      <div className="absolute z-30 flex flex-col items-center resolution-box-print" 
+                      <div className="absolute z-30 flex resolution-box-print" 
                            style={{ 
-                             left: isMobile ? '4px' : `${groupX - 160}px`, 
-                             bottom: isMobile ? `${COTA_CERO_BASE_Y + vFloorH + vScreenH - 10}px` : `${COTA_CERO_BASE_Y + vFloorH + vScreenH}px`,
-                             transform: isMobile ? 'translateY(100%)' : 'translateY(100%)',
-                             gap: isMobile ? '4px' : '6px'
+                             left: isMobile ? '4px' : padX + 'px',
+                             top: isMobile ? '2px' : '10px',
+                             width: isMobile ? 'auto' : infoW + 'px',
+                             right: isMobile ? '4px' : 'auto',
+                             flexDirection: isMobile ? 'row' : 'column',
+                             alignItems: isMobile ? 'stretch' : 'stretch',
+                             justifyContent: 'center',
+                             gap: isMobile ? '6px' : '8px'
                            }}>
-                        <div className="bg-white border border-gray-300 rounded shadow-md" style={{ minWidth: isMobile ? 'auto' : '140px', padding: isMobile ? '4px 6px' : '8px' }}>
+                        <div className="bg-white border border-gray-300 rounded shadow-md" style={{ flex: isMobile ? '1 1 0' : 'none', minWidth: 0, padding: isMobile ? '4px 6px' : '8px' }}>
                         {(() => {
                           const resInfo = getResolutionInfo(stats?.resW, stats?.resH);
                           return resInfo ? (
@@ -4932,8 +5164,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
 
                         {/* RESUMEN RÁPIDO - Cabinets / Pitch / Ancho / Alto */}
                         {stats && (
-                          <div className="rounded shadow-md" style={{ backgroundColor: '#082f28', minWidth: isMobile ? 'auto' : '140px', padding: isMobile ? '4px 8px' : '6px 12px', marginTop: isMobile ? '4px' : '6px' }}>
-                            <div className="flex flex-col" style={{ gap: isMobile ? '2px' : '3px' }}>
+                          <div className="rounded shadow-md" style={{ backgroundColor: '#082f28', flex: isMobile ? '1 1 0' : 'none', minWidth: 0, padding: isMobile ? '4px 8px' : '6px 12px', display: 'flex', alignItems: 'center' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr', gap: isMobile ? '3px 8px' : '3px', width: '100%' }}>
                               <div className="flex items-center" style={{ gap: isMobile ? '6px' : '8px' }}>
                                 <svg viewBox="0 0 24 24" width={isMobile ? 12 : 14} height={isMobile ? 12 : 14} fill="none" stroke="#ffffff" strokeWidth="2" style={{flexShrink:0, opacity:0.85}}>
                                   <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
@@ -5529,7 +5761,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                                           writingMode: 'vertical-rl',
                                           textOrientation: 'mixed',
                                           fontSize: isMobile ? 'clamp(12px, 3.2vw, 16px)' : '12px',
-                                          padding: '4px 2px'
+                                          padding: '4px 2px', whiteSpace: 'nowrap'
                                       }}>ALTO {U(stats?.heightM)} {unit}</span>
                            </div>
 
@@ -5834,11 +6066,114 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                         <div>Consumo Total <strong>{ampsC} AMP</strong></div>
                       ];
                       
-                      return filas.map((contenido, idx) => (
-                        <div key={idx} className={`px-4 py-2 text-sm text-gray-800 border-b border-gray-200 ${idx % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
+                      // ===== Vista en pantalla: tarjetas agrupadas (el PDF conserva la lista original) =====
+                      const rw = stats?.resW || 0, rh = stats?.resH || 0;
+                      const mpx = (parseFloat(stats?.totalPix || 0) / 1000000).toFixed(2).replace('.', ',');
+                      const arN = parseFloat(stats?.ar || 0);
+                      const stdAr = [[1, '1:1'], [1.25, '5:4'], [1.333, '4:3'], [1.6, '16:10'], [1.778, '16:9'], [2.333, '21:9'], [3.556, '32:9']].find(([v]) => Math.abs(arN - v) / v < 0.04);
+                      const arTxt = stdAr ? stdAr[1] : (arN ? arN.toFixed(2) + ':1' : '');
+                      const niveles = [['HD', 1280, 720], ['FHD', 1920, 1080], ['4K UHD', 3840, 2160], ['8K', 7680, 4320]];
+                      const minV = parseFloat(stats?.minView || 0), optV = parseFloat(stats?.optView || 0);
+                      const totV = Math.max(optV * 1.7, 1), pc = (v) => Math.min(100, Math.max(0, v / totV * 100)) + '%';
+                      const arBox = arN > 0 ? (arN >= 1 ? { w: 64, h: 64 / arN } : { w: 64 * arN, h: 64 }) : { w: 64, h: 36 };
+                      const cC = Math.min(stats?.cols || 1, 14), cR = Math.min(stats?.rows || 1, 10), cs = Math.min(64 / cC, 44 / cR);
+                      const Tarjeta = ({ titulo, color, children }) => (
+                        <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden" style={{ borderTop: '3px solid ' + color }}>
+                          <div className="px-3 pt-2 text-[10px] font-extrabold uppercase tracking-wider" style={{ color }}>{titulo}</div>
+                          <div className="px-3 pb-3 pt-1">{children}</div>
+                        </div>
+                      );
+                      const Dato = ({ k, v, strong }) => (
+                        <div className="flex justify-between items-baseline gap-2 text-xs py-0.5"><span className="text-gray-500">{k}</span><span className={strong ? 'font-bold text-gray-900' : 'font-semibold text-gray-800'}>{v}</span></div>
+                      );
+                      const pantallaVista = (
+                        <div key="cs" className="car-screen no-print p-3 lg:p-4 bg-slate-50 border-b border-gray-200">
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-start">
+                            <div className="flex flex-col gap-3 min-w-0">
+                              <Tarjeta titulo="Dimensiones" color="#0f766e">
+                                <div className="flex items-center gap-3">
+                                  <svg width="84" height="84" viewBox="0 0 84 84" aria-hidden="true">
+                                    <rect x={(84 - arBox.w) / 2} y={(84 - arBox.h) / 2} width={arBox.w} height={arBox.h} fill="#0b1220" stroke="#ccff00" strokeWidth="1.5" />
+                                    <text x="42" y="46" fontSize="10" fontWeight="700" fill="#ccff00" textAnchor="middle" fontFamily="Roboto, Arial, sans-serif">{arTxt}</text>
+                                  </svg>
+                                  <div className="min-w-0">
+                                    <div className="text-xl lg:text-2xl font-extrabold text-gray-900 leading-tight">{widthC} × {heightC} <span className="text-sm font-bold text-gray-500">{unit}</span></div>
+                                    <div className="text-[11px] text-gray-500">ancho × alto</div>
+                                  </div>
+                                </div>
+                                <div className="mt-2 border-t border-gray-100 pt-1">
+                                  <Dato k="Diagonal" v={diagMC + ' ' + unit + ' (' + (stats?.diagInches || '') + '″)'} />
+                                  <Dato k="Formato" v={arTxt + (arN ? ' (' + arN.toFixed(2) + ')' : '')} />
+                                  <Dato k="Grosor" v={(selectedModel?.thick || 'N/D') + ' mm'} />
+                                </div>
+                              </Tarjeta>
+                              <Tarjeta titulo="Resolución" color="#1d4ed8">
+                                <div className="text-xl lg:text-2xl font-extrabold text-gray-900 leading-tight">{rw} × {rh} <span className="text-sm font-bold text-gray-500">px</span></div>
+                                <div className="text-[11px] text-gray-500 mb-2">{totalPixFmt} píxeles · {mpx} Mpx</div>
+                                <div className="flex flex-wrap gap-1 mb-2">
+                                  {niveles.map(([n, w, h]) => { const ok = rw >= w && rh >= h; return <span key={n} className="text-[10px] font-bold px-2 py-0.5 rounded-full border" style={{ background: ok ? '#dcfce7' : '#f3f4f6', borderColor: ok ? '#16a34a' : '#d1d5db', color: ok ? '#166534' : '#9ca3af' }}>{ok ? '✓ ' : ''}{n}</span>; })}
+                                </div>
+                                <Dato k="Resolución cabinet" v={(stats?.cabPixAncho || 0) + ' × ' + (stats?.cabPixAlto || 0) + ' px'} />
+                                <Dato k="Píxeles por cabinet" v={cabPixTotalFmt} />
+                                <Dato k="Pitch" v={(selectedModel?.pitch || '') + ' mm'} />
+                              </Tarjeta>
+                              <Tarjeta titulo="Distancia de visionado" color="#b45309">
+                                <div className="relative" style={{ height: '34px' }}>
+                                  <div className="absolute left-0 right-0 flex overflow-hidden rounded" style={{ top: '8px', height: '14px' }}>
+                                    <div style={{ width: pc(minV), background: '#fca5a5' }}></div>
+                                    <div style={{ width: pc(optV - minV), background: '#fde68a' }}></div>
+                                    <div style={{ flex: 1, background: '#86efac' }}></div>
+                                  </div>
+                                  <div className="absolute" style={{ left: pc(minV), top: 0, bottom: 0, borderLeft: '2px solid #b91c1c' }}></div>
+                                  <div className="absolute" style={{ left: pc(optV), top: 0, bottom: 0, borderLeft: '2px solid #166534' }}></div>
+                                </div>
+                                <div className="flex text-[10px] font-bold" style={{ marginTop: '-2px' }}>
+                                  <span style={{ width: pc(minV), color: '#b91c1c' }}>cerca</span>
+                                  <span style={{ width: pc(optV - minV), color: '#92400e' }}>aceptable</span>
+                                  <span style={{ flex: 1, color: '#166534' }}>óptima</span>
+                                </div>
+                                <div className="mt-2 border-t border-gray-100 pt-1">
+                                  <Dato k="Mínima" v={minViewC + ' ' + unit} strong />
+                                  <Dato k="Óptima desde" v={optViewC + ' ' + unit} strong />
+                                </div>
+                              </Tarjeta>
+                            </div>
+                            <div className="flex flex-col gap-3 min-w-0">
+                              <Tarjeta titulo="Cabinets" color="#4338ca">
+                                <div className="flex items-center gap-3">
+                                  <svg width="72" height="52" viewBox="0 0 72 52" aria-hidden="true">
+                                    {Array.from({ length: cR }).map((_, r) => Array.from({ length: cC }).map((_, c) => <rect key={r + '-' + c} x={4 + c * cs} y={4 + r * cs} width={cs - 1} height={cs - 1} fill="#0b1220" stroke="#ccff00" strokeWidth="0.6" />))}
+                                  </svg>
+                                  <div>
+                                    <div className="text-xl lg:text-2xl font-extrabold text-gray-900 leading-tight">{stats?.totalCab} <span className="text-sm font-bold text-gray-500">cabinets</span></div>
+                                    <div className="text-[11px] text-gray-500">{stats?.cols} de ancho × {cabinetsAltoTxt}</div>
+                                  </div>
+                                </div>
+                                <div className="mt-2 border-t border-gray-100 pt-1">
+                                  <Dato k="Peso total" v={weightC + ' kg'} strong />
+                                  <Dato k="Mantenimiento" v={mantCap || 'N/D'} />
+                                  <Dato k="Receiving card" v={selectedModel?.card || '—'} />
+                                </div>
+                              </Tarjeta>
+                              <Tarjeta titulo="Señal y alimentación" color="#dc2626">
+                                <div className="flex gap-2 mb-2">
+                                  <div className="flex-1 rounded border text-center py-1" style={{ borderColor: '#16a34a', background: '#f0fdf4' }}><div className="text-lg font-extrabold" style={{ color: '#166534' }}>{stats?.lines}</div><div className="text-[10px] font-bold text-gray-600 uppercase">líneas Ethernet</div></div>
+                                  <div className="flex-1 rounded border text-center py-1" style={{ borderColor: '#16a34a', borderStyle: 'dashed', background: '#f0fdf4' }}><div className="text-lg font-extrabold" style={{ color: '#166534' }}>{stats?.lines}</div><div className="text-[10px] font-bold text-gray-600 uppercase">backup</div></div>
+                                  <div className="flex-1 rounded border text-center py-1" style={{ borderColor: '#dc2626', background: '#fef2f2' }}><div className="text-lg font-extrabold" style={{ color: '#b91c1c' }}>{ampsC}</div><div className="text-[10px] font-bold text-gray-600 uppercase">A · 230 V</div></div>
+                                </div>
+                                <Dato k="Potencia máxima" v={(stats?.powerMax || 'N/D') + ' kW'} />
+                                <Dato k="Consumo total" v={ampsC + ' A'} />
+                              </Tarjeta>
+                            </div>
+                          </div>
+                        </div>
+                      );
+
+                      return [pantallaVista, <span key="cs2" className="no-print" style={{ display: 'none' }}></span>].concat(filas.map((contenido, idx) => (
+                        <div key={idx} className={`car-print-only px-4 py-2 text-sm text-gray-800 border-b border-gray-200 ${idx % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
                           {contenido}
                         </div>
-                      ));
+                      )));
                     })()}
                     
                     {/* Desglose de combinación - solo si hay combinación activa */}
@@ -5950,7 +6285,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       {electronicasSugeridas.length > 0 ? (
                         electronicasSugeridas.map((e) => (
                           <ElecBubble key={e.key} titulo={e.modelo} sub={e.marca + ' · ' + e.serie + ' · ' + (e.escalador ? 'Con escalador' : 'Sin escalador')} badge={e.enStock ? 'STOCK' : ''}
-                            lineas={[['Puertos', e.puertos], ['Capacidad', e.capacidad]]}
+                            lineas={[['Puertos', e.puertos], ['Capacidad', e.capacidad]].concat(e.nota ? [['Entradas', e.nota]] : [])}
                             equipos={e.equipos} url={e.url} front={e.front} back={e.back} logo={e.logo} />
                         ))
                       ) : (
@@ -5984,7 +6319,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                           mediaserversSugeridos.map((m) => (
                             <ElecBubble key={m.id} titulo={m.modelo} sub={m.marca + ' · ' + m.out4k + ' salida' + (m.out4k > 1 ? 's' : '') + ' 4K (necesarias: ' + m.need + ')'}
                               lineas={[['Dante', m.dante ? 'Sí' : 'No'], ['Backup', m.backupNativo ? 'Nativo' : (filtroElecTipo === 'backup' ? 'Duplicar equipo' : 'No necesario')], ['Resumen', m.resumen]]}
-                              url={m.url} />
+                              url={m.url || charmexBusca(m.modelo)} />
                           ))
                         ) : (
                           <div className="col-span-2 text-center text-gray-400 py-4 text-sm">No hay mediaservers que cumplan los requisitos</div>
@@ -6414,7 +6749,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none', fontWeight: 800, letterSpacing: '0.04em', color: '#94a3b8', textShadow: '0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(0,0,0,0.28)'}}>VJSHOW</a>
                       <span>(visuales audio-reactivos) que estamos desarrollando.</span>
                     </div>
-                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.6 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.7 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
@@ -6424,6 +6759,29 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     </div>
                   </div>
                 </div>
+                  {/* ESQUEMA DE CONEXIONES Y MATERIAL (proyecto con electrónica / mediaserver) */}
+                  {proyectoData && (
+                    <div className="esquema-sec px-4 lg:px-6 pb-6"><div className="bg-white shadow-sm overflow-hidden" style={{ border: 'none' }}>
+                      <div className="bg-[#082f28] text-white px-4 py-3 text-center text-sm font-bold uppercase tracking-wide">Esquema de conexiones y material</div>
+                      <div className="p-3 bg-white"><EsquemaProyecto d={proyectoData} /></div>
+                      <div className="px-3 pb-3 bg-white">
+                        <table className="esquema-bom w-full text-xs" style={{ borderCollapse: 'collapse' }}>
+                          <thead><tr style={{ background: '#f1f5f9' }}><th style={{ textAlign: 'left', padding: '3px 6px', width: '7%' }}>Cant.</th><th style={{ textAlign: 'left', padding: '3px 6px', width: '28%' }}>Referencia</th><th style={{ textAlign: 'left', padding: '3px 6px' }}>Descripción</th></tr></thead>
+                          <tbody>
+                            {proyectoData.material.map((m, i) => (
+                              <tr key={i} style={{ borderTop: '1px solid #e5e7eb' }}>
+                                <td style={{ padding: '3px 6px', fontWeight: 700 }}>{m.c}</td>
+                                <td style={{ padding: '3px 6px', fontWeight: 700 }}><span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', marginRight: '5px', background: ({ pantalla: '#111827', video: COL_SENAL.video, elec: '#082f28', fibra: COL_SENAL.fibra, eth: COL_SENAL.eth, power: COL_SENAL.power, ctrl: COL_SENAL.ctrl, extra: '#a16207' })[m.g] }}></span>{m.ref}</td>
+                                <td style={{ padding: '3px 6px' }}>{m.desc}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                        <div className="text-[10px] text-gray-500 mt-1">* Propuesta orientativa: confirmar referencias, tarjetas y cableado con el fabricante antes de ofertar.</div>
+                      </div>
+                    </div></div>
+                  )}
+
               </main>
             </div>
           </div>
@@ -6435,7 +6793,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
               <div className="no-print" style={{position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px'}}
                    onClick={() => setNlDialog(null)}>
                 <div onClick={e => e.stopPropagation()} style={{background: '#fff', borderRadius: '10px', padding: '18px', width: '100%', maxWidth: '380px', boxShadow: '0 10px 40px rgba(0,0,0,0.3)'}}>
-                  <div style={{fontSize: '11px', color: '#6b7280', fontWeight: 700, marginBottom: '4px'}}>PREGUNTA {nlDialog.idx + 1} DE {nlDialog.queue.length}</div>
+                  <div style={{fontSize: '11px', color: '#6b7280', fontWeight: 700, marginBottom: '4px'}}>PREGUNTA {nlDialog.n || 1}</div>
                   <div style={{fontSize: '16px', fontWeight: 800, color: '#111827', marginBottom: '10px'}}>{q.titulo}</div>
                   {q.tipo === 'text' ? (
                     <div>
