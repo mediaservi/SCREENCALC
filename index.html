@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.3                              ║
+║                          Versión actual: v4.4                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.3 (manual)
+ÚLTIMA ACTUALIZACIÓN: v4.4 (manual)
+- Rutas de assets relativas (assets/...) para funcionar igual en Netlify y GitHub Pages
+ANTERIOR: v4.3
 - PANEL DE ENTRADA: cuadro 📝 de petición en lenguaje natural (parser local, sin servicios
   externos) con popup de preguntas si falta algún dato; modo resumen (solo lo elegido) si la
   petición vino en texto y modo manual si no; botones INSTALL/RENTAL/tipo simétricos;
@@ -2308,10 +2310,10 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
       };
 
       // URLs
-      const APP_LOGO = "/assets/SCLOGO.png";
-      const APP_LOGO_PRINT = "/assets/SCLOGO.png";
-      const DEFAULT_SCREEN_BG = "/assets/SCCHART.jfif";
-      const DEFAULT_SCREEN_BG_PRINT = "/assets/SCCHART.jfif";
+      const APP_LOGO = "assets/SCLOGO.png";
+      const APP_LOGO_PRINT = "assets/SCLOGO.png";
+      const DEFAULT_SCREEN_BG = "assets/SCCHART.jfif";
+      const DEFAULT_SCREEN_BG_PRINT = "assets/SCCHART.jfif";
       // Video de YouTube: https://youtu.be/IIqtuupvdWg (convertido a embed)
       const VIDEO_MOCK_URL = "https://www.youtube.com/embed/IIqtuupvdWg?autoplay=1&mute=1&loop=1";
 
@@ -4173,7 +4175,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                  </a>
                  <div>
                    <h1 className="text-white font-days text-xl tracking-wider title-halo">SCREENCALC</h1>
-                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.3</div>
+                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.4</div>
                  </div>
                </div>
                
@@ -6310,13 +6312,13 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none', fontWeight: 800, letterSpacing: '0.04em', color: '#94a3b8', textShadow: '0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(0,0,0,0.28)'}}>VJSHOW</a>
                       <span>(visuales audio-reactivos) que estamos desarrollando.</span>
                     </div>
-                    <a href="https://screencalcx.netlify.app/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.3 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalcx.netlify.app/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.4 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.3 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.4 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by mediaservi.com
                     </div>
                   </div>
                 </div>
