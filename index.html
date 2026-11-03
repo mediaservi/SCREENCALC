@@ -2,10 +2,15 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.17                             ║
+║                          Versión actual: v4.18                             ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.17 (manual)
+ÚLTIMA ACTUALIZACIÓN: v4.18 (manual)
+- Corrección grave de filtros: el filtro rápido de resolución (HD/FHD/UHD) ignoraba INDOOR/OUTDOOR y GOLD y podía proponer modelos de otro tipo. Ahora respeta CLASS, TIPO y GOLD
+- Auditoría de la hoja MODELOS: se descartan filas que no son modelos (notas/enlaces del pie, sin CRM, con CLASS o TIPO no válidos) y se normalizan los valores (INTERIOR→INDOOR, etc.)
+- Si ningún modelo cumple pitch/nits, el modelo activo nunca incumple CLASS/TIPO/GOLD
+- Aviso visible cuando un modelo no tiene consumo (cabAmp) en la hoja y por tanto no se puede calcular el cableado eléctrico
+ANTERIOR: v4.17 (manual)
 - Panel de entrada reorganizado con aspecto profesional; la PETICIÓN DEL CLIENTE es la entrada principal (destacada, ayuda completa visible)
 - Dictado por voz (🎤) y audio a texto (🎧: wav, mp3, m4a, ogg… transcrito en el navegador con Whisper)
 - Botones con aspecto 3D técnico en toda la app (mismos colores)
@@ -2423,14 +2428,23 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
       // alcanza la resolución mínima pedida. Orden de prioridad:
       // 1) modelos en stock primero, 2) mayor pitch que cumpla el filtro,
       // 3) orden de la fila original en la hoja de Google Sheet (como criterio de desempate)
-      const buscarConfigsPorResolucion = (anchoCm, altoCm, minResW, minResH, listaModelos, claseFiltro) => {
+      // Normaliza los valores de la hoja (mayúsculas, sin acentos/espacios; INTERIOR→INDOOR, EXTERIOR→OUTDOOR, VITRINA→ESCAPARATE)
+      const normTipo = (v) => {
+        const t = String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toUpperCase();
+        if (/^(INDOOR|INTERIOR)$/.test(t)) return 'INDOOR';
+        if (/^(OUTDOOR|EXTERIOR)$/.test(t)) return 'OUTDOOR';
+        if (/^(ESCAPARATE|VITRINA|SHOP ?WINDOW)$/.test(t)) return 'ESCAPARATE';
+        return t;
+      };
+      const normClase = (v) => String(v || '').trim().toUpperCase();
+      const buscarConfigsPorResolucion = (anchoCm, altoCm, minResW, minResH, listaModelos, claseFiltro, tipoFiltro = '', soloGold = false) => {
         const anchoMm = anchoCm * 10;
         const altoMm = altoCm * 10;
         if (anchoMm <= 0 || altoMm <= 0 || !listaModelos) return [];
         
         const candidatos = listaModelos
           .map((m, idx) => ({ m, idx }))
-          .filter(o => !claseFiltro || o.m.class === claseFiltro);
+          .filter(o => (!claseFiltro || o.m.class === claseFiltro) && (!tipoFiltro || normTipo(o.m.tipo) === tipoFiltro) && (!soloGold || /gold/i.test(String(o.m.tech || ''))));
         const resultados = [];
         
         for (const { m, idx } of candidatos) {
@@ -3050,6 +3064,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
               
               return {
                 ...item,
+                tipo: normTipo(item.tipo),
+                class: normClase(item.class),
                 cabAmp: parseFloat(String(cabAmpValue).replace(',', '.')) || 0,
                 cabKg: parseFloat(String(cabKgValue).replace(',', '.')) || 0,
                 cabAncho: parseFloat(String(item.cabAncho || 0).replace(',', '.')) || 0,
@@ -3070,7 +3086,12 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           // Función para excluir modelos marcados como NOSHOW en el campo "obs" (no deben aparecer ni usarse en ningún cálculo)
           const filterNoShow = (data) => {
             if (!data || !Array.isArray(data)) return data;
-            return data.filter(item => String(item.obs || '').trim().toUpperCase() !== 'NOSHOW');
+            // Integridad: solo filas que son modelos reales (con crm, CLASS INSTALL/RENTAL y TIPO INDOOR/OUTDOOR/ESCAPARATE).
+            // Las filas de notas/enlaces del pie de la hoja y las NOSHOW nunca entran en listas ni cálculos.
+            return data.filter(item => String(item.obs || '').trim().toUpperCase() !== 'NOSHOW'
+              && String(item.crm || '').trim() !== ''
+              && ['INSTALL', 'RENTAL'].includes(String(item.class || '').trim().toUpperCase())
+              && ['INDOOR', 'OUTDOOR', 'ESCAPARATE'].includes(normTipo(item.tipo)));
           };
           
           // 1. Cargar inmediatamente desde caché si existe
@@ -3268,6 +3289,14 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
             setCombinacionActiva(null); setHoloCombAncho(null); // Resetear combinación
           }
         }, [filteredModelos]);
+        // Salvaguarda: si ningún modelo cumple pitch/nits, el modelo activo nunca incumple CLASS / TIPO / GOLD
+        useEffect(() => {
+          if (filteredModelos.length > 0 || !selectedModel) return;
+          const ok = (m) => (!filterClass || m.class === filterClass) && (!filterTipo || normTipo(m.tipo) === filterTipo) && (!filterGold || esGold(m));
+          if (ok(selectedModel)) return;
+          const alt = modelos.filter(ok).sort((x, y) => x.pitch - y.pitch)[0];
+          if (alt) { setSelectedModel(alt); setGiro90(false); setCombinacionActiva(null); setHoloCombAncho(null); }
+        }, [filteredModelos, filterClass, filterTipo, filterGold]);
         
         // Cerrar dropdown de modelos al hacer clic fuera
         useEffect(() => {
@@ -3368,7 +3397,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
             return;
           }
           const resObjetivo = RESOLUCIONES_MINIMAS[modoKey];
-          const resultados = buscarConfigsPorResolucion(anchoNum, altoNum, resObjetivo.w, resObjetivo.h, modelos, filterClass);
+          const resultados = buscarConfigsPorResolucion(anchoNum, altoNum, resObjetivo.w, resObjetivo.h, modelos, filterClass, filterTipo, filterGold);
           
           if (resultados.length === 0) {
             setQuickConfigError('Ningún modelo disponible alcanza esa resolución con ese tamaño');
@@ -3870,7 +3899,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           if (filterPitch !== nlPending.pitch || filterNits !== nlPending.nits || Number(targetW_cm) !== nlPending.w || Number(targetH_cm) !== nlPending.h) return;
           if (nlPending.conRes) {
             const ro = RESOLUCIONES_MINIMAS[resolucionModo];
-            const ok = ro && buscarConfigsPorResolucion(Number(targetW_cm), Number(targetH_cm), ro.w, ro.h, modelos, filterClass).length > 0;
+            const ok = ro && buscarConfigsPorResolucion(Number(targetW_cm), Number(targetH_cm), ro.w, ro.h, modelos, filterClass, filterTipo, filterGold).length > 0;
             if (ok) { setNlPending(null); handleCalcular(); return; }
             setNlAviso(prev => (prev ? prev + ' ' : '') + 'Ningún modelo alcanza ' + (ro ? ro.displayLabel : 'esa resolución') + ' con ese tamaño: se muestra la mejor opción sin exigir resolución mínima.');
             setResolucionModo('NONE');
@@ -4836,7 +4865,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                  </a>
                  <div>
                    <h1 className="text-white font-days text-xl tracking-wider title-halo">SCREENCALC</h1>
-                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.17</div>
+                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.18</div>
                  </div>
                </div>
                
@@ -6818,6 +6847,11 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                           </div>
                         )}
                         
+                        {!distribucionElectrica && selectedModel && (
+                          <div className="border border-amber-300 bg-amber-50 rounded p-3 text-xs text-amber-800 font-bold">
+                            ⚠ El modelo {selectedModel.crm} no tiene el consumo (cabAmp) informado en la hoja de modelos: no se puede calcular el cableado eléctrico ni la potencia.
+                          </div>
+                        )}
                         {/* PROPUESTA CABLEADO ELÉCTRICO */}
                         {distribucionElectrica && (
                           <div className="border border-gray-300 rounded overflow-hidden">
@@ -7028,13 +7062,13 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none', fontWeight: 800, letterSpacing: '0.04em', color: '#94a3b8', textShadow: '0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(0,0,0,0.28)'}}>VJSHOW</a>
                       <span>(visuales audio-reactivos) que estamos desarrollando.</span>
                     </div>
-                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.17 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.18 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.17 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.18 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by mediaservi.com
                     </div>
                   </div>
               </main>

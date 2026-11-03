@@ -2,7 +2,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.17**
+**Versión actual: v4.18**
 
 Web pública: https://mediaservi.github.io/SCREENCALC/ · Otra copia: https://screencalcx.netlify.app/
 
@@ -42,18 +42,16 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 - `main`: versión oficial y pública, aprobada.
 - Dos ramas de versión más recientes (`v4.x`) para pruebas. Las anteriores se eliminan.
 
-## Cambios de la versión actual (v4.17)
+## Cambios de la versión actual (v4.18)
 
-- Panel de entrada reorganizado con aspecto profesional (espaciados y jerarquía uniformes). La PETICIÓN DEL CLIENTE es la entrada principal: más grande, destacada y con el texto de ayuda completo.
-- Dictado por voz con el icono 🎤 (Web Speech del navegador; pide permiso de micrófono en cada dispositivo) y audio a texto con 🎧 (wav, mp3, m4a, ogg…), transcrito en el propio navegador con Whisper; la primera vez descarga el modelo (~75 MB).
-- Botones con aspecto 3D técnico en toda la app, manteniendo los colores.
-- Líneas de señal y alimentación por columnas o filas completas (máx. 16 A por línea), coherentes en tarjetas, esquema y material; botones COSIDO AUTO / VERTICAL / HORIZ. (una 5×5 de pitch 1.5 UFIX-COB-1.5 da ahora 5 y 5).
-- Con una sola medida y un formato («pantalla 4k de 6 m de ancho») se calcula la otra (TV 16:9 por defecto) con los cabinets que más se acercan a la resolución. «Solo sending» = solo la electrónica de control, sin mediaserver.
-- Figura humana de referencia: silueta SVG integrada de forma nativa, escalada a 175 cm sin deformarse.
-- Licencia GPL-3.0 sin cambios.
+- Corrección grave de filtros: el filtro rápido de resolución (HD / FHD / UHD) ignoraba INDOOR / OUTDOOR y GOLD, y podía proponer modelos de otro tipo. Ahora respeta CLASS, TIPO y GOLD.
+- Auditoría de la pestaña MODELOS: se descartan las filas que no son modelos (notas y enlaces del pie, sin CRM, con CLASS o TIPO no válidos), además de las NOSHOW, y se normalizan los valores (INTERIOR → INDOOR, EXTERIOR → OUTDOOR…).
+- Si ningún modelo cumple pitch y nits, el modelo activo nunca incumple CLASS / TIPO / GOLD.
+- Aviso visible cuando un modelo no tiene el consumo (`cabAmp`) en la hoja: sin él no se puede calcular el cableado eléctrico ni la potencia.
 
 ## Historial de versiones
 
+- **v4.17:** panel profesional, dictado y audio a texto, botones 3D, líneas por columnas/filas completas con botones de cosido, una medida + formato, «solo sending» y silueta SVG.
 - **v4.16:** figura humana más realista, campos que parpadean al pedir datos y menú lateral compacto.
 - **v4.15:** enlaces a la ficha de Charmex en el listado de material.
 - **v4.14:** cabinets GOLD en entorno marino, botón REINICIAR en el popup de contenido y fuente de prueba 5 eliminada.
