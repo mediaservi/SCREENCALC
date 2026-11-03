@@ -2,7 +2,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.18**
+**Versión actual: v4.19**
 
 Web pública: https://mediaservi.github.io/SCREENCALC/ · Otra copia: https://screencalcx.netlify.app/
 
@@ -42,15 +42,15 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 - `main`: versión oficial y pública, aprobada.
 - Dos ramas de versión más recientes (`v4.x`) para pruebas. Las anteriores se eliminan.
 
-## Cambios de la versión actual (v4.18)
+## Cambios de la versión actual (v4.19)
 
-- Corrección grave de filtros: el filtro rápido de resolución (HD / FHD / UHD) ignoraba INDOOR / OUTDOOR y GOLD, y podía proponer modelos de otro tipo. Ahora respeta CLASS, TIPO y GOLD.
-- Auditoría de la pestaña MODELOS: se descartan las filas que no son modelos (notas y enlaces del pie, sin CRM, con CLASS o TIPO no válidos), además de las NOSHOW, y se normalizan los valores (INTERIOR → INDOOR, EXTERIOR → OUTDOOR…).
-- Si ningún modelo cumple pitch y nits, el modelo activo nunca incumple CLASS / TIPO / GOLD.
-- Aviso visible cuando un modelo no tiene el consumo (`cabAmp`) en la hoja: sin él no se puede calcular el cableado eléctrico ni la potencia.
+- Columna derecha del panel de entrada en tres bloques con icono: 📐 Tamaño pantalla (unidades, columnas/filas, ancho/alto y altura), 🔌 Cosido de cable (AUTO / VERTICAL / HORIZ., movido desde el bloque del cabinet) y 📺 Resolución (resolución mínima y CALCULAR / RESET).
+- Los botones de unidad m / cm / mm van sobre un fondo de regla.
+- Licencia GPL-3.0 sin cambios.
 
 ## Historial de versiones
 
+- **v4.18:** corrección de filtros INDOOR / OUTDOOR / GOLD en el filtro de resolución, auditoría de la hoja MODELOS y aviso de modelos sin consumo.
 - **v4.17:** panel profesional, dictado y audio a texto, botones 3D, líneas por columnas/filas completas con botones de cosido, una medida + formato, «solo sending» y silueta SVG.
 - **v4.16:** figura humana más realista, campos que parpadean al pedir datos y menú lateral compacto.
 - **v4.15:** enlaces a la ficha de Charmex en el listado de material.
