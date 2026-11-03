@@ -2,10 +2,15 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.11                             ║
+║                          Versión actual: v4.12                             ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.11 (manual)
+ÚLTIMA ACTUALIZACIÓN: v4.12 (manual)
+- Contenido de pantalla: el icono de imagen abre un popup centrado (ya no el panel lateral) con
+  FUENTES MULTIMEDIA DE PRUEBA (la 1ª fija y por defecto: https://youtu.be/vKN4AcGz7zs; 6 editables,
+  guardadas en el navegador), URL propia y subida de archivo; soporta enlaces /live/, /shorts/ y listas
+- Pie (aviso, VJSHOW, SCREENCALC) siempre al final del frame, después del esquema de conexiones
+ANTERIOR: v4.11 (manual)
 - Cabecera: el icono de editar (que no hacía nada en PC) pasa a ser un icono de información (i)
   que abre el README en una ventana nueva
 ANTERIOR: v4.10 (manual)
@@ -778,6 +783,7 @@ ANTERIOR: v4.1
         }
         
         .elec-link-ico { display: none !important; }
+        main.printable-area > .footer-pantalla { display: none !important; }
         /* Esquema de conexiones y material: página 2 del PDF (pantalla y cableado) */
         main.printable-area .esquema-sec {
           display: block !important;
@@ -2581,16 +2587,17 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
       const APP_LOGO_PRINT = "assets/SCLOGO.png";
       const DEFAULT_SCREEN_BG = "assets/SCCHART.jfif";
       const DEFAULT_SCREEN_BG_PRINT = "assets/SCCHART.jfif";
-      // Vídeo por defecto: SIEMPRE el último subido al canal @MEDIASERVI (lista "uploads" del canal UCjOocBuBTaCWZRcBvZ-waqQ).
-      // YouTube no ofrece públicamente cuál es el vídeo "fijado"; para forzar uno concreto basta con subirlo al canal.
-      const VIDEO_MOCK_URL = "https://www.youtube.com/embed/videoseries?list=UUjOocBuBTaCWZRcBvZ-waqQ&autoplay=1&mute=1&loop=1";
+      // Vídeo por defecto: primera fuente multimedia de prueba (fija): https://youtu.be/vKN4AcGz7zs
+      const VIDEO_MOCK_URL = "https://www.youtube.com/embed/vKN4AcGz7zs?autoplay=1&mute=1&loop=1&playlist=vKN4AcGz7zs&controls=0";
 
       // Función para convertir URLs de YouTube/Vimeo a formato embed
       const convertToEmbed = (url) => {
         if (!url) return url;
         
         // YouTube - varios formatos
-        const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+        const lista = url.match(/youtube\.com\/playlist\?[^\s]*list=([A-Za-z0-9_-]+)/);
+        if (lista) return `https://www.youtube.com/embed/videoseries?list=${lista[1]}&autoplay=1&mute=1&loop=1&controls=0`;
+        const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|live|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
         const youtubeMatch = url.match(youtubeRegex);
         if (youtubeMatch) {
           return `https://www.youtube.com/embed/${youtubeMatch[1]}?autoplay=1&mute=1&loop=1&playlist=${youtubeMatch[1]}&controls=0`;
@@ -2677,6 +2684,20 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
 
         const [activeTab, setActiveTab] = useState('config'); 
         const [customContent, setCustomContent] = useState(null);
+        // Popup de contenido de la pantalla y fuentes multimedia de prueba (la primera es fija)
+        const FUENTE_FIJA = 'https://youtu.be/vKN4AcGz7zs';
+        const FUENTES_DEF = [
+          'https://www.youtube.com/watch?v=ROboUHfPUrU',
+          'https://www.youtube.com/live/b4tE5aKhtlg',
+          'https://www.youtube.com/live/Qr61waJ6AZg',
+          'https://www.youtube.com/live/UEyEs8AE1ss',
+          'https://www.youtube.com/live/VlcwKEDOgOk',
+          'https://www.youtube.com/live/ewBqZHS9iG8'
+        ];
+        const [showMedia, setShowMedia] = useState(false);
+        const [fuentes, setFuentes] = useState(() => { try { const v = JSON.parse(localStorage.getItem('screencalc_fuentes') || 'null'); if (Array.isArray(v) && v.length === 6) return v; } catch (e) {} return FUENTES_DEF; });
+        const [fuenteSel, setFuenteSel] = useState(0);
+        const [urlPropia, setUrlPropia] = useState('');
         const [customContentType, setCustomContentType] = useState(null); // 'image', 'video', 'url'
         const [containerSize, setContainerSize] = useState({ w: 1000, h: 450 }); 
         const [mediaCycle, setMediaCycle] = useState(0); // 0 = Image, 1 = Video
@@ -4551,7 +4572,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                  </a>
                  <div>
                    <h1 className="text-white font-days text-xl tracking-wider title-halo">SCREENCALC</h1>
-                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.11</div>
+                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.12</div>
                  </div>
                </div>
                
@@ -5046,101 +5067,6 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     )}
                   </div>
                 )}
-
-                {activeTab === 'media' && (
-                  <div className="p-6 space-y-4 upload-panel">
-                    <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider border-b pb-2">Contenido Pantalla</h2>
-                    
-                    {customContent && (
-                      <div className="bg-green-50 border border-green-200 rounded p-3 mb-4">
-                        <div className="text-xs font-bold text-green-700 mb-1">✓ Contenido cargado</div>
-                        <div className="text-[10px] text-green-600 break-all">{customContent.substring(0, 80)}{customContent.length > 80 ? '...' : ''}</div>
-                      </div>
-                    )}
-                    
-                    <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded p-6 flex flex-col items-center justify-center relative hover:bg-gray-100">
-                       <input 
-                         type="file" 
-                         accept="image/*,video/*" 
-                         className="absolute inset-0 opacity-0 cursor-pointer" 
-                         onChange={e => { 
-                           const f = e.target.files[0]; 
-                           if(f) {
-                             setCustomContent(URL.createObjectURL(f));
-                             setCustomContentType(f.type.startsWith('image/') ? 'image' : 'video');
-                             setIsHovering(false);
-                             setMediaCycle(0);
-                           }
-                         }}
-                       />
-                       <div className="text-gray-400 mb-2"><Icon path={Icons.Upload} size={32}/></div>
-                       <div className="text-xs font-bold text-gray-600">Subir Imagen / Video</div>
-                    </div>
-                    
-                    <div className="mt-6">
-                        <label className="text-xs font-bold text-slate-500 block mb-1">URL de YouTube, Vimeo, Imagen o Video</label>
-                        <div className="flex gap-2">
-                          <input 
-                            type="text" 
-                            placeholder="https://youtube.com/watch?v=... o https://i.imgur.com/imagen.jpg" 
-                            id="urlInput"
-                            className="flex-1 border p-2 rounded text-sm"
-                            onKeyPress={(e) => {
-                              if (e.key === 'Enter') {
-                                const url = e.target.value.trim();
-                                if (url) {
-                                  setCustomContent(url);
-                                  setCustomContentType('url');
-                                  setIsHovering(false);
-                                  setMediaCycle(0);
-                                  e.target.value = '';
-                                }
-                              }
-                            }}
-                          />
-                          <button 
-                            onClick={() => {
-                              const input = document.getElementById('urlInput');
-                              const url = input.value.trim();
-                              if (url) {
-                                setCustomContent(url);
-                                setCustomContentType('url');
-                                setIsHovering(false);
-                                setMediaCycle(0);
-                                input.value = '';
-                              }
-                            }}
-                            className="px-4 py-2 bg-corp-teal text-white text-xs font-bold rounded hover:bg-corp-teal/80"
-                          >
-                            Aplicar
-                          </button>
-                        </div>
-                        <p className="text-[10px] text-gray-400 mt-1">Acepta: YouTube, Vimeo, imágenes (.jpg, .png, .gif) o videos (.mp4, .webm)</p>
-                    </div>
-                    
-                    {customContent && (
-                      <button 
-                        onClick={() => {
-                          setCustomContent(null);
-                          setCustomContentType(null);
-                          setMediaCycle(0);
-                        }} 
-                        className="w-full py-2 bg-red-50 text-red-600 text-xs font-bold rounded flex justify-center items-center gap-2"
-                      >
-                        <Icon path={Icons.Trash} size={14}/> Eliminar Contenido y Volver a Video por Defecto
-                      </button>
-                    )}
-                    
-                    <button 
-                      onClick={handleRegresarInicio} 
-                      className="w-full py-3 bg-corp-green text-white text-sm font-bold rounded hover:bg-corp-teal transition uppercase mt-4"
-                    >
-                      REGRESAR INICIO
-                    </button>
-                    
-                    <button onClick={() => setActiveTab('view')} className="lg:hidden w-full bg-corp-green text-white py-3 font-bold rounded mt-4">VER RESULTADO</button>
-                  </div>
-                )}
               </aside>
 
               <main className={`flex-1 flex-col min-w-0 overflow-y-auto bg-slate-100 printable-area ${activeTab === 'view' ? 'flex' : 'hidden lg:flex'}`}>
@@ -5262,7 +5188,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                            
                            {/* Botón de Contenido (debajo de la línea de suelo) */}
                            <button 
-                              onClick={() => setActiveTab('media')} 
+                              onClick={() => setShowMedia(true)} 
                               className="absolute z-50 p-2 bg-white rounded shadow-md border border-gray-200 hover:bg-gray-50 transition hidden lg:flex"
                               style={{ 
                                   left: '-40px',
@@ -6796,27 +6722,6 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     </button>
                   </div>
 
-                  <div className="text-[10px] text-center text-slate-400 pt-4 pb-8 no-print">
-                    <div className="text-slate-400 mb-2">
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
-                    </div>
-                    <div className="mb-2" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '4px'}}>
-                      <span>Si te gusta esta webapp prueba</span>
-                      <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" title="VJSHOW" style={{display: 'inline-flex'}}>
-                        <img src={VJSHOW_ICON} alt="VJSHOW" style={{width: '20px', height: '20px', borderRadius: '50%'}} />
-                      </a>
-                      <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none', fontWeight: 800, letterSpacing: '0.04em', color: '#94a3b8', textShadow: '0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(0,0,0,0.28)'}}>VJSHOW</a>
-                      <span>(visuales audio-reactivos) que estamos desarrollando.</span>
-                    </div>
-                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.11 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
-                  </div>
-                  
-                  {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
-                  <div className="print-footer hidden print:block" style={{display: 'none'}}>
-                    <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.5 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by mediaservi.com
-                    </div>
-                  </div>
                 </div>
                   {/* ESQUEMA DE CONEXIONES Y MATERIAL (proyecto con electrónica / mediaserver) */}
                   {proyectoData && (
@@ -6841,11 +6746,83 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     </div></div>
                   )}
 
+                  {/* PIE: siempre al final del frame, después de todos los bloques */}
+                  <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
+                    <div className="text-slate-400 mb-2">
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
+                    </div>
+                    <div className="mb-2" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '4px'}}>
+                      <span>Si te gusta esta webapp prueba</span>
+                      <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" title="VJSHOW" style={{display: 'inline-flex'}}>
+                        <img src={VJSHOW_ICON} alt="VJSHOW" style={{width: '20px', height: '20px', borderRadius: '50%'}} />
+                      </a>
+                      <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none', fontWeight: 800, letterSpacing: '0.04em', color: '#94a3b8', textShadow: '0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(0,0,0,0.28)'}}>VJSHOW</a>
+                      <span>(visuales audio-reactivos) que estamos desarrollando.</span>
+                    </div>
+                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.12 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                  </div>
+                  
+                  {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
+                  <div className="print-footer hidden print:block" style={{display: 'none'}}>
+                    <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.12 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by mediaservi.com
+                    </div>
+                  </div>
               </main>
             </div>
           </div>
           
           {/* POPUP CÓDIGO DE PRECIOS */}
+          {showMedia && (() => {
+            const guardar = (arr) => { setFuentes(arr); try { localStorage.setItem('screencalc_fuentes', JSON.stringify(arr)); } catch (e) {} };
+            const aplicar = () => {
+              const propia = urlPropia.trim();
+              const url = propia || (fuenteSel === 0 ? '' : String(fuentes[fuenteSel - 1] || '').trim());
+              if (url) { setCustomContent(url); setCustomContentType('url'); }
+              else { setCustomContent(null); setCustomContentType(null); }
+              setIsHovering(false); setMediaCycle(0); setShowMedia(false);
+            };
+            return (
+              <div className="no-print" onClick={() => setShowMedia(false)} style={{position: 'fixed', inset: 0, zIndex: 90, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px'}}>
+                <div onClick={e => e.stopPropagation()} style={{background: '#fff', borderRadius: '14px', boxShadow: '0 12px 40px rgba(0,0,0,0.35)', width: '100%', maxWidth: '560px', maxHeight: '92vh', overflowY: 'auto', padding: '18px'}}>
+                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}}>
+                    <div style={{fontSize: '15px', fontWeight: 800, color: '#082f28'}}>🎬 CONTENIDO PANTALLA</div>
+                    <button onClick={() => setShowMedia(false)} aria-label="Cerrar" style={{fontSize: '22px', lineHeight: 1, minHeight: 0, padding: '2px 8px', color: '#6b7280'}}>×</button>
+                  </div>
+                  <div style={{fontSize: '11px', fontWeight: 800, color: '#6b7280', letterSpacing: '0.05em', marginBottom: '6px'}}>FUENTES MULTIMEDIA DE PRUEBA</div>
+                  <div style={{display: 'flex', flexDirection: 'column', gap: '6px'}}>
+                    {[FUENTE_FIJA].concat(fuentes).map((u, i) => (
+                      <label key={i} style={{display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', border: '2px solid ' + (fuenteSel === i ? '#009688' : '#e5e7eb'), borderRadius: '8px', background: fuenteSel === i ? '#f0fdfa' : '#fff'}}>
+                        <input type="radio" name="fuente" checked={fuenteSel === i} onChange={() => { setFuenteSel(i); setUrlPropia(''); }} style={{width: '18px', height: '18px', flexShrink: 0}} />
+                        {i === 0 ? (
+                          <div style={{flex: 1, minWidth: 0, fontSize: '12px'}}><strong>Mi vídeo (por defecto)</strong><div style={{color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{u}</div></div>
+                        ) : (
+                          <input type="text" value={u} onChange={e => { const a = fuentes.slice(); a[i - 1] = e.target.value; guardar(a); }} onFocus={() => { setFuenteSel(i); setUrlPropia(''); }} style={{flex: 1, minWidth: 0, fontSize: '12px', border: '1px solid #d1d5db', borderRadius: '6px', padding: '5px 7px'}} placeholder="Pega aquí un enlace de YouTube, Vimeo, imagen o vídeo" />
+                        )}
+                      </label>
+                    ))}
+                  </div>
+                  <div style={{fontSize: '10px', color: '#9ca3af', margin: '4px 0 10px'}}>Las fuentes 2 a 7 se pueden editar; la primera es fija. Se guardan en este navegador.</div>
+                  <div style={{fontSize: '11px', fontWeight: 800, color: '#6b7280', letterSpacing: '0.05em', marginBottom: '6px'}}>O USA TU PROPIO CONTENIDO</div>
+                  <div style={{display: 'flex', gap: '8px', alignItems: 'stretch', flexWrap: 'wrap'}}>
+                    <input type="text" value={urlPropia} onChange={e => setUrlPropia(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') aplicar(); }} placeholder="URL de YouTube, Vimeo, imagen o vídeo" style={{flex: '1 1 220px', minWidth: 0, fontSize: '13px', border: '1px solid #d1d5db', borderRadius: '6px', padding: '8px'}} />
+                    <label style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 12px', border: '2px dashed #9ca3af', borderRadius: '6px', fontSize: '12px', fontWeight: 700, color: '#4b5563', cursor: 'pointer'}}>
+                      ⬆ Subir imagen / vídeo
+                      <input type="file" accept="image/*,video/*" style={{position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer'}} onChange={e => {
+                        const f = e.target.files[0];
+                        if (f) { setCustomContent(URL.createObjectURL(f)); setCustomContentType(f.type.startsWith('image/') ? 'image' : 'video'); setIsHovering(false); setMediaCycle(0); setShowMedia(false); }
+                      }} />
+                    </label>
+                  </div>
+                  <div style={{display: 'flex', gap: '8px', marginTop: '14px'}}>
+                    <button onClick={aplicar} className="bg-corp-teal text-white font-bold rounded" style={{flex: 1, height: '42px', fontSize: '14px'}}>APLICAR</button>
+                    <button onClick={() => setShowMedia(false)} className="bg-gray-200 text-gray-700 font-bold rounded" style={{flex: 1, height: '42px', fontSize: '14px'}}>CERRAR</button>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
           {nlDialog && (() => {
             const q = nlDialog.queue[nlDialog.idx];
             return (
