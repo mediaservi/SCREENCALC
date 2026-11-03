@@ -2,10 +2,14 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.13                             ║
+║                          Versión actual: v4.14                             ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.13 (manual)
+ÚLTIMA ACTUALIZACIÓN: v4.14 (manual)
+- Entorno marino/húmedo: solo se proponen cabinets con tecnología GOLD (soldadura de oro)
+- Botón REINICIAR en el popup de contenido: vuelve a la imagen de fondo estática inicial
+- Eliminada la fuente multimedia de prueba 5 (no funcionaba); quedan 5 editables
+ANTERIOR: v4.13 (manual)
 - El vídeo de la pantalla se estira (deformándose, sin mantener proporción) hasta rellenar toda la pantalla
 ANTERIOR: v4.12 (manual)
 - Contenido de pantalla: el icono de imagen abre un popup centrado (ya no el panel lateral) con
@@ -2660,6 +2664,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         
         // Filtros - Por defecto INSTALL y pitch 1.8
         const [filterClass, setFilterClass] = useState('INSTALL'); // '' = todos, 'INSTALL', 'RENTAL'
+        const [filterGold, setFilterGold] = useState(false); // entorno marino/húmedo: solo cabinets con tecnología GOLD
+        const esGold = (m) => /gold/i.test(String(m.tech || ''));
         const [filterTipo, setFilterTipo] = useState(''); // '' = todos, 'INDOOR', 'OUTDOOR', 'ESCAPARATE'
         const [filterPitch, setFilterPitch] = useState(0.9);
         const [filterNits, setFilterNits] = useState(600);
@@ -2718,12 +2724,11 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           'https://www.youtube.com/watch?v=ROboUHfPUrU',
           'https://www.youtube.com/live/b4tE5aKhtlg',
           'https://www.youtube.com/live/Qr61waJ6AZg',
-          'https://www.youtube.com/live/UEyEs8AE1ss',
           'https://www.youtube.com/live/VlcwKEDOgOk',
           'https://www.youtube.com/live/ewBqZHS9iG8'
         ];
         const [showMedia, setShowMedia] = useState(false);
-        const [fuentes, setFuentes] = useState(() => { try { const v = JSON.parse(localStorage.getItem('screencalc_fuentes') || 'null'); if (Array.isArray(v) && v.length === 6) return v; } catch (e) {} return FUENTES_DEF; });
+        const [fuentes, setFuentes] = useState(() => { try { const v = JSON.parse(localStorage.getItem('screencalc_fuentes_v2') || 'null'); if (Array.isArray(v) && v.length === 5) return v; } catch (e) {} return FUENTES_DEF; });
         const [fuenteSel, setFuenteSel] = useState(0);
         const [urlPropia, setUrlPropia] = useState('');
         const [titulos, setTitulos] = useState({});
@@ -3061,6 +3066,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           if (filterClass) result = result.filter(m => m.class === filterClass);
           // Filtro por TIPO (INDOOR/OUTDOOR/ESCAPARATE)
           if (filterTipo) result = result.filter(m => String(m.tipo || '').toUpperCase() === filterTipo);
+          if (filterGold) result = result.filter(esGold);
           
           if (quickFitActive) {
             // Filtro rápido activo: solo modelos que alcanzan la resolución mínima pedida en ese tamaño
@@ -3096,7 +3102,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           });
           
           return result;
-        }, [modelos, filterClass, filterTipo, filterPitch, filterNits, quickFitActive]);
+        }, [modelos, filterClass, filterTipo, filterGold, filterPitch, filterNits, quickFitActive]);
         
         // Lista para el dropdown MASTER del sidebar: nunca filtrada por quickFit,
         // solo por class/pitch/nits (el desplegable izquierdo siempre muestra todo)
@@ -3104,6 +3110,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           let result = [...modelos];
           if (filterClass) result = result.filter(m => m.class === filterClass);
           if (filterTipo) result = result.filter(m => String(m.tipo || '').toUpperCase() === filterTipo);
+          if (filterGold) result = result.filter(esGold);
           if (filterPitch > 0) result = result.filter(m => m.pitch >= filterPitch);
           if (filterNits > 0) result = result.filter(m => m.nits >= filterNits);
           result.sort((a, b) => {
@@ -3112,7 +3119,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
             return 0;
           });
           return result;
-        }, [modelos, filterClass, filterTipo, filterPitch, filterNits]);
+        }, [modelos, filterClass, filterTipo, filterGold, filterPitch, filterNits]);
         
         // Auto-seleccionar el primer modelo cuando cambian los filtros
         useEffect(() => {
@@ -3331,7 +3338,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         const handleNuevaConfiguracion = () => {
           // Reiniciar filtros
           setFilterClass('INSTALL');
-          setFilterTipo('');
+          setFilterTipo(''); setFilterGold(false);
           setFilterPitch(1.8);
           setFilterNits(600);
           setNlText(''); setNlSummary(''); setNlAviso(''); setNlDialog(null); setNlPending(null); setPanelModo('manual');
@@ -3566,10 +3573,13 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         const aplicarSolicitud = (p) => {
           let clase = p.clase, tipo = p.tipo;
           const relajados = [];
-          const seleccion = () => modelos.filter(m => (!clase || m.class === clase) && (!tipo || String(m.tipo || '').toUpperCase() === tipo));
+          const marino = p.marino === 'si';
+          const seleccion = () => modelos.filter(m => (!clase || m.class === clase) && (!tipo || String(m.tipo || '').toUpperCase() === tipo) && (!marino || esGold(m)));
+          let sinGold = false;
+          if (marino && !modelos.some(m => esGold(m) && (!clase || m.class === clase) && (!tipo || String(m.tipo || '').toUpperCase() === tipo))) sinGold = true;
           if (!seleccion().length && tipo) { relajados.push(tipo); tipo = ''; }
           if (!seleccion().length && clase) { relajados.push(clase); clase = ''; }
-          const lista = seleccion().length ? seleccion() : modelos;
+          const lista = seleccion().length ? seleccion() : (marino && !sinGold ? modelos : modelos.filter(m => (!clase || m.class === clase) && (!tipo || String(m.tipo || '').toUpperCase() === tipo)));
           const pitches = [...new Set(lista.map(m => m.pitch).filter(v => v > 0))].sort((a, b) => a - b);
           let pitchSel = pitches[0] || 0.9;
           if (p.pitch) pitchSel = pitches.reduce((best, v) => Math.abs(v - p.pitch) < Math.abs(best - p.pitch) ? v : best, pitches[0] || p.pitch);
@@ -3580,7 +3590,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           if (minNits) { const c = nitsList.find(v => v >= minNits); nitsSel = c !== undefined ? c : (nitsList[nitsList.length - 1] || nitsSel); }
           const w = Number(p.anchoCm), h = Number(p.altoCm);
 
-          setFilterClass(clase || ''); setFilterTipo(tipo || '');
+          setFilterClass(clase || ''); setFilterTipo(tipo || ''); setFilterGold(marino && !sinGold);
           setFilterPitch(pitchSel); setFilterNits(nitsSel);
           setTargetW_cm(w); setTargetH_cm(h);
           setQuickFitActive(null); setQuickFitResults([]); setQuickFitSelectedCrm(''); setQuickConfigError('');
@@ -3592,7 +3602,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           setFiltroMediaDante(!!p.dante);
           setElecSel(''); setMediaSel('');
           setProyecto({ elec: p.elec === 'si', media: !!p.media && p.media !== 'ninguno', entradas: p.entradas || 0, tipoEntrada: p.tipoEntrada || '', resEntrada: p.resEntrada || '', cableM: p.cableM || 0, marino: p.marino === 'si' });
-          setNlAviso(relajados.length ? 'No hay modelos ' + relajados.join(' / ') + ' en la tabla: se ha ampliado la búsqueda.' : '');
+          setNlAviso((relajados.length ? 'No hay modelos ' + relajados.join(' / ') + ' en la tabla: se ha ampliado la búsqueda. ' : '') + (marino ? (sinGold ? 'No hay cabinets GOLD para esta selección en la tabla: revisa a mano la variante con soldadura de oro.' : 'Entorno marino/húmedo: solo cabinets con tecnología GOLD.') : ''));
           setNlPending({ pitch: pitchSel, nits: nitsSel, w, h, conRes: !!p.resModo });
 
           const partes = [U(w / 100) + ' x ' + U(h / 100) + ' ' + unit];
@@ -4613,7 +4623,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                  </a>
                  <div>
                    <h1 className="text-white font-days text-xl tracking-wider title-halo">SCREENCALC</h1>
-                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.13</div>
+                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.14</div>
                  </div>
                </div>
                
@@ -6788,13 +6798,13 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none', fontWeight: 800, letterSpacing: '0.04em', color: '#94a3b8', textShadow: '0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(0,0,0,0.28)'}}>VJSHOW</a>
                       <span>(visuales audio-reactivos) que estamos desarrollando.</span>
                     </div>
-                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.13 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.14 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.13 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.14 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by mediaservi.com
                     </div>
                   </div>
               </main>
@@ -6803,7 +6813,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           
           {/* POPUP CÓDIGO DE PRECIOS */}
           {showMedia && (() => {
-            const guardar = (arr) => { setFuentes(arr); try { localStorage.setItem('screencalc_fuentes', JSON.stringify(arr)); } catch (e) {} };
+            const guardar = (arr) => { setFuentes(arr); try { localStorage.setItem('screencalc_fuentes_v2', JSON.stringify(arr)); } catch (e) {} };
             const aplicar = () => {
               const propia = urlPropia.trim();
               const url = propia || (fuenteSel === 0 ? FUENTE_FIJA : String(fuentes[fuenteSel - 1] || '').trim());
@@ -6837,7 +6847,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     ))}
                   </div>
                   {window.location.protocol === 'file:' && <div style={{fontSize: '10px', color: '#b45309', background: '#fffbeb', borderRadius: '5px', padding: '3px 6px', margin: '4px 0'}}>⚠ Abierta como archivo local, YouTube da «Error 153». Los vídeos funcionan desde la página publicada (https).</div>}
-                  <div style={{fontSize: '10px', color: '#9ca3af', margin: '4px 0 10px'}}>Las fuentes 2 a 7 se pueden editar; la primera es fija. Se guardan en este navegador.</div>
+                  <div style={{fontSize: '10px', color: '#9ca3af', margin: '4px 0 10px'}}>Las fuentes 2 a 6 se pueden editar; la primera es fija. Se guardan en este navegador.</div>
                   <div style={{fontSize: '11px', fontWeight: 800, color: '#6b7280', letterSpacing: '0.05em', marginBottom: '6px'}}>O USA TU PROPIO CONTENIDO</div>
                   <div style={{display: 'flex', gap: '8px', alignItems: 'stretch', flexWrap: 'wrap'}}>
                     <input type="text" value={urlPropia} onChange={e => setUrlPropia(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') aplicar(); }} placeholder="URL de YouTube, Vimeo, imagen o vídeo" style={{flex: '1 1 150px', minWidth: 0, fontSize: '12px', border: '1px solid #d1d5db', borderRadius: '6px', padding: '4px 6px', minHeight: 0, height: '34px'}} />
@@ -6851,6 +6861,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                   </div>
                   <div style={{display: 'flex', gap: '8px', marginTop: '10px'}}>
                     <button onClick={aplicar} className="bg-corp-teal text-white font-bold rounded" style={{flex: 1, height: '34px', fontSize: '13px', minHeight: 0}}>APLICAR</button>
+                    <button onClick={() => { setCustomContent(null); setCustomContentType(null); setIsHovering(false); setMediaCycle(0); setFuenteSel(0); setUrlPropia(''); setShowMedia(false); }} className="bg-amber-100 text-amber-800 font-bold rounded" title="Volver a la imagen de fondo estática inicial" style={{flex: 1, height: '34px', fontSize: '13px', minHeight: 0}}>REINICIAR</button>
                     <button onClick={() => setShowMedia(false)} className="bg-gray-200 text-gray-700 font-bold rounded" style={{flex: 1, height: '34px', fontSize: '13px', minHeight: 0}}>CERRAR</button>
                   </div>
                 </div>

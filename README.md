@@ -2,7 +2,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.13 (beta)**
+**Versión actual: v4.14 (beta)**
 
 Web pública: https://mediaservi.github.io/SCREENCALC/ · Otra copia: https://screencalcx.netlify.app/
 
@@ -23,7 +23,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **Elección manual de equipos:** clic en una burbuja de electrónica o de mediaserver para elegirla; otro clic la quita.
 - **Esquema de conexiones y material (llave en mano):** diagrama con símbolos AV y colores por señal (vídeo, Ethernet, fibra, alimentación, control, backup) y listado de material, que incluye el cable HDMI PureLink FlexInstall más adecuado a la distancia de las fuentes. Se muestra en resultados y es la página 2 de ambos PDF.
 - **Enlaces e imágenes de producto:** icono de enlace (a la ficha o a la búsqueda de Charmex por modelo) y, en electrónica, pila de logo, vista frontal y trasera con visor al 80 % de la pantalla. Se leen de la hoja ELECTRONICAS (columnas `url`, `front`, `back`, `logo`) cada vez que se abre la app; las imágenes no van al PDF.
-- **Contenido de la pantalla (🖼):** el icono de imagen abre un popup centrado con FUENTES MULTIMEDIA DE PRUEBA (la primera es fija y va preseleccionada; las otras 6 son editables y se guardan en el navegador), URL propia (YouTube normal, /live/, /shorts/, listas, Vimeo, imagen o vídeo) y subida de archivo.
+- **Contenido de la pantalla (🖼):** el icono de imagen abre un popup centrado con FUENTES MULTIMEDIA DE PRUEBA (la primera es fija y va preseleccionada; las otras 5 son editables y se guardan en el navegador), URL propia (YouTube normal, /live/, /shorts/, listas, Vimeo, imagen o vídeo) y subida de archivo.
 - **Esquemas de cableado:** propuesta de cableado de señal y eléctrico.
 - **PDF:** "PDF pantalla" y "PDF cableado", cada uno en una hoja A4 más la página 2 del esquema cuando hay electrónica o mediaserver.
 - **Información (ⓘ):** el icono de la cabecera abre este README en una ventana nueva.
@@ -42,12 +42,15 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 - `main`: versión oficial y pública, aprobada.
 - Dos ramas de versión más recientes (`v4.x`) para pruebas. Las anteriores se eliminan.
 
-## Cambios de la versión actual (v4.13)
+## Cambios de la versión actual (v4.14)
 
-- El vídeo de la pantalla se estira, deformándose y sin mantener la proporción, hasta rellenar toda la pantalla simulada.
+- Entorno marino o con mucha humedad: la app propone solo cabinets cuya columna `tech` contiene GOLD (soldadura de oro). Si la tabla no tiene ninguno para esa selección, lo avisa.
+- Botón REINICIAR entre APLICAR y CERRAR en el popup de contenido: deja la pantalla con la imagen de fondo estática inicial.
+- Eliminada la fuente multimedia de prueba 5, que no funcionaba. Quedan la fija y 5 editables.
 
 ## Historial de versiones
 
+- **v4.13:** el vídeo se estira (deformándose) para rellenar toda la pantalla.
 - **v4.12:** popup de contenido con fuentes multimedia de prueba (la primera, la lista del canal, fija), vídeo sin controles y pie siempre al final.
 - **v4.11:** icono de información (ⓘ) que abre el README y README completo.
 - **v4.10:** elegir electrónica y mediaserver con clic en la burbuja y generar el esquema con ese equipo.
