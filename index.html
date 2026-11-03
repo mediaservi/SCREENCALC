@@ -2588,7 +2588,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
       const DEFAULT_SCREEN_BG = "assets/SCCHART.jfif";
       const DEFAULT_SCREEN_BG_PRINT = "assets/SCCHART.jfif";
       // Vídeo por defecto: primera fuente multimedia de prueba (fija): https://youtu.be/vKN4AcGz7zs
-      const VIDEO_MOCK_URL = "https://www.youtube.com/embed/vKN4AcGz7zs?autoplay=1&mute=1&loop=1&playlist=vKN4AcGz7zs&controls=0";
+      const VIDEO_MOCK_URL = "https://www.youtube.com/embed/vKN4AcGz7zs?autoplay=1&mute=1&playsinline=1&rel=0";
 
       // Función para convertir URLs de YouTube/Vimeo a formato embed
       const convertToEmbed = (url) => {
@@ -2600,7 +2600,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|live|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
         const youtubeMatch = url.match(youtubeRegex);
         if (youtubeMatch) {
-          return `https://www.youtube.com/embed/${youtubeMatch[1]}?autoplay=1&mute=1&loop=1&playlist=${youtubeMatch[1]}&controls=0`;
+          return `https://www.youtube.com/embed/${youtubeMatch[1]}?autoplay=1&mute=1&playsinline=1&rel=0`;
         }
         
         // Vimeo
@@ -5246,7 +5246,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                                                 src={processedCustomContent}
                                                 className="w-full h-full" 
                                                 frameBorder="0" 
-                                                allow="autoplay; encrypted-media; picture-in-picture"
+                                                allow="autoplay; encrypted-media; picture-in-picture" referrerPolicy="strict-origin-when-cross-origin"
                                                 allowFullScreen
                                             />
                                         ) : processedCustomContent.match(/\.(jpg|jpeg|png|gif|webp|bmp)$/i) ? (
@@ -5273,7 +5273,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                                             src={VIDEO_MOCK_URL}
                                             className="w-full h-full" 
                                             frameBorder="0" 
-                                            allow="autoplay; encrypted-media; picture-in-picture"
+                                            allow="autoplay; encrypted-media; picture-in-picture" referrerPolicy="strict-origin-when-cross-origin"
                                             allowFullScreen
                                         />
                                     ) : (
@@ -6784,20 +6784,20 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
             };
             return (
               <div className="no-print" onClick={() => setShowMedia(false)} style={{position: 'fixed', inset: 0, zIndex: 90, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px'}}>
-                <div onClick={e => e.stopPropagation()} style={{background: '#fff', borderRadius: '14px', boxShadow: '0 12px 40px rgba(0,0,0,0.35)', width: '100%', maxWidth: '400px', maxHeight: '80vh', overflowY: 'auto', padding: '12px'}}>
+                <div onClick={e => e.stopPropagation()} style={{background: '#fff', borderRadius: '14px', boxShadow: '0 12px 40px rgba(0,0,0,0.35)', width: '100%', maxWidth: '340px', maxHeight: '80vh', overflowY: 'auto', padding: '12px'}}>
                   <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}}>
                     <div style={{fontSize: '15px', fontWeight: 800, color: '#082f28'}}>🎬 CONTENIDO PANTALLA</div>
                     <button onClick={() => setShowMedia(false)} aria-label="Cerrar" style={{fontSize: '22px', lineHeight: 1, minHeight: 0, padding: '2px 8px', color: '#6b7280'}}>×</button>
                   </div>
                   <div style={{fontSize: '11px', fontWeight: 800, color: '#6b7280', letterSpacing: '0.05em', marginBottom: '6px'}}>FUENTES MULTIMEDIA DE PRUEBA</div>
-                  <div style={{display: 'flex', flexDirection: 'column', gap: '3px'}}>
+                  <div style={{display: 'flex', flexDirection: 'column', gap: '2px'}}>
                     {[FUENTE_FIJA].concat(fuentes).map((u, i) => (
-                      <label key={i} style={{display: 'flex', alignItems: 'center', gap: '6px', padding: '3px 6px', border: '2px solid ' + (fuenteSel === i ? '#009688' : '#e5e7eb'), borderRadius: '8px', background: fuenteSel === i ? '#f0fdfa' : '#fff'}}>
+                      <label key={i} style={{display: 'flex', alignItems: 'center', gap: '5px', padding: '1px 5px', border: '1px solid ' + (fuenteSel === i ? '#009688' : '#e5e7eb'), borderRadius: '8px', background: fuenteSel === i ? '#f0fdfa' : '#fff'}}>
                         <input type="radio" name="fuente" checked={fuenteSel === i} onChange={() => { setFuenteSel(i); setUrlPropia(''); }} style={{width: '14px', height: '14px', flexShrink: 0, minHeight: 0}} />
                         {i === 0 ? (
-                          <div style={{flex: 1, minWidth: 0, fontSize: '11px'}}><strong>Mi vídeo (por defecto)</strong><div style={{color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{u}</div></div>
+                          <div style={{flex: 1, minWidth: 0, fontSize: '11px', lineHeight: '14px'}}><strong>mediaservi.com 24/7</strong><div style={{color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{u}</div></div>
                         ) : (
-                          <input type="text" value={u} onChange={e => { const a = fuentes.slice(); a[i - 1] = e.target.value; guardar(a); }} onFocus={() => { setFuenteSel(i); setUrlPropia(''); }} style={{flex: 1, minWidth: 0, fontSize: '11px', border: '1px solid #d1d5db', borderRadius: '5px', padding: '3px 6px', minHeight: 0, height: '26px'}} placeholder="Pega aquí un enlace de YouTube, Vimeo, imagen o vídeo" />
+                          <input type="text" value={u} onChange={e => { const a = fuentes.slice(); a[i - 1] = e.target.value; guardar(a); }} onFocus={() => { setFuenteSel(i); setUrlPropia(''); }} style={{flex: 1, minWidth: 0, fontSize: '11px', border: '1px solid #d1d5db', borderRadius: '5px', padding: '3px 6px', minHeight: 0, height: '22px'}} placeholder="Pega aquí un enlace de YouTube, Vimeo, imagen o vídeo" />
                         )}
                       </label>
                     ))}
