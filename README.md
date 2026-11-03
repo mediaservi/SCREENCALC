@@ -12,7 +12,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 
 ## Funciones
 
-- **Petición en lenguaje natural (📝):** se pega el texto del cliente y la app propone una pantalla. Si falta un dato, pregunta con un popup. Se interpreta con reglas locales, sin servicios externos de IA.
+- **Petición en lenguaje natural (📝):** se pega el texto del cliente y la app propone una pantalla. Si falta un dato, pregunta con un popup, incluidas las preguntas de electrónica (solo línea o con backup, con o sin escalador, conexión RJ45 o rack con fibra) y de mediaserver (ninguno, cualquier marca, NovaStar, PixelHue o con Dante), para dar un proyecto completo. Lo que ya viene en el texto no se vuelve a preguntar. Se interpreta con reglas locales, sin servicios externos de IA.
 - **Panel de entrada manual:** INSTALL / RENTAL, INDOOR / OUTDOOR / ESCAPARATE, pitch y nits (valores de la tabla con flechas ▲▼), columnas y filas, ancho y alto con selector de unidad m / cm / mm (por defecto cm; el PDF sigue la unidad elegida), resolución mínima (HD / FHD / UHD 4K) y altura sobre el suelo. Muestra en vivo las medidas, los cabinets y la resolución.
 - **Modo resumen:** si la petición se hizo en texto, el panel solo muestra lo elegido. Con "Editar a mano" se vuelve al panel completo.
 - **Resultados:** características de la pantalla y del cabinet, distancias de visión mínima y óptima, peso, consumo, líneas de señal (con backup) y simulación a escala con figura humana.
@@ -37,19 +37,13 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 - `main`: versión oficial y pública, aprobada.
 - Dos ramas de versión más recientes (`v4.x`) para pruebas. Las anteriores se eliminan.
 
-## Cambios de la versión actual (v4.5)
+## Cambios de la versión actual (v4.6)
 
-- Los enlaces de la app apuntan a https://mediaservi.github.io/SCREENCALC/.
-- Selector de unidad m / cm / mm (por defecto cm) en entradas y datos mostrados, incluido el PDF. El pitch se mantiene en mm; peso, potencia y píxeles no cambian.
-- Cuadro 📝 a todo el ancho y más alto, con el icono flotando dentro y el texto de guía completo.
-- Ayuda de pitch: "A menor pitch, más definición. Con 3.9p se ve bien desde 3,9 m (óptimo desde 11,7 m)", en la unidad elegida.
-- Tamaño Pantalla: COLUMNAS y FILAS; se eliminan los números de paso 1 · / 2 · / 3 ·.
-- Botón flotante ⚙ PANEL en móvil para volver al panel desde los resultados.
-- Electrónica: pila logo / frontal / trasera con visor al 80 %, enlace Charmex del VX400 Pro y lectura de enlaces e imágenes desde la hoja.
-- Vídeo por defecto: último subido al canal @MEDIASERVI (YouTube no publica cuál es el vídeo fijado).
+- El cuestionario de la petición en texto añade preguntas de electrónica (backup, escalador, conexión) y mediaserver (marca, Dante), que se aplican a los filtros de esas secciones y aparecen en el resumen del panel.
 
 ## Historial de versiones
 
+- **v4.5:** selector de unidades m / cm / mm, cuadro 📝 a todo el ancho, columnas y filas, botón ⚙ PANEL en móvil, imágenes y enlaces de electrónica con visor, vídeo del canal y enlaces a GitHub Pages.
 - **v4.4:** rutas de `assets/` relativas para funcionar en GitHub Pages.
 - **v4.3:** panel de entrada rediseñado con petición en lenguaje natural, modo resumen/manual, pitch y nits con flechas, botones simétricos, y enlace a VJSHOW en el pie.
 - **v4.2:** nuevo motor de electrónica basado en especificaciones del fabricante, bloque de mediaserver con filtros, enlaces a producto y PDF compacto.

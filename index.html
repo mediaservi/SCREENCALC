@@ -2,10 +2,13 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.5                              ║
+║                          Versión actual: v4.6                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.5 (manual)
+ÚLTIMA ACTUALIZACIÓN: v4.6 (manual)
+- Cuestionario de texto: nuevas preguntas de electrónica (backup, escalador, conexión) y mediaserver
+  (marca, Dante) para completar el proyecto; se aplican a los filtros de esas secciones
+ANTERIOR: v4.5 (manual)
 - Enlaces de la app apuntan a https://mediaservi.github.io/SCREENCALC/
 - Selector de unidad m / cm / mm (por defecto cm) en entradas y datos mostrados (PDF incluido)
 - Cuadro 📝 a todo el ancho, más alto, icono flotante dentro; ayuda de pitch reformulada
@@ -1556,6 +1559,18 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         if (/\buhd\b|\b4k\b|ultra ?hd/.test(t)) r.resModo = 'UHD4K';
         else if (/\bfhd\b|full ?hd|1080/.test(t)) r.resModo = 'FULLHD';
         else if (/\bhd\b|720/.test(t)) r.resModo = 'HD';
+        // Electrónica y mediaserver (undefined = no mencionado → se preguntará)
+        if (/sin (backup|redundancia|respaldo)/.test(t)) r.elecTipo = 'linea';
+        else if (/backup|redundan|respaldo/.test(t)) r.elecTipo = 'backup';
+        if (/sin (escalador|scaler)/.test(t)) r.elecEsc = 'sin';
+        else if (/escalador|scaler|escalado/.test(t)) r.elecEsc = 'con';
+        if (/fibra|\brack\b|cvt/.test(t)) r.elecCon = 'rack';
+        else if (/rj ?45|directo|cable de red/.test(t)) r.elecCon = 'directo';
+        if (/sin (mediaserver|media server|servidor)/.test(t)) r.media = 'ninguno';
+        else if (/novastar/.test(t) && /mediaserver|media server|servidor|\bet\d/.test(t)) r.media = 'novastar';
+        else if (/pixelhue/.test(t)) r.media = 'pixelhue';
+        else if (/mediaserver|media server|servidor de (medios|video)|dante/.test(t)) r.media = 'todos';
+        if (/dante/.test(t)) { r.dante = true; if (!r.media) r.media = 'todos'; }
         return r;
       };
 
@@ -3262,6 +3277,10 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           if (!p.tipo) q.push({ id: 'tipo', tipo: 'opciones', titulo: '¿Dónde se instalará la pantalla?', opciones: [['INDOOR', 'Interior'], ['OUTDOOR', 'Exterior'], ['ESCAPARATE', 'Escaparate'], ['', 'Sin preferencia']] });
           if (!p.clase) q.push({ id: 'clase', tipo: 'opciones', titulo: '¿Es para instalación fija o para alquiler?', opciones: [['INSTALL', 'Instalación fija'], ['RENTAL', 'Alquiler / eventos'], ['', 'Sin preferencia']] });
           if (!p.pitch && !p.dist && !p.resModo) q.push({ id: 'dist', tipo: 'opciones', titulo: '¿A qué distancia mínima estará el público?', opciones: [['1.5', 'Menos de 2 m'], ['2', 'De 2 a 4 m'], ['4', 'De 4 a 8 m'], ['8', 'De 8 a 15 m'], ['15', 'Más de 15 m'], ['', 'No lo sé']] });
+          if (p.elecTipo === undefined) q.push({ id: 'elecTipo', tipo: 'opciones', titulo: '¿Quieres electrónica con backup (redundancia)?', opciones: [['backup', 'Sí, con backup'], ['linea', 'No, solo línea principal'], ['', 'Sin preferencia']] });
+          if (p.elecEsc === undefined) q.push({ id: 'elecEsc', tipo: 'opciones', titulo: '¿La electrónica debe llevar escalador (procesador de vídeo)?', opciones: [['con', 'Sí, con escalador'], ['sin', 'No, sin escalador'], ['', 'Sin preferencia']] });
+          if (p.elecCon === undefined) q.push({ id: 'elecCon', tipo: 'opciones', titulo: '¿Cómo se conecta la electrónica a la pantalla?', opciones: [['directo', 'Directo por cable de red (RJ45)'], ['rack', 'En rack con fibra óptica'], ['', 'Sin preferencia']] });
+          if (p.media === undefined) q.push({ id: 'media', tipo: 'opciones', titulo: '¿Necesitas mediaserver?', opciones: [['ninguno', 'No lo necesito'], ['todos', 'Sí, cualquier marca'], ['novastar', 'Sí, NovaStar'], ['pixelhue', 'Sí, PixelHue'], ['dante', 'Sí, con audio Dante']] });
           return q;
         };
 
@@ -3288,11 +3307,20 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           setTargetW_cm(w); setTargetH_cm(h);
           setQuickFitActive(null); setQuickFitResults([]); setQuickFitSelectedCrm(''); setQuickConfigError('');
           setResolucionModo(p.resModo || 'NONE');
+          if (p.elecTipo) setFiltroElecTipo(p.elecTipo);
+          if (p.elecEsc) setFiltroElecEscalador(p.elecEsc);
+          if (p.elecCon) setFiltroElecConexion(p.elecCon);
+          if (p.media) setFiltroMedia(p.media);
+          setFiltroMediaDante(!!p.dante);
           setNlAviso(relajados.length ? 'No hay modelos ' + relajados.join(' / ') + ' en la tabla: se ha ampliado la búsqueda.' : '');
           setNlPending({ pitch: pitchSel, nits: nitsSel, w, h, conRes: !!p.resModo });
 
           const partes = [U(w / 100) + ' x ' + U(h / 100) + ' ' + unit];
           if (p.dist) partes.push('con pitch ' + pitchSel + ' mm se ve bien desde ' + fmtDist(pitchSel) + ' ' + unit + ' (óptimo desde ' + fmtDist(pitchSel * 3) + ' ' + unit + ')');
+          const etq = { backup: 'con backup', linea: 'sin backup', con: 'con escalador', sin: 'sin escalador', directo: 'conexión RJ45', rack: 'rack + fibra' };
+          const el = [p.elecTipo, p.elecEsc, p.elecCon].filter(Boolean).map(k => etq[k]);
+          if (el.length) partes.push('Electrónica ' + el.join(', '));
+          if (p.media) partes.push(p.media === 'ninguno' ? 'Sin mediaserver' : 'Mediaserver ' + (p.media === 'todos' ? '' : p.media.toUpperCase() + ' ') + (p.dante ? 'con Dante' : ''));
           setNlSummary(partes.join(' · '));
           setPanelModo('texto');
         };
@@ -3317,6 +3345,10 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           } else if (q.id === 'tipo') p.tipo = val;
           else if (q.id === 'clase') p.clase = val;
           else if (q.id === 'dist') p.dist = val ? parseFloat(val) : 0;
+          else if (q.id === 'elecTipo') p.elecTipo = val;
+          else if (q.id === 'elecEsc') p.elecEsc = val;
+          else if (q.id === 'elecCon') p.elecCon = val;
+          else if (q.id === 'media') { if (val === 'dante') { p.media = 'todos'; p.dante = true; } else p.media = val; }
           if (d.idx + 1 < d.queue.length) setNlDialog({ ...d, p, idx: d.idx + 1, valor: '', sel: '', error: '' });
           else { setNlDialog(null); aplicarSolicitud(p); }
         };
@@ -4242,7 +4274,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                  </a>
                  <div>
                    <h1 className="text-white font-days text-xl tracking-wider title-halo">SCREENCALC</h1>
-                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.5</div>
+                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.6</div>
                  </div>
                </div>
                
@@ -6382,7 +6414,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none', fontWeight: 800, letterSpacing: '0.04em', color: '#94a3b8', textShadow: '0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(0,0,0,0.28)'}}>VJSHOW</a>
                       <span>(visuales audio-reactivos) que estamos desarrollando.</span>
                     </div>
-                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.5 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.6 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
