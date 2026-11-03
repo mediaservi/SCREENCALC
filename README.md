@@ -38,16 +38,13 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 - `main`: versión oficial y pública, aprobada.
 - Dos ramas de versión más recientes (`v4.x`) para pruebas. Las anteriores se eliminan.
 
-## Cambios de la versión actual (v4.7)
+## Cambios de la versión actual (v4.8)
 
-- **Cuestionario llave en mano:** pregunta si se quiere electrónica y, si sí, número de fuentes, tipo y resolución de señal de entrada. Con ello calcula las tarjetas de entrada de la H Series (referencias orientativas, a confirmar) y filtra mediaservers por entradas. En exterior pregunta si es zona de mar o mucha humedad y añade al material la variante tropicalizada con contactos chapados en oro.
-- **Esquema de conexiones y material:** gráfico técnico con símbolos AV y colores por señal (vídeo, Ethernet, fibra, alimentación, control, backup) y listado de material. Se muestra en resultados y es la página 2 del PDF pantalla y del PDF cableado. Solo aparece si se pidió electrónica o mediaserver.
-- **Características Pantalla:** tarjetas agrupadas (dimensiones, resolución con niveles HD/FHD/4K/8K, distancia de visionado con zonas, cabinets, señal y alimentación). 2 columnas en PC y apiladas en móvil; el PDF conserva su lista.
-- **Simulación:** layout dinámico sin desbordes. Datos en columna lateral (PC) o franja superior (móvil), altura adaptada y escala que aprovecha el espacio manteniendo proporción.
-- **Enlaces:** si un equipo no tiene URL directa, el icono lleva a la búsqueda de Charmex por modelo (`charmex.net/productos-search/<modelo>`).
+- **Características Pantalla:** rejilla adaptable (3 columnas en pantalla ancha, 2 o 1 si hay menos espacio), icono distintivo por bloque, sombra y fondo pastel por sección. Solo en pantalla: el PDF no cambia. Nuevo bloque Instalación con peso, mantenimiento y receiving card.
 
 ## Historial de versiones
 
+- **v4.7:** cuestionario llave en mano (entradas, humedad), esquema de conexiones y material (también página 2 del PDF), tarjetas de características, simulación dinámica y enlaces de búsqueda Charmex.
 - **v4.6:** preguntas de electrónica (backup, escalador, conexión) y mediaserver en el cuestionario de texto.
 - **v4.5:** selector de unidades m / cm / mm, cuadro 📝 a todo el ancho, columnas y filas, botón ⚙ PANEL en móvil, imágenes y enlaces de electrónica con visor, vídeo del canal y enlaces a GitHub Pages.
 - **v4.4:** rutas de `assets/` relativas para funcionar en GitHub Pages.
