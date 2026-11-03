@@ -2588,7 +2588,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
       const DEFAULT_SCREEN_BG = "assets/SCCHART.jfif";
       const DEFAULT_SCREEN_BG_PRINT = "assets/SCCHART.jfif";
       // Vídeo por defecto: primera fuente multimedia de prueba (fija): https://youtu.be/vKN4AcGz7zs
-      const VIDEO_MOCK_URL = "https://www.youtube.com/embed/vKN4AcGz7zs?list=PLe5oQrtGOkLA&autoplay=1&mute=1&playsinline=1&rel=0";
+      const VIDEO_MOCK_URL = "https://www.youtube.com/embed/vKN4AcGz7zs?list=PLe5oQrtGOkLA&autoplay=1&mute=1&playsinline=1&rel=0&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&cc_load_policy=0&showinfo=0";
 
       // Función para convertir URLs de YouTube/Vimeo a formato embed
       const convertToEmbed = (url) => {
@@ -2597,12 +2597,12 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         // YouTube - varios formatos
         const lista = url.match(/youtube\.com\/(?:playlist|watch)\?[^\s]*list=([A-Za-z0-9_-]+)/);
         const vidLista = url.match(/[?&]v=([A-Za-z0-9_-]{11})/);
-        if (lista && vidLista) return `https://www.youtube.com/embed/${vidLista[1]}?list=${lista[1]}&autoplay=1&mute=1&playsinline=1&rel=0`;
-        if (lista) return `https://www.youtube.com/embed/videoseries?list=${lista[1]}&autoplay=1&mute=1&loop=1&controls=0`;
+        if (lista && vidLista) return `https://www.youtube.com/embed/${vidLista[1]}?list=${lista[1]}&autoplay=1&mute=1&playsinline=1&rel=0&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&cc_load_policy=0&showinfo=0`;
+        if (lista) return `https://www.youtube.com/embed/videoseries?list=${lista[1]}&autoplay=1&mute=1&playsinline=1&rel=0&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&cc_load_policy=0&showinfo=0`;
         const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|live|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
         const youtubeMatch = url.match(youtubeRegex);
         if (youtubeMatch) {
-          return `https://www.youtube.com/embed/${youtubeMatch[1]}?autoplay=1&mute=1&playsinline=1&rel=0`;
+          return `https://www.youtube.com/embed/${youtubeMatch[1]}?autoplay=1&mute=1&playsinline=1&rel=0&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&cc_load_policy=0&showinfo=0`;
         }
         
         // Vimeo
@@ -5257,13 +5257,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                                         />
                                     ) : customContentType === 'url' && processedCustomContent ? (
                                         processedCustomContent.includes('youtube.com/embed') || processedCustomContent.includes('player.vimeo.com') ? (
-                                            <iframe 
-                                                src={processedCustomContent}
-                                                className="w-full h-full" 
-                                                frameBorder="0" 
-                                                allow="autoplay; encrypted-media; picture-in-picture" referrerPolicy="strict-origin-when-cross-origin"
-                                                allowFullScreen
-                                            />
+                                            <div className="w-full h-full" style={{position: 'relative', overflow: 'hidden', background: '#000'}}><iframe src={processedCustomContent} frameBorder="0" tabIndex={-1} allow="autoplay; encrypted-media; picture-in-picture" referrerPolicy="strict-origin-when-cross-origin" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', transform: 'scale(1.3)', transformOrigin: 'center', pointerEvents: 'none', border: 0}} /></div>
                                         ) : processedCustomContent.match(/\.(jpg|jpeg|png|gif|webp|bmp)$/i) ? (
                                             <img src={processedCustomContent} className="w-full h-full object-fill" alt="Imagen desde URL" />
                                         ) : processedCustomContent.match(/\.(mp4|webm|ogg)$/i) ? (
@@ -5284,13 +5278,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                                 ) : (
                                     // Sin contenido personalizado - mostrar por defecto
                                     isHovering && mediaCycle === 1 ? (
-                                        <iframe 
-                                            src={VIDEO_MOCK_URL}
-                                            className="w-full h-full" 
-                                            frameBorder="0" 
-                                            allow="autoplay; encrypted-media; picture-in-picture" referrerPolicy="strict-origin-when-cross-origin"
-                                            allowFullScreen
-                                        />
+                                        <div className="w-full h-full" style={{position: 'relative', overflow: 'hidden', background: '#000'}}><iframe src={VIDEO_MOCK_URL} frameBorder="0" tabIndex={-1} allow="autoplay; encrypted-media; picture-in-picture" referrerPolicy="strict-origin-when-cross-origin" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', transform: 'scale(1.3)', transformOrigin: 'center', pointerEvents: 'none', border: 0}} /></div>
                                     ) : (
                                         <img 
                                             src={DEFAULT_SCREEN_BG}
@@ -6822,6 +6810,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       </label>
                     ))}
                   </div>
+                  {window.location.protocol === 'file:' && <div style={{fontSize: '10px', color: '#b45309', background: '#fffbeb', borderRadius: '5px', padding: '3px 6px', margin: '4px 0'}}>⚠ Abierta como archivo local, YouTube da «Error 153». Los vídeos funcionan desde la página publicada (https).</div>}
                   <div style={{fontSize: '10px', color: '#9ca3af', margin: '4px 0 10px'}}>Las fuentes 2 a 7 se pueden editar; la primera es fija. Se guardan en este navegador.</div>
                   <div style={{fontSize: '11px', fontWeight: 800, color: '#6b7280', letterSpacing: '0.05em', marginBottom: '6px'}}>O USA TU PROPIO CONTENIDO</div>
                   <div style={{display: 'flex', gap: '8px', alignItems: 'stretch', flexWrap: 'wrap'}}>
