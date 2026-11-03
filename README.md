@@ -2,7 +2,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.12**
+**Versión actual: v4.13 (beta)**
 
 Web pública: https://mediaservi.github.io/SCREENCALC/ · Otra copia: https://screencalcx.netlify.app/
 
@@ -42,15 +42,13 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 - `main`: versión oficial y pública, aprobada.
 - Dos ramas de versión más recientes (`v4.x`) para pruebas. Las anteriores se eliminan.
 
-## Cambios de la versión actual (v4.12)
+## Cambios de la versión actual (v4.13)
 
-- El pie (aviso de APP experimental, VJSHOW y SCREENCALC) queda siempre al final de la página, después del esquema de conexiones.
-- El icono de imagen abre un popup centrado en lugar del panel lateral, con FUENTES MULTIMEDIA DE PRUEBA: la primera (mi vídeo) es fija y viene seleccionada por defecto; las otras 6 se pueden editar.
-- Popup más compacto (lista apilada en filas finas); la primera fuente se llama «mediaservi.com 24/7» y al aplicarla se carga siempre su vídeo. La lista muestra solo el título (recortado) de cada fuente, leído de YouTube; el lápiz ✎ permite editar el enlace. Los vídeos de YouTube se insertan en modo simple, y los enlaces con lista (`watch?v=…&list=…`) cargan el vídeo dentro de su lista. La fuente fija es la lista del canal https://www.youtube.com/playlist?list=PLe5oQrtGOkLA, que se reproduce siempre desde su primer vídeo (sin fijar uno de inicio), de modo que el orden se cambia en YouTube. El vídeo se muestra sin controles ni títulos (parámetros del reproductor, recorte con zoom y sin clics). **Importante:** YouTube da «Error 153» si la app se abre como archivo local; hay que usarla desde la página publicada (https).
-- Vídeo por defecto: https://youtu.be/vKN4AcGz7zs. Se admiten también enlaces /live/, /shorts/ y listas de YouTube.
+- El vídeo de la pantalla se estira, deformándose y sin mantener la proporción, hasta rellenar toda la pantalla simulada.
 
 ## Historial de versiones
 
+- **v4.12:** popup de contenido con fuentes multimedia de prueba (la primera, la lista del canal, fija), vídeo sin controles y pie siempre al final.
 - **v4.11:** icono de información (ⓘ) que abre el README y README completo.
 - **v4.10:** elegir electrónica y mediaserver con clic en la burbuja y generar el esquema con ese equipo.
 - **v4.9:** cable HDMI PureLink FlexInstall en el material según la distancia de las fuentes.
