@@ -2,10 +2,17 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.16                             ║
+║                          Versión actual: v4.17                             ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.16 (manual)
+ÚLTIMA ACTUALIZACIÓN: v4.17 (manual)
+- Panel de entrada reorganizado con aspecto profesional; la PETICIÓN DEL CLIENTE es la entrada principal (destacada, ayuda completa visible)
+- Dictado por voz (🎤) y audio a texto (🎧: wav, mp3, m4a, ogg… transcrito en el navegador con Whisper)
+- Botones con aspecto 3D técnico en toda la app (mismos colores)
+- Líneas de señal y alimentación por columnas/filas completas (≤16 A); botones COSIDO AUTO / VERTICAL / HORIZ.
+- Una sola medida + formato (ej. «4k de 6 m de ancho»): se calcula la otra (TV 16:9); «solo sending» = solo electrónica de control
+- Figura humana de referencia: silueta SVG aportada, integrada de forma nativa y escalable
+ANTERIOR: v4.16 (manual)
 - Figura humana de referencia: silueta más realista, de pie y mirando hacia la pantalla
 - Los campos que la app pide rellenar parpadean con un color de resalte hasta que se rellenan
 - Menú lateral compacto: en PC (>=1280px) a 2 columnas y sin scroll; en móvil textos y controles más grandes, y 2 columnas en horizontal
@@ -1205,6 +1212,70 @@ ANTERIOR: v4.1
         aside.controls-sidebar > div > :nth-child(3) { grid-column: 1; }
         aside.controls-sidebar > div > :nth-child(4) { grid-column: 2; grid-row: 1 / span 3; align-self: start; }
       }
+
+      /* ===== v4.17 · Panel profesional + botones 3D técnicos ===== */
+      .controls-sidebar > div > div {
+        background: linear-gradient(180deg, #ffffff 0%, #f4f7f9 100%) !important;
+        border: 1px solid #d8e1e8 !important; border-radius: 12px !important;
+        box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 6px 14px rgba(15,23,42,.05);
+      }
+      .controls-sidebar > div > div > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+      .controls-sidebar > div > div { display: flex; flex-direction: column; gap: 9px; }
+      .controls-sidebar .sec-title {
+        display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; letter-spacing: .08em;
+        text-transform: uppercase; color: #064e45; padding-bottom: 6px; border-bottom: 1px solid rgba(0,150,136,.28);
+      }
+      .controls-sidebar .sec-ico { font-size: 13px; line-height: 1; }
+      .controls-sidebar .sec-sub { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #6b7280; }
+      /* Entrada principal: destacada */
+      .controls-sidebar > div > .nl-main {
+        background: linear-gradient(180deg, #f0fdfa 0%, #e6f7f4 100%) !important;
+        border: 2px solid #009688 !important;
+        box-shadow: 0 0 0 3px rgba(0,150,136,.12), 0 8px 18px rgba(0,150,136,.18);
+      }
+      .nl-badge { margin-left: auto; font-size: 9px; font-weight: 800; letter-spacing: .06em; color: #fff; background: #009688; border-radius: 999px; padding: 2px 8px; }
+      .nl-textarea { border-color: #80cbc4 !important; box-shadow: inset 0 1px 3px rgba(0,0,0,.08); }
+      .nl-textarea:focus { border-color: #009688 !important; box-shadow: inset 0 1px 3px rgba(0,0,0,.08), 0 0 0 3px rgba(0,150,136,.2); }
+      .controls-sidebar .nl-main textarea { height: 96px; }
+      .nl-tools { position: absolute; right: 6px; bottom: 6px; display: flex; flex-direction: column; gap: 6px; }
+      .nl-tool { width: 34px !important; height: 34px !important; min-height: 0 !important; padding: 0 !important; font-size: 16px !important; display: flex; align-items: center; justify-content: center; }
+      .nl-hint { font-size: 11px; line-height: 1.35; color: #37505a; }
+      .nl-estado { font-size: 12px; line-height: 1.3; font-weight: 700; color: #b45309; background: #fffbeb; border: 1px solid #fcd34d; border-radius: 6px; padding: 4px 8px; }
+      @keyframes micPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,.55); } 50% { box-shadow: 0 0 0 7px rgba(239,68,68,0); } }
+      .mic-activo { animation: micPulse 1.1s infinite; }
+      @media (min-width: 1280px) and (max-height: 820px) {
+        .controls-sidebar .nl-main textarea { height: 50px; }
+        .nl-hint { font-size: 10px; line-height: 1.2; }
+        .controls-sidebar > div > div { gap: 4px; }
+        .controls-sidebar .sec-title { padding-bottom: 3px; }
+        .nl-tool { width: 28px !important; height: 28px !important; }
+      }
+      @media (min-width: 1280px) {
+        /* La columna derecha (tamaño) ocupa todo el alto: sin huecos entre columnas */
+        aside.controls-sidebar > div > :nth-child(4) { align-self: stretch !important; justify-content: space-between; }
+      }
+
+      /* Botones 3D de aspecto técnico (mantienen su color; el relieve va por encima) */
+      button[class^="bg-"]:not([class*="bg-transparent"]):not(.toggle-switch-btn),
+      button[class*=" bg-"]:not([class*="bg-transparent"]):not(.toggle-switch-btn) {
+        background-image: linear-gradient(to bottom, rgba(255,255,255,.30) 0%, rgba(255,255,255,.06) 48%, rgba(0,0,0,.14) 100%);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(0,0,0,.20), 0 2px 0 rgba(0,0,0,.24), 0 5px 9px rgba(0,0,0,.18);
+        transition: transform .06s ease, box-shadow .06s ease, filter .15s ease;
+        letter-spacing: .02em;
+      }
+      button[class^="bg-"]:not([class*="bg-transparent"]):not(.toggle-switch-btn):hover:not(:disabled),
+      button[class*=" bg-"]:not([class*="bg-transparent"]):not(.toggle-switch-btn):hover:not(:disabled) { filter: brightness(1.07) saturate(1.05); }
+      button[class^="bg-"]:not([class*="bg-transparent"]):not(.toggle-switch-btn):active:not(:disabled),
+      button[class*=" bg-"]:not([class*="bg-transparent"]):not(.toggle-switch-btn):active:not(:disabled) {
+        transform: translateY(2px);
+        box-shadow: inset 0 2px 5px rgba(0,0,0,.30), 0 0 0 rgba(0,0,0,0);
+        filter: brightness(.96);
+      }
+      button[class^="bg-"]:disabled, button[class*=" bg-"]:disabled { box-shadow: none; background-image: none; }
+      @media print {
+        button { box-shadow: none !important; background-image: none !important; }
+        .controls-sidebar > div > div { box-shadow: none !important; }
+      }
     </style>
   </head>
     <!-- React 18.3.1 UMD — inline, zero CDN -->
@@ -1642,6 +1713,18 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         if (u) return v * 100;                // m, mt, mts, metro(s)
         return v <= 40 ? v * 100 : v;         // sin unidad: <=40 se entiende en metros
       };
+      // Proporción pedida en el texto (16:9, 4/3...). 0 si no hay.
+      const ratioDe = (t) => { const m = String(t || '').match(/(\d{1,2})\s*[:\/]\s*(\d{1,2})(?!\d)/); return m && Number(m[2]) ? Number(m[1]) / Number(m[2]) : 0; };
+      // Si solo hay una medida y se pide un formato (4K, FHD, HD = 16:9, formato TV) o una proporción, calcula la otra.
+      const completarMedidas = (r, t) => {
+        if ((r.anchoCm && r.altoCm) || (!r.anchoCm && !r.altoCm)) return;
+        const ar = ratioDe(t) || (r.resModo ? 16 / 9 : 0);
+        if (!ar) return;
+        const arTxt = ratioDe(t) ? (String(t).match(/(\d{1,2})\s*[:\/]\s*(\d{1,2})(?!\d)/)[0].replace(/\s/g, '').replace('/', ':')) : '16:9';
+        if (r.anchoCm) { r.altoCm = Math.round(r.anchoCm / ar); r.medidaCalc = 'alto (' + arTxt + ')'; }
+        else { r.anchoCm = Math.round(r.altoCm * ar); r.medidaCalc = 'ancho (' + arTxt + ')'; }
+      };
+
       const parseSolicitud = (raw) => {
         let t = sinAcentos(raw);
         const r = { anchoCm: 0, altoCm: 0, tipo: '', clase: '', dist: 0, pitch: 0, nits: 0, resModo: '' };
@@ -1684,6 +1767,10 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         else if (/pixelhue/.test(t)) r.media = 'pixelhue';
         else if (/mediaserver|media server|servidor de (medios|video)|dante/.test(t)) r.media = 'todos';
         if (/dante/.test(t)) { r.dante = true; if (!r.media) r.media = 'todos'; }
+        // «Solo sending»: solo la electrónica que controla y gestiona la pantalla, sin mediaserver ni mediaplayer/escalador obligatorio
+        if (/solo\s+(?:el\s+|la\s+)?send|only\s+send|sending\s+(?:card\s+)?solo|solo\s+(?:la\s+)?(?:electronica|controladora)/.test(t)) {
+          r.elec = 'si'; r.media = 'ninguno'; if (!r.elecEsc) r.elecEsc = 'sin';
+        }
         // Proyecto llave en mano: electrónica, entradas, humedad (undefined = no mencionado → se preguntará)
         if (/sin (electronica|controladora)/.test(t)) r.elec = 'no';
         else if (/electronica|controladora|llave en mano/.test(t)) r.elec = 'si';
@@ -1696,6 +1783,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         const cm1 = t.replace(/(\d),(\d)/g, '$1.$2').match(/(?:cable|hdmi|fuentes?)[^.;]{0,14}?(\d+(?:\.\d+)?)\s*(?:m|mts?|metros?)(?![a-z])/) || t.replace(/(\d),(\d)/g, '$1.$2').match(/(\d+(?:\.\d+)?)\s*(?:m|mts?|metros?)\s*de\s*(?:cable|hdmi)/);
         if (cm1) r.cableM = parseFloat(cm1[1]);
         if (/\bmar\b|costa\b|costero|playa|litoral|salin|humedad|humedo|tropical|marin/.test(t)) r.marino = 'si';
+        completarMedidas(r, t);
         return r;
       };
 
@@ -2398,15 +2486,34 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
       // Estrategias: 1) Vertical, 2) Horizontal serpiente, 3) Serpiente mixta
       // Garantiza coincidencia 100% entre líneas calculadas y esquema
       // ========================================
-      const calcularCosidoSenal = (cols, rows, pixelsPorCabinet, modelo, puertosDisponibles = null) => {
+      // Plan de cosido: decide cuántas líneas (puertos) hacen falta cosiendo SIEMPRE columnas o filas completas.
+      // modo: 'auto' (elige el que da menos líneas), 'vertical' (por columnas) u 'horizontal' (por filas).
+      // Si una columna/fila entera no cabe en un puerto, se parte (serpentina) y se marca partido: true.
+      const planCosido = (cols, rows, pixelsPorCabinet, modo = 'auto') => {
+        const total = cols * rows;
+        const cabPorPuerto = pixelsPorCabinet > 0 ? Math.floor(MAX_PIXELS_POR_PUERTO / pixelsPorCabinet) : 0;
+        if (cabPorPuerto < 1) return { modo: 'serpentina', lineas: Math.max(1, Math.ceil(total * pixelsPorCabinet / MAX_PIXELS_POR_PUERTO)), grupo: 0, cabPorPuerto, partido: true, pedido: modo };
+        const colsPP = Math.floor(cabPorPuerto / rows), filasPP = Math.floor(cabPorPuerto / cols);
+        const opV = colsPP >= 1 ? { modo: 'vertical', lineas: Math.ceil(cols / colsPP), grupo: colsPP } : null;
+        const opH = filasPP >= 1 ? { modo: 'horizontal', lineas: Math.ceil(rows / filasPP), grupo: filasPP } : null;
+        let el = null;
+        if (modo === 'vertical') el = opV;
+        else if (modo === 'horizontal') el = opH;
+        else el = (opV && opH) ? (opH.lineas < opV.lineas ? opH : opV) : (opV || opH);
+        if (!el) return { modo: 'serpentina', lineas: Math.ceil(total / cabPorPuerto), grupo: 0, cabPorPuerto, partido: true, pedido: modo };
+        return { ...el, cabPorPuerto, partido: false, pedido: modo };
+      };
+
+      const calcularCosidoSenal = (cols, rows, pixelsPorCabinet, modelo, puertosDisponibles = null, modoCosido = 'auto') => {
         if (!cols || !rows || !pixelsPorCabinet) return null;
         
         const totalPixels = cols * rows * pixelsPorCabinet;
         const totalCabinets = cols * rows;
         
         // PASO 1: Calcular líneas necesarias (DEBE coincidir con stats.lines)
-        const cabinetsPorPuerto = Math.floor(MAX_PIXELS_POR_PUERTO / pixelsPorCabinet);
-        const lineasNecesarias = cabinetsPorPuerto > 0 ? Math.ceil(totalCabinets / cabinetsPorPuerto) : Math.ceil(totalPixels / MAX_PIXELS_POR_PUERTO);
+        const plan = planCosido(cols, rows, pixelsPorCabinet, modoCosido);
+        const cabinetsPorPuerto = plan.cabPorPuerto;
+        const lineasNecesarias = plan.lineas;
         
         const pixelsPorColumna = rows * pixelsPorCabinet;
         const pixelsPorFila = cols * pixelsPorCabinet;
@@ -2419,57 +2526,38 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         let cabinetId = 1;
         let pixelsEnPuerto = 0;
         
-        // ESTRATEGIA 1: VERTICAL - Si columnas = líneas necesarias Y cabe 1 columna por puerto
-        if (cols === lineasNecesarias && pixelsPorColumna <= MAX_PIXELS_POR_PUERTO) {
+        // ESTRATEGIA 1: VERTICAL - columnas completas por puerto (grupo de columnas, cosidas en serpentina vertical)
+        if (plan.modo === 'vertical') {
           tipoCosido = 'vertical';
-          descripcion = `Cosido vertical · ${lineasNecesarias} puertos (1 columna = 1 puerto)`;
-          
+          descripcion = `Cosido vertical · ${lineasNecesarias} puertos (${plan.grupo} columna${plan.grupo > 1 ? 's' : ''} por puerto)`;
           for (let col = 0; col < cols; col++) {
-            puertoActual = col + 1;
-            posicionEnCadena = 1;
-            
-            // Siempre de abajo hacia arriba
-            for (let fila = rows - 1; fila >= 0; fila--) {
+            puertoActual = Math.floor(col / plan.grupo) + 1;
+            if (col % plan.grupo === 0) posicionEnCadena = 1;
+            const subiendo = (col % plan.grupo) % 2 === 0;
+            for (let k = 0; k < rows; k++) {
+              const fila = subiendo ? rows - 1 - k : k;
               cabinets.push({
-                id: cabinetId++,
-                fila,
-                col,
-                puerto: puertoActual,
-                posicionEnCadena: posicionEnCadena++,
-                pixelsCabinet: pixelsPorCabinet,
-                color: COLORES_PUERTOS[(puertoActual - 1) % COLORES_PUERTOS.length],
-                direccion: 'arriba'
+                id: cabinetId++, fila, col, puerto: puertoActual, posicionEnCadena: posicionEnCadena++,
+                pixelsCabinet: pixelsPorCabinet, color: COLORES_PUERTOS[(puertoActual - 1) % COLORES_PUERTOS.length],
+                direccion: subiendo ? 'arriba' : 'abajo'
               });
             }
           }
         }
-        // ESTRATEGIA 2: HORIZONTAL SERPIENTE - Si filas = líneas necesarias Y cabe 1 fila por puerto
-        else if (rows === lineasNecesarias && pixelsPorFila <= MAX_PIXELS_POR_PUERTO) {
+        // ESTRATEGIA 2: HORIZONTAL - filas completas por puerto (grupo de filas, cosidas en serpentina horizontal desde abajo)
+        else if (plan.modo === 'horizontal') {
           tipoCosido = 'horizontal';
-          descripcion = `Cosido horizontal serpiente · ${lineasNecesarias} puertos (1 fila = 1 puerto)`;
-          
-          // Empezar desde abajo
-          for (let fila = rows - 1; fila >= 0; fila--) {
-            puertoActual = rows - fila; // Puerto 1 = fila inferior
-            posicionEnCadena = 1;
-            
-            // Serpentina: filas pares (desde abajo) van izq->der, impares der->izq
-            const filaDesdeAbajo = rows - 1 - fila;
-            const izqADer = filaDesdeAbajo % 2 === 0;
-            
-            const colStart = izqADer ? 0 : cols - 1;
-            const colEnd = izqADer ? cols : -1;
-            const colStep = izqADer ? 1 : -1;
-            
-            for (let col = colStart; col !== colEnd; col += colStep) {
+          descripcion = `Cosido horizontal · ${lineasNecesarias} puertos (${plan.grupo} fila${plan.grupo > 1 ? 's' : ''} por puerto)`;
+          for (let desdeAbajo = 0; desdeAbajo < rows; desdeAbajo++) {
+            const fila = rows - 1 - desdeAbajo;
+            puertoActual = Math.floor(desdeAbajo / plan.grupo) + 1;
+            if (desdeAbajo % plan.grupo === 0) posicionEnCadena = 1;
+            const izqADer = (desdeAbajo % plan.grupo) % 2 === 0;
+            for (let k = 0; k < cols; k++) {
+              const col = izqADer ? k : cols - 1 - k;
               cabinets.push({
-                id: cabinetId++,
-                fila,
-                col,
-                puerto: puertoActual,
-                posicionEnCadena: posicionEnCadena++,
-                pixelsCabinet: pixelsPorCabinet,
-                color: COLORES_PUERTOS[(puertoActual - 1) % COLORES_PUERTOS.length],
+                id: cabinetId++, fila, col, puerto: puertoActual, posicionEnCadena: posicionEnCadena++,
+                pixelsCabinet: pixelsPorCabinet, color: COLORES_PUERTOS[(puertoActual - 1) % COLORES_PUERTOS.length],
                 direccion: izqADer ? 'derecha' : 'izquierda'
               });
             }
@@ -2478,7 +2566,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         // ESTRATEGIA 3: SERPIENTE MIXTA - En otros casos
         else {
           tipoCosido = 'serpentina';
-          descripcion = `Cosido serpentina · ${lineasNecesarias} puertos`;
+          descripcion = `Cosido serpentina (columnas partidas) · ${lineasNecesarias} puertos`;
           
           // Recorrer en serpentina vertical: col0 sube, col1 baja, col2 sube...
           for (let col = 0; col < cols; col++) {
@@ -2577,6 +2665,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           rows,
           modoVerticalPuro: tipoCosido === 'vertical',
           tipoCosido,
+          grupo: plan.grupo,
+          partido: plan.partido,
           descripcion,
           cabinetsPorPuerto,
           lineasNecesarias,
@@ -2591,70 +2681,60 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
       
       const MAX_AMP_POR_LINEA = 16; // Máximo amperios por magnetotérmico estándar
       
-      const calcularDistribucionElectrica = (cols, rows, ampsPorCabinet) => {
+      const calcularDistribucionElectrica = (cols, rows, ampsPorCabinet, orient = 'vertical') => {
         if (!cols || !rows || !ampsPorCabinet) return null;
         
+        const horizontal = orient === 'horizontal';
         const totalCabinets = cols * rows;
         const consumoTotal = totalCabinets * ampsPorCabinet;
-        const ampsColumna = rows * ampsPorCabinet;
+        // Unidad de reparto: columna completa (vertical) o fila completa (horizontal). Nunca se parte.
+        const units = horizontal ? rows : cols;
+        const unitCabs = horizontal ? cols : rows;
+        const ampsUnidad = unitCabs * ampsPorCabinet;
         
-        // Estrategia: dividir en líneas equilibradas
-        // Si todo cabe en 16A, dividir en 2-3 líneas; si no, usar límite de 16A
         let numLineas;
-        
         if (consumoTotal <= MAX_AMP_POR_LINEA) {
-          // Consumo bajo: usar 1-2 líneas según columnas
-          if (cols <= 2) numLineas = 1;
-          else if (cols <= 4) numLineas = 2;
-          else numLineas = Math.min(3, cols);
+          // Consumo bajo: 1-3 líneas según unidades, para repartir
+          if (units <= 2) numLineas = 1;
+          else if (units <= 4) numLineas = 2;
+          else numLineas = Math.min(3, units);
         } else {
-          // Calcular mínimo de líneas necesarias para no superar 16A cada una
-          numLineas = Math.ceil(consumoTotal / MAX_AMP_POR_LINEA);
-          // Pero no más líneas que columnas
-          numLineas = Math.min(numLineas, cols);
+          // Unidades completas por línea sin superar 16 A (mínimo 1 aunque una sola ya supere 16 A)
+          const porLinea = Math.max(1, Math.floor(MAX_AMP_POR_LINEA / ampsUnidad));
+          numLineas = Math.ceil(units / porLinea);
         }
         
-        // Distribuir columnas en líneas lo más equilibrado posible
         const lineas = [];
-        const colsPorLineaBase = Math.floor(cols / numLineas);
-        const colsExtra = cols % numLineas;
-        
-        let colActual = 0;
+        const base = Math.floor(units / numLineas);
+        const extra = units % numLineas;
+        let actual = 0;
         for (let i = 0; i < numLineas; i++) {
-          // Las primeras líneas tienen 1 columna extra si hay resto
-          const numCols = colsPorLineaBase + (i < colsExtra ? 1 : 0);
-          
-          if (numCols > 0) {
-            const columnas = [];
-            for (let c = 0; c < numCols; c++) {
-              columnas.push(colActual + c);
-            }
-            
-            const cabinetsLinea = numCols * rows;
+          const n = base + (i < extra ? 1 : 0);
+          if (n > 0) {
+            const idxs = []; for (let c = 0; c < n; c++) idxs.push(actual + c);
+            const celdas = [];
+            idxs.forEach(u => { for (let k = 0; k < unitCabs; k++) celdas.push(horizontal ? { col: k, fila: u } : { col: u, fila: k }); });
+            const cabinetsLinea = n * unitCabs;
             const ampsLinea = cabinetsLinea * ampsPorCabinet;
-            
-            // Magnetotérmico: siguiente estándar por encima
             const magnetotermicos = [4, 6, 10, 16, 20, 25, 32];
             const magneto = magnetotermicos.find(m => m >= ampsLinea) || 32;
-            
             lineas.push({
               numero: i + 1,
-              columnas,
+              columnas: horizontal ? [] : idxs,
+              filas: horizontal ? idxs : [],
+              celdas,
               cabinets: cabinetsLinea,
               amps: ampsLinea,
+              excede: ampsLinea > MAX_AMP_POR_LINEA + 1e-9,
               magnetotermico: magneto,
               color: COLORES_PUERTOS[i % COLORES_PUERTOS.length]
             });
-            
-            colActual += numCols;
+            actual += n;
           }
         }
         
-        // Diferencial superinmunizado: siguiente estándar
         const diferenciales = [20, 25, 30, 40, 63, 80, 100];
         const diferencial = diferenciales.find(d => d >= consumoTotal * 1.25) || 100;
-        
-        // Potencia máxima (W) - asumiendo 220V
         const potenciaMaxW = Math.round(consumoTotal * 220);
         
         return {
@@ -2663,7 +2743,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           consumoTotal: consumoTotal.toFixed(2),
           diferencial,
           ampsPorCabinet,
-          potenciaMaxW
+          potenciaMaxW,
+          orient: horizontal ? 'horizontal' : 'vertical'
         };
       };
 
@@ -2719,6 +2800,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         
         // Filtros - Por defecto INSTALL y pitch 1.8
         const [filterClass, setFilterClass] = useState('INSTALL'); // '' = todos, 'INSTALL', 'RENTAL'
+        const [cosidoModo, setCosidoModo] = useState('auto'); // 'auto' | 'vertical' | 'horizontal': cosido de señal y reparto eléctrico
         const [filterGold, setFilterGold] = useState(false); // entorno marino/húmedo: solo cabinets con tecnología GOLD
         const esGold = (m) => /gold/i.test(String(m.tech || ''));
         const [filterTipo, setFilterTipo] = useState(''); // '' = todos, 'INDOOR', 'OUTDOOR', 'ESCAPARATE'
@@ -3395,7 +3477,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         const handleNuevaConfiguracion = () => {
           // Reiniciar filtros
           setFilterClass('INSTALL');
-          setFilterTipo(''); setFilterGold(false);
+          setFilterTipo(''); setFilterGold(false); setCosidoModo('auto');
           setFilterPitch(1.8);
           setFilterNits(600);
           setNlText(''); setNlSummary(''); setNlAviso(''); setNlDialog(null); setNlPending(null); setPanelModo('manual');
@@ -3561,6 +3643,10 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         
         // ===== SOLICITUD EN LENGUAJE NATURAL =====
         const [nlText, setNlText] = useState('');
+        const [nlEstado, setNlEstado] = useState('');       // mensajes del dictado / transcripción de audio
+        const [escuchando, setEscuchando] = useState(false);
+        const recRef = useRef(null);
+        const audioInputRef = useRef(null);
         const [proyecto, setProyecto] = useState({ elec: false, media: false, entradas: 0, tipoEntrada: '', resEntrada: '', cableM: 0, marino: false });
         const [elecSel, setElecSel] = useState('');
         const [mediaSel, setMediaSel] = useState('');
@@ -3662,7 +3748,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           setNlAviso((relajados.length ? 'No hay modelos ' + relajados.join(' / ') + ' en la tabla: se ha ampliado la búsqueda. ' : '') + (marino ? (sinGold ? 'No hay cabinets GOLD para esta selección en la tabla: revisa a mano la variante con soldadura de oro.' : 'Entorno marino/húmedo: solo cabinets con tecnología GOLD.') : ''));
           setNlPending({ pitch: pitchSel, nits: nitsSel, w, h, conRes: !!p.resModo });
 
-          const partes = [U(w / 100) + ' x ' + U(h / 100) + ' ' + unit];
+          const partes = [U(w / 100) + ' x ' + U(h / 100) + ' ' + unit + (p.medidaCalc ? ' (' + p.medidaCalc.split(' ')[0] + ' calculado en ' + p.medidaCalc.split(' ')[1].replace(/[()]/g, '') + ')' : '')];
           if (p.dist) partes.push('con pitch ' + pitchSel + ' mm se ve bien desde ' + fmtDist(pitchSel) + ' ' + unit + ' (óptimo desde ' + fmtDist(pitchSel * 3) + ' ' + unit + ')');
           const etq = { backup: 'con backup', linea: 'sin backup', con: 'con escalador', sin: 'sin escalador', directo: 'conexión RJ45', rack: 'rack + fibra' };
           const el = [p.elecTipo, p.elecEsc, p.elecCon].filter(Boolean).map(k => etq[k]);
@@ -3673,6 +3759,65 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         };
 
         const sigPregunta = (queue, desde, p) => { for (let i = desde; i < queue.length; i++) { if (!queue[i].si || queue[i].si(p)) return i; } return -1; };
+
+        // Dictado por voz con el reconocimiento de voz del navegador (Chrome, Edge, Safari)
+        const alternarMic = () => {
+          if (recRef.current) { try { recRef.current.stop(); } catch (e) {} return; }
+          const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+          if (!SR) { setNlEstado('Este navegador no admite dictado por voz. Prueba con Chrome, Edge o Safari, o sube un audio.'); return; }
+          const rec = new SR();
+          rec.lang = 'es-ES'; rec.interimResults = true; rec.continuous = true;
+          const base = nlText.trim();
+          rec.onresult = (e) => {
+            let txt = '';
+            for (let i = 0; i < e.results.length; i++) txt += e.results[i][0].transcript + ' ';
+            setNlText((base ? base + ' ' : '') + txt.trim());
+          };
+          rec.onerror = (e) => {
+            const m = { 'not-allowed': 'Permiso de micrófono denegado: actívalo en el navegador para dictar.', 'service-not-allowed': 'Permiso de micrófono denegado: actívalo en el navegador para dictar.', 'no-speech': 'No se ha oído nada. Inténtalo de nuevo.', 'audio-capture': 'No se encuentra ningún micrófono.', 'network': 'El dictado necesita conexión a internet.' };
+            setNlEstado(m[e.error] || 'Error de dictado: ' + e.error);
+          };
+          rec.onend = () => { recRef.current = null; setEscuchando(false); };
+          try { rec.start(); recRef.current = rec; setEscuchando(true); setNlEstado('🎤 Escuchando… pulsa de nuevo el micrófono para parar.'); }
+          catch (err) { setNlEstado('No se pudo iniciar el micrófono.'); }
+        };
+
+        // Transcripción de un archivo de audio (wav, mp3, m4a, ogg/opus...) en el propio navegador con Whisper (transformers.js).
+        // El modelo se descarga la primera vez y queda en caché del navegador; el audio no sale del dispositivo.
+        const transcribirAudio = async (file) => {
+          if (!file) return;
+          try {
+            setNlEstado('Leyendo el audio…');
+            const buf = await file.arrayBuffer();
+            const AC = window.AudioContext || window.webkitAudioContext;
+            const ctx = new AC();
+            let audio;
+            try { audio = await ctx.decodeAudioData(buf); }
+            catch (e) { throw new Error('formato'); }
+            const off = new OfflineAudioContext(1, Math.max(1, Math.ceil(audio.duration * 16000)), 16000);
+            const src = off.createBufferSource(); src.buffer = audio; src.connect(off.destination); src.start();
+            const datos = (await off.startRendering()).getChannelData(0);
+            setNlEstado('Preparando el transcriptor (la primera vez descarga unos 75 MB)…');
+            if (!window.__tfMod) window.__tfMod = (new Function('u', 'return import(u)'))('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.2');
+            const tf = await window.__tfMod;
+            tf.env.allowLocalModels = false;
+            if (!window.__asr) window.__asr = tf.pipeline('automatic-speech-recognition', 'Xenova/whisper-base', {
+              progress_callback: (d) => { if (d && d.status === 'progress' && typeof d.progress === 'number') setNlEstado('Descargando el transcriptor… ' + Math.round(d.progress) + ' %'); }
+            });
+            const asr = await window.__asr;
+            setNlEstado('Transcribiendo el audio…');
+            const out = await asr(datos, { language: 'spanish', task: 'transcribe', chunk_length_s: 30, stride_length_s: 5 });
+            const txt = String((out && out.text) || '').trim();
+            if (!txt) { setNlEstado('No se ha entendido nada en el audio.'); return; }
+            setNlText(prev => (prev.trim() ? prev.trim() + ' ' : '') + txt);
+            setNlEstado('✔ Audio transcrito. Revisa el texto y pulsa PROPONER PANTALLA.');
+          } catch (err) {
+            window.__asr = null; window.__tfMod = null;
+            setNlEstado(err && err.message === 'formato'
+              ? 'No puedo leer este formato de audio en este navegador (los .opus de WhatsApp no funcionan en Safari). Conviértelo a mp3 o wav.'
+              : 'No se pudo transcribir el audio (¿sin conexión para descargar el modelo?). Puedes dictarlo con el micrófono.');
+          }
+        };
 
         const procesarSolicitud = () => {
           const p = parseSolicitud(nlText);
@@ -3689,9 +3834,18 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           const val = valorElegido !== undefined ? valorElegido : d.valor;
           let p = { ...d.p };
           if (q.id === 'size') {
-            const r = parseSolicitud(String(val).trim().match(/[a-z]/i) ? String(val) : String(val) + ' ');
+            const txt = String(val).trim();
+            const r = parseSolicitud(txt.match(/[a-z]/i) ? txt : txt + ' ');
+            if (!r.anchoCm && !r.altoCm) {
+              // Una sola cifra suelta («6», «6 m»): se toma como ancho (metros por defecto)
+              const m1 = sinAcentos(txt).match(/(\d+(?:[.,]\d+)?)\s*(mm|cm|m|mts?|metros?)?/);
+              if (m1) r.anchoCm = Math.round(aCm(m1[1].replace(',', '.'), m1[2] || 'm'));
+            }
+            if (r.anchoCm && !r.altoCm && !(ratioDe(txt) || r.resModo || p.resModo)) { setNlDialog({ ...d, error: 'Falta el alto. Escribe, por ejemplo: 6x2 m, o indica la proporción (6 m en 16:9).' }); return; }
+            if (!r.resModo && p.resModo) r.resModo = p.resModo;
+            completarMedidas(r, sinAcentos(txt));
             if (!r.anchoCm || !r.altoCm) { setNlDialog({ ...d, error: 'No he entendido las medidas. Escribe, por ejemplo: 6x2 m' }); return; }
-            p.anchoCm = r.anchoCm; p.altoCm = r.altoCm;
+            p.anchoCm = r.anchoCm; p.altoCm = r.altoCm; if (r.medidaCalc) p.medidaCalc = r.medidaCalc;
           } else if (q.id === 'tipo') p.tipo = val;
           else if (q.id === 'clase') p.clase = val;
           else if (q.id === 'dist') p.dist = val ? parseFloat(val) : 0;
@@ -4246,8 +4400,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
             
             const totalCab = totalCabPerRow * holoRows;
             const pixelsPorCabinet = selectedModel.cabPixAncho * selectedModel.cabPixAlto;
-            const cabinetsPorPuerto = Math.floor(650000 / pixelsPorCabinet);
-            const lines = cabinetsPorPuerto > 0 ? Math.ceil(totalCab / cabinetsPorPuerto) : Math.ceil(totalPix / 650000);
+            const lines = planCosido(totalCabPerRow, holoRows, pixelsPorCabinet, cosidoModo).lineas;
             
             const arValue = totalPixH > 0 ? totalPixW / totalPixH : 1;
             
@@ -4378,9 +4531,9 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           
           // Cálculo de líneas/puertos IGUAL que el esquema de cosido
           const pixelsPorCabinet = cabPixAncho * cabPixAlto;
-          const cabinetsPorPuerto = Math.floor(650000 / pixelsPorCabinet);
+          const planLineas = planCosido(aCols, aRows, pixelsPorCabinet, cosidoModo);
           const totalCab = aCols * aRows;
-          const lines = cabinetsPorPuerto > 0 ? Math.ceil(totalCab / cabinetsPorPuerto) : Math.ceil(totalPix / 650000); 
+          const lines = planLineas.lineas;
           
           const arValue = (aCols * cabPixAncho) / (aRows * cabPixAlto);
 
@@ -4401,6 +4554,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
             minView,
             optView,
             lines,
+            cosido: planLineas.modo,
+            cosidoPartido: planLineas.partido,
             ar: arValue.toFixed(2),
             giroActivo: usarGiro,
             cabAncho,
@@ -4409,7 +4564,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
             cabPixAlto,
             esCombinacion: false
           };
-        }, [selectedModel, cols, rows, floorDist_cm, giro90, combinacionActiva, holoTopMm, holoBotMm, holoCombAncho]);
+        }, [selectedModel, cols, rows, floorDist_cm, giro90, combinacionActiva, holoTopMm, holoBotMm, holoCombAncho, cosidoModo]);
         
         // Electrónicas y hierros sugeridos
         const electronicasSugeridas = useMemo(() => {
@@ -4572,14 +4727,15 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
             }
           }
           
-          return calcularCosidoSenal(stats.cols, stats.rows, pixelsPorCabinet, selectedModel, puertosDisponibles);
-        }, [selectedModel, stats, electronicasSugeridas]);
+          return calcularCosidoSenal(stats.cols, stats.rows, pixelsPorCabinet, selectedModel, puertosDisponibles, cosidoModo);
+        }, [selectedModel, stats, electronicasSugeridas, cosidoModo]);
         
         // Calcular distribución eléctrica
         const distribucionElectrica = useMemo(() => {
           if (!selectedModel || !stats) return null;
-          return calcularDistribucionElectrica(stats.cols, stats.rows, parseFloat(parseFloat(selectedModel.cabAmp || 0).toFixed(1)));
-        }, [selectedModel, stats]);
+          const orient = (cosidoSenal && cosidoSenal.tipoCosido === 'horizontal') ? 'horizontal' : 'vertical';
+          return calcularDistribucionElectrica(stats.cols, stats.rows, parseFloat(parseFloat(selectedModel.cabAmp || 0).toFixed(1)), orient);
+        }, [selectedModel, stats, cosidoSenal]);
         
         const hierroSugerido = useMemo(() => {
           console.log('🔍 hierroSugerido - hierros.length:', hierros?.length, 'selectedModel.family:', selectedModel?.family);
@@ -4622,7 +4778,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         const separationM = 0.02; 
         const labelMarginM = 0.2; // Margen lateral
         
-        const visualHumanW = humanH * 0.35; 
+        const visualHumanW = humanH * 0.347; // proporción de la silueta (ancho/alto) 
         
         // ===== LAYOUT DINÁMICO DE LA SIMULACIÓN =====
         // Reserva zonas fijas (datos, cotas, suelo) y escala la escena para llenar el resto sin solapes.
@@ -4680,7 +4836,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                  </a>
                  <div>
                    <h1 className="text-white font-days text-xl tracking-wider title-halo">SCREENCALC</h1>
-                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.16</div>
+                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.17</div>
                  </div>
                </div>
                
@@ -4701,21 +4857,31 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                  {activeTab === 'config' && (
                   <div className="p-3 lg:p-4 space-y-3 lg:space-y-4 h-full overflow-y-auto">
                     
-                    {/* SOLICITUD DEL CLIENTE EN LENGUAJE NATURAL */}
-                    <div className="space-y-2 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    {/* SOLICITUD DEL CLIENTE EN LENGUAJE NATURAL: ENTRADA PRINCIPAL (escribir, dictar o subir audio) */}
+                    <div className="nl-main space-y-2 p-3 rounded-lg">
+                      <div className="sec-title" style={{color: '#00796b', borderBottom: 'none', paddingBottom: 0}}>
+                        <span className="sec-ico">✨</span> Petición del cliente
+                        <span className="nl-badge">ENTRADA PRINCIPAL</span>
+                      </div>
                       <div style={{position: 'relative', width: '100%'}}>
-                        <span style={{position: 'absolute', right: '8px', bottom: '6px', fontSize: '22px', lineHeight: '1', opacity: 0.55, pointerEvents: 'none'}} title="Pega aquí lo que pide el cliente">📝</span>
                         <textarea
                           value={nlText}
                           onChange={e => setNlText(e.target.value)}
                           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); procesarSolicitud(); } }}
-                          rows={4}
-                          placeholder="Pega aquí la petición del cliente. Ej.: pantalla led para exterior de 6x2 metros que se lea bien a 4m de distancia"
-                          style={{display: 'block', width: '100%', boxSizing: 'border-box', paddingRight: '36px', fontSize: '13px', lineHeight: '1.3', resize: 'none'}}
-                          className="border-2 border-gray-300 bg-white p-2 rounded focus:border-corp-teal outline-none"
+                          rows={5}
+                          placeholder="Escribe, dicta o sube un audio con la petición…"
+                          style={{display: 'block', width: '100%', boxSizing: 'border-box', paddingRight: '46px', fontSize: '14px', lineHeight: '1.35', resize: 'none'}}
+                          className="nl-textarea border-2 bg-white p-2 rounded outline-none"
                         />
+                        <div className="nl-tools">
+                          <button type="button" onClick={alternarMic} title="Dictar la petición con el micrófono" aria-label="Dictar con el micrófono" className={(escuchando ? 'bg-red-500 text-white mic-activo' : 'bg-white text-gray-700') + ' nl-tool rounded-full border border-gray-300'}>🎤</button>
+                          <button type="button" onClick={() => audioInputRef.current && audioInputRef.current.click()} title="Subir un audio del cliente (wav, mp3, m4a, ogg)" aria-label="Subir audio" className="bg-white text-gray-700 nl-tool rounded-full border border-gray-300">🎧</button>
+                          <input ref={audioInputRef} type="file" accept="audio/*,.opus,.ogg,.m4a,.mp3,.wav,.webm" style={{display: 'none'}} onChange={e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; transcribirAudio(f); }} />
+                        </div>
                       </div>
-                      <button onClick={procesarSolicitud} disabled={!nlText.trim()} style={{width: '100%', height: '32px', fontSize: '12px', lineHeight: '1'}}
+                      <div className="nl-hint">Pega el texto del cliente, dícta con el 🎤 o sube su audio 🎧. Ej.: «pantalla led para exterior de 6×2 metros que se lea bien a 4 m de distancia».</div>
+                      {nlEstado && <div className="nl-estado">{nlEstado}</div>}
+                      <button onClick={procesarSolicitud} disabled={!nlText.trim()} style={{width: '100%', height: '36px', fontSize: '13px', lineHeight: '1'}}
                         className={`font-bold rounded transition ${nlText.trim() ? 'bg-corp-teal text-white hover:bg-opacity-90' : 'bg-gray-200 text-gray-400'}`}>PROPONER PANTALLA</button>
                     </div>
 
@@ -4723,7 +4889,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     {panelModo === 'texto' ? (
                     <div className="space-y-2 bg-gray-50 p-3 rounded-lg border border-gray-200">
                       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px'}}>
-                        <div style={{fontSize: '11px', fontWeight: 800, color: '#009688', letterSpacing: '0.05em'}}>✔ SOLICITUD APLICADA</div>
+                        <div className="sec-title" style={{borderBottom: 'none', paddingBottom: 0}}><span className="sec-ico">✔</span> Solicitud aplicada</div>
                         <button onClick={() => setPanelModo('manual')} style={{fontSize: '11px', height: '26px', padding: '0 10px', lineHeight: '1'}} className="bg-white text-gray-700 border border-gray-300 rounded font-bold hover:bg-gray-100">✎ EDITAR</button>
                       </div>
                       <div style={{display: 'flex', flexWrap: 'wrap', gap: '6px'}}>
@@ -4737,7 +4903,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
 
                     ) : (
                     <div className="space-y-2 bg-gray-50 p-3 rounded-lg border border-gray-200">
-                      <div style={{fontSize: '10px', fontWeight: 800, color: '#6b7280', letterSpacing: '0.05em'}}>¿PARA QUÉ ES?</div>
+                      <div className="sec-title"><span className="sec-ico">🎯</span> ¿Para qué es?</div>
                       <div style={{display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '6px'}}>
                         <button onClick={() => setFilterClass(filterClass === 'INSTALL' ? '' : 'INSTALL')} style={{gridColumn: 'span 3', height: '30px', fontSize: '11px', lineHeight: '1'}}
                           className={`font-bold rounded transition border ${filterClass === 'INSTALL' ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>INSTALL</button>
@@ -4751,7 +4917,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                           className={`font-bold rounded transition border ${filterTipo === 'ESCAPARATE' ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>ESCAPARATE</button>
                       </div>
 
-                      <div style={{fontSize: '10px', fontWeight: 800, color: '#6b7280', letterSpacing: '0.05em', paddingTop: '4px'}}>DEFINICIÓN Y BRILLO</div>
+                      <div className="sec-sub">Definición y brillo</div>
                       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem'}}>
                         <div style={{minWidth: 0}}>
                           <label className="text-[10px] lg:text-xs font-bold uppercase text-gray-600 block mb-1 flex items-center gap-1">
@@ -4792,8 +4958,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     {/* CABINET - Bloque unificado con fondo gris */}
                     <div className="space-y-2 bg-gray-50 p-3 rounded-lg border border-gray-200">
                       <div className="flex items-center">
-                        <label className="text-sm lg:text-base font-bold text-gray-700 uppercase" style={{fontSize: 'clamp(11px, 3.5vw, 16px)', lineHeight: 1.3, wordBreak: 'break-word'}}>
-                          Cabinet {selectedModel && (() => {
+                        <label className="sec-title" style={{width: '100%', fontSize: 'clamp(11px, 3.5vw, 12px)', lineHeight: 1.3, wordBreak: 'break-word'}}>
+                          <span className="sec-ico">▦</span> Cabinet {selectedModel && (() => {
                             const arValue = selectedModel.ar || '4:3';
                             return `${selectedModel.tipo} [${arValue}]`;
                           })()}
@@ -4935,6 +5101,15 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                             )}
                           </div>
                         </div>
+                        {/* COSIDO de señal y reparto eléctrico: por columnas o por filas completas */}
+                        <div className="flex items-center gap-1.5 mt-1" title="Cómo se cablea la pantalla: AUTO elige el cosido con menos líneas sin partir columnas ni filas">
+                          <span className="text-[10px] font-bold text-gray-600 uppercase" style={{whiteSpace: 'nowrap'}}>Cosido</span>
+                          <div style={{display: 'flex', flex: 1, gap: '4px'}}>
+                            {[['auto', 'AUTO'], ['vertical', 'VERTICAL'], ['horizontal', 'HORIZ.']].map(([k, lab]) => (
+                              <button key={k} onClick={() => setCosidoModo(k)} className={'cosido-btn flex-1 rounded font-bold ' + (cosidoModo === k ? 'bg-corp-teal text-white' : 'bg-white text-gray-700 border border-gray-300')} style={{fontSize: '10px', padding: '4px 2px', minHeight: 0}}>{lab}</button>
+                            ))}
+                          </div>
+                        </div>
                         {/* T-SKIN textura + Iconos stock/brochure */}
                         <div className="flex items-center justify-between gap-1.5 mt-1">
                           {/* T-SKIN: Selector de textura - izquierda */}
@@ -4989,7 +5164,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     {/* TAMAÑO PANTALLA: manual completo / resumen si la petición vino en texto */}
                     {panelModo === 'texto' ? (
                     <div className="space-y-2 lg:space-y-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
-                      <label className="block text-sm lg:text-base font-bold text-gray-700 uppercase text-center">Tamaño Pantalla</label>
+                      <label className="sec-title"><span className="sec-ico">📐</span> Tamaño pantalla</label>
                       {selectorUnidad}
                       <div style={{fontSize: '12px', lineHeight: '1.4', color: '#374151'}}>
                         <div>Pedido: <strong>{cmToU(targetW_cm)} × {cmToU(targetH_cm)} {unit}</strong></div>
@@ -5009,7 +5184,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     </div>
                     ) : (
                     <div className="space-y-2 lg:space-y-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
-                      <label className="block text-sm lg:text-base font-bold text-gray-700 uppercase text-center">Tamaño Pantalla</label>
+                      <label className="sec-title"><span className="sec-ico">📐</span> Tamaño pantalla</label>
                       {selectorUnidad}
                       
                       {/* Sliders de cabinets (columnas y filas) */}
@@ -6633,9 +6808,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                               </div>
                               
                               <div className="mt-1 text-[9px] text-gray-500 text-center">
-                                {cosidoSenal.tipoCosido === 'vertical' 
-                                  ? `Cosido vertical · ${cosidoSenal.totalPuertos} puertos (1 columna = 1 puerto)` 
-                                  : `Cosido serpentina · ${cosidoSenal.totalPuertos} puertos · ${cosidoSenal.cabinetsPorPuerto} cab/puerto`}
+                                {cosidoSenal.descripcion} · {cosidoSenal.cabinetsPorPuerto} cab/puerto
+                                {cosidoSenal.partido ? ' · ⚠ una columna/fila no cabe en un puerto: se parte' : ''}
                               </div>
                               <div className="mt-2 text-[9px] text-orange-700 text-center font-bold leading-tight">
                                 *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
@@ -6670,13 +6844,13 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                                 }}
                               >
                                 {distribucionElectrica.lineas.map((linea) => 
-                                  linea.columnas.map((col) => 
-                                    Array.from({ length: stats?.rows }).map((_, fila) => {
+                                  linea.celdas.map(({ col, fila }) => {
+                                      const hor = distribucionElectrica.orient === 'horizontal';
                                       const cellW = 100 / stats?.cols;
                                       const cellH = 100 / stats?.rows;
-                                      const numFila = stats?.rows - fila; // Numeración de abajo a arriba
-                                      const esUltimo = fila === 0; // Arriba
-                                      const esPrimero = fila === stats?.rows - 1; // Abajo
+                                      const numFila = hor ? col + 1 : stats?.rows - fila; // Numeración: de abajo a arriba (vertical) o de izquierda a derecha (horizontal)
+                                      const esUltimo = hor ? col === stats?.cols - 1 : fila === 0; // Fin de línea
+                                      const esPrimero = hor ? col === 0 : fila === stats?.rows - 1; // Inicio de línea
                                       const iconSize = stats?.rows > 10 ? 'tiny' : stats?.rows > 6 ? 'small' : stats?.rows > 4 ? 'medium' : 'large';
                                       
                                       return (
@@ -6748,8 +6922,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                                           )}
                                         </div>
                                       );
-                                    })
-                                  )
+                                  })
                                 )}
                               </div>
                               
@@ -6855,13 +7028,13 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none', fontWeight: 800, letterSpacing: '0.04em', color: '#94a3b8', textShadow: '0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(0,0,0,0.28)'}}>VJSHOW</a>
                       <span>(visuales audio-reactivos) que estamos desarrollando.</span>
                     </div>
-                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.16 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.17 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.16 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.17 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by mediaservi.com
                     </div>
                   </div>
               </main>
@@ -7025,26 +7198,14 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         </div>
       );
 
-      // Figura humana de referencia: silueta de perfil 3/4 (dibujo propio), de pie y mirando hacia la pantalla (a la derecha)
+      // Figura humana de referencia: silueta vectorial (SVG aportado por el propietario) integrada de forma nativa.
+      // viewBox ajustado al contorno (proporción 0,347) para que escale con la altura sin deformarse.
+      const HUMAN_PATH = 'M3140 12790 c-83 -20 -128 -46 -333 -191 -74 -53 -84 -68 -113 -181 -51 -197 -56 -233 -39 -280 19 -55 20 -51 -17 -71 -65 -36 -73 -58 -70 -190 2 -136 15 -172 62 -182 16 -4 34 -4 39 -1 9 6 14 -39 27 -223 l6 -93 -108 7 c-60 4 -138 10 -174 14 -98 10 -153 -9 -185 -63 -14 -23 -25 -53 -25 -65 0 -33 -82 -238 -140 -349 -52 -100 -60 -139 -35 -182 20 -34 19 -74 -2 -92 -10 -9 -43 -23 -73 -33 -143 -45 -280 -147 -362 -268 -22 -32 -68 -118 -103 -190 -52 -108 -72 -165 -109 -312 -126 -501 -307 -1431 -360 -1853 -46 -357 -62 -778 -37 -952 18 -125 53 -265 111 -440 77 -230 83 -239 198 -314 53 -35 109 -77 124 -92 30 -33 81 -141 72 -155 -3 -5 0 -9 6 -9 18 0 50 19 113 67 67 52 88 51 118 -8 12 -24 33 -46 53 -56 42 -20 45 -31 52 -203 5 -106 2 -168 -15 -290 -44 -325 -52 -431 -52 -705 0 -295 9 -393 60 -630 44 -209 59 -326 78 -622 22 -334 22 -771 -1 -1050 -9 -111 -16 -240 -16 -287 0 -84 0 -85 61 -201 33 -64 59 -117 57 -118 -35 -18 -49 -34 -80 -93 -20 -38 -39 -87 -43 -110 -7 -46 14 -158 51 -276 l24 -77 -35 -119 c-43 -146 -47 -242 -14 -302 21 -37 21 -39 4 -91 -10 -30 -51 -119 -92 -198 l-73 -144 0 -138 c0 -133 1 -139 25 -168 27 -32 130 -76 300 -129 l90 -28 108 47 c120 53 170 86 191 127 8 17 15 76 19 157 2 72 8 138 12 147 3 9 20 21 36 27 16 6 58 36 94 67 l64 57 -6 92 c-6 88 -4 95 21 141 50 89 186 420 209 508 21 82 21 88 5 97 -17 9 -17 12 -2 41 15 29 14 36 -10 122 -79 280 -167 936 -152 1141 13 194 110 647 197 920 38 120 41 140 43 255 3 109 10 158 60 389 l58 264 -16 114 c-22 161 -22 163 14 163 l30 0 0 -115 c0 -80 6 -143 21 -208 81 -362 149 -697 158 -777 21 -184 52 -757 54 -985 2 -195 -1 -238 -15 -280 -26 -75 -68 -425 -68 -567 0 -145 15 -187 86 -240 95 -70 96 -71 96 -115 -1 -30 -10 -54 -35 -90 -19 -26 -46 -69 -61 -95 l-27 -47 69 -35 69 -35 15 -134 c13 -110 23 -150 51 -216 29 -66 37 -98 42 -174 12 -185 3 -165 134 -296 l118 -117 5 -59 c5 -67 69 -208 116 -258 66 -71 163 -89 431 -85 l175 3 32 80 c36 87 44 174 23 250 -6 22 -64 146 -129 275 l-118 235 25 65 c16 44 28 103 35 180 9 108 8 122 -15 220 l-25 105 27 20 c14 10 41 34 59 53 40 42 41 75 7 227 l-26 110 35 67 c49 94 66 188 66 364 0 185 -11 255 -125 824 -52 256 -92 476 -89 490 2 14 13 198 24 410 12 212 31 525 43 695 22 305 22 312 4 410 -11 62 -21 188 -27 330 -5 127 -12 284 -16 351 -6 102 -4 130 11 178 10 31 22 59 27 62 4 3 40 -23 79 -57 l70 -63 103 52 c57 29 107 52 112 52 24 0 202 204 453 520 68 85 133 163 144 173 20 18 21 29 26 565 13 1266 6 1598 -40 1734 -21 64 -162 368 -369 798 -78 162 -169 353 -201 424 -34 72 -95 181 -141 249 l-82 121 -178 85 -178 85 0 61 c0 66 3 61 -98 185 -43 54 -108 181 -177 348 -51 125 -77 152 -144 152 -28 0 -66 -7 -85 -17 -30 -14 -37 -14 -52 -2 -15 12 -14 16 14 39 39 33 82 97 82 124 0 12 9 40 20 64 26 58 18 133 -20 175 l-27 30 28 56 c28 55 29 59 29 228 0 159 -2 178 -25 238 -67 179 -143 274 -251 314 -130 49 -290 71 -374 51z';
       const HumanSVG = ({ height }) => (
-         <svg viewBox="0 0 100 230" height={height} className="fill-human-gray drop-shadow-sm" preserveAspectRatio="xMidYMax meet">
-            {/* Pelo y cabeza, ligeramente levantada hacia la pantalla */}
-            <g transform="rotate(10 52 20)">
-              <path d="M40 17 C40 6 46 1 54 1 C62 1 66 7 66 15 C66 17 67 18 69 20 C68 22 66 22 66 24 C66 30 62 35 55 36 C46 36 40 29 40 17 Z" />
+         <svg viewBox="97 0 445 1280" height={height} className="drop-shadow-sm" style={{color: '#374151'}} preserveAspectRatio="xMidYMax meet">
+            <g transform="translate(0,1280) scale(0.1,-0.1)" fill="currentColor" stroke="none">
+              <path d={HUMAN_PATH} />
             </g>
-            {/* Cuello */}
-            <path d="M47 31 L59 31 L61 43 L45 43 Z" />
-            {/* Torso con hombros */}
-            <path d="M44 41 C33 42 29 46 29 57 L32 112 L70 112 L73 57 C73 46 69 42 60 41 Z" />
-            {/* Brazos: el de la pantalla ligeramente adelantado */}
-            <path d="M29 48 C23 50 21 57 21 66 L19 104 C19 109 26 109 26 104 L31 68 Z" />
-            <path d="M73 48 C79 50 82 57 82 66 L86 102 C87 107 94 106 93 101 L78 68 Z" />
-            {/* Piernas separadas en postura relajada */}
-            <path d="M32 108 L51 108 L50 162 L47 218 L36 218 L35 162 Z" />
-            <path d="M52 108 L71 108 L69 162 L68 218 L57 218 L53 162 Z" />
-            {/* Zapatos orientados hacia la pantalla */}
-            <path d="M35 216 L48 216 L49 225 Q49 229 45 229 L31 229 Q28 228 30 225 Z" />
-            <path d="M56 216 L69 216 L75 224 Q78 229 73 229 L56 229 Q53 228 55 224 Z" />
          </svg>
       );
 
