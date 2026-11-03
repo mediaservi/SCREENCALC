@@ -6777,27 +6777,27 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
             const guardar = (arr) => { setFuentes(arr); try { localStorage.setItem('screencalc_fuentes', JSON.stringify(arr)); } catch (e) {} };
             const aplicar = () => {
               const propia = urlPropia.trim();
-              const url = propia || (fuenteSel === 0 ? '' : String(fuentes[fuenteSel - 1] || '').trim());
+              const url = propia || (fuenteSel === 0 ? FUENTE_FIJA : String(fuentes[fuenteSel - 1] || '').trim());
               if (url) { setCustomContent(url); setCustomContentType('url'); }
               else { setCustomContent(null); setCustomContentType(null); }
               setIsHovering(false); setMediaCycle(0); setShowMedia(false);
             };
             return (
               <div className="no-print" onClick={() => setShowMedia(false)} style={{position: 'fixed', inset: 0, zIndex: 90, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px'}}>
-                <div onClick={e => e.stopPropagation()} style={{background: '#fff', borderRadius: '14px', boxShadow: '0 12px 40px rgba(0,0,0,0.35)', width: '100%', maxWidth: '560px', maxHeight: '92vh', overflowY: 'auto', padding: '18px'}}>
+                <div onClick={e => e.stopPropagation()} style={{background: '#fff', borderRadius: '14px', boxShadow: '0 12px 40px rgba(0,0,0,0.35)', width: '100%', maxWidth: '400px', maxHeight: '80vh', overflowY: 'auto', padding: '12px'}}>
                   <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}}>
                     <div style={{fontSize: '15px', fontWeight: 800, color: '#082f28'}}>🎬 CONTENIDO PANTALLA</div>
                     <button onClick={() => setShowMedia(false)} aria-label="Cerrar" style={{fontSize: '22px', lineHeight: 1, minHeight: 0, padding: '2px 8px', color: '#6b7280'}}>×</button>
                   </div>
                   <div style={{fontSize: '11px', fontWeight: 800, color: '#6b7280', letterSpacing: '0.05em', marginBottom: '6px'}}>FUENTES MULTIMEDIA DE PRUEBA</div>
-                  <div style={{display: 'flex', flexDirection: 'column', gap: '6px'}}>
+                  <div style={{display: 'flex', flexDirection: 'column', gap: '3px'}}>
                     {[FUENTE_FIJA].concat(fuentes).map((u, i) => (
-                      <label key={i} style={{display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', border: '2px solid ' + (fuenteSel === i ? '#009688' : '#e5e7eb'), borderRadius: '8px', background: fuenteSel === i ? '#f0fdfa' : '#fff'}}>
-                        <input type="radio" name="fuente" checked={fuenteSel === i} onChange={() => { setFuenteSel(i); setUrlPropia(''); }} style={{width: '18px', height: '18px', flexShrink: 0}} />
+                      <label key={i} style={{display: 'flex', alignItems: 'center', gap: '6px', padding: '3px 6px', border: '2px solid ' + (fuenteSel === i ? '#009688' : '#e5e7eb'), borderRadius: '8px', background: fuenteSel === i ? '#f0fdfa' : '#fff'}}>
+                        <input type="radio" name="fuente" checked={fuenteSel === i} onChange={() => { setFuenteSel(i); setUrlPropia(''); }} style={{width: '14px', height: '14px', flexShrink: 0, minHeight: 0}} />
                         {i === 0 ? (
-                          <div style={{flex: 1, minWidth: 0, fontSize: '12px'}}><strong>Mi vídeo (por defecto)</strong><div style={{color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{u}</div></div>
+                          <div style={{flex: 1, minWidth: 0, fontSize: '11px'}}><strong>Mi vídeo (por defecto)</strong><div style={{color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{u}</div></div>
                         ) : (
-                          <input type="text" value={u} onChange={e => { const a = fuentes.slice(); a[i - 1] = e.target.value; guardar(a); }} onFocus={() => { setFuenteSel(i); setUrlPropia(''); }} style={{flex: 1, minWidth: 0, fontSize: '12px', border: '1px solid #d1d5db', borderRadius: '6px', padding: '5px 7px'}} placeholder="Pega aquí un enlace de YouTube, Vimeo, imagen o vídeo" />
+                          <input type="text" value={u} onChange={e => { const a = fuentes.slice(); a[i - 1] = e.target.value; guardar(a); }} onFocus={() => { setFuenteSel(i); setUrlPropia(''); }} style={{flex: 1, minWidth: 0, fontSize: '11px', border: '1px solid #d1d5db', borderRadius: '5px', padding: '3px 6px', minHeight: 0, height: '26px'}} placeholder="Pega aquí un enlace de YouTube, Vimeo, imagen o vídeo" />
                         )}
                       </label>
                     ))}
@@ -6805,8 +6805,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                   <div style={{fontSize: '10px', color: '#9ca3af', margin: '4px 0 10px'}}>Las fuentes 2 a 7 se pueden editar; la primera es fija. Se guardan en este navegador.</div>
                   <div style={{fontSize: '11px', fontWeight: 800, color: '#6b7280', letterSpacing: '0.05em', marginBottom: '6px'}}>O USA TU PROPIO CONTENIDO</div>
                   <div style={{display: 'flex', gap: '8px', alignItems: 'stretch', flexWrap: 'wrap'}}>
-                    <input type="text" value={urlPropia} onChange={e => setUrlPropia(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') aplicar(); }} placeholder="URL de YouTube, Vimeo, imagen o vídeo" style={{flex: '1 1 220px', minWidth: 0, fontSize: '13px', border: '1px solid #d1d5db', borderRadius: '6px', padding: '8px'}} />
-                    <label style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 12px', border: '2px dashed #9ca3af', borderRadius: '6px', fontSize: '12px', fontWeight: 700, color: '#4b5563', cursor: 'pointer'}}>
+                    <input type="text" value={urlPropia} onChange={e => setUrlPropia(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') aplicar(); }} placeholder="URL de YouTube, Vimeo, imagen o vídeo" style={{flex: '1 1 150px', minWidth: 0, fontSize: '12px', border: '1px solid #d1d5db', borderRadius: '6px', padding: '4px 6px', minHeight: 0, height: '34px'}} />
+                    <label style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px 8px', border: '2px dashed #9ca3af', borderRadius: '6px', fontSize: '11px', fontWeight: 700, color: '#4b5563', cursor: 'pointer'}}>
                       ⬆ Subir imagen / vídeo
                       <input type="file" accept="image/*,video/*" style={{position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer'}} onChange={e => {
                         const f = e.target.files[0];
@@ -6814,9 +6814,9 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       }} />
                     </label>
                   </div>
-                  <div style={{display: 'flex', gap: '8px', marginTop: '14px'}}>
-                    <button onClick={aplicar} className="bg-corp-teal text-white font-bold rounded" style={{flex: 1, height: '42px', fontSize: '14px'}}>APLICAR</button>
-                    <button onClick={() => setShowMedia(false)} className="bg-gray-200 text-gray-700 font-bold rounded" style={{flex: 1, height: '42px', fontSize: '14px'}}>CERRAR</button>
+                  <div style={{display: 'flex', gap: '8px', marginTop: '10px'}}>
+                    <button onClick={aplicar} className="bg-corp-teal text-white font-bold rounded" style={{flex: 1, height: '34px', fontSize: '13px', minHeight: 0}}>APLICAR</button>
+                    <button onClick={() => setShowMedia(false)} className="bg-gray-200 text-gray-700 font-bold rounded" style={{flex: 1, height: '34px', fontSize: '13px', minHeight: 0}}>CERRAR</button>
                   </div>
                 </div>
               </div>
@@ -6850,7 +6850,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       ))}
                     </div>
                   )}
-                  <div style={{display: 'flex', gap: '8px', marginTop: '14px'}}>
+                  <div style={{display: 'flex', gap: '8px', marginTop: '10px'}}>
                     <button onClick={() => setNlDialog(null)} style={{flex: 1, height: '40px', fontSize: '14px'}} className="bg-gray-200 text-gray-700 font-bold rounded">CANCELAR</button>
                     <button onClick={() => responderDialogo()} disabled={q.tipo !== 'text' && !nlDialog.sel}
                       style={{flex: 1, height: '40px', fontSize: '14px', opacity: (q.tipo !== 'text' && !nlDialog.sel) ? 0.4 : 1}} className="bg-corp-teal text-white font-bold rounded">ENVIAR</button>

@@ -46,6 +46,7 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 
 - El pie (aviso de APP experimental, VJSHOW y SCREENCALC) queda siempre al final de la página, después del esquema de conexiones.
 - El icono de imagen abre un popup centrado en lugar del panel lateral, con FUENTES MULTIMEDIA DE PRUEBA: la primera (mi vídeo) es fija y viene seleccionada por defecto; las otras 6 se pueden editar.
+- Popup más compacto; al aplicar la primera fuente se carga siempre su vídeo.
 - Vídeo por defecto: https://youtu.be/vKN4AcGz7zs. Se admiten también enlaces /live/, /shorts/ y listas de YouTube.
 
 ## Historial de versiones
