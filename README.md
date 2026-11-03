@@ -13,13 +13,14 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 ## Funciones
 
 - **Petición en lenguaje natural (📝):** se pega el texto del cliente y la app propone una pantalla. Si falta un dato, pregunta con un popup. Se interpreta con reglas locales, sin servicios externos de IA.
-- **Panel de entrada manual:** INSTALL / RENTAL, INDOOR / OUTDOOR / ESCAPARATE, pitch y nits (valores de la tabla con flechas ▲▼), columnas y filas, ancho y alto en cm, resolución mínima (HD / FHD / UHD 4K) y altura sobre el suelo. Muestra en vivo las medidas, los cabinets y la resolución.
+- **Panel de entrada manual:** INSTALL / RENTAL, INDOOR / OUTDOOR / ESCAPARATE, pitch y nits (valores de la tabla con flechas ▲▼), columnas y filas, ancho y alto con selector de unidad m / cm / mm (por defecto cm; el PDF sigue la unidad elegida), resolución mínima (HD / FHD / UHD 4K) y altura sobre el suelo. Muestra en vivo las medidas, los cabinets y la resolución.
 - **Modo resumen:** si la petición se hizo en texto, el panel solo muestra lo elegido. Con "Editar a mano" se vuelve al panel completo.
 - **Resultados:** características de la pantalla y del cabinet, distancias de visión mínima y óptima, peso, consumo, líneas de señal (con backup) y simulación a escala con figura humana.
 - **Esquemas de cableado:** propuesta de cableado de señal y eléctrico.
 - **Electrónica de control:** motor propio basado en especificaciones del fabricante (NovaStar MCTRL, VX Pro, NovaPro, COEX MX y H Series). Admite con o sin backup y conexión directa por RJ45 o rack con fibra y convertidores CVT10 Pro.
 - **Mediaserver:** NovaStar (ET) y PixelHue, con filtro por marca y audio Dante, y un resumen de características en cada opción.
-- **Enlaces a producto** en las opciones de electrónica y mediaserver cuando existe URL.
+- **Enlaces e imágenes de producto** en las opciones de electrónica y mediaserver: icono de enlace y, a la izquierda de cada burbuja de electrónica, una pila con logo, vista frontal y trasera (clic para ampliar al 80 % de la pantalla). Solo aparecen si hay dato; las imágenes no van al PDF. Se leen de la hoja ELECTRONICAS (columnas `url`, `front`, `back`, `logo`) cada vez que se abre la app.
+- **Vídeo de la simulación:** por defecto el último vídeo subido al canal de YouTube @MEDIASERVI.
 - **PDF:** "PDF pantalla" y "PDF cableado", cada uno en una sola hoja A4.
 - **Adaptada a PC y móvil.**
 
@@ -36,12 +37,20 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 - `main`: versión oficial y pública, aprobada.
 - Dos ramas de versión más recientes (`v4.x`) para pruebas. Las anteriores se eliminan.
 
-## Cambios de la versión actual (v4.4)
+## Cambios de la versión actual (v4.5)
 
-- Las rutas de `assets/` pasan a ser relativas para que el logo y el fondo de la simulación carguen también en GitHub Pages.
+- Los enlaces de la app apuntan a https://mediaservi.github.io/SCREENCALC/.
+- Selector de unidad m / cm / mm (por defecto cm) en entradas y datos mostrados, incluido el PDF. El pitch se mantiene en mm; peso, potencia y píxeles no cambian.
+- Cuadro 📝 a todo el ancho y más alto, con el icono flotando dentro y el texto de guía completo.
+- Ayuda de pitch: "A menor pitch, más definición. Con 3.9p se ve bien desde 3,9 m (óptimo desde 11,7 m)", en la unidad elegida.
+- Tamaño Pantalla: COLUMNAS y FILAS; se eliminan los números de paso 1 · / 2 · / 3 ·.
+- Botón flotante ⚙ PANEL en móvil para volver al panel desde los resultados.
+- Electrónica: pila logo / frontal / trasera con visor al 80 %, enlace Charmex del VX400 Pro y lectura de enlaces e imágenes desde la hoja.
+- Vídeo por defecto: último subido al canal @MEDIASERVI (YouTube no publica cuál es el vídeo fijado).
 
 ## Historial de versiones
 
+- **v4.4:** rutas de `assets/` relativas para funcionar en GitHub Pages.
 - **v4.3:** panel de entrada rediseñado con petición en lenguaje natural, modo resumen/manual, pitch y nits con flechas, botones simétricos, y enlace a VJSHOW en el pie.
 - **v4.2:** nuevo motor de electrónica basado en especificaciones del fabricante, bloque de mediaserver con filtros, enlaces a producto y PDF compacto.
 - **v4.1:** migración a Netlify, filtros INDOOR / OUTDOOR / ESCAPARATE, logo y fondo en `assets/`.

@@ -2,10 +2,20 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.4                              ║
+║                          Versión actual: v4.5                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.4 (manual)
+ÚLTIMA ACTUALIZACIÓN: v4.5 (manual)
+- Enlaces de la app apuntan a https://mediaservi.github.io/SCREENCALC/
+- Selector de unidad m / cm / mm (por defecto cm) en entradas y datos mostrados (PDF incluido)
+- Cuadro 📝 a todo el ancho, más alto, icono flotante dentro; ayuda de pitch reformulada
+- Tamaño Pantalla: COLUMNAS / FILAS; eliminados los números de paso 1·/2·/3·
+- Botón flotante ⚙ PANEL en móvil para volver al panel desde los resultados
+- Electrónica: pila logo/frontal/trasera por burbuja (solo si hay imagen), visor al 80 %,
+  enlace Charmex VX400 Pro; imágenes y enlaces se leen de la hoja ELECTRONICAS
+  (columnas url, front, back, logo) en cada apertura
+- Vídeo por defecto: último vídeo subido al canal @MEDIASERVI
+ANTERIOR: v4.4
 - Rutas de assets relativas (assets/...) para funcionar igual en Netlify y GitHub Pages
 ANTERIOR: v4.3
 - PANEL DE ENTRADA: cuadro 📝 de petición en lenguaje natural (parser local, sin servicios
@@ -1470,7 +1480,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
       const ELEC_DEVICES = [
         { id: 'MCTRL660PRO', marca: 'NOVASTAR', serie: 'MCTRL',        modelo: 'MCTRL660 PRO', rj: 6,  opt: 0,  ppo: 0,  capPx: 3900000,   escalador: false, url: null },
         { id: 'MCTRL4K',     marca: 'NOVASTAR', serie: 'MCTRL',        modelo: 'MCTRL 4K',     rj: 16, opt: 4,  ppo: 8,  capPx: 8800000,   escalador: false, url: 'https://www.novastar.tech/product/detail.html?catid=2&id=24' },
-        { id: 'VX400PRO',    marca: 'NOVASTAR', serie: 'VX Pro',       modelo: 'VX400 Pro',    rj: 4,  opt: 2,  ppo: 10, capPx: 2600000,   escalador: true,  url: null },
+        { id: 'VX400PRO',    marca: 'NOVASTAR', serie: 'VX Pro',       modelo: 'VX400 Pro',    rj: 4,  opt: 2,  ppo: 10, capPx: 2600000,   escalador: true,  url: 'https://charmex.net/novastar-serie-vx--vx400-pro/44270' },
         { id: 'VX600PRO',    marca: 'NOVASTAR', serie: 'VX Pro',       modelo: 'VX600 Pro',    rj: 6,  opt: 2,  ppo: 10, capPx: 3900000,   escalador: true,  url: null },
         { id: 'VX1000PRO',   marca: 'NOVASTAR', serie: 'VX Pro',       modelo: 'VX1000 Pro',   rj: 10, opt: 2,  ppo: 10, capPx: 6500000,   escalador: true,  url: CHARMEX_NOVASTAR + 'serie-vx--vx1000-pro' },
         { id: 'VX2000PRO',   marca: 'NOVASTAR', serie: 'VX Pro',       modelo: 'VX2000 Pro',   rj: 20, opt: 4,  ppo: 10, capPx: 13000000,  escalador: true,  url: null },
@@ -1558,9 +1568,15 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
       const elecDeHoja = (modelo, hoja) => {
         const k = elecNorm(modelo);
         const f = (hoja || []).find(h => k && elecNorm(h.modelo).includes(k));
-        if (!f) return { enStock: false, url: null };
-        const u = String(f.url || f.urlprod || f.link || f.web || '').trim();
-        return { enStock: String(f.stock || '').toUpperCase() === 'SI', url: /^https?:\/\//i.test(u) ? u : null };
+        if (!f) return { enStock: false, url: null, front: null, back: null, logo: null };
+        const ok = (v) => { const t = String(v || '').trim(); return /^https?:\/\//i.test(t) ? t : null; };
+        return {
+          enStock: String(f.stock || '').toUpperCase() === 'SI',
+          url: ok(f.url || f.urlprod || f.link || f.web),
+          front: ok(f.front || f.frontal || f.img1 || f.imagen),
+          back: ok(f.back || f.trasera || f.img2),
+          logo: ok(f.logo)
+        };
       };
 
       // Motor de cálculo: devuelve las configuraciones adecuadas para el proyecto
@@ -1598,7 +1614,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           res.push({
             key: c.d.id, marca: c.d.marca, serie: c.d.serie, modelo: c.d.modelo, escalador: c.d.escalador,
             puertos: c.det.puertos, capacidad: elecMpx(c.d.capPx) + ' Mpx (proyecto ' + elecMpx(totalPix) + ' Mpx)',
-            equipos: c.det.equipos, url: c.d.url || h.url, enStock: h.enStock
+            equipos: c.det.equipos, url: h.url || c.d.url, enStock: h.enStock,
+            front: c.d.front || h.front, back: c.d.back || h.back, logo: c.d.logo || h.logo
           });
         });
 
@@ -1653,8 +1670,35 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
       };
 
       // Burbuja de equipo (electrónica o mediaserver) con icono de enlace opcional
-      const ElecBubble = ({ titulo, sub, lineas, equipos, url, badge }) => (
-        <div className="elec-bubble bg-white p-3 border-2 border-gray-300 min-w-0 overflow-hidden">
+      const ElecImg = ({ src, alt, onOpen, style }) => {
+        const [bad, setBad] = useState(false);
+        useEffect(() => { setBad(false); }, [src]);
+        if (!src || bad) return null;
+        return <img src={src} alt={alt} loading="lazy" referrerPolicy="no-referrer" onError={() => setBad(true)} onClick={onOpen}
+          style={{ width: '100%', flex: 1, minHeight: 0, objectFit: 'contain', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '3px', cursor: onOpen ? 'zoom-in' : 'default', ...style }} />;
+      };
+
+      const ElecBubble = ({ titulo, sub, lineas, equipos, url, badge, front, back, logo }) => {
+        const [visor, setVisor] = useState(null);
+        const hay = !!(front || back || logo);
+        return (
+        <div className="elec-bubble bg-white p-3 border-2 border-gray-300 min-w-0 overflow-hidden" style={hay ? { display: 'flex', gap: '8px' } : undefined}>
+          {hay && (
+            <div className="no-print" style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '56px', flexShrink: 0 }}>
+              <div style={{ height: '52px', display: 'flex' }}><ElecImg src={logo} alt="Logo" /></div>
+              <div style={{ height: '52px', display: 'flex' }}><ElecImg src={front} alt={titulo + ' frontal'} onOpen={() => setVisor(front)} /></div>
+              <div style={{ height: '52px', display: 'flex' }}><ElecImg src={back} alt={titulo + ' trasera'} onOpen={() => setVisor(back)} /></div>
+            </div>
+          )}
+          {visor && (
+            <div className="no-print" onClick={() => setVisor(null)} style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(0,0,0,.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div onClick={e => e.stopPropagation()} style={{ width: '80vw', height: '80vh', background: '#fff', borderRadius: '6px', position: 'relative', display: 'flex', padding: '8px' }}>
+                <button onClick={() => setVisor(null)} style={{ position: 'absolute', top: '6px', right: '10px', fontSize: '22px', fontWeight: 700, minHeight: 0, padding: 0, lineHeight: 1 }}>×</button>
+                <img src={visor} alt={titulo} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              </div>
+            </div>
+          )}
+          <div style={{ flex: 1, minWidth: 0 }}>
           <div className="flex items-start justify-between gap-2 mb-1">
             <div className="font-bold text-gray-900" style={{ fontSize: '0.9rem', lineHeight: 1.2, wordBreak: 'break-word' }}>{titulo}</div>
             {url && (
@@ -1668,8 +1712,10 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           {equipos && equipos.map((q, i) => (
             <div key={'q' + i} className="text-xs text-gray-700">{q.cant > 0 ? <strong>{q.cant}× {q.ref}</strong> : <strong>{q.ref}</strong>} – {q.desc}</div>
           ))}
+          </div>
         </div>
-      );
+        );
+      };
 
       // === DEFINICIÓN DE KITS ===
       // Los kits son modelos que despliegan un conjunto de componentes fijos
@@ -2314,8 +2360,9 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
       const APP_LOGO_PRINT = "assets/SCLOGO.png";
       const DEFAULT_SCREEN_BG = "assets/SCCHART.jfif";
       const DEFAULT_SCREEN_BG_PRINT = "assets/SCCHART.jfif";
-      // Video de YouTube: https://youtu.be/IIqtuupvdWg (convertido a embed)
-      const VIDEO_MOCK_URL = "https://www.youtube.com/embed/IIqtuupvdWg?autoplay=1&mute=1&loop=1";
+      // Vídeo por defecto: SIEMPRE el último subido al canal @MEDIASERVI (lista "uploads" del canal UCjOocBuBTaCWZRcBvZ-waqQ).
+      // YouTube no ofrece públicamente cuál es el vídeo "fijado"; para forzar uno concreto basta con subirlo al canal.
+      const VIDEO_MOCK_URL = "https://www.youtube.com/embed/videoseries?list=UUjOocBuBTaCWZRcBvZ-waqQ&autoplay=1&mute=1&loop=1";
 
       // Función para convertir URLs de YouTube/Vimeo a formato embed
       const convertToEmbed = (url) => {
@@ -3186,7 +3233,27 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           const menores = lista.filter(v => v < actual);
           return menores.length ? menores[menores.length - 1] : actual;
         };
-        const fmtDist = (v) => (Math.round(v * 10) / 10).toString().replace('.', ',');
+        const [unit, setUnit] = useState('cm'); // unidad de medida mostrada: m / cm / mm
+        const uK = unit === 'm' ? 1 : unit === 'cm' ? 100 : 1000;
+        // Convierte metros a la unidad elegida (texto)
+        const U = (m) => {
+          const v = parseFloat(String(m).replace(',', '.'));
+          if (isNaN(v)) return '';
+          const x = v * uK;
+          return unit === 'm' ? x.toFixed(2) : unit === 'cm' ? String(Math.round(x * 10) / 10) : String(Math.round(x));
+        };
+        const fmtDist = (v) => U(v).replace('.', ',');
+        // Convierte cm (estado interno) a la unidad elegida y a la inversa (entradas)
+        const cmToU = (cm) => unit === 'cm' ? cm : (unit === 'm' ? Math.round(cm) / 100 : Math.round(cm * 10));
+        const uToCm = (v) => unit === 'cm' ? v : (unit === 'm' ? v * 100 : v / 10);
+        const selectorUnidad = (
+          <div style={{display: 'flex', justifyContent: 'center', gap: '4px'}}>
+            {['m', 'cm', 'mm'].map(u => (
+              <button key={u} onClick={() => setUnit(u)} className={`rounded font-bold border-2 transition ${unit === u ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300'}`}
+                style={{minHeight: 0, padding: '2px 10px', fontSize: '11px', lineHeight: '1.3'}}>{u}</button>
+            ))}
+          </div>
+        );
 
         // Preguntas que faltan para poder calcular
         const construirPreguntas = (p) => {
@@ -3224,8 +3291,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
           setNlAviso(relajados.length ? 'No hay modelos ' + relajados.join(' / ') + ' en la tabla: se ha ampliado la búsqueda.' : '');
           setNlPending({ pitch: pitchSel, nits: nitsSel, w, h, conRes: !!p.resModo });
 
-          const partes = [(w / 100) + ' x ' + (h / 100) + ' m'];
-          if (p.dist) partes.push('con pitch ' + pitchSel + ' mm se ve bien desde ' + fmtDist(pitchSel) + ' m (óptimo desde ' + fmtDist(pitchSel * 3) + ' m)');
+          const partes = [U(w / 100) + ' x ' + U(h / 100) + ' ' + unit];
+          if (p.dist) partes.push('con pitch ' + pitchSel + ' mm se ve bien desde ' + fmtDist(pitchSel) + ' ' + unit + ' (óptimo desde ' + fmtDist(pitchSel * 3) + ' ' + unit + ')');
           setNlSummary(partes.join(' · '));
           setPanelModo('texto');
         };
@@ -4170,12 +4237,12 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
             
             <header className="bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
-                 <a href="https://screencalcx.netlify.app/" target="_blank" style={{display:'contents'}}>
+                 <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" style={{display:'contents'}}>
                    <img src={APP_LOGO} className="h-8 w-auto object-contain cursor-pointer" alt="Logo" />
                  </a>
                  <div>
                    <h1 className="text-white font-days text-xl tracking-wider title-halo">SCREENCALC</h1>
-                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.4</div>
+                   <div className="text-[10px] text-gray-400 font-mono opacity-80 leading-none">v4.5</div>
                  </div>
                </div>
                
@@ -4196,15 +4263,15 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     
                     {/* SOLICITUD DEL CLIENTE EN LENGUAJE NATURAL */}
                     <div className="space-y-2 bg-gray-50 p-3 rounded-lg border border-gray-200">
-                      <div style={{display: 'flex', alignItems: 'flex-start', gap: '8px'}}>
-                        <span style={{fontSize: '22px', lineHeight: '1.2'}} title="Pega aquí lo que pide el cliente">📝</span>
+                      <div style={{position: 'relative', width: '100%'}}>
+                        <span style={{position: 'absolute', right: '8px', bottom: '6px', fontSize: '22px', lineHeight: '1', opacity: 0.55, pointerEvents: 'none'}} title="Pega aquí lo que pide el cliente">📝</span>
                         <textarea
                           value={nlText}
                           onChange={e => setNlText(e.target.value)}
                           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); procesarSolicitud(); } }}
-                          rows={3}
+                          rows={4}
                           placeholder="Pega aquí la petición del cliente. Ej.: pantalla led para exterior de 6x2 metros que se lea bien a 4m de distancia"
-                          style={{flex: 1, minWidth: 0, fontSize: '13px', lineHeight: '1.3', resize: 'none'}}
+                          style={{display: 'block', width: '100%', boxSizing: 'border-box', paddingRight: '36px', fontSize: '13px', lineHeight: '1.3', resize: 'none'}}
                           className="border-2 border-gray-300 bg-white p-2 rounded focus:border-corp-teal outline-none"
                         />
                       </div>
@@ -4230,7 +4297,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
 
                     ) : (
                     <div className="space-y-2 bg-gray-50 p-3 rounded-lg border border-gray-200">
-                      <div style={{fontSize: '10px', fontWeight: 800, color: '#6b7280', letterSpacing: '0.05em'}}>1 · ¿PARA QUÉ ES?</div>
+                      <div style={{fontSize: '10px', fontWeight: 800, color: '#6b7280', letterSpacing: '0.05em'}}>¿PARA QUÉ ES?</div>
                       <div style={{display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '6px'}}>
                         <button onClick={() => setFilterClass(filterClass === 'INSTALL' ? '' : 'INSTALL')} style={{gridColumn: 'span 3', height: '30px', fontSize: '11px', lineHeight: '1'}}
                           className={`font-bold rounded transition border ${filterClass === 'INSTALL' ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>INSTALL</button>
@@ -4244,7 +4311,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                           className={`font-bold rounded transition border ${filterTipo === 'ESCAPARATE' ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>ESCAPARATE</button>
                       </div>
 
-                      <div style={{fontSize: '10px', fontWeight: 800, color: '#6b7280', letterSpacing: '0.05em', paddingTop: '4px'}}>2 · DEFINICIÓN Y BRILLO</div>
+                      <div style={{fontSize: '10px', fontWeight: 800, color: '#6b7280', letterSpacing: '0.05em', paddingTop: '4px'}}>DEFINICIÓN Y BRILLO</div>
                       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem'}}>
                         <div style={{minWidth: 0}}>
                           <label className="text-[10px] lg:text-xs font-bold uppercase text-gray-600 block mb-1 flex items-center gap-1">
@@ -4278,7 +4345,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                           </div>
                         </div>
                       </div>
-                      <div style={{fontSize: '11px', color: '#6b7280', lineHeight: '1.3'}}>Cuanto menor el pitch, más definición. Con pitch {filterPitch} mm se ve bien desde {fmtDist(filterPitch)} m (óptimo desde {fmtDist(filterPitch * 3)} m).</div>
+                      <div style={{fontSize: '11px', color: '#6b7280', lineHeight: '1.3'}}>A menor pitch, más definición. Con {filterPitch}p se ve bien desde {fmtDist(filterPitch)} {unit} (óptimo desde {fmtDist(filterPitch * 3)} {unit}).</div>
                     </div>
                     )}
 
@@ -4483,14 +4550,15 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     {panelModo === 'texto' ? (
                     <div className="space-y-2 lg:space-y-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
                       <label className="block text-sm lg:text-base font-bold text-gray-700 uppercase text-center">Tamaño Pantalla</label>
+                      {selectorUnidad}
                       <div style={{fontSize: '12px', lineHeight: '1.4', color: '#374151'}}>
-                        <div>Pedido: <strong>{targetW_cm} × {targetH_cm} cm</strong></div>
-                        {stats && <div>Resultado: <strong>{stats.widthM} × {stats.heightM} m</strong> · {stats.cols}×{stats.rows} cabinets · <strong>{stats.resW}×{stats.resH} px</strong>{(() => { const ri = getResolutionInfo(stats.resW, stats.resH); return ri ? ' · ' + ri.displayName : ''; })()}</div>}
+                        <div>Pedido: <strong>{cmToU(targetW_cm)} × {cmToU(targetH_cm)} {unit}</strong></div>
+                        {stats && <div>Resultado: <strong>{U(stats.widthM)} × {U(stats.heightM)} {unit}</strong> · {stats.cols}×{stats.rows} cabinets · <strong>{stats.resW}×{stats.resH} px</strong>{(() => { const ri = getResolutionInfo(stats.resW, stats.resH); return ri ? ' · ' + ri.displayName : ''; })()}</div>}
                       </div>
                       <div className="pt-2 border-t border-gray-300">
                         <div className="flex justify-between text-[10px] lg:text-xs font-bold mb-1.5">
-                          <span className="text-gray-700">Altura desde el suelo (cm)</span>
-                          <span className="text-corp-teal">{floorDist_cm}</span>
+                          <span className="text-gray-700">Altura desde el suelo ({unit})</span>
+                          <span className="text-corp-teal">{cmToU(floorDist_cm)}</span>
                         </div>
                         <input type="range" min="0" max="500" step="10" value={floorDist_cm} onChange={e => setFloorDist_cm(Number(e.target.value))} className="w-full accent-corp-teal"/>
                       </div>
@@ -4501,7 +4569,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     </div>
                     ) : (
                     <div className="space-y-2 lg:space-y-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
-                      <label className="block text-sm lg:text-base font-bold text-gray-700 uppercase text-center">3 · Tamaño Pantalla</label>
+                      <label className="block text-sm lg:text-base font-bold text-gray-700 uppercase text-center">Tamaño Pantalla</label>
+                      {selectorUnidad}
                       
                       {/* Sliders de cabinets (columnas y filas) */}
                       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', paddingTop: '0.5rem'}}>
@@ -4528,7 +4597,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                           </div>
                         </div>
                         <div style={{minWidth: 0}}>
-                          <label className="text-[10px] lg:text-xs font-bold uppercase text-gray-600 mb-1 block text-center">Alto</label>
+                          <label className="text-[10px] lg:text-xs font-bold uppercase text-gray-600 mb-1 block text-center">Filas</label>
                           {/* HOLO: Selector de combo de alturas */}
                           {selectedModel?.family && selectedModel.family.toLowerCase().includes('holo') ? (
                             <div className="flex flex-col gap-1">
@@ -4594,20 +4663,20 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       {/* Campos de tamaño en cm - EDITABLES */}
                       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid #d1d5db'}}>
                         <div style={{minWidth: 0}}>
-                          <label className="text-[10px] lg:text-xs font-bold uppercase text-gray-600 mb-1 block">Ancho (cm)</label>
+                          <label className="text-[10px] lg:text-xs font-bold uppercase text-gray-600 mb-1 block">Ancho ({unit})</label>
                           <input 
                             type="number" 
-                            value={targetW_cm || ''} 
-                            onChange={e => setTargetW_cm(e.target.value === '' ? 0 : Number(e.target.value))} onKeyDown={e => { if (e.key === 'Enter') handleCalcular(); }} 
+                            value={targetW_cm ? cmToU(targetW_cm) : ''} 
+                            onChange={e => setTargetW_cm(e.target.value === '' ? 0 : uToCm(Number(e.target.value)))} onKeyDown={e => { if (e.key === 'Enter') handleCalcular(); }} 
                             className="w-full border-2 border-gray-300 bg-white p-2 font-bold text-base lg:text-lg rounded focus:border-corp-teal outline-none"
                           />
                         </div>
                         <div style={{minWidth: 0}}>
-                          <label className="text-[10px] lg:text-xs font-bold uppercase text-gray-600 mb-1 block">Alto (cm)</label>
+                          <label className="text-[10px] lg:text-xs font-bold uppercase text-gray-600 mb-1 block">Alto ({unit})</label>
                           <input 
                             type="number" 
-                            value={targetH_cm || ''} 
-                            onChange={e => setTargetH_cm(e.target.value === '' ? 0 : Number(e.target.value))} onKeyDown={e => { if (e.key === 'Enter') handleCalcular(); }} 
+                            value={targetH_cm ? cmToU(targetH_cm) : ''} 
+                            onChange={e => setTargetH_cm(e.target.value === '' ? 0 : uToCm(Number(e.target.value)))} onKeyDown={e => { if (e.key === 'Enter') handleCalcular(); }} 
                             className="w-full border-2 border-gray-300 bg-white p-2 font-bold text-base lg:text-lg rounded focus:border-corp-teal outline-none"
                           />
                         </div>
@@ -4615,7 +4684,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       
                       {stats && (
                         <div style={{fontSize: '11px', lineHeight: '1.35', color: '#374151'}}>
-                          = <strong>{stats.widthM} × {stats.heightM} m</strong> · {stats.cols}×{stats.rows} cabinets · <strong>{stats.resW}×{stats.resH} px</strong>{(() => { const ri = getResolutionInfo(stats.resW, stats.resH); return ri ? ' · ' + ri.displayName : ''; })()}
+                          = <strong>{U(stats.widthM)} × {U(stats.heightM)} {unit}</strong> · {stats.cols}×{stats.rows} cabinets · <strong>{stats.resW}×{stats.resH} px</strong>{(() => { const ri = getResolutionInfo(stats.resW, stats.resH); return ri ? ' · ' + ri.displayName : ''; })()}
                         </div>
                       )}
                       <div style={{fontSize: '10px', fontWeight: 700, color: '#6b7280'}}>¿Resolución mínima exigida? (opcional, necesita ancho y alto)</div>
@@ -4641,8 +4710,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       
                       <div className="pt-2 border-t border-gray-300">
                         <div className="flex justify-between text-[10px] lg:text-xs font-bold mb-1.5">
-                          <span className="text-gray-700">Altura desde el suelo (cm)</span>
-                          <span className="text-corp-teal">{floorDist_cm}</span>
+                          <span className="text-gray-700">Altura desde el suelo ({unit})</span>
+                          <span className="text-corp-teal">{cmToU(floorDist_cm)}</span>
                         </div>
                         <input type="range" min="0" max="500" step="10" value={floorDist_cm} onChange={e => setFloorDist_cm(Number(e.target.value))} className="w-full accent-corp-teal"/>
                       </div>
@@ -4764,6 +4833,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
               </aside>
 
               <main className={`flex-1 flex-col min-w-0 overflow-y-auto bg-slate-100 printable-area ${activeTab === 'view' ? 'flex' : 'hidden lg:flex'}`}>
+                  <button onClick={() => setActiveTab('config')} className="lg:hidden no-print" title="Volver al panel de control" style={{position:'fixed',left:'12px',bottom:'12px',zIndex:50,background:'#009688',color:'#fff',fontWeight:700,fontSize:'13px',padding:'10px 14px',borderRadius:'9999px',boxShadow:'0 2px 8px rgba(0,0,0,.35)'}}>⚙ PANEL</button>
                 
                 {/* --- CABECERA PARA IMPRESIÓN PDF - UNA SOLA LÍNEA --- */}
                 <div className="print-header hidden print:flex" style={{display: 'none'}}>
@@ -4772,7 +4842,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     <span className="print-header-title">SCREENCALC</span>
                   </div>
                   <div className="print-header-url">
-                    <a href="https://screencalcx.netlify.app/" style={{fontStyle:'italic',color:'#555',fontSize:'7pt',textDecoration:'none'}}>screencalcx.netlify.app</a>
+                    <a href="https://mediaservi.github.io/SCREENCALC/" style={{fontStyle:'italic',color:'#555',fontSize:'7pt',textDecoration:'none'}}>mediaservi.github.io/SCREENCALC</a>
                   </div>
                   <div className="print-header-date">
                     {new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })} · {new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
@@ -5402,7 +5472,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                                     height: '20px' 
                                 }}>
                                 <div className="dim-line-h" style={{ width: '100%', top: '10px' }}></div>
-                                <span className="absolute bg-tech-gray text-gray-800 font-bold" style={{ top: '-5px', fontSize: isMobile ? 'clamp(12px, 3.2vw, 16px)' : '12px', padding: '0 4px' }}>ANCHO {stats?.widthM || ''} m</span>
+                                <span className="absolute bg-tech-gray text-gray-800 font-bold" style={{ top: '-5px', fontSize: isMobile ? 'clamp(12px, 3.2vw, 16px)' : '12px', padding: '0 4px' }}>ANCHO {U(stats?.widthM)} {unit}</span>
                            </div>
 
                            {/* Cota ALTO (Derecha) - Línea vertical con medida */}
@@ -5428,7 +5498,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                                           textOrientation: 'mixed',
                                           fontSize: isMobile ? 'clamp(12px, 3.2vw, 16px)' : '12px',
                                           padding: '4px 2px'
-                                      }}>ALTO {stats?.heightM || ''} m</span>
+                                      }}>ALTO {U(stats?.heightM)} {unit}</span>
                            </div>
 
                            {/* Líneas punteadas de ELEVACIÓN - Desde suelo hasta base de pantalla */}
@@ -5455,7 +5525,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                                   fontSize: isMobile ? 'clamp(12px, 3.2vw, 16px)' : '12px'
                                 }}>
                                   <div className="font-bold text-gray-700" style={{fontSize: 'inherit'}}>
-                                    {isMobile ? `Elevación ${(floorDist_cm / 100).toFixed(2)}m` : `Elevación desde el suelo ${(floorDist_cm / 100).toFixed(2)}m`}
+                                    {isMobile ? `Elevación ${U(floorDist_cm / 100)}${unit}` : `Elevación desde el suelo ${U(floorDist_cm / 100)}${unit}`}
                                   </div>
                                 </div>
                             )}
@@ -5476,11 +5546,11 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                           fontFamily: 'ui-monospace, monospace',
                           color: '#4b5563'
                         }}>
-                          <span style={{fontWeight: 700}}>Figura ref. 1,75m</span>
+                          <span style={{fontWeight: 700}}>Figura ref. {fmtDist(1.75)}{unit}</span>
                           <span style={{color: '#9ca3af'}}>|</span>
                           <span style={{display: 'inline-flex', alignItems: 'center', gap: '3px'}}>
                             <Icon path={Icons.Eye} size={10} className="text-corp-teal" style={{flexShrink:0}}/>
-                            Distancia visionado {stats?.minView || ''}m (mínima) {stats?.optView || ''}m (óptima)
+                            Distancia visionado {U(stats?.minView)}{unit} (mínima) {U(stats?.optView)}{unit} (óptima)
                           </span>
                         </div>
                       )}
@@ -5520,7 +5590,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     <span style={{color: '#9ca3af'}}>|</span>
                     <span style={{display: 'inline-flex', alignItems: 'center', gap: '3px'}}>
                       <svg width="10" height="10" style={{minWidth: '10px', minHeight: '10px', width: '10px', height: '10px'}} viewBox="0 0 24 24" fill="none" stroke="#009688" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                      {stats?.minView}m (mín) · {stats?.optView}m (ópt)
+                      {U(stats?.minView)}{unit} (mín) · {U(stats?.optView)}{unit} (ópt)
                     </span>
                   </div>
                 )}
@@ -5531,12 +5601,12 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       let text;
                       if (stats?.esCombinacion) {
                         const prefijo = getPrefijoCombinable(selectedModel?.crm) || selectedModel?.crm;
-                        text = `PANTALLA LED ${prefijo} (COMBINADO) de ${stats?.widthM || ''}m(ancho) x ${stats?.heightM || ''}m(alto) ${stats?.diagInches || ''}" [${stats?.cols}x(${stats?.filas100}+${stats?.filas50})=${stats?.totalCab} cabinets: ${stats?.cabinets100}x${stats?.modelo100?.crm} + ${stats?.cabinets50}x${stats?.modelo50?.crm}] (${stats?.resW || ''} x ${stats?.resH || ''} pixels) {${stats?.lines || ''} lineas}`;
+                        text = `PANTALLA LED ${prefijo} (COMBINADO) de ${U(stats?.widthM)}${unit}(ancho) x ${U(stats?.heightM)}${unit}(alto) ${stats?.diagInches || ''}" [${stats?.cols}x(${stats?.filas100}+${stats?.filas50})=${stats?.totalCab} cabinets: ${stats?.cabinets100}x${stats?.modelo100?.crm} + ${stats?.cabinets50}x${stats?.modelo50?.crm}] (${stats?.resW || ''} x ${stats?.resH || ''} pixels) {${stats?.lines || ''} lineas}`;
                       } else if (stats?.holoCombAncho) {
                         const hc = stats.holoCombAncho;
-                        text = `PANTALLA LED HOLO (COMBINADO) de ${stats?.widthM || ''}m(ancho) x ${stats?.heightM || ''}m(alto) ${stats?.diagInches || ''}" [${hc.colsAncho * (stats?.holoRows || 1)}x${hc.modeloAncho.crm} + ${hc.colsEstrecho * (stats?.holoRows || 1)}x${hc.modeloEstrecho.crm} = ${stats?.totalCab} cabinets] (${stats?.resW || ''} x ${stats?.resH || ''} pixels) {${stats?.lines || ''} lineas}`;
+                        text = `PANTALLA LED HOLO (COMBINADO) de ${U(stats?.widthM)}${unit}(ancho) x ${U(stats?.heightM)}${unit}(alto) ${stats?.diagInches || ''}" [${hc.colsAncho * (stats?.holoRows || 1)}x${hc.modeloAncho.crm} + ${hc.colsEstrecho * (stats?.holoRows || 1)}x${hc.modeloEstrecho.crm} = ${stats?.totalCab} cabinets] (${stats?.resW || ''} x ${stats?.resH || ''} pixels) {${stats?.lines || ''} lineas}`;
                       } else {
-                        text = `PANTALLA LED ${selectedModel?.crm || ''}${stats?.giroActivo ? ' (⚠️ instalado a 90°)' : ''} de ${stats?.widthM || ''}m(ancho) x ${stats?.heightM || ''}m(alto) ${stats?.diagInches || ''}" [${stats?.cols || ''}x${stats?.rows || ''}=${stats?.totalCab || ''} cabinets ${selectedModel?.cabAncho || ''}x${selectedModel?.cabAlto || ''}x${selectedModel?.thick || ''}mm ${selectedModel?.nits || ''}nits ${selectedModel?.hz || ''}Hz ${selectedModel?.tech || ''}] (${stats?.resW || ''} x ${stats?.resH || ''} pixels) {${stats?.lines || ''} lineas}`;
+                        text = `PANTALLA LED ${selectedModel?.crm || ''}${stats?.giroActivo ? ' (⚠️ instalado a 90°)' : ''} de ${U(stats?.widthM)}${unit}(ancho) x ${U(stats?.heightM)}${unit}(alto) ${stats?.diagInches || ''}" [${stats?.cols || ''}x${stats?.rows || ''}=${stats?.totalCab || ''} cabinets ${selectedModel?.cabAncho || ''}x${selectedModel?.cabAlto || ''}x${selectedModel?.thick || ''}mm ${selectedModel?.nits || ''}nits ${selectedModel?.hz || ''}Hz ${selectedModel?.tech || ''}] (${stats?.resW || ''} x ${stats?.resH || ''} pixels) {${stats?.lines || ''} lineas}`;
                       }
                       navigator.clipboard.writeText(text).then(() => {
                         const el = event.currentTarget;
@@ -5552,11 +5622,11 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                     title="Toca para copiar"
                   >
                     {stats?.esCombinacion ? (
-                      <h3 className="font-bold text-xs">PANTALLA LED {getPrefijoCombinable(selectedModel?.crm) || selectedModel?.crm} (COMBINADO) de {stats?.widthM || ''}m(ancho) x {stats?.heightM || ''}m(alto) {stats?.diagInches || ''}" [{stats?.cols}x({stats?.filas100}+{stats?.filas50})={stats?.totalCab} cabinets: {stats?.cabinets100}x-100 + {stats?.cabinets50}x-50] ({stats?.resW || ''} x {stats?.resH || ''} pixels) {'{'}{stats?.lines || ''} lineas{'}'}</h3>
+                      <h3 className="font-bold text-xs">PANTALLA LED {getPrefijoCombinable(selectedModel?.crm) || selectedModel?.crm} (COMBINADO) de {U(stats?.widthM)}{unit}(ancho) x {U(stats?.heightM)}{unit}(alto) {stats?.diagInches || ''}" [{stats?.cols}x({stats?.filas100}+{stats?.filas50})={stats?.totalCab} cabinets: {stats?.cabinets100}x-100 + {stats?.cabinets50}x-50] ({stats?.resW || ''} x {stats?.resH || ''} pixels) {'{'}{stats?.lines || ''} lineas{'}'}</h3>
                     ) : stats?.holoCombAncho ? (
-                      <h3 className="font-bold text-xs">PANTALLA LED HOLO (COMBINADO) de {stats?.widthM || ''}m(ancho) x {stats?.heightM || ''}m(alto) {stats?.diagInches || ''}" [{stats.holoCombAncho.colsAncho * (stats?.holoRows || 1)}x{stats.holoCombAncho.modeloAncho.crm} + {stats.holoCombAncho.colsEstrecho * (stats?.holoRows || 1)}x{stats.holoCombAncho.modeloEstrecho.crm} = {stats?.totalCab} cab] ({stats?.resW || ''} x {stats?.resH || ''} pixels) {'{'}{stats?.lines || ''} lineas{'}'}</h3>
+                      <h3 className="font-bold text-xs">PANTALLA LED HOLO (COMBINADO) de {U(stats?.widthM)}{unit}(ancho) x {U(stats?.heightM)}{unit}(alto) {stats?.diagInches || ''}" [{stats.holoCombAncho.colsAncho * (stats?.holoRows || 1)}x{stats.holoCombAncho.modeloAncho.crm} + {stats.holoCombAncho.colsEstrecho * (stats?.holoRows || 1)}x{stats.holoCombAncho.modeloEstrecho.crm} = {stats?.totalCab} cab] ({stats?.resW || ''} x {stats?.resH || ''} pixels) {'{'}{stats?.lines || ''} lineas{'}'}</h3>
                     ) : (
-                      <h3 className="font-bold text-xs">PANTALLA LED {selectedModel?.crm || ''}{stats?.giroActivo ? ' (⚠️ instalado a 90°)' : ''} de {stats?.widthM || ''}m(ancho) x {stats?.heightM || ''}m(alto) {stats?.diagInches || ''}" [{stats?.cols || ''}x{stats?.rows || ''}={stats?.totalCab || ''} cabinets {selectedModel?.cabAncho || ''}x{selectedModel?.cabAlto || ''}x{selectedModel?.thick || ''}mm {selectedModel?.nits || ''}nits {selectedModel?.hz || ''}Hz {selectedModel?.tech || ''}] ({stats?.resW || ''} x {stats?.resH || ''} pixels) {'{'}{stats?.lines || ''} lineas{'}'}</h3>
+                      <h3 className="font-bold text-xs">PANTALLA LED {selectedModel?.crm || ''}{stats?.giroActivo ? ' (⚠️ instalado a 90°)' : ''} de {U(stats?.widthM)}{unit}(ancho) x {U(stats?.heightM)}{unit}(alto) {stats?.diagInches || ''}" [{stats?.cols || ''}x{stats?.rows || ''}={stats?.totalCab || ''} cabinets {selectedModel?.cabAncho || ''}x{selectedModel?.cabAlto || ''}x{selectedModel?.thick || ''}mm {selectedModel?.nits || ''}nits {selectedModel?.hz || ''}Hz {selectedModel?.tech || ''}] ({stats?.resW || ''} x {stats?.resH || ''} pixels) {'{'}{stats?.lines || ''} lineas{'}'}</h3>
                     )}
                   </div>
                   
@@ -5572,7 +5642,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                         )}
                         <span style={{fontWeight: 700}}>{stats?.resW} x {stats?.resH} pixels</span>
                         <span style={{margin: '0 4pt', color: '#999'}}>|</span>
-                        <span>Distancia visionado: {stats?.minView}m (mínima) · {stats?.optView}m (óptima)</span>
+                        <span>Distancia visionado: {U(stats?.minView)}{unit} (mínima) · {U(stats?.optView)}{unit} (óptima)</span>
                       </div>
                     );
                   })()}
@@ -5615,7 +5685,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                   {/* Combinación activa - mostrar info y botón cancelar */}
                   {combinacionActiva && (
                     <div className="bg-green-100 border-2 border-green-500 text-green-800 px-3 py-2 text-center rounded text-xs font-bold">
-                      <div>✓ COMBINACIÓN ACTIVA: {stats?.widthM}m x {stats?.heightM}m {combinacionActiva.encajaExacto ? '(EXACTO)' : ''}</div>
+                      <div>✓ COMBINACIÓN ACTIVA: {U(stats?.widthM)}{unit} x {U(stats?.heightM)}{unit} {combinacionActiva.encajaExacto ? '(EXACTO)' : ''}</div>
                       <div className="mt-1 text-green-700">
                         {stats?.cabinets100 > 0 && <span>{stats.cabinets100}x {stats.modelo100?.crm}</span>}
                         {stats?.cabinets100 > 0 && stats?.cabinets50 > 0 && <span> + </span>}
@@ -5634,7 +5704,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                   {/* HOLO combinación de anchos activa */}
                   {stats?.holoCombAncho && (
                     <div className="bg-green-100 border-2 border-green-500 text-green-800 px-3 py-2 text-center rounded text-xs font-bold">
-                      <div>✓ HOLO COMBINADO: {stats?.widthM}m x {stats?.heightM}m {stats.holoCombAncho.encajaExacto ? '(EXACTO)' : ''}</div>
+                      <div>✓ HOLO COMBINADO: {U(stats?.widthM)}{unit} x {U(stats?.heightM)}{unit} {stats.holoCombAncho.encajaExacto ? '(EXACTO)' : ''}</div>
                       <div className="mt-1 text-green-700">
                         <span>{stats.holoCombAncho.colsAncho * stats.holoRows}x {stats.holoCombAncho.modeloAncho.crm}</span>
                         <span> + </span>
@@ -5702,13 +5772,13 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                         if (isNaN(n)) return '';
                         return Math.round(n).toLocaleString('es-ES');
                       };
-                      const widthC = formatComma(stats?.widthM);
-                      const heightC = formatComma(stats?.heightM);
+                      const widthC = U(stats?.widthM).replace('.', ',');
+                      const heightC = U(stats?.heightM).replace('.', ',');
                       const diagM = Math.sqrt(Math.pow(parseFloat(stats?.widthM || 0), 2) + Math.pow(parseFloat(stats?.heightM || 0), 2));
-                      const diagMC = formatComma(diagM);
+                      const diagMC = U(diagM).replace('.', ',');
                       const weightC = formatComma(stats?.weight);
-                      const minViewC = formatComma(stats?.minView);
-                      const optViewC = formatComma(stats?.optView);
+                      const minViewC = U(stats?.minView).replace('.', ',');
+                      const optViewC = U(stats?.optView).replace('.', ',');
                       const ampsC = formatComma(stats?.amps);
                       const totalPixFmt = formatMiles(stats?.totalPix);
                       const cabPixTotal = (stats?.cabPixAncho || 0) * (stats?.cabPixAlto || 0);
@@ -5719,10 +5789,10 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                         : `${stats?.rows} de alto`;
                       
                       const filas = [
-                        <div>{widthC}m de ancho x {heightC}m de alto y grosor de {selectedModel?.thick || ''}mm</div>,
+                        <div>{widthC}{unit} de ancho x {heightC}{unit} de alto y grosor de {selectedModel?.thick || ''}mm</div>,
                         <div>Resolución Pantalla <strong>{stats?.resW}</strong>Hx<strong>{stats?.resH}</strong>V pixels = <strong>{totalPixFmt} pixels</strong></div>,
-                        <div>Diagonal Pantalla <strong>{diagMC}m</strong> ({stats?.diagInches}") [Formato {stats?.ar}]</div>,
-                        <div>Distancias de visión <strong>{minViewC}m</strong> mínima - <strong>{optViewC}m</strong> óptima</div>,
+                        <div>Diagonal Pantalla <strong>{diagMC}{unit}</strong> ({stats?.diagInches}") [Formato {stats?.ar}]</div>,
+                        <div>Distancias de visión <strong>{minViewC}{unit}</strong> mínima - <strong>{optViewC}{unit}</strong> óptima</div>,
                         <div>Peso Total <strong>{weightC} Kg</strong></div>,
                         <div><strong>{stats?.totalCab} cabinets</strong> [{stats?.cols} de ancho x {cabinetsAltoTxt}]</div>,
                         <div>Resolución Cabinet <strong>{stats?.cabPixAncho}</strong>Hx<strong>{stats?.cabPixAlto}</strong>V pixels = <strong>{cabPixTotalFmt} pixels</strong></div>,
@@ -5849,7 +5919,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                         electronicasSugeridas.map((e) => (
                           <ElecBubble key={e.key} titulo={e.modelo} sub={e.marca + ' · ' + e.serie + ' · ' + (e.escalador ? 'Con escalador' : 'Sin escalador')} badge={e.enStock ? 'STOCK' : ''}
                             lineas={[['Puertos', e.puertos], ['Capacidad', e.capacidad]]}
-                            equipos={e.equipos} url={e.url} />
+                            equipos={e.equipos} url={e.url} front={e.front} back={e.back} logo={e.logo} />
                         ))
                       ) : (
                         <div className="col-span-2 text-center text-gray-400 py-4 text-sm">No hay electrónicas que cumplan los requisitos. Prueba con otro tipo de conexión, con escalador o sin backup.</div>
@@ -6312,13 +6382,13 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none', fontWeight: 800, letterSpacing: '0.04em', color: '#94a3b8', textShadow: '0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(0,0,0,0.28)'}}>VJSHOW</a>
                       <span>(visuales audio-reactivos) que estamos desarrollando.</span>
                     </div>
-                    <a href="https://screencalcx.netlify.app/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.4 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.5 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.4 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.5 {new Date().getFullYear()} es un proyecto hecho con 𑣲 by mediaservi.com
                     </div>
                   </div>
                 </div>
