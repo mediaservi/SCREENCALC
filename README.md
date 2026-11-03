@@ -46,7 +46,7 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 
 - El pie (aviso de APP experimental, VJSHOW y SCREENCALC) queda siempre al final de la página, después del esquema de conexiones.
 - El icono de imagen abre un popup centrado en lugar del panel lateral, con FUENTES MULTIMEDIA DE PRUEBA: la primera (mi vídeo) es fija y viene seleccionada por defecto; las otras 6 se pueden editar.
-- Popup más compacto (lista apilada en filas finas); la primera fuente se llama «mediaservi.com 24/7» y al aplicarla se carga siempre su vídeo. Los vídeos de YouTube se insertan en modo simple (sin bucle ni lista), válido también para directos.
+- Popup más compacto (lista apilada en filas finas); la primera fuente se llama «mediaservi.com 24/7» y al aplicarla se carga siempre su vídeo. La lista muestra solo el título (recortado) de cada fuente, leído de YouTube; el lápiz ✎ permite editar el enlace. Los vídeos de YouTube se insertan en modo simple, y los enlaces con lista (`watch?v=…&list=…`) cargan el vídeo dentro de su lista. La fuente fija es https://www.youtube.com/watch?v=vKN4AcGz7zs&list=PLe5oQrtGOkLA.
 - Vídeo por defecto: https://youtu.be/vKN4AcGz7zs. Se admiten también enlaces /live/, /shorts/ y listas de YouTube.
 
 ## Historial de versiones

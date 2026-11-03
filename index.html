@@ -2588,14 +2588,16 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
       const DEFAULT_SCREEN_BG = "assets/SCCHART.jfif";
       const DEFAULT_SCREEN_BG_PRINT = "assets/SCCHART.jfif";
       // Vídeo por defecto: primera fuente multimedia de prueba (fija): https://youtu.be/vKN4AcGz7zs
-      const VIDEO_MOCK_URL = "https://www.youtube.com/embed/vKN4AcGz7zs?autoplay=1&mute=1&playsinline=1&rel=0";
+      const VIDEO_MOCK_URL = "https://www.youtube.com/embed/vKN4AcGz7zs?list=PLe5oQrtGOkLA&autoplay=1&mute=1&playsinline=1&rel=0";
 
       // Función para convertir URLs de YouTube/Vimeo a formato embed
       const convertToEmbed = (url) => {
         if (!url) return url;
         
         // YouTube - varios formatos
-        const lista = url.match(/youtube\.com\/playlist\?[^\s]*list=([A-Za-z0-9_-]+)/);
+        const lista = url.match(/youtube\.com\/(?:playlist|watch)\?[^\s]*list=([A-Za-z0-9_-]+)/);
+        const vidLista = url.match(/[?&]v=([A-Za-z0-9_-]{11})/);
+        if (lista && vidLista) return `https://www.youtube.com/embed/${vidLista[1]}?list=${lista[1]}&autoplay=1&mute=1&playsinline=1&rel=0`;
         if (lista) return `https://www.youtube.com/embed/videoseries?list=${lista[1]}&autoplay=1&mute=1&loop=1&controls=0`;
         const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|live|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
         const youtubeMatch = url.match(youtubeRegex);
@@ -2685,7 +2687,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         const [activeTab, setActiveTab] = useState('config'); 
         const [customContent, setCustomContent] = useState(null);
         // Popup de contenido de la pantalla y fuentes multimedia de prueba (la primera es fija)
-        const FUENTE_FIJA = 'https://youtu.be/vKN4AcGz7zs';
+        const FUENTE_FIJA = 'https://www.youtube.com/watch?v=vKN4AcGz7zs&list=PLe5oQrtGOkLA';
         const FUENTES_DEF = [
           'https://www.youtube.com/watch?v=ROboUHfPUrU',
           'https://www.youtube.com/live/b4tE5aKhtlg',
@@ -2698,6 +2700,19 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
         const [fuentes, setFuentes] = useState(() => { try { const v = JSON.parse(localStorage.getItem('screencalc_fuentes') || 'null'); if (Array.isArray(v) && v.length === 6) return v; } catch (e) {} return FUENTES_DEF; });
         const [fuenteSel, setFuenteSel] = useState(0);
         const [urlPropia, setUrlPropia] = useState('');
+        const [titulos, setTitulos] = useState({});
+        const [editFuente, setEditFuente] = useState(-1);
+        useEffect(() => {
+          if (!showMedia) return;
+          [FUENTE_FIJA].concat(fuentes).forEach(u => {
+            const url = String(u || '').trim();
+            if (!url || titulos[url] !== undefined) return;
+            fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent(url))
+              .then(res => res.ok ? res.json() : Promise.reject())
+              .then(j => setTitulos(t => ({...t, [url]: j.title || ''})))
+              .catch(() => setTitulos(t => ({...t, [url]: ''})));
+          });
+        }, [showMedia, fuentes]);
         const [customContentType, setCustomContentType] = useState(null); // 'image', 'video', 'url'
         const [containerSize, setContainerSize] = useState({ w: 1000, h: 450 }); 
         const [mediaCycle, setMediaCycle] = useState(0); // 0 = Image, 1 = Video
@@ -6795,9 +6810,14 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                       <label key={i} style={{display: 'flex', alignItems: 'center', gap: '5px', padding: '1px 5px', border: '1px solid ' + (fuenteSel === i ? '#009688' : '#e5e7eb'), borderRadius: '8px', background: fuenteSel === i ? '#f0fdfa' : '#fff'}}>
                         <input type="radio" name="fuente" checked={fuenteSel === i} onChange={() => { setFuenteSel(i); setUrlPropia(''); }} style={{width: '14px', height: '14px', flexShrink: 0, minHeight: 0}} />
                         {i === 0 ? (
-                          <div style={{flex: 1, minWidth: 0, fontSize: '11px', lineHeight: '14px'}}><strong>mediaservi.com 24/7</strong><div style={{color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{u}</div></div>
+                          <div style={{flex: 1, minWidth: 0, fontSize: '11px', lineHeight: '20px', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>mediaservi.com 24/7</div>
+                        ) : editFuente === i ? (
+                          <input type="text" autoFocus value={u} onChange={e => { const a = fuentes.slice(); a[i - 1] = e.target.value; guardar(a); }} onBlur={() => setEditFuente(-1)} onKeyDown={e => { if (e.key === 'Enter') setEditFuente(-1); }} style={{flex: 1, minWidth: 0, fontSize: '11px', border: '1px solid #d1d5db', borderRadius: '5px', padding: '2px 6px', minHeight: 0, height: '22px'}} placeholder="Pega un enlace de YouTube, Vimeo, imagen o vídeo" />
                         ) : (
-                          <input type="text" value={u} onChange={e => { const a = fuentes.slice(); a[i - 1] = e.target.value; guardar(a); }} onFocus={() => { setFuenteSel(i); setUrlPropia(''); }} style={{flex: 1, minWidth: 0, fontSize: '11px', border: '1px solid #d1d5db', borderRadius: '5px', padding: '3px 6px', minHeight: 0, height: '22px'}} placeholder="Pega aquí un enlace de YouTube, Vimeo, imagen o vídeo" />
+                          <div style={{flex: 1, minWidth: 0, fontSize: '11px', lineHeight: '20px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={u}>{titulos[String(u).trim()] || (String(u).trim() ? 'Fuente ' + (i + 1) : 'Vacía · pulsa ✎ para añadir')}</div>
+                        )}
+                        {i > 0 && editFuente !== i && (
+                          <button type="button" onClick={e => { e.preventDefault(); setEditFuente(i); setFuenteSel(i); setUrlPropia(''); }} title="Editar enlace" style={{fontSize: '12px', minHeight: 0, padding: '0 4px', lineHeight: '20px', color: '#6b7280'}}>✎</button>
                         )}
                       </label>
                     ))}
