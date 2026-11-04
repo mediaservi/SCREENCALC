@@ -2,7 +2,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.19**
+**Versión actual: v4.20**
 
 Web pública: https://mediaservi.github.io/SCREENCALC/ · Otra copia: https://screencalcx.netlify.app/
 
@@ -31,7 +31,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 
 ## Datos
 
-La app lee en vivo las pestañas MODELOS, ELECTRONICAS y HIERROS de una hoja de Google Sheets publicada como CSV, y guarda una caché local en el navegador. No usa datos de muestra salvo como último recurso sin conexión. El catálogo de electrónica y mediaservers está en el propio `index.html` (constantes `ELEC_DEVICES` y `ELEC_MEDIASERVERS`).
+La app obtiene el catálogo en vivo y lo guarda cifrado en el dispositivo; no se expone como tabla ni se puede exportar. No usa datos de muestra salvo como último recurso sin conexión. El catálogo de electrónica y mediaservers está en el propio `index.html` (constantes `ELEC_DEVICES` y `ELEC_MEDIASERVERS`).
 
 ## Tecnología y despliegue
 
@@ -42,15 +42,40 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 - `main`: versión oficial y pública, aprobada.
 - Dos ramas de versión más recientes (`v4.x`) para pruebas. Las anteriores se eliminan.
 
-## Cambios de la versión actual (v4.19)
+## Paleta corporativa
 
-- Columna derecha del panel de entrada en tres bloques con icono: 📐 Tamaño pantalla (unidades, columnas/filas, ancho/alto y altura), 🔌 Cosido de cable (AUTO / VERTICAL / HORIZ., movido desde el bloque del cabinet) y 📺 Resolución (resolución mínima y CALCULAR / RESET).
-- Los botones de unidad m / cm / mm van sobre un fondo de regla.
+La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, grises y los colores que no son verde):
+
+![Paleta corporativa](assets/paleta.svg)
+
+| Nombre | Código | Uso |
+|---|---|---|
+| VERDE CLARO | `#73ac44` | acentos secundarios y estado «óptimo» |
+| VERDE MEDIO | `#00a792` | botones y elementos activos |
+| VERDE OSCURO | `#0f584c` | cabeceras de sección y fondos principales |
+| VERDE FLUO | `#ccff00` | resaltes y parpadeos de campos por rellenar |
+
+## Cambios de la versión actual (v4.20)
+
+- **Elevación desde el suelo:** el slider del panel lateral se sustituye por botones ▼ / ▲ (10 cm) junto al texto «Elevación desde el suelo» en la simulación; evita cambios accidentales con el dedo en móvil.
+- **Catálogo protegido:** solo se usa el catálogo de modelos; se guarda cifrado en el dispositivo y no se muestra ni exporta.
+
+- **Iconos nuevos** en cabecera (info, descarga, idioma), secciones (tipo de pantalla, pitch, nits, cabinet, tamaño, cosido, resolución), micro y audio, contenido, tarjetas de características y pie. Icono de la app en `assets/` (favicon, icono de instalación).
+- **Cabecera** más baja y con tres botones: información, descarga y idioma.
+- **Descarga para uso sin conexión:** botón con popup (DESCARGAR APP / CANCELAR). Guarda la app, sus recursos y una copia cifrada del catálogo; funciona sin internet y se actualiza sola al volver a tener conexión. Instalable como aplicación (`manifest.json` y `sw.js`).
+- **Idiomas:** popup con banderas (castellano por defecto, inglés, català, galego, euskera y portugués) con la selección guardada. La traducción de los textos de la app queda pendiente.
+- **Paleta de 4 verdes** en toda la app y cabeceras de sección unificadas en VERDE OSCURO; los parpadeos usan VERDE FLUO.
+- **Petición del cliente:** se elimina el texto de ayuda; en pantalla grande, bocadillos al pasar el ratón sobre el micro («Díctame lo que necesitas») y el audio («Envíame archivo de audio»).
+- **Solo una resolución** («pantalla 4K de interior»): calcula la pantalla más pequeña que la alcanza, sin pedir medidas.
+- **Prioridad de modelos:** 1.º en stock; INSTALL/INDOOR SMD UfixAvant (o LED protegido: HOB UfixAvant / COB UfixCOB, con pregunta si es espacio público); ESCAPARATE Slimfix; OUTDOOR Jfix (JFIXII y después JFIX-K).
+- **Simulación:** vídeos sin subtítulos, cotas más ceñidas, botón SIMULAR CONTENIDO bajo el resumen y menos fondo gris.
+- **Características de la pantalla:** el resumen pasa a la cabecera, tarjetas en rejilla 2×3 con iconos nuevos y gráfico de distancia a escala (pantalla, figura de 1,75 m y cuatro pitch con semáforo; el pitch elegido, destacado).
 - Licencia GPL-3.0 sin cambios.
 
 ## Historial de versiones
 
-- **v4.18:** corrección de filtros INDOOR / OUTDOOR / GOLD en el filtro de resolución, auditoría de la hoja MODELOS y aviso de modelos sin consumo.
+- **v4.19:** columna derecha del panel en bloques (Tamaño, Cosido, Resolución) con iconos y regla en las unidades.
+- **v4.18:** corrección de filtros INDOOR / OUTDOOR / GOLD en el filtro de resolución, auditoría del catálogo y aviso de modelos sin consumo.
 - **v4.17:** panel profesional, dictado y audio a texto, botones 3D, líneas por columnas/filas completas con botones de cosido, una medida + formato, «solo sending» y silueta SVG.
 - **v4.16:** figura humana más realista, campos que parpadean al pedir datos y menú lateral compacto.
 - **v4.15:** enlaces a la ficha de Charmex en el listado de material.

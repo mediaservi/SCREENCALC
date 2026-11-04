@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="150" viewBox="0 0 760 150" font-family="Arial, Helvetica, sans-serif">
+  <rect width="760" height="150" fill="#ffffff"/>
+  <g>
+    <rect x="10" y="10" width="170" height="90" rx="8" fill="#73ac44"/>
+    <rect x="200" y="10" width="170" height="90" rx="8" fill="#00a792"/>
+    <rect x="390" y="10" width="170" height="90" rx="8" fill="#0f584c"/>
+    <rect x="580" y="10" width="170" height="90" rx="8" fill="#ccff00" stroke="#0f584c" stroke-width="1"/>
+  </g>
+  <g font-size="13" font-weight="700" fill="#111827" text-anchor="middle">
+    <text x="95" y="122">VERDE CLARO</text><text x="285" y="122">VERDE MEDIO</text>
+    <text x="475" y="122">VERDE OSCURO</text><text x="665" y="122">VERDE FLUO</text>
+  </g>
+  <g font-size="12" fill="#4b5563" text-anchor="middle" font-family="Consolas, monospace">
+    <text x="95" y="140">#73ac44</text><text x="285" y="140">#00a792</text>
+    <text x="475" y="140">#0f584c</text><text x="665" y="140">#ccff00</text>
+  </g>
+</svg>
