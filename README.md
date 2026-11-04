@@ -1,8 +1,10 @@
+<p align="center"><img src="assets/logo-verde.svg" alt="SCREENCALC" height="56"></p>
+
 # SCREENCALC
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.22**
+**Versión actual: v4.23**
 
 Web pública: https://mediaservi.github.io/SCREENCALC/ · Otra copia: https://screencalcx.netlify.app/
 
@@ -55,7 +57,11 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 | VERDE OSCURO | `#0f584c` | cabeceras de sección y fondos principales |
 | VERDE FLUO | `#ccff00` | resaltes y parpadeos de campos por rellenar |
 
-## Cambios de la versión actual (v4.22)
+## Cambios de la versión actual (v4.23)
+
+- **Nueva identidad:** logotipo en SVG (`assets/logo.svg`, versión blanca para la cabecera y `assets/logo-verde.svg` para el PDF) e isotipo como favicon e icono de la app (`assets/favicon.svg` y PNG de instalación). Se eliminan el logo y el título anteriores.
+
+## Cambios de la v4.22
 
 - **Idiomas nativos:** toda la interfaz (menús, preguntas del asistente, resultados, esquema de conexiones, avisos y PDF) se muestra en castellano, inglés, català, galego, euskara y português según el idioma elegido, que se recuerda.
 - **Petición en cualquier idioma:** el texto escrito o dictado se entiende en los seis idiomas (tipo de pantalla, medidas, pitch, alquiler/instalación, electrónica, mediaserver, etc.); el micrófono y la transcripción de audio usan el idioma elegido.
