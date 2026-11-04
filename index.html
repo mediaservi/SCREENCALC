@@ -2,10 +2,11 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.23                             ║
+║                          Versión actual: v4.24                             ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.23 (manual)
+ÚLTIMA ACTUALIZACIÓN: v4.24 (manual)
+- v4.24: logo más grande en el PDF; logotipo en verde lima en la cabecera; micrófono y audio junto al botón PROPONER PANTALLA (sin solapar el texto)
 - v4.23: nuevo logotipo (SVG) en cabecera y PDF, nuevo isotipo como favicon e icono de la app; se eliminan el logo y el título anteriores
 - v4.22: IDIOMAS: toda la interfaz (menús, preguntas, resultados, esquema y PDF) traducida a castellano, inglés, català, galego, euskara y português; la petición se puede escribir o dictar en cada idioma (micrófono y transcripción de audio en el idioma elegido)
 - v4.21: «Figura ref.» sobre la línea de suelo junto al monigote; distancia de visionado en 3 líneas bajo SIMULAR CONTENIDO; fila de cabinet con giro 90° + icono stock (verde) / bajo pedido (naranja) + brochure; popup de descarga sin texto sobrante
@@ -301,8 +302,8 @@ ANTERIOR: v4.1
         }
         
         .print-header-logo {
-          max-width: 60px !important;
-          max-height: 20px !important;
+          max-width: none !important;
+          max-height: none !important;
         }
         
         html, body {
@@ -568,7 +569,7 @@ ANTERIOR: v4.1
         }
         
         .print-header-logo {
-          height: 20pt !important;
+          height: 30pt !important;
           width: auto !important;
           display: inline !important;
           vertical-align: middle !important;
@@ -1267,8 +1268,9 @@ ANTERIOR: v4.1
       .nl-textarea { border-color: #00a792 !important; box-shadow: inset 0 1px 3px rgba(0,0,0,.08); }
       .nl-textarea:focus { border-color: #00a792 !important; box-shadow: inset 0 1px 3px rgba(0,0,0,.08), 0 0 0 3px rgba(0,150,136,.2); }
       .controls-sidebar .nl-main textarea { height: 96px; }
-      .nl-tools { position: absolute; right: 6px; bottom: 6px; display: flex; flex-direction: column; gap: 6px; }
-      .nl-tool { width: 34px !important; height: 34px !important; min-height: 0 !important; padding: 0 !important; font-size: 16px !important; display: flex; align-items: center; justify-content: center; }
+      .nl-actions { display: flex; align-items: center; gap: 6px; }
+      .nl-tools { display: flex; flex-direction: row; gap: 6px; flex: none; }
+      .nl-tool { width: 36px !important; height: 36px !important; min-height: 0 !important; padding: 0 !important; font-size: 16px !important; display: flex; align-items: center; justify-content: center; }
       .nl-hint { font-size: 11px; line-height: 1.35; color: #37505a; }
       .nl-estado { font-size: 12px; line-height: 1.3; font-weight: 700; color: #b45309; background: #fffbeb; border: 1px solid #fcd34d; border-radius: 6px; padding: 4px 8px; }
       @keyframes micPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,.55); } 50% { box-shadow: 0 0 0 7px rgba(239,68,68,0); } }
@@ -1278,7 +1280,7 @@ ANTERIOR: v4.1
         .nl-hint { font-size: 10px; line-height: 1.2; }
         .controls-sidebar > div > div { gap: 4px; }
         .controls-sidebar .sec-title { padding-bottom: 3px; }
-        .nl-tool { width: 28px !important; height: 28px !important; }
+        .nl-tool { width: 32px !important; height: 32px !important; }
       }
       @media (min-width: 1280px) {
         /* La columna derecha (tamaño) ocupa todo el alto: sin huecos entre columnas */
@@ -5143,7 +5145,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                  <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" style={{display:'contents'}}>
                    <img src={APP_LOGO} className="app-logo cursor-pointer" alt="SCREENCALC" />
                  </a>
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.23</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.24</div>
                </div>
                
                <div className="flex items-center gap-2">
@@ -5206,9 +5208,14 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); procesarSolicitud(); } }}
                           rows={5}
                           placeholder="Escribe, dicta o sube un audio con la petición…"
-                          style={{display: 'block', width: '100%', boxSizing: 'border-box', paddingRight: '46px', fontSize: '14px', lineHeight: '1.35', resize: 'none'}}
+                          style={{display: 'block', width: '100%', boxSizing: 'border-box', fontSize: '14px', lineHeight: '1.35', resize: 'none'}}
                           className="nl-textarea border-2 bg-white p-2 rounded outline-none"
                         />
+                      </div>
+                      {nlEstado && <div className="nl-estado">{nlEstado}</div>}
+                      <div className="nl-actions">
+                      <button onClick={procesarSolicitud} disabled={!nlText.trim()} style={{flex: 1, minWidth: 0, height: '36px', fontSize: '13px', lineHeight: '1'}}
+                        className={`font-bold rounded transition ${nlText.trim() ? 'bg-corp-teal text-white hover:bg-opacity-90' : 'bg-gray-200 text-gray-400'}`}>PROPONER PANTALLA</button>
                         <div className="nl-tools">
                           <div className="nl-wrap"><span className="bocadillo"><Ic n="oido" /> Díctame lo que necesitas</span>
                           <button type="button" onClick={alternarMic} title="Dictar la petición con el micrófono" aria-label="Dictar con el micrófono" className={(escuchando ? 'bg-red-500 text-white mic-activo' : 'bg-white text-gray-700') + ' nl-tool rounded-full border border-gray-300'}><Ic n="mic" /></button></div>
@@ -5217,9 +5224,6 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                           <input ref={audioInputRef} type="file" accept="audio/*,.opus,.ogg,.m4a,.mp3,.wav,.webm" style={{display: 'none'}} onChange={e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; transcribirAudio(f); }} />
                         </div>
                       </div>
-                      {nlEstado && <div className="nl-estado">{nlEstado}</div>}
-                      <button onClick={procesarSolicitud} disabled={!nlText.trim()} style={{width: '100%', height: '36px', fontSize: '13px', lineHeight: '1'}}
-                        className={`font-bold rounded transition ${nlText.trim() ? 'bg-corp-teal text-white hover:bg-opacity-90' : 'bg-gray-200 text-gray-400'}`}>PROPONER PANTALLA</button>
                     </div>
 
                     {/* FILTROS PREVIOS (entrada manual) / RESUMEN (petición en texto) */}
@@ -7374,13 +7378,13 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none', fontWeight: 800, letterSpacing: '0.04em', color: '#94a3b8', textShadow: '0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(0,0,0,0.28)'}}>VJSHOW</a>
                       <span>(visuales audio-reactivos) que estamos desarrollando.</span>
                     </div>
-                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.23 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://mediaservi.github.io/SCREENCALC/" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.24 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.23 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.24 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
                     </div>
                   </div>
               </main>

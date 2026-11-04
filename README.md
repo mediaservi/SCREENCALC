@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.23**
+**Versión actual: v4.24**
 
 Web pública: https://mediaservi.github.io/SCREENCALC/ · Otra copia: https://screencalcx.netlify.app/
 
@@ -57,7 +57,13 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 | VERDE OSCURO | `#0f584c` | cabeceras de sección y fondos principales |
 | VERDE FLUO | `#ccff00` | resaltes y parpadeos de campos por rellenar |
 
-## Cambios de la versión actual (v4.23)
+## Cambios de la versión actual (v4.24)
+
+- **PDF:** logotipo más grande y legible en la cabecera.
+- **Cabecera:** logotipo en verde lima corporativo (`#ccff00`) sobre el verde oscuro.
+- **Petición del cliente:** los botones de micrófono y audio pasan junto al botón PROPONER PANTALLA (más corto) y ya no tapan el texto.
+
+## Cambios de la v4.23
 
 - **Nueva identidad:** logotipo en SVG (`assets/logo.svg`, versión blanca para la cabecera y `assets/logo-verde.svg` para el PDF) e isotipo como favicon e icono de la app (`assets/favicon.svg` y PNG de instalación). Se eliminan el logo y el título anteriores.
 
