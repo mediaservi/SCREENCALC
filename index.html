@@ -5147,12 +5147,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                  </a>
                  <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.24</div>
                </div>
-<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontFamily: 'sans-serif', fontSize: '13px' }}>
-  <span style={{ color: '#ffffff', marginRight: '5px' }}>📦 TOP GADGETS </span>
-  <a href="https://link.amazon/B06XHoFBl" target="_blank" rel="noopener noreferrer" style={{ color: '#28a745', fontWeight: 'bold', textDecoration: 'none' }}>
-    100% Recomendables ↗
-  </a>
-</div>
+               
                <div className="flex items-center gap-2">
                  <button onClick={() => window.open('https://github.com/mediaservi/SCREENCALC/blob/main/README.md', '_blank', 'noopener')} className="hdr-btn" title="Información (README)" aria-label="Información: abrir el README"><Ic n="info" /></button>
                  <button onClick={() => { setDescEstado(''); setShowDescarga(true); }} className="hdr-btn" title="Descargar la app para usarla sin conexión" aria-label="Descargar la app"><Ic n="download" /></button>
@@ -5654,6 +5649,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                 )}
               </aside>
+
               <main className={`flex-1 flex-col min-w-0 overflow-y-auto bg-slate-100 printable-area ${activeTab === 'view' ? 'flex' : 'hidden lg:flex'}`}>
                   <button onClick={() => setActiveTab('config')} className="lg:hidden no-print" title="Volver al panel de control" style={{position:'fixed',left:'12px',bottom:'12px',zIndex:50,background:'#00a792',color:'#fff',fontWeight:700,fontSize:'13px',padding:'10px 14px',borderRadius:'9999px',boxShadow:'0 2px 8px rgba(0,0,0,.35)'}}>⚙ PANEL</button>
                 
@@ -5770,6 +5766,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                         </div>
                       )}
                       </div>
+                      
                       {/* LÍNEA DE SUELO (Cota Cero) - CORREGIDA Y ESTABLE */}
                       <div className="absolute left-0 right-0 border-b-4 border-gray-600 z-10" style={{ bottom: COTA_CERO_BASE_Y }}></div>
                       
