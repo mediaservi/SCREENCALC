@@ -2,7 +2,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.21**
+**Versión actual: v4.22**
 
 Web pública: https://mediaservi.github.io/SCREENCALC/ · Otra copia: https://screencalcx.netlify.app/
 
@@ -55,7 +55,13 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 | VERDE OSCURO | `#0f584c` | cabeceras de sección y fondos principales |
 | VERDE FLUO | `#ccff00` | resaltes y parpadeos de campos por rellenar |
 
-## Cambios de la versión actual (v4.21)
+## Cambios de la versión actual (v4.22)
+
+- **Idiomas nativos:** toda la interfaz (menús, preguntas del asistente, resultados, esquema de conexiones, avisos y PDF) se muestra en castellano, inglés, català, galego, euskara y português según el idioma elegido, que se recuerda.
+- **Petición en cualquier idioma:** el texto escrito o dictado se entiende en los seis idiomas (tipo de pantalla, medidas, pitch, alquiler/instalación, electrónica, mediaserver, etc.); el micrófono y la transcripción de audio usan el idioma elegido.
+- Nota: las descripciones técnicas que vienen del catálogo (notas de producto) se traducen en las frases habituales; textos nuevos del catálogo pueden aparecer en castellano.
+
+## Cambios de la v4.21
 
 - **«Figura ref. 175 cm»** sobre la línea de suelo, pegada a la izquierda del monigote.
 - **Distancia de visionado** en 3 líneas (título, mínima, óptima) bajo SIMULAR CONTENIDO.
@@ -70,7 +76,7 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - **Iconos nuevos** en cabecera (info, descarga, idioma), secciones (tipo de pantalla, pitch, nits, cabinet, tamaño, cosido, resolución), micro y audio, contenido, tarjetas de características y pie. Icono de la app en `assets/` (favicon, icono de instalación).
 - **Cabecera** más baja y con tres botones: información, descarga y idioma.
 - **Descarga para uso sin conexión:** botón con popup (DESCARGAR APP / CANCELAR). Guarda la app, sus recursos y una copia cifrada del catálogo; funciona sin internet y se actualiza sola al volver a tener conexión. Instalable como aplicación (`manifest.json` y `sw.js`).
-- **Idiomas:** popup con banderas (castellano por defecto, inglés, català, galego, euskera y portugués) con la selección guardada. La traducción de los textos de la app queda pendiente.
+- **Idiomas:** popup con banderas (castellano por defecto, inglés, català, galego, euskera y portugués) con la selección guardada. 
 - **Paleta de 4 verdes** en toda la app y cabeceras de sección unificadas en VERDE OSCURO; los parpadeos usan VERDE FLUO.
 - **Petición del cliente:** se elimina el texto de ayuda; en pantalla grande, bocadillos al pasar el ratón sobre el micro («Díctame lo que necesitas») y el audio («Envíame archivo de audio»).
 - **Solo una resolución** («pantalla 4K de interior»): calcula la pantalla más pequeña que la alcanza, sin pedir medidas.
