@@ -2,7 +2,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.20**
+**Versión actual: v4.21**
 
 Web pública: https://mediaservi.github.io/SCREENCALC/ · Otra copia: https://screencalcx.netlify.app/
 
@@ -55,7 +55,14 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 | VERDE OSCURO | `#0f584c` | cabeceras de sección y fondos principales |
 | VERDE FLUO | `#ccff00` | resaltes y parpadeos de campos por rellenar |
 
-## Cambios de la versión actual (v4.20)
+## Cambios de la versión actual (v4.21)
+
+- **«Figura ref. 175 cm»** sobre la línea de suelo, pegada a la izquierda del monigote.
+- **Distancia de visionado** en 3 líneas (título, mínima, óptima) bajo SIMULAR CONTENIDO.
+- **Tarjeta de cabinet más compacta:** en una sola fila, giro 90°, icono de stock (verde) o bajo pedido (naranja) y brochure.
+- **Popup de descarga:** texto simplificado.
+
+## Cambios de la v4.20
 
 - **Elevación desde el suelo:** el slider del panel lateral se sustituye por botones ▼ / ▲ (10 cm) junto al texto «Elevación desde el suelo» en la simulación; evita cambios accidentales con el dedo en móvil.
 - **Catálogo protegido:** solo se usa el catálogo de modelos; se guarda cifrado en el dispositivo y no se muestra ni exporta.

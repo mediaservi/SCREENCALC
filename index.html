@@ -2,10 +2,11 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.20                             ║
+║                          Versión actual: v4.21                             ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.20 (manual)
+ÚLTIMA ACTUALIZACIÓN: v4.21 (manual)
+- v4.21: «Figura ref.» sobre la línea de suelo junto al monigote; distancia de visionado en 3 líneas bajo SIMULAR CONTENIDO; fila de cabinet con giro 90° + icono stock (verde) / bajo pedido (naranja) + brochure; popup de descarga sin texto sobrante
 - Iconos nuevos (cabecera, secciones, micro/audio, contenido, tarjetas, pie) e icono de la app en assets
 - Cabecera más baja; botones de información, descarga (uso sin conexión: manifest.json + sw.js) e idioma (popup con banderas)
 - Paleta de 4 verdes (#73ac44, #00a792, #0f584c, #ccff00); cabeceras de sección en VERDE OSCURO; parpadeos en VERDE FLUO
@@ -1310,6 +1311,9 @@ ANTERIOR: v4.1
         .regla { padding: 8px 8px 4px; }
       }
 
+      .ic-stock{--m:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgaGVpZ2h0PSIyNHB4IiB3aWR0aD0iMjRweCIgZmlsbD0iIzAwMDAwMCI+PHBhdGggZD0iTTE1LjUsMTkuOTNsLTQuMjUtNC4yNWwxLjQtMS40bDIuODUsMi44NWw1LjY1LTUuNjVsMS40LDEuNEwxNS41LDE5LjkzWk0yMSwxMEgxOVY1SDE3VjhIN1Y1SDVWMTloNnYySDVxLTAuODMsMC0xLjQxLTAuNTlUMywxOVY1UTMsNC4xNyAzLjU5LDMuNTlUNSwzSDkuMThxMC4yOC0wLjg4IDEuMDctMS40NFQxMiwxcTEsMCAxLjc5LDAuNTZUMTQuODUsM0gxOXEwLjgzLDAgMS40MSwwLjU5VDIxLDV2NVpNMTIuNzEsNC43MVExMyw0LjQyIDEzLDRxMC0wLjQzLTAuMjktMC43MVQxMiwzVDExLjI5LDMuMjlUMTEsNHEwLDAuNDIgMC4yOSwwLjcxVDEyLDV0MC43MS0wLjI5WiIvPjwvc3ZnPg==)}
+      .ic-order{--m:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgaGVpZ2h0PSIyNHB4IiB3aWR0aD0iMjRweCIgZmlsbD0iIzAwMDAwMCI+PHBhdGggZD0iTTQsMThxMC0wLjI1IDAtMC40OVQ0LDE3cTAtMi45MyAwLTQuOTZUNCwxMHQwLDAuMDl0MCwwLjI0VjZWMThaTTQsOEgyMFY2SDRWOFptNy42OCwxMkg0cS0wLjgyLDAtMS40MS0wLjU5VDIsMThWNlEyLDUuMTggMi41OSw0LjU5VDQsNEgyMHEwLjgzLDAgMS40MSwwLjU5UTIyLDUuMTggMjIsNnY1LjI1cS0wLjktMC42My0xLjk1LTAuOTRUMTcuOSwxMHEtMS4zNSwwLTIuNiwwLjUyVDEzLjEsMTJINHY2aDcuMDhxMC4wNywwLjUyIDAuMjIsMS4wMlQxMS42OCwyMFptOC0wLjYzbDAuNy0wLjdMMTguNSwxNi44VjE0aC0xdjMuMmwyLjE4LDIuMThaTTE4LjAzLDIycS0yLjEsMC0zLjU2LTEuNDVUMTMsMTd0MS40Ni0zLjU1VDE4LjAzLDEycTIuMDcsMCAzLjUyLDEuNDZRMjMsMTQuOTMgMjMsMTd0LTEuNDUsMy41NFQxOC4wMywyMloiLz48L3N2Zz4=)}
+      .ic-brochure{--m:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgaGVpZ2h0PSIyNHB4IiB3aWR0aD0iMjRweCIgZmlsbD0iIzAwMDAwMCI+PHBhdGggZD0iTTcsMjJxLTAuODIsMC0xLjQxLTAuNTlUNSwyMFY0UTUsMy4xNyA1LjU5LDIuNTlUNywyaDYuMThxMC40LDAgMC43NiwwLjE1dDAuNjQsMC40M2wzLjg1LDMuODVRMTguNyw2LjcgMTguODUsNy4wNlQxOSw3LjgyVjIwcTAsMC44Mi0wLjU5LDEuNDFUMTcsMjJIN1pNMTEsNEg3VjIwSDE3VjEwSDE0cS0xLjI1LDAtMi4xMy0wLjg4VDExLDdWNFptMiwwVjdxMCwwLjQzIDAuMjksMC43MVQxNCw4aDNWNy44MkwxMy4xOCw0SDEzWk0xMCwxOXEtMC40MiwwLTAuNzEtMC4yOVE5LDE4LjQzIDksMTh0MC4yOS0wLjcxUTkuNTgsMTcgMTAsMTdoMnEwLjQzLDAgMC43MSwwLjI5VDEzLDE4dC0wLjI5LDAuNzFUMTIsMTlIMTBabTAtNHEtMC40MiwwLTAuNzEtMC4yOVQ5LDE0dDAuMjktMC43MVE5LjU4LDEzIDEwLDEzaDRxMC40MywwIDAuNzEsMC4yOVQxNSwxNHQtMC4yOSwwLjcxVDE0LDE1SDEwWiIvPjwvc3ZnPg==)}
       /* ===== v4.20 · Iconos (máscaras coloreables), cabecera compacta, bocadillos, popups ===== */
       .ic { -webkit-print-color-adjust: exact; print-color-adjust: exact; display: inline-block; width: 1.2em; height: 1.2em; flex: none; vertical-align: -0.22em; background-color: currentColor;
             -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; }
@@ -4993,7 +4997,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                  </a>
                  <div>
                    <h1 className="text-white font-days text-xl tracking-wider title-halo">SCREENCALC</h1>
-                   <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none">v4.20</div>
+                   <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none">v4.21</div>
                  </div>
                </div>
                
@@ -5021,7 +5025,7 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                 <div className="popup-caja" onClick={e => e.stopPropagation()}>
                   <h2><Ic n="download" /> Descargar la app</h2>
                   <div style={{fontSize: '13px', lineHeight: 1.45, color: '#374151'}} className="space-y-2">
-                    <p>Descarga SCREENCALC en este dispositivo para usarla <strong>sin conexión</strong>. Se guardan la aplicación y los datos necesarios para calcular, protegidos en el dispositivo.</p>
+                    <p>Descarga SCREENCALC en este dispositivo para usarla <strong>sin conexión</strong>. Se guardan la aplicación y los datos necesarios para calcular.</p>
                     <p>Hazlo con conexión (wifi o datos móviles). Al volver a abrir la app con internet, los datos se actualizan solos.</p>
                     <p style={{fontSize: '12px', color: '#6b7280'}}>iPhone / iPad: en Safari, botón Compartir → «Añadir a pantalla de inicio». Chrome / Edge: se ofrecerá instalarla como aplicación.</p>
                     {localStorage.getItem('screencalc_descarga') && <p style={{fontSize: '12px', color: '#0f584c'}}>Última descarga: {new Date(localStorage.getItem('screencalc_descarga')).toLocaleString()}</p>}
@@ -5268,24 +5272,34 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                             <div className="flex-1 bg-gray-100 p-2 rounded text-[10px] lg:text-xs text-gray-700 leading-relaxed text-justify">
                               {selectedModel.cabAncho}x{selectedModel.cabAlto}x{selectedModel.thick}mm · {pitch}pitch · {selectedModel.nits}nits · {selectedModel.tech} · {selectedModel.hz}Hz · {selectedModel.cabPixAncho}x{selectedModel.cabPixAlto}pixels · mantenimiento {selectedModel.mant}
                             </div>
-                            {/* Switch de giro 90° - compacto, solo si el cabinet lo permite */}
-                            {selectedModel.girok && String(selectedModel.girok).toLowerCase().trim() === 'girok' && (
-                              <div className="flex items-center justify-between px-2 py-1 bg-white border border-gray-300 rounded">
-                                <span className="text-[10px] font-bold text-gray-600">Instalado a 90°</span>
-                                <button
-                                  onClick={() => setGiro90(!giro90)}
-                                  className={`toggle-switch-btn relative w-9 h-5 rounded-full transition-colors duration-200 ${giro90 ? 'bg-[#00a792]' : 'bg-gray-300'}`}
-                                >
-                                  <span className={`toggle-switch-thumb absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${giro90 ? 'translate-x-4' : 'translate-x-0'}`}></span>
-                                </button>
-                              </div>
-                            )}
+                            <div className="flex items-center gap-1.5">
+                              {selectedModel.girok && String(selectedModel.girok).toLowerCase().trim() === 'girok' ? (
+                                <div className="flex-1 flex items-center justify-between gap-1 px-1.5 py-1 bg-white border border-gray-300 rounded min-w-0 overflow-hidden">
+                                  <span className="text-[9px] font-bold text-gray-600 truncate" style={{minWidth:0}}>Instalado a 90°</span>
+                                  <button
+                                    onClick={() => setGiro90(!giro90)}
+                                    className={`toggle-switch-btn relative w-9 h-5 rounded-full transition-colors duration-200 flex-shrink-0 ${giro90 ? 'bg-[#00a792]' : 'bg-gray-300'}`}
+                                  >
+                                    <span className={`toggle-switch-thumb absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${giro90 ? 'translate-x-4' : 'translate-x-0'}`}></span>
+                                  </button>
+                                </div>
+                              ) : <div className="flex-1"/>}
+                              {selectedModel && (
+                                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white flex-shrink-0" style={{ background: ((selectedModel?.disp || selectedModel?.stock) === 'STOCK' || (selectedModel?.disp || selectedModel?.stock) === 'SI') ? '#73ac44' : '#f97316' }} title={((selectedModel?.disp || selectedModel?.stock) === 'STOCK' || (selectedModel?.disp || selectedModel?.stock) === 'SI') ? 'Stock disponible' : 'Bajo pedido'}>
+                                  <Ic n={((selectedModel?.disp || selectedModel?.stock) === 'STOCK' || (selectedModel?.disp || selectedModel?.stock) === 'SI') ? 'stock' : 'order'} size="18px" />
+                                </div>
+                              )}
+                              {selectedModel?.brochure && (
+                                <a href={selectedModel.brochure} target="_blank" rel="noopener noreferrer"
+                                  className="w-7 h-7 bg-red-500 rounded-lg flex items-center justify-center text-white hover:bg-red-600 transition flex-shrink-0" title="Ver brochure PDF">
+                                  <Ic n="brochure" size="18px" />
+                                </a>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        {/* T-SKIN textura + Iconos stock/brochure */}
-                        <div className="flex items-center justify-between gap-1.5 mt-1">
-                          {/* T-SKIN: Selector de textura - izquierda */}
-                          {selectedModel?.family && selectedModel.family.toLowerCase().replace(/[^a-z0-9]/g, '').includes('tskin') ? (
+                        {selectedModel?.family && selectedModel.family.toLowerCase().replace(/[^a-z0-9]/g, '').includes('tskin') && (
+                          <div className="flex items-center mt-1">
                             <select
                               value={skinTexture}
                               onChange={(e) => setSkinTexture(e.target.value)}
@@ -5297,37 +5311,8 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                               <option value="METAL">⚙️ Metal</option>
                               <option value="ESMERALDA">💎 Esmeralda</option>
                             </select>
-                          ) : <div/>}
-                          {/* Iconos stock + brochure - derecha */}
-                          <div className="flex items-center gap-1.5">
-                          {selectedModel && ((selectedModel.disp || selectedModel.stock) === 'STOCK' || (selectedModel.disp || selectedModel.stock) === 'SI') ? (
-                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center" title="Stock disponible">
-                              <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3" style={{minWidth:'14px',minHeight:'14px'}}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
-                              </svg>
-                            </div>
-                          ) : selectedModel ? (
-                            <div className="w-6 h-6 bg-yellow-400 rounded-lg flex items-center justify-center" title="Bajo pedido">
-                              <svg className="w-3.5 h-3.5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" style={{minWidth:'14px',minHeight:'14px'}}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                              </svg>
-                            </div>
-                          ) : null}
-                          {selectedModel?.brochure && (
-                            <a 
-                              href={selectedModel.brochure} 
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="w-6 h-6 bg-red-500 rounded-lg flex items-center justify-center hover:bg-red-600 transition"
-                              title="Ver brochure PDF"
-                            >
-                              <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" style={{minWidth:'14px',minHeight:'14px'}}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                              </svg>
-                            </a>
-                          )}
                           </div>
-                        </div>
+                        )}
                         </>
                         );
                       })()}
@@ -5624,6 +5609,13 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                           style={{ width: '100%', padding: '8px 6px', fontSize: '11px', lineHeight: 1.1, letterSpacing: '.04em' }}>
                           <Ic n="contenido" size="18px" /> Simular contenido
                         </button>
+                      )}
+                      {!isMobile && stats && (
+                        <div className="hidden lg:flex flex-col items-start text-gray-600" style={{ fontSize: '10px', lineHeight: 1.35, fontFamily: 'ui-monospace, monospace', marginTop: '4px' }}>
+                          <span className="font-bold inline-flex items-center gap-1"><Icon path={Icons.Eye} size={10} className="text-corp-teal"/>Distancia visionado</span>
+                          <span>Mínima {U(stats?.minView)}{unit}</span>
+                          <span>Óptima {U(stats?.optView)}{unit}</span>
+                        </div>
                       )}
                       </div>
                       
@@ -6205,26 +6197,18 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
                         </div>
                       </div>
                       
-                      {/* TEXTO REF + DISTANCIA - Una sola fila horizontal, ancho completo, debajo del suelo */}
+                      {/* Figura ref: sobre la línea de suelo, pegada a la izquierda del monigote */}
                       {!isMobile && stats && (
                         <div className="absolute z-30" style={{
-                          left: `${groupX}px`,
-                          bottom: `${COTA_CERO_BASE_Y - 38}px`,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
+                          left: `${groupX - 6}px`,
+                          bottom: `${COTA_CERO_BASE_Y + 6}px`,
+                          transform: 'translateX(-100%)',
                           whiteSpace: 'nowrap',
                           fontSize: '11px',
                           fontFamily: 'ui-monospace, monospace',
+                          fontWeight: 700,
                           color: '#4b5563'
-                        }}>
-                          <span style={{fontWeight: 700}}>Figura ref. {fmtDist(1.75)}{unit}</span>
-                          <span style={{color: '#9ca3af'}}>|</span>
-                          <span style={{display: 'inline-flex', alignItems: 'center', gap: '3px'}}>
-                            <Icon path={Icons.Eye} size={10} className="text-corp-teal" style={{flexShrink:0}}/>
-                            Distancia visionado {U(stats?.minView)}{unit} (mínima) {U(stats?.optView)}{unit} (óptima)
-                          </span>
-                        </div>
+                        }}>Figura ref. {fmtDist(1.75)}{unit}</div>
                       )}
                       
                    </div>
