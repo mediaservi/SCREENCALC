@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.26**
+**Versión actual: v4.27**
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -69,7 +69,11 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v4.26)
+## Cambios de la versión actual (v4.27)
+
+- **Administrador:** el botón del pie y la lectura de anuncios apuntan al nuevo panel de administrador.
+
+## Cambios de la v4.26
 
 - **Administrador:** el panel de administrador ya está publicado; el botón del pie lo abre (acceso solo para el propietario con su cuenta de Google) y los anuncios se configuran desde él, con `ads.json` como respaldo.
 

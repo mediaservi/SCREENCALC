@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.26                             ║
+║                          Versión actual: v4.27                             ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.26 (beta-2)
+ÚLTIMA ACTUALIZACIÓN: v4.27 (beta-3)
+- v4.27: el botón de administrador y la lectura de anuncios apuntan al nuevo panel de administrador
+ANTERIOR: v4.26 (beta-2)
 - v4.26: panel de administrador publicado (AVHUB admin): el botón del pie lo abre y los anuncios se leen de él (ads.json queda de respaldo)
 ANTERIOR: v4.25 (beta-1)
 - v4.25: logo sin enlace (pulsarlo reinicia como RESET); botón ⓘ con 2 opciones: INFORMACIÓN (README en ventana al 80 %) y DESCARGAR APP; acceso a SCREENBOX en la cabecera
@@ -2139,7 +2141,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
       const VJSHOW_URL = 'https://mediaservi.github.io/VJSHOW/';
       // PANEL DE ADMINISTRADOR (solo propietario): web app propia con acceso por cuenta de Google.
       // La comprobación del email se hace en el servidor; aquí solo va el enlace (vacío = aún no publicado).
-      const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbz3skSjsWWJZojxlb17d4CE2Gy8D0RVgb4RAtI-wxKhro18-pkBpx4s3hJLvq4nTtUXyg/exec';
+      const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbwkc12y4LODbFe-kQidnR2MbbA6cbW1WbhU3UiqmDmshx-ncAdGYrFRy8PNjm9Wg6Mx3w/exec';
       // ANUNCIOS: puntos de inserción localizados. La configuración (activo/inactivo y contenido) la da el
       // panel de administrador; si no está publicado, se usa ads.json del repositorio.
       let ANUNCIOS_PROMESA = null;
@@ -5234,7 +5236,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.26</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.27</div>
                </div>
                
                <div className="flex items-center gap-2">
@@ -7477,14 +7479,14 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       <a href={VJSHOW_URL} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none', fontWeight: 800, letterSpacing: '0.04em', color: '#94a3b8', textShadow: '0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(0,0,0,0.28)'}}>VJSHOW</a>
                       <span>(visuales audio-reactivos) que estamos desarrollando.</span>
                     </div>
-                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.26 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.27 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.26 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.27 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
                     </div>
                   </div>
               </main>
