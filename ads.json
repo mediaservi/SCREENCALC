@@ -1,0 +1,19 @@
+{
+  "nota": "Puntos de inserción de anuncios. activo: true/false. Cuando el panel de administrador esté publicado, esta configuración la sirve el panel y este archivo queda como respaldo.",
+  "slots": {
+    "panel": {
+      "activo": false,
+      "tipo": "amazon",
+      "url": "https://link.amazon/B08T9uV6Q",
+      "texto": "Ver en Amazon",
+      "imagen": ""
+    },
+    "resultados": {
+      "activo": false,
+      "tipo": "amazon",
+      "url": "https://link.amazon/B08T9uV6Q",
+      "texto": "Ver en Amazon",
+      "imagen": ""
+    }
+  }
+}

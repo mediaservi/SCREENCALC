@@ -4,9 +4,11 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.24**
+**Versión actual: v4.25**
 
-Web pública: https://mediaservi.github.io/SCREENCALC/ · Otra copia: https://screencalcx.netlify.app/
+Web principal: **https://screencalc.mediaservi.com**
+
+Copias redundantes: https://mediaservi.github.io/SCREENCALC/ · https://screencalcx.netlify.app/
 
 ## Para qué sirve
 
@@ -28,7 +30,12 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **Contenido de la pantalla (🖼):** el icono de imagen abre un popup centrado con FUENTES MULTIMEDIA DE PRUEBA (la primera es fija y va preseleccionada; las otras 5 son editables y se guardan en el navegador), URL propia (YouTube normal, /live/, /shorts/, listas, Vimeo, imagen o vídeo) y subida de archivo.
 - **Esquemas de cableado:** propuesta de cableado de señal y eléctrico.
 - **PDF:** "PDF pantalla" y "PDF cableado", cada uno en una hoja A4 más la página 2 del esquema cuando hay electrónica o mediaserver.
-- **Información (ⓘ):** el icono de la cabecera abre este README en una ventana nueva.
+- **Información (ⓘ):** el icono de la cabecera ofrece 2 opciones: **INFORMACIÓN** (este README en una ventana al 80 % que se puede desplazar y cerrar) y **DESCARGAR APP** (uso sin conexión).
+- **Logo:** sin enlace; al pulsarlo se reinicia la app para un nuevo cálculo (igual que RESET).
+- **SCREENBOX:** el isotipo de la cabecera abre la sub-app SCREENBOX (https://screenboxsim.netlify.app/) para pantallas de una o varias paredes con proyectores y salas inmersivas.
+- **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
+- **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios y las consultas internas.
+- **Anuncios:** puntos de inserción localizados (bajo el panel de entrada y al final de los resultados) que se activan o desactivan desde el panel de administrador (o `ads.json` mientras no esté publicado). Como afiliado de Amazon, se obtienen ingresos por las compras adscritas que cumplen los requisitos aplicables.
 - **Adaptada a PC y móvil:** el panel lateral de entrada va en 2 columnas sin scroll en PC y se ve en grande en móvil.
 
 ## Datos
@@ -42,7 +49,7 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 ## Ramas
 
 - `main`: versión oficial y pública, aprobada.
-- Dos ramas de versión más recientes (`v4.x`) para pruebas. Las anteriores se eliminan.
+- Betas numeradas (`beta-1`, `beta-2`…) para pruebas; solo pasan a `main` cuando se aprueban.
 
 ## Paleta corporativa
 
@@ -57,7 +64,24 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 | VERDE OSCURO | `#0f584c` | cabeceras de sección y fondos principales |
 | VERDE FLUO | `#ccff00` | resaltes y parpadeos de campos por rellenar |
 
-## Cambios de la versión actual (v4.24)
+## Avisos
+
+- ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
+- *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
+
+## Cambios de la versión actual (v4.25)
+
+- **Cabecera:** el logo deja de llevar enlace y, al pulsarlo, reinicia la app para el siguiente cálculo (como RESET). Nuevo acceso a SCREENBOX con su isotipo.
+- **Información (ⓘ):** 2 opciones: INFORMACIÓN (README en ventana al 80 %, con scroll y cierre) y DESCARGAR APP.
+- **Tamaño pantalla:** resumen destacado en 3 líneas justo bajo el título (medidas, cabinets y píxeles); ANCHO y ALTO arriba con la unidad completa (p. ej. «Ancho (centímetros)»), COLUMNAS y FILAS abajo, y campos más bajos.
+- **Bloque cabinet:** se elimina el teclado de código de precios; stock en verde fluo y bajo pedido en naranja en el propio icono, sobre botón claro con sombra; el folleto se abre desde la web del fabricante.
+- **Electrónica COEX MX2000 Pro / MX6000 Pro:** como solo son chasis, se añade el despiece: tarjetas de entrada, tarjetas de salida MX 4×OPT multimodo, módulos SFP+ 10G multimodo para sus puertos y conversores CVT10-M (que ya traen sus módulos SFP+).
+- **Petición con varios pixel pitch:** se reconocen todos los pitch del texto; se usa el primero y se avisa para poder elegir otro.
+- **Anuncios y administrador:** puntos de inserción activables y acceso de administrador en el pie.
+- **Avisos:** el aviso «APP experimental…» pasa del pie de la pantalla a este README (en el PDF se mantiene).
+- **URL principal:** screencalc.mediaservi.com, con las copias de GitHub Pages y Netlify.
+
+## Cambios de la v4.24
 
 - **PDF:** logotipo más grande y legible en la cabecera.
 - **Cabecera:** logotipo en verde lima corporativo (`#ccff00`) sobre el verde oscuro.
