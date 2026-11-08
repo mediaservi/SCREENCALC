@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.5**
+**Versión actual: v4.6**
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -73,7 +73,14 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v4.5)
+## Cambios de la versión actual (v4.6)
+
+- **Minibanner del configurador oficial de TRAULUX:** fijo en la posición del AD1 (pie del menú), siempre arriba; si hay otro AD1 activo, va debajo. Fondo negro, logo de la X de TRAULUX y el texto «PRUEBA EL NUEVO CONFIGURADOR OFICIAL DE TRAULUX», sin indicador de publicidad. Se activa o desactiva desde el panel de administrador (tarjeta «TRAULUX · configurador oficial»). Como el AD1, no aparece en móvil.
+- **Cabecera:** la X de TRAULUX sustituye al icono de descarga y abre la página de configuradores. «Descargar app» sigue en Información.
+- **Información:** empieza con la nota de que SCREENCALC se basa en las especificaciones de los productos LED de TRAULUX, el enlace a su configurador oficial y que SCREENCALC es una alternativa que calcula el proyecto completo.
+- **Página de configuradores:** logos reales de AVHUB, SCREENCALC y TRAULUX, y textos nuevos.
+
+## Cambios de la v4.5
 
 - **Eslogan de AVHUB:** pasa a ser «TOOLS FOR AV PEOPLE» en el pie de los configuradores (todos los idiomas).
 
