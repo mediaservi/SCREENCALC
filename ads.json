@@ -1,7 +1,15 @@
 {
-  "nota": "Puntos de inserción de anuncios. activo: true/false. imagenes: varias fotos o vídeos (.mp4/.webm), una URL por línea o separadas por comas. texto: una viñeta por línea. Todo el banner abre 'url' en una pestaña nueva. Cuando el panel de administrador esté publicado, esta configuración la sirve el panel y este archivo queda como respaldo.",
+  "nota": "Puntos de inserción: panel = AD1 pie del menú (foto | texto); hero = AD2 pie de resultados izquierda (foto/vídeo a sangre con el texto encima, contraste automático; varias fotos pasan cada 4 s); resultados = AD3 pie de resultados derecha (foto | foto | texto). activo: true/false. imagenes: fotos o vídeos (.mp4/.webm), una URL por línea o separadas por comas. texto: una viñeta por línea. Todo el banner abre 'url' en una pestaña nueva. La configuración la sirve el panel de administrador; este archivo queda como respaldo.",
   "slots": {
     "panel": {
+      "activo": false,
+      "tipo": "amazon",
+      "url": "https://link.amazon/B08T9uV6Q",
+      "texto": "Ver en Amazon",
+      "imagen": "",
+      "imagenes": ""
+    },
+    "hero": {
       "activo": false,
       "tipo": "amazon",
       "url": "https://link.amazon/B08T9uV6Q",

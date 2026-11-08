@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.3.1                            ║
+║                          Versión actual: v4.3.2                            ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.3.1 (beta-5)
+ÚLTIMA ACTUALIZACIÓN: v4.3.2 (beta-6)
+- v4.3.2: anuncios en 3 formatos: AD1 pie del menú (foto | texto), AD2 pie de resultados «hero» (foto/vídeo a sangre con el texto encima y contraste automático: texto oscuro sobre fondo claro, blanco sobre oscuro, blanco con filete negro si no se puede medir) y AD3 pie de resultados final (foto | foto | texto); AD2 y AD3 lado a lado
+ANTERIOR: v4.3.1 (beta-5)
 - v4.3.1: banner de anuncio con varias fotos o vídeos y texto amplio con viñetas (una por línea); todo el banner (texto, fotos y vídeos) abre el enlace en una pestaña nueva
 ANTERIOR: v4.3
 - v4.3: PDF único (resultados, simulación, cosidos y esquema de electrónica en páginas continuas, sin cortes); un solo botón PDF en la cabecera (icono); se eliminan los botones inferiores DOCS, PDF PANTALLA y PDF CABLEADO (DOCS pasa al panel de administrador)
@@ -1443,13 +1445,29 @@ ANTERIOR: v4.1
       }
       /* ===== v4.25 · Resumen destacado de TAMAÑO PANTALLA (3 líneas) ===== */
       /* ===== v4.25 · Anuncios y acceso de administrador ===== */
-      .ad-slot { margin: 10px 0; padding: 8px 10px; border: 1px dashed #cbd5e1; border-radius: 10px; background: #fff; text-align: center; font-size: 12px; }
-      .ad-slot .ad-tag { display: block; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px; }
-      .ad-slot .ad-link { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; color: #0f584c; font-weight: 700; text-decoration: none; cursor: pointer; }
-      .ad-slot .ad-medios { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
-      .ad-slot img, .ad-slot video { max-height: 90px; max-width: 160px; object-fit: contain; border-radius: 6px; pointer-events: none; }
-      .ad-slot ul.ad-texto { margin: 0; padding-left: 18px; text-align: left; list-style: disc; font-weight: 600; line-height: 1.45; flex: 1 1 260px; max-width: 520px; }
+      /* Anuncios v4.3.2: AD1 menú (media|texto), AD2 hero (media a sangre + texto encima), AD3 final (media|media|texto) */
+      .ad-slot { position: relative; margin: 10px 0; border: 1px dashed #cbd5e1; border-radius: 10px; background: #fff; font-size: 13px; overflow: hidden; }
+      .ad-slot .ad-tag { position: absolute; top: 3px; right: 8px; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: #94a3b8; pointer-events: none; z-index: 3; }
+      .ad-slot .ad-link { display: grid; align-items: center; gap: 10px; padding: 10px 12px; color: #0f584c; font-weight: 700; text-decoration: none; cursor: pointer; min-height: 100px; }
+      .ad-slot img, .ad-slot video { pointer-events: none; display: block; }
+      .ad-slot .ad-m { display: flex; align-items: center; justify-content: center; height: 100%; }
+      .ad-slot .ad-m img, .ad-slot .ad-m video { max-width: 100%; max-height: 120px; object-fit: contain; border-radius: 6px; }
+      .ad-slot ul.ad-texto { margin: 0; padding-left: 18px; text-align: left; list-style: disc; font-weight: 600; line-height: 1.45; }
       .ad-slot .ad-link:hover .ad-texto { text-decoration: underline; }
+      .ad-menu .ad-link { grid-template-columns: 1fr 1fr; }
+      .ad-final .ad-link { grid-template-columns: auto auto 1fr; }
+      .ad-final .ad-m img, .ad-final .ad-m video { max-width: 140px; }
+      .ad-hero { border-style: solid; border-color: transparent; }
+      .ad-hero .ad-link { position: relative; display: flex; min-height: 130px; padding: 14px 16px; }
+      .ad-hero .ad-fondo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+      .ad-hero .ad-txt { position: relative; z-index: 1; font-size: 16px; font-weight: 800; max-width: 70%; }
+      .ad-hero .ad-txt ul.ad-texto { font-weight: 700; }
+      .ad-tono-oscuro { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.75); }
+      .ad-tono-claro { color: #111; text-shadow: 0 0 4px rgba(255,255,255,.9), 0 0 2px #fff; }
+      .ad-tono-filete { color: #fff; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 2px 6px rgba(0,0,0,.8); }
+      .ad-fila { display: flex; flex-wrap: wrap; gap: 12px; }
+      .ad-fila > .ad-slot { flex: 1 1 360px; margin: 10px 0; }
+      @media (max-width: 520px) { .ad-final .ad-link { grid-template-columns: 1fr 1fr; } .ad-final .ad-txt { grid-column: 1 / -1; } .ad-hero .ad-txt { max-width: 100%; } }
       /* ===== v4.25 · Iconos del bloque cabinet: color en el propio icono sobre botón claro con sombra ===== */
       .cab-ico-btn { background: #fff; border: 1px solid #d1d5db; box-shadow: 0 2px 4px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.9); }
       .cab-ico-btn .ic { filter: drop-shadow(0 0 0.6px rgba(15,88,76,.9)); }
@@ -2197,31 +2215,67 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
         }
         return ANUNCIOS_PROMESA;
       };
+      // Anuncios (v4.3.2): 3 formatos según el punto de inserción.
+      //  AD1 'panel' (pie del menú): media a la izquierda + texto a la derecha.
+      //  AD2 'hero' (pie de resultados, izquierda): media a sangre de fondo con el texto encima (contraste automático).
+      //  AD3 'resultados' (pie de resultados, derecha): media izquierda + media derecha + texto.
+      // Todo el banner es un único enlace que abre en pestaña nueva. Texto: una viñeta por línea.
+      const adLista = (v) => (Array.isArray(v) ? v : String(v || '').split(/[\n,]+/)).map(x => String(x).trim()).filter(x => /^https?:\/\//i.test(x));
+      const adEsVideo = (u) => /\.(mp4|webm|ogg|mov)(\?|#|$)/i.test(u);
+      const AdMedia = ({ u, fondo }) => adEsVideo(u)
+        ? <video src={u} autoPlay muted loop playsInline className={fondo ? 'ad-fondo' : ''} />
+        : <img src={u} alt="" className={fondo ? 'ad-fondo' : ''} />;
+      const AdTexto = ({ lineas }) => lineas.length > 1
+        ? <ul className="ad-texto">{lineas.map((l, i) => <li key={i}>{l}</li>)}</ul>
+        : <span className="ad-texto">{lineas[0]}</span>;
+      // Luminosidad media de una imagen (0 oscuro … 1 claro); null si no se puede leer (CORS o vídeo)
+      const adLuminancia = (u) => new Promise(res => {
+        if (adEsVideo(u)) return res(null);
+        const im = new Image(); im.crossOrigin = 'anonymous';
+        im.onload = () => {
+          try {
+            const c = document.createElement('canvas'); c.width = 24; c.height = 24;
+            const x = c.getContext('2d'); x.drawImage(im, 0, 0, 24, 24);
+            const d = x.getImageData(0, 0, 24, 24).data; let t = 0;
+            for (let i = 0; i < d.length; i += 4) t += (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) / 255;
+            res(t / (d.length / 4));
+          } catch (e) { res(null); }
+        };
+        im.onerror = () => res(null);
+        im.src = u;
+      });
       const AdSlot = ({ id }) => {
         const [ad, setAd] = useState(null);
+        const [idx, setIdx] = useState(0);
+        const [tono, setTono] = useState('filete');
         useEffect(() => { let vivo = true; cargarAnuncios().then(sl => { if (vivo) setAd(sl[id] && sl[id].activo ? sl[id] : null); }); return () => { vivo = false; }; }, [id]);
+        const medios = ad ? adLista(ad.imagenes).concat(adLista(ad.imagen).filter(u => !adLista(ad.imagenes).includes(u))) : [];
+        // AD2: si hay varias fotos/vídeos de fondo, pasan cada 4 s
+        useEffect(() => {
+          if (id !== 'hero' || medios.length < 2) return;
+          const t = setInterval(() => setIdx(i => (i + 1) % medios.length), 4000);
+          return () => clearInterval(t);
+        }, [id, medios.length]);
+        // AD2: color del texto según el fondo (claro → texto oscuro; oscuro → texto blanco; desconocido → blanco con filete negro)
+        const actual = medios.length ? medios[idx % medios.length] : '';
+        useEffect(() => {
+          if (id !== 'hero' || !actual) return;
+          let vivo = true;
+          adLuminancia(actual).then(l => { if (vivo) setTono(l == null ? 'filete' : (l > 0.6 ? 'claro' : 'oscuro')); });
+          return () => { vivo = false; };
+        }, [id, actual]);
         if (!ad || !ad.url) return null;
-        // Varias fotos o vídeos (una URL por línea o separadas por comas) + texto con viñetas (una por línea).
-        // Todo el banner es un único enlace: tocar texto, foto o vídeo abre la página en una pestaña nueva.
-        const lista = (v) => (Array.isArray(v) ? v : String(v || '').split(/[\n,]+/)).map(x => String(x).trim()).filter(x => /^https?:\/\//i.test(x));
-        const medios = lista(ad.imagenes).concat(lista(ad.imagen).filter(u => !lista(ad.imagenes).includes(u)));
-        const esVideo = (u) => /\.(mp4|webm|ogg|mov)(\?|#|$)/i.test(u);
         const lineas = String(ad.texto || 'Ver en Amazon').split(/\n+/).map(l => l.replace(/^\s*[-•*·]\s*/, '').trim()).filter(Boolean);
+        const tipo = id === 'hero' ? 'hero' : (id === 'panel' ? 'menu' : 'final');
         return (
-          <div className="ad-slot no-print" data-slot={id}>
-            <span className="ad-tag">Publicidad</span>
+          <div className={'ad-slot no-print ad-' + tipo} data-slot={id}>
             <a href={ad.url} target="_blank" rel="sponsored noopener noreferrer" className="ad-link">
-              {medios.length > 0 && (
-                <span className="ad-medios">
-                  {medios.map((u, i) => esVideo(u)
-                    ? <video key={i} src={u} autoPlay muted loop playsInline />
-                    : <img key={i} src={u} alt="" />)}
-                </span>
-              )}
-              {lineas.length > 1
-                ? <ul className="ad-texto">{lineas.map((l, i) => <li key={i}>{l}</li>)}</ul>
-                : <span className="ad-texto">{lineas[0]}</span>}
+              {tipo === 'hero' && actual && <AdMedia key={actual} u={actual} fondo />}
+              {tipo === 'menu' && medios[0] && <span className="ad-m"><AdMedia u={medios[0]} /></span>}
+              {tipo === 'final' && medios.slice(0, 2).map((u, i) => <span key={i} className="ad-m"><AdMedia u={u} /></span>)}
+              <span className={'ad-txt' + (tipo === 'hero' ? ' ad-tono-' + tono : '')}><AdTexto lineas={lineas} /></span>
             </a>
+            <span className="ad-tag">Publicidad</span>
           </div>
         );
       };
@@ -5296,7 +5350,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.3.1</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.3.2</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -5644,6 +5698,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       </div>
                     </div>
                     {cosidoSel}
+                    <AdSlot id="panel" />
                     </div>
                     ) : (
                     <div className="col-der"><div className="card-sec space-y-2 lg:space-y-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
@@ -5807,9 +5862,9 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                         </button>
                       </div>
                     </div>
+                    <AdSlot id="panel" />
                     </div>
                     )}
-                    <AdSlot id="panel" />
                   </div>
                 )}
               </aside>
@@ -7495,17 +7550,20 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                     </div></div>
                   )}
 
-                  <AdSlot id="resultados" />
+                  <div className="ad-fila no-print">
+                    <AdSlot id="hero" />
+                    <AdSlot id="resultados" />
+                  </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.3.1 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.3.2 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.3.1 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.3.2 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
                     </div>
                   </div>
               </main>

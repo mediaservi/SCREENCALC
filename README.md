@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.3.1**
+**Versión actual: v4.3.2**
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -71,7 +71,15 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v4.3.1)
+## Cambios de la versión actual (v4.3.2)
+
+- **Anuncios en 3 formatos:**
+  - **AD1 · pie del menú** (punto `panel`): foto o vídeo a la izquierda y texto a la derecha.
+  - **AD2 · pie de resultados, hero** (punto `hero`, nuevo): foto o vídeo a sangre de fondo con el texto encima. El color del texto se elige solo según el fondo: oscuro sobre fondo claro, blanco sobre fondo oscuro, y blanco con filete negro cuando no se puede medir (vídeos o imágenes de otros dominios). Si hay varias fotos, pasan cada 4 s.
+  - **AD3 · pie de resultados, final** (punto `resultados`): foto izquierda, foto derecha y texto.
+  - AD2 y AD3 van lado a lado en pantalla ancha y uno debajo del otro en móvil. Todo el anuncio abre su enlace en una pestaña nueva.
+
+## Cambios de la v4.3.1
 
 - **Banner de anuncio:** admite varias fotos o vídeos (una URL por línea o separadas por comas) y un texto amplio con viñetas (una viñeta por línea). Todo el banner es un único enlace: tocar el texto, una foto o un vídeo abre la página en una pestaña nueva.
 
