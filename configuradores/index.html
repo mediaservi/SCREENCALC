@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Configuradores de pantallas LED</title>
+<meta name="description" content="Elige entre SCREENCALC (proyecto técnico completo con electrónica y PDF) y el configurador oficial de TRAULUX (presupuesto con un especialista).">
+<meta property="og:title" content="Configuradores de pantallas LED">
+<meta property="og:description" content="SCREENCALC o el configurador oficial de TRAULUX: elige el que necesitas.">
+<meta property="og:image" content="https://screencalc.mediaservi.com/assets/promo/traulux-banner-728x90.png">
+<link rel="icon" href="../assets/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--fondo:#121216;--chasis:#2A2A2A;--txt:#ececf2;--tenue:#a3a3b2;--marca:#9900ff;--on:#00ff04;--azul:#00b4ff}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:radial-gradient(1200px 600px at 20% -10%,#2a0d44 0%,transparent 60%),radial-gradient(900px 500px at 110% 110%,#06301a 0%,transparent 60%),var(--fondo);color:var(--txt);font-family:Inter,system-ui,sans-serif}
+body{display:flex;flex-direction:column;justify-content:center;min-height:100vh;min-height:100dvh;padding:max(20px,env(safe-area-inset-top)) 16px max(20px,env(safe-area-inset-bottom))}
+.top{display:flex;justify-content:space-between;align-items:center;max-width:1040px;width:100%;margin:0 auto}
+.top a{color:var(--tenue);text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.14em}
+.idiomas{display:flex;gap:4px}
+.idiomas button{border:1px solid #3a3a44;background:transparent;color:var(--tenue);border-radius:6px;padding:5px 8px;font:700 11px Inter,sans-serif;cursor:pointer}
+.idiomas button.on{border-color:var(--on);color:var(--on)}
+h1{margin:28px auto 6px;text-align:center;font-size:clamp(24px,4vw,40px);font-weight:800;letter-spacing:-.01em}
+.sub{text-align:center;color:var(--tenue);font-size:15px;line-height:1.6;margin:0 auto 26px}
+.cartas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:1040px;width:100%;margin:0 auto}
+.carta{position:relative;display:flex;flex-direction:column;gap:14px;padding:24px;border-radius:16px;background:linear-gradient(180deg,#24242b,#1b1b21);border:1px solid #34343e;box-shadow:0 10px 30px rgba(0,0,0,.35);transition:transform .2s,border-color .2s}
+.carta:hover{transform:translateY(-3px)}
+.carta.sc:hover{border-color:var(--marca)}
+.carta.tx:hover{border-color:#fff}
+.marca{display:flex;align-items:center;gap:12px;min-height:44px}
+.marca .nom{font-size:24px;font-weight:800;letter-spacing:.12em}
+.marca .tipo{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--tenue)}
+.chip{align-self:flex-start;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:5px 9px;border-radius:5px;border:1px solid}
+.sc .chip{color:#d9a6ff;border-color:var(--marca)}
+.tx .chip{color:#fff;border-color:#fff}
+.resumen{font-size:15px;line-height:1.55;color:#d6d6e0;margin:0}
+ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+li{display:flex;gap:10px;font-size:14px;line-height:1.45;color:#cfcfda}
+li::before{content:'';flex:none;width:8px;height:8px;margin-top:6px;border-radius:2px;background:var(--on)}
+.tx li::before{background:#fff}
+.ideal{font-size:13px;color:var(--tenue);line-height:1.5;border-top:1px solid #33333c;padding-top:12px;margin-top:auto}
+.ideal b{color:var(--txt)}
+.ir{display:flex;justify-content:center;align-items:center;gap:8px;padding:14px 18px;border-radius:999px;font-weight:800;font-size:14px;letter-spacing:.06em;text-decoration:none;text-transform:uppercase}
+.sc .ir{background:var(--marca);color:#fff;box-shadow:0 0 18px rgba(153,0,255,.45)}
+.tx .ir{background:#fff;color:#1b1b21}
+.ir:focus-visible{outline:3px solid var(--on);outline-offset:3px}
+.aviso{font-size:11px;color:#8b8b99;text-align:center;line-height:1.5}
+footer{text-align:center;color:#8b8b99;font-size:12px;margin-top:22px}
+footer a{color:var(--tenue);text-decoration:none}
+@media (max-width:760px){.cartas{grid-template-columns:1fr}.carta{padding:20px}h1{margin-top:18px}}
+</style>
+</head>
+<body>
+<div class="top">
+  <a href="https://avhub.mediaservi.com/">AVHUB</a>
+  <div class="idiomas" role="group" aria-label="Idioma"><button data-l="es">ES</button><button data-l="en">EN</button><button data-l="ca">CA</button></div>
+</div>
+<h1 data-t="titulo"></h1>
+<p class="sub" data-t="sub"></p>
+<div class="cartas">
+  <section class="carta sc">
+    <div class="marca">
+      <svg width="44" height="40" viewBox="0 0 60 48" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9900ff"/><stop offset=".55" stop-color="#00b4ff"/><stop offset="1" stop-color="#00ff04"/></linearGradient></defs><path d="M8 44 L28 8 Q30 4 32 8 L54 44 Z" fill="none" stroke="url(#g)" stroke-width="7" stroke-linejoin="round"/><path d="M26 22 L38 30 L26 38 Z" fill="#9900ff"/></svg>
+      <div><div class="nom">SCREENCALC</div><div class="tipo" data-t="sc_tipo"></div></div>
+    </div>
+    <span class="chip" data-t="sc_chip"></span>
+    <p class="resumen" data-t="sc_res"></p>
+    <ul data-l="sc_lista"></ul>
+    <div class="ideal" data-t="sc_ideal"></div>
+    <a class="ir" href="https://screencalc.mediaservi.com/" target="_blank" rel="noopener" data-t="sc_ir"></a>
+    <div class="aviso" data-t="sc_aviso"></div>
+  </section>
+  <section class="carta tx">
+    <div class="marca">
+      <svg width="40" height="40" viewBox="0 0 30 30" aria-hidden="true"><g fill="#fff"><rect x="0" y="0" width="8" height="8" rx="2"/><rect x="11" y="0" width="8" height="8" rx="2"/><rect x="22" y="0" width="8" height="8" rx="2"/><rect x="0" y="11" width="8" height="8" rx="2"/><rect x="11" y="11" width="8" height="8" rx="2"/><rect x="22" y="11" width="8" height="8" rx="2"/><rect x="0" y="22" width="8" height="8" rx="2"/><rect x="11" y="22" width="8" height="8" rx="2"/><rect x="22" y="22" width="8" height="8" rx="2"/></g></svg>
+      <div><div class="nom">TRAULUX</div><div class="tipo" data-t="tx_tipo"></div></div>
+    </div>
+    <span class="chip" data-t="tx_chip"></span>
+    <p class="resumen" data-t="tx_res"></p>
+    <ul data-l="tx_lista"></ul>
+    <div class="ideal" data-t="tx_ideal"></div>
+    <a class="ir" href="https://traulux.net/led/configurador" target="_blank" rel="noopener" data-t="tx_ir"></a>
+    <div class="aviso" data-t="tx_aviso"></div>
+  </section>
+</div>
+<footer><span data-t="pie"></span> · <a href="https://mediaservi.com/" target="_blank" rel="noopener">mediaservi.com</a></footer>
+<script>
+(function () {
+  var T = {
+    es: {
+      titulo: '¿Qué configurador necesitas?', sub: 'Dos herramientas para tu pantalla LED.<br>Elige según lo que quieras conseguir.',
+      sc_tipo: 'Calculadora de proyecto', sc_chip: 'Proyecto técnico completo',
+      sc_res: 'Del texto del cliente a una propuesta técnica llave en mano.',
+      sc_lista: ['Petición en lenguaje natural, escrita o por voz', 'Modelo de cabinet, medidas, resolución y distancias de visión', 'Simulación a escala con figura humana y contenido de prueba', 'Electrónica de control y mediaserver recomendados', 'Esquema de conexiones, cableado de señal y eléctrico', 'PDF del proyecto en 2 páginas'],
+      sc_ideal: '<b>Ideal para</b> integradores y técnicos<br>que necesitan dimensionar todo el proyecto.',
+      sc_ir: 'Abrir SCREENCALC →', sc_aviso: 'Herramienta experimental con cálculo asistido por IA.<br>Verifica siempre los resultados.',
+      tx_tipo: 'Configurador oficial', tx_chip: 'Presupuesto oficial',
+      tx_res: 'Configura tu pantalla y recibe el presupuesto de un especialista.',
+      tx_lista: ['Instalación fija o alquiler, interior o exterior', 'Elección de modelo y pitch', 'Medidas ajustadas a cabinets completos, con ajuste por columnas', 'Ficha del cabinet y distancias de visión', 'Impresión o PDF de la configuración', 'Solicitud de presupuesto con asesoramiento y plazos'],
+      tx_ideal: '<b>Ideal para</b> pedir precio y plazos<br>directamente al fabricante.',
+      tx_ir: 'Ir al configurador TRAULUX →', tx_aviso: 'La estructura, la electrónica y el precio<br>los dimensiona un especialista de TRAULUX.',
+      pie: 'AVHUB · herramientas para profesionales AV'
+    },
+    en: {
+      titulo: 'Which configurator do you need?', sub: 'Two tools for your LED screen.<br>Choose according to what you want to achieve.',
+      sc_tipo: 'Project calculator', sc_chip: 'Complete technical project',
+      sc_res: 'From the client\'s request to a turnkey technical proposal.',
+      sc_lista: ['Natural-language request, typed or by voice', 'Cabinet model, size, resolution and viewing distances', 'Scale simulation with human figure and test content', 'Recommended control electronics and media server', 'Connection diagram, signal and power cabling', '2-page project PDF'],
+      sc_ideal: '<b>Ideal for</b> integrators and technicians<br>who need to size the whole project.',
+      sc_ir: 'Open SCREENCALC →', sc_aviso: 'Experimental tool with AI-assisted calculation.<br>Always verify the results.',
+      tx_tipo: 'Official configurator', tx_chip: 'Official quote',
+      tx_res: 'Configure your screen and get a quote from a specialist.',
+      tx_lista: ['Fixed installation or rental, indoor or outdoor', 'Choice of model and pitch', 'Size snapped to full cabinets, with column-by-column adjustment', 'Cabinet data sheet and viewing distances', 'Print or PDF of the configuration', 'Quote request with advice and lead times'],
+      tx_ideal: '<b>Ideal for</b> getting price and lead times<br>directly from the manufacturer.',
+      tx_ir: 'Go to the TRAULUX configurator →', tx_aviso: 'Structure, electronics and price<br>are sized by a TRAULUX specialist.',
+      pie: 'AVHUB · tools for AV professionals'
+    },
+    ca: {
+      titulo: 'Quin configurador necessites?', sub: 'Dues eines per a la teva pantalla LED.<br>Tria segons el que vulguis aconseguir.',
+      sc_tipo: 'Calculadora de projecte', sc_chip: 'Projecte tècnic complet',
+      sc_res: 'Del text del client a una proposta tècnica clau en mà.',
+      sc_lista: ['Petició en llenguatge natural, escrita o per veu', 'Model de cabinet, mides, resolució i distàncies de visió', 'Simulació a escala amb figura humana i contingut de prova', 'Electrònica de control i mediaserver recomanats', 'Esquema de connexions, cablejat de senyal i elèctric', 'PDF del projecte en 2 pàgines'],
+      sc_ideal: '<b>Ideal per a</b> integradors i tècnics<br>que han de dimensionar tot el projecte.',
+      sc_ir: 'Obrir SCREENCALC →', sc_aviso: 'Eina experimental amb càlcul assistit per IA.<br>Verifica sempre els resultats.',
+      tx_tipo: 'Configurador oficial', tx_chip: 'Pressupost oficial',
+      tx_res: 'Configura la teva pantalla i rep el pressupost d\'un especialista.',
+      tx_lista: ['Instal·lació fixa o lloguer, interior o exterior', 'Elecció de model i pitch', 'Mides ajustades a cabinets complets, amb ajust per columnes', 'Fitxa del cabinet i distàncies de visió', 'Impressió o PDF de la configuració', 'Sol·licitud de pressupost amb assessorament i terminis'],
+      tx_ideal: '<b>Ideal per</b> demanar preu i terminis<br>directament al fabricant.',
+      tx_ir: 'Anar al configurador TRAULUX →', tx_aviso: 'L\'estructura, l\'electrònica i el preu<br>els dimensiona un especialista de TRAULUX.',
+      pie: 'AVHUB · eines per a professionals AV'
+    }
+  };
+  function poner(l) {
+    var t = T[l] || T.es; document.documentElement.lang = l;
+    document.querySelectorAll('[data-t]').forEach(function (e) { e.innerHTML = t[e.dataset.t]; });
+    document.querySelectorAll('ul[data-l]').forEach(function (u) { u.innerHTML = t[u.dataset.l].map(function (x) { return '<li>' + x + '</li>'; }).join(''); });
+    document.querySelectorAll('.idiomas button').forEach(function (b) { b.classList.toggle('on', b.dataset.l === l); });
+    document.title = t.titulo;
+    try { localStorage.setItem('avhub-idioma', l); } catch (e) { /* sin almacenamiento */ }
+  }
+  var q = (location.search.match(/[?&]lang=(es|en|ca)/) || [])[1], guardado = null;
+  try { guardado = localStorage.getItem('avhub-idioma'); } catch (e) { /* sin almacenamiento */ }
+  var nav = (navigator.language || 'es').slice(0, 2).toLowerCase();
+  poner(q || guardado || (T[nav] ? nav : (/^(gl|eu|pt|it|fr)$/.test(nav) ? 'es' : 'en')));
+  document.querySelectorAll('.idiomas button').forEach(function (b) { b.onclick = function () { poner(b.dataset.l); }; });
+})();
+</script>
+</body>
+</html>
