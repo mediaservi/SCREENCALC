@@ -29,6 +29,8 @@ h1{margin:28px auto 6px;text-align:center;font-size:clamp(24px,4vw,40px);font-we
 .carta.tx:hover{border-color:#fff}
 .marca{display:flex;align-items:center;gap:12px;min-height:44px}
 .marca .nom{font-size:24px;font-weight:800;letter-spacing:.12em}
+.marca .logo{display:block;height:38px;width:auto;margin-bottom:6px}
+.top .avlogo img{display:block;height:34px;width:auto}
 .marca .tipo{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--tenue)}
 .chip{align-self:flex-start;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:5px 9px;border-radius:5px;border:1px solid}
 .sc .chip{color:#d9a6ff;border-color:var(--marca)}
@@ -52,7 +54,7 @@ footer a{color:var(--tenue);text-decoration:none}
 </head>
 <body>
 <div class="top">
-  <a href="https://avhub.mediaservi.com/">AVHUB</a>
+  <a href="https://avhub.mediaservi.com/" class="avlogo"><img src="../assets/avhub-logo.svg" alt="AVHUB"></a>
   <div class="idiomas" role="group" aria-label="Idioma"><button data-l="es">ES</button><button data-l="en">EN</button><button data-l="ca">CA</button></div>
 </div>
 <h1 data-t="titulo"></h1>
@@ -60,8 +62,7 @@ footer a{color:var(--tenue);text-decoration:none}
 <div class="cartas">
   <section class="carta sc">
     <div class="marca">
-      <svg width="44" height="40" viewBox="0 0 60 48" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9900ff"/><stop offset=".55" stop-color="#00b4ff"/><stop offset="1" stop-color="#00ff04"/></linearGradient></defs><path d="M8 44 L28 8 Q30 4 32 8 L54 44 Z" fill="none" stroke="url(#g)" stroke-width="7" stroke-linejoin="round"/><path d="M26 22 L38 30 L26 38 Z" fill="#9900ff"/></svg>
-      <div><div class="nom">SCREENCALC</div><div class="tipo" data-t="sc_tipo"></div></div>
+      <div><img class="logo logo-sc" src="../assets/logo-verde.svg" alt="SCREENCALC"><div class="tipo" data-t="sc_tipo"></div></div>
     </div>
     <span class="chip" data-t="sc_chip"></span>
     <p class="resumen" data-t="sc_res"></p>
@@ -72,8 +73,7 @@ footer a{color:var(--tenue);text-decoration:none}
   </section>
   <section class="carta tx">
     <div class="marca">
-      <svg width="40" height="40" viewBox="0 0 30 30" aria-hidden="true"><g fill="#fff"><rect x="0" y="0" width="8" height="8" rx="2"/><rect x="11" y="0" width="8" height="8" rx="2"/><rect x="22" y="0" width="8" height="8" rx="2"/><rect x="0" y="11" width="8" height="8" rx="2"/><rect x="11" y="11" width="8" height="8" rx="2"/><rect x="22" y="11" width="8" height="8" rx="2"/><rect x="0" y="22" width="8" height="8" rx="2"/><rect x="11" y="22" width="8" height="8" rx="2"/><rect x="22" y="22" width="8" height="8" rx="2"/></g></svg>
-      <div><div class="nom">TRAULUX</div><div class="tipo" data-t="tx_tipo"></div></div>
+      <div><img class="logo logo-tx" src="../assets/traulux-logo-blanco.svg" alt="TRAULUX"><div class="tipo" data-t="tx_tipo"></div></div>
     </div>
     <span class="chip" data-t="tx_chip"></span>
     <p class="resumen" data-t="tx_res"></p>
@@ -90,44 +90,44 @@ footer a{color:var(--tenue);text-decoration:none}
     es: {
       titulo: '¿Qué configurador necesitas?', sub: 'Dos herramientas para tu pantalla LED.<br>Elige según lo que quieras conseguir.',
       sc_tipo: 'Calculadora de proyecto', sc_chip: 'Proyecto técnico completo',
-      sc_res: 'Del texto del cliente a una propuesta técnica llave en mano.',
+      sc_res: 'Asistente con IA que te configurará un primer boceto completo del proyecto.',
       sc_lista: ['Petición en lenguaje natural, escrita o por voz', 'Modelo de cabinet, medidas, resolución y distancias de visión', 'Simulación a escala con figura humana y contenido de prueba', 'Electrónica de control y mediaserver recomendados', 'Esquema de conexiones, cableado de señal y eléctrico', 'PDF del proyecto en 2 páginas'],
       sc_ideal: '<b>Ideal para</b> integradores y técnicos<br>que necesitan dimensionar todo el proyecto.',
       sc_ir: 'Abrir SCREENCALC →', sc_aviso: 'Herramienta experimental con cálculo asistido por IA.<br>Verifica siempre los resultados.',
       tx_tipo: 'Configurador oficial', tx_chip: 'Presupuesto oficial',
-      tx_res: 'Configura tu pantalla y recibe el presupuesto de un especialista.',
+      tx_res: 'Configura la pantalla que necesita tu proyecto',
       tx_lista: ['Instalación fija o alquiler, interior o exterior', 'Elección de modelo y pitch', 'Medidas ajustadas a cabinets completos, con ajuste por columnas', 'Ficha del cabinet y distancias de visión', 'Impresión o PDF de la configuración', 'Solicitud de presupuesto con asesoramiento y plazos'],
-      tx_ideal: '<b>Ideal para</b> pedir precio y plazos<br>directamente al fabricante.',
-      tx_ir: 'Ir al configurador TRAULUX →', tx_aviso: 'La estructura, la electrónica y el precio<br>los dimensiona un especialista de TRAULUX.',
-      pie: 'AVHUB · herramientas para profesionales AV'
+      tx_ideal: '<b>Ideal para</b> pedir ofertas y plazos<br>directamente al distribuidor',
+      tx_ir: 'Ir al configurador TRAULUX →', tx_aviso: 'Tu asesor te ayudará con el resto de material.',
+      pie: 'AVHUB · TOOLS FOR AV PEOPLE'
     },
     en: {
       titulo: 'Which configurator do you need?', sub: 'Two tools for your LED screen.<br>Choose according to what you want to achieve.',
       sc_tipo: 'Project calculator', sc_chip: 'Complete technical project',
-      sc_res: 'From the client\'s request to a turnkey technical proposal.',
+      sc_res: 'AI assistant that builds a complete first draft of your project.',
       sc_lista: ['Natural-language request, typed or by voice', 'Cabinet model, size, resolution and viewing distances', 'Scale simulation with human figure and test content', 'Recommended control electronics and media server', 'Connection diagram, signal and power cabling', '2-page project PDF'],
       sc_ideal: '<b>Ideal for</b> integrators and technicians<br>who need to size the whole project.',
       sc_ir: 'Open SCREENCALC →', sc_aviso: 'Experimental tool with AI-assisted calculation.<br>Always verify the results.',
       tx_tipo: 'Official configurator', tx_chip: 'Official quote',
-      tx_res: 'Configure your screen and get a quote from a specialist.',
+      tx_res: 'Configure the screen your project needs',
       tx_lista: ['Fixed installation or rental, indoor or outdoor', 'Choice of model and pitch', 'Size snapped to full cabinets, with column-by-column adjustment', 'Cabinet data sheet and viewing distances', 'Print or PDF of the configuration', 'Quote request with advice and lead times'],
-      tx_ideal: '<b>Ideal for</b> getting price and lead times<br>directly from the manufacturer.',
-      tx_ir: 'Go to the TRAULUX configurator →', tx_aviso: 'Structure, electronics and price<br>are sized by a TRAULUX specialist.',
-      pie: 'AVHUB · tools for AV professionals'
+      tx_ideal: '<b>Ideal for</b> requesting offers and lead times<br>directly from the distributor',
+      tx_ir: 'Go to the TRAULUX configurator →', tx_aviso: 'Your advisor will help you with the rest of the equipment.',
+      pie: 'AVHUB · TOOLS FOR AV PEOPLE'
     },
     ca: {
       titulo: 'Quin configurador necessites?', sub: 'Dues eines per a la teva pantalla LED.<br>Tria segons el que vulguis aconseguir.',
       sc_tipo: 'Calculadora de projecte', sc_chip: 'Projecte tècnic complet',
-      sc_res: 'Del text del client a una proposta tècnica clau en mà.',
+      sc_res: 'Assistent amb IA que et configurarà un primer esbós complet del projecte.',
       sc_lista: ['Petició en llenguatge natural, escrita o per veu', 'Model de cabinet, mides, resolució i distàncies de visió', 'Simulació a escala amb figura humana i contingut de prova', 'Electrònica de control i mediaserver recomanats', 'Esquema de connexions, cablejat de senyal i elèctric', 'PDF del projecte en 2 pàgines'],
       sc_ideal: '<b>Ideal per a</b> integradors i tècnics<br>que han de dimensionar tot el projecte.',
       sc_ir: 'Obrir SCREENCALC →', sc_aviso: 'Eina experimental amb càlcul assistit per IA.<br>Verifica sempre els resultats.',
       tx_tipo: 'Configurador oficial', tx_chip: 'Pressupost oficial',
-      tx_res: 'Configura la teva pantalla i rep el pressupost d\'un especialista.',
+      tx_res: 'Configura la pantalla que necessita el teu projecte',
       tx_lista: ['Instal·lació fixa o lloguer, interior o exterior', 'Elecció de model i pitch', 'Mides ajustades a cabinets complets, amb ajust per columnes', 'Fitxa del cabinet i distàncies de visió', 'Impressió o PDF de la configuració', 'Sol·licitud de pressupost amb assessorament i terminis'],
-      tx_ideal: '<b>Ideal per</b> demanar preu i terminis<br>directament al fabricant.',
-      tx_ir: 'Anar al configurador TRAULUX →', tx_aviso: 'L\'estructura, l\'electrònica i el preu<br>els dimensiona un especialista de TRAULUX.',
-      pie: 'AVHUB · eines per a professionals AV'
+      tx_ideal: '<b>Ideal per</b> demanar ofertes i terminis<br>directament al distribuïdor',
+      tx_ir: 'Anar al configurador TRAULUX →', tx_aviso: 'El teu assessor t\'ajudarà amb la resta de material.',
+      pie: 'AVHUB · TOOLS FOR AV PEOPLE'
     }
   };
   function poner(l) {

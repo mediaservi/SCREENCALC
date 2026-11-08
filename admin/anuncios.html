@@ -263,6 +263,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     <div class="seg" id="vista"><button data-v="escritorio" class="on">Escritorio</button><button data-v="movil">Móvil</button></div>
     <button class="bt" id="deshacer" disabled title="Deshacer (Ctrl+Z)">↶ Deshacer</button>
     <button class="bt" id="verapp">Ver en SCREENCALC ↗</button>
+    <a class="bt" id="ajustes" href="https://script.google.com/macros/s/AKfycbwkc12y4LODbFe-kQidnR2MbbA6cbW1WbhU3UiqmDmshx-ncAdGYrFRy8PNjm9Wg6Mx3w/exec?vista=ajustes" target="_top" style="text-decoration:none">AJUSTES · QR · DOCS ↗</a>
     <button class="bt prim" id="guardar">GUARDAR</button>
   </div>
 </header>
@@ -326,7 +327,9 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
   }
   /* Convierte cualquier respuesta (v2 o antigua) al formato v2 */
   function normalizar(j) {
-    var out = { version: 2, zonas: {}, borradores: [], biblioteca: [] };
+    var out = { version: 2, zonas: {}, borradores: [], biblioteca: [], traulux: { activo: true } };
+    var tx = j && (j.traulux || (j.slots && j.slots.traulux));
+    if (tx) out.traulux.activo = tx.activo !== false;
     Object.keys(ZONAS).forEach(function (z) { out.zonas[z] = { rotacion: 'orden', segundos: 8, anuncios: [] }; });
     if (j && j.version === 2 && j.zonas) {
       Object.keys(j.zonas).forEach(function (z) {
@@ -357,6 +360,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
       slots[z] = a ? { activo: true, tipo: 'propio', url: a.url, texto: a.texto, imagen: '', imagenes: a.medios.join('\n') }
                    : { activo: false, url: '', texto: '', imagen: '', imagenes: '' };
     });
+    slots.traulux = { activo: !d.traulux || d.traulux.activo !== false, url: 'https://screencalc.mediaservi.com/configuradores/', texto: 'PRUEBA EL NUEVO CONFIGURADOR OFICIAL DE TRAULUX' };
     return slots;
   }
   function hoyISO(d) { var z = new Date(d.getTime() - d.getTimezoneOffset() * 60000); return z.toISOString().slice(0, 10); }
@@ -610,10 +614,27 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
   function pintarTodo() {
     Object.keys(limpiezas).forEach(function (k) { limpiezas[k](); }); limpiezas = {};
     var cont = $('#zonas'); cont.innerHTML = '';
+    cont.appendChild(pintarTraulux());
     Object.keys(A.ZONAS).forEach(function (z) { cont.appendChild(pintarZona(z, A.ZONAS[z], D.zonas[z])); });
     cont.appendChild(pintarZona('borradores', { nombre: 'Borradores', ubicacion: 'Anuncios guardados que no se publican' }, { anuncios: D.borradores }));
     pintarBiblio();
     marcarSucio(sucio);
+  }
+  /* Minibanner fijo del configurador oficial de TRAULUX: siempre en la posición del AD1, encima del AD1 si hay otro activo */
+  function pintarTraulux() {
+    D.traulux = D.traulux || { activo: true };
+    var s = el('section', 'zona'); s.dataset.zona = 'traulux';
+    var cab = el('div', 'zona-cab');
+    cab.appendChild(el('div', '', '<h2>TRAULUX · configurador oficial</h2><div class="ubi">Fijo en la posición del AD1 (pie del menú), siempre arriba; si hay otro AD1 activo, ese va debajo · no aparece en móvil</div>'));
+    var lb = el('label', '', '<input type="checkbox"' + (D.traulux.activo !== false ? ' checked' : '') + '> Activo');
+    lb.style.cssText = 'margin-left:auto;display:flex;align-items:center;gap:6px;font-weight:700;cursor:pointer';
+    lb.querySelector('input').onchange = function (e) { cambio(function () { D.traulux.activo = e.target.checked; }); led('Minibanner TRAULUX ' + (e.target.checked ? 'activado' : 'desactivado') + ' · pulsa GUARDAR', 'ok'); };
+    cab.appendChild(lb);
+    s.appendChild(cab);
+    var prev = el('div', '', '<a href="https://screencalc.mediaservi.com/configuradores/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;background:#000;color:#fff;text-decoration:none;font:800 12px/1.3 Inter,sans-serif;letter-spacing:.04em;max-width:420px"><img src="https://screencalc.mediaservi.com/assets/traulux-x.svg" alt="" style="width:30px;height:30px;flex:none">PRUEBA EL NUEVO CONFIGURADOR OFICIAL DE TRAULUX</a>');
+    prev.style.cssText = 'padding:12px;' + (D.traulux.activo === false ? 'opacity:.4' : '');
+    s.appendChild(prev);
+    return s;
   }
   function pintarZona(id, def, z) {
     var s = el('section', 'zona'); s.dataset.zona = id;
@@ -1922,7 +1943,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     if (GAS) {
       led('Guardando…');
       google.script.run.withSuccessHandler(function () { marcarSucio(false); led('Guardado · anuncios, firmas y newsletters', 'ok'); if (cb) cb(); })
-        .withFailureHandler(function (e) { led('No se ha guardado: ' + e.message, 'err'); }).guardarTodo(JSON.stringify(D), JSON.stringify(F), JSON.stringify(N));
+        .withFailureHandler(function (e) { led('No se ha guardado: ' + e.message, 'err'); }).guardarTodo((D.slots = A.aLegado(D), JSON.stringify(D)), JSON.stringify(F), JSON.stringify(N));
     } else {
       try { localStorage.setItem(CLAVE_DEMO, JSON.stringify(D)); localStorage.setItem(CLAVE_DEMO + '-firmas', JSON.stringify(F)); localStorage.setItem(CLAVE_DEMO + '-news', JSON.stringify(N)); marcarSucio(false); led('Modo demo: guardado solo en este navegador', 'ok'); if (cb) cb(); }
       catch (e) { led('Modo demo: no cabe en el navegador (quita fotos subidas grandes)', 'err'); }
