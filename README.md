@@ -129,4 +129,4 @@ Distribuido bajo la licencia **GNU General Public License v3.0** (GPL-3.0). Cons
 
 ## Autoría
 
-Proyecto de [mediaservi.com](https://mediaservi.com). Si te gusta, prueba también [VJSHOW](https://mediaservi.github.io/VJSHOW/) (visuales audio-reactivos).
+Proyecto de [mediaservi.com](https://mediaservi.com). Si te gusta, prueba también [AVHUB](https://avhub.mediaservi.com/).
