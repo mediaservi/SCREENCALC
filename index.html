@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.3                              ║
+║                          Versión actual: v4.3.1                            ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.3
+ÚLTIMA ACTUALIZACIÓN: v4.3.1 (beta-5)
+- v4.3.1: banner de anuncio con varias fotos o vídeos y texto amplio con viñetas (una por línea); todo el banner (texto, fotos y vídeos) abre el enlace en una pestaña nueva
+ANTERIOR: v4.3
 - v4.3: PDF único (resultados, simulación, cosidos y esquema de electrónica en páginas continuas, sin cortes); un solo botón PDF en la cabecera (icono); se eliminan los botones inferiores DOCS, PDF PANTALLA y PDF CABLEADO (DOCS pasa al panel de administrador)
 - v4.3: logo de AVHUB (nueva app en preparación) en la cabecera, entre el logo y los iconos, con enlace a avhub.mediaservi.com; se elimina el anuncio de VJSHOW del pie
 - v4.3: integra los cambios de las betas 1-4 (v4.25-v4.28) en main
@@ -1443,8 +1445,11 @@ ANTERIOR: v4.1
       /* ===== v4.25 · Anuncios y acceso de administrador ===== */
       .ad-slot { margin: 10px 0; padding: 8px 10px; border: 1px dashed #cbd5e1; border-radius: 10px; background: #fff; text-align: center; font-size: 12px; }
       .ad-slot .ad-tag { display: block; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px; }
-      .ad-slot .ad-link { display: inline-flex; align-items: center; gap: 8px; color: #0f584c; font-weight: 700; text-decoration: none; }
-      .ad-slot img { max-height: 60px; max-width: 120px; object-fit: contain; }
+      .ad-slot .ad-link { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; color: #0f584c; font-weight: 700; text-decoration: none; cursor: pointer; }
+      .ad-slot .ad-medios { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+      .ad-slot img, .ad-slot video { max-height: 90px; max-width: 160px; object-fit: contain; border-radius: 6px; pointer-events: none; }
+      .ad-slot ul.ad-texto { margin: 0; padding-left: 18px; text-align: left; list-style: disc; font-weight: 600; line-height: 1.45; flex: 1 1 260px; max-width: 520px; }
+      .ad-slot .ad-link:hover .ad-texto { text-decoration: underline; }
       /* ===== v4.25 · Iconos del bloque cabinet: color en el propio icono sobre botón claro con sombra ===== */
       .cab-ico-btn { background: #fff; border: 1px solid #d1d5db; box-shadow: 0 2px 4px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.9); }
       .cab-ico-btn .ic { filter: drop-shadow(0 0 0.6px rgba(15,88,76,.9)); }
@@ -2196,12 +2201,26 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
         const [ad, setAd] = useState(null);
         useEffect(() => { let vivo = true; cargarAnuncios().then(sl => { if (vivo) setAd(sl[id] && sl[id].activo ? sl[id] : null); }); return () => { vivo = false; }; }, [id]);
         if (!ad || !ad.url) return null;
+        // Varias fotos o vídeos (una URL por línea o separadas por comas) + texto con viñetas (una por línea).
+        // Todo el banner es un único enlace: tocar texto, foto o vídeo abre la página en una pestaña nueva.
+        const lista = (v) => (Array.isArray(v) ? v : String(v || '').split(/[\n,]+/)).map(x => String(x).trim()).filter(x => /^https?:\/\//i.test(x));
+        const medios = lista(ad.imagenes).concat(lista(ad.imagen).filter(u => !lista(ad.imagenes).includes(u)));
+        const esVideo = (u) => /\.(mp4|webm|ogg|mov)(\?|#|$)/i.test(u);
+        const lineas = String(ad.texto || 'Ver en Amazon').split(/\n+/).map(l => l.replace(/^\s*[-•*·]\s*/, '').trim()).filter(Boolean);
         return (
           <div className="ad-slot no-print" data-slot={id}>
             <span className="ad-tag">Publicidad</span>
             <a href={ad.url} target="_blank" rel="sponsored noopener noreferrer" className="ad-link">
-              {ad.imagen && <img src={ad.imagen} alt="" />}
-              <span>{ad.texto || 'Ver en Amazon'}</span>
+              {medios.length > 0 && (
+                <span className="ad-medios">
+                  {medios.map((u, i) => esVideo(u)
+                    ? <video key={i} src={u} autoPlay muted loop playsInline />
+                    : <img key={i} src={u} alt="" />)}
+                </span>
+              )}
+              {lineas.length > 1
+                ? <ul className="ad-texto">{lineas.map((l, i) => <li key={i}>{l}</li>)}</ul>
+                : <span className="ad-texto">{lineas[0]}</span>}
             </a>
           </div>
         );
@@ -5277,7 +5296,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.3</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.3.1</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -7479,14 +7498,14 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   <AdSlot id="resultados" />
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.3.1 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.3.1 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
                     </div>
                   </div>
               </main>

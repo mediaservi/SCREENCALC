@@ -1,19 +1,21 @@
 {
-  "nota": "Puntos de inserción de anuncios. activo: true/false. Cuando el panel de administrador esté publicado, esta configuración la sirve el panel y este archivo queda como respaldo.",
+  "nota": "Puntos de inserción de anuncios. activo: true/false. imagenes: varias fotos o vídeos (.mp4/.webm), una URL por línea o separadas por comas. texto: una viñeta por línea. Todo el banner abre 'url' en una pestaña nueva. Cuando el panel de administrador esté publicado, esta configuración la sirve el panel y este archivo queda como respaldo.",
   "slots": {
     "panel": {
       "activo": false,
       "tipo": "amazon",
       "url": "https://link.amazon/B08T9uV6Q",
       "texto": "Ver en Amazon",
-      "imagen": ""
+      "imagen": "",
+      "imagenes": ""
     },
     "resultados": {
       "activo": false,
       "tipo": "amazon",
       "url": "https://link.amazon/B08T9uV6Q",
       "texto": "Ver en Amazon",
-      "imagen": ""
+      "imagen": "",
+      "imagenes": ""
     }
   }
 }

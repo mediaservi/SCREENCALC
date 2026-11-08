@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.3**
+**Versión actual: v4.3.1**
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -35,7 +35,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **SCREENBOX:** el isotipo de la cabecera abre la sub-app SCREENBOX (https://screenboxsim.netlify.app/) para pantallas de una o varias paredes con proyectores y salas inmersivas.
 - **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
 - **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios, las consultas internas y la documentación (DOCS), que ya no es pública.
-- **Anuncios:** puntos de inserción localizados (bajo el panel de entrada y al final de los resultados) que se activan o desactivan desde el panel de administrador (o `ads.json` mientras no esté publicado). Como afiliado de Amazon, se obtienen ingresos por las compras adscritas que cumplen los requisitos aplicables.
+- **Anuncios:** puntos de inserción localizados (bajo el panel de entrada y al final de los resultados) que se activan o desactivan desde el panel de administrador; cada banner admite varias fotos o vídeos y texto con viñetas, y todo él abre el enlace en una pestaña nueva (o `ads.json` mientras no esté publicado). Como afiliado de Amazon, se obtienen ingresos por las compras adscritas que cumplen los requisitos aplicables.
 - **Adaptada a PC y móvil:** el panel lateral de entrada va en 2 columnas sin scroll en PC y se ve en grande en móvil.
 
 - **AVHUB:** el logo de AVHUB en la cabecera (entre el logo de SCREENCALC y los iconos) lleva a https://avhub.mediaservi.com/. AVHUB es la nueva app en preparación que reunirá en un solo sitio SCREENCALC, el hardware de proyectos AV, novedades y VJSHOW, con el mismo idioma en todas las secciones.
@@ -71,7 +71,11 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v4.3)
+## Cambios de la versión actual (v4.3.1)
+
+- **Banner de anuncio:** admite varias fotos o vídeos (una URL por línea o separadas por comas) y un texto amplio con viñetas (una viñeta por línea). Todo el banner es un único enlace: tocar el texto, una foto o un vídeo abre la página en una pestaña nueva.
+
+## Cambios de la v4.3
 
 - **PDF único:** un solo botón PDF, en forma de icono en la cabecera. Genera un PDF con resultados, simulación, cosidos, cabinet/electrónica y esquema de conexiones en páginas continuas, sin bloques cortados ni grandes espacios en blanco. Se eliminan los botones inferiores PDF PANTALLA y PDF CABLEADO.
 - **DOCS:** el botón deja de ser público; el enlace pasa al panel de administrador.
