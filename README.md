@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.13**
+**Versión actual: v4.14**
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -74,7 +74,12 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v4.13)
+## Cambios de la versión actual (v4.14)
+
+- **Entorno:** el popup «Datos del proyecto» tiene siempre la fila ENTORNO (Estándar · Marino / tropical · Al alcance del público); cada opción lleva a otros tipos de cabinet (GOLD tropicalizado / LED protegido) y se activa o desactiva por separado. También están como botones en el panel manual (TIPO DE PANTALLA) y como etiquetas en el resumen.
+- **✎ EDITAR:** en «Solicitud aplicada» reabre el popup con lo elegido, para corregir cualquier dato que se haya interpretado mal y volver a calcular.
+
+## Cambios de la versión v4.13
 
 - **Petición:** entiende frases dictadas como «se vea bien a una distancia de unos 6 metros» o «la pared de ancho son 12 metros»; «público» ya no se toma como LED protegido salvo si se dice espacio o lugar público.
 - **Popup «Datos del proyecto»:** nueva fila «Resolución mínima» (Full HD, 4K…) editable; la distancia del público también aparece cuando se pide una resolución; valores por defecto: interior, instalación fija, sin LED protegido, electrónica con backup, escalador y conexión RJ45, sin mediaserver, 1 fuente HDMI; en pantallas anchas se muestra a dos columnas.
