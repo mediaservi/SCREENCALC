@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.4**
+**Versión actual: v4.5**
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -73,7 +73,11 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v4.4)
+## Cambios de la versión actual (v4.5)
+
+- **Eslogan de AVHUB:** pasa a ser «TOOLS FOR AV PEOPLE» en el pie de los configuradores (todos los idiomas).
+
+## Cambios de la v4.4
 
 - **Numeración:** las versiones usan 2 cifras (v4.4, v4.5 … hasta v99.99).
 - **PDF en 2 páginas** con el orden fijo: página 1 (características pantalla, observaciones, características del cabinet, simulación) y página 2 (electrónica y mediaserver elegidos en una fila, esquema, cableado de señal, cableado eléctrico y aviso IA). El esquema se encoge lo necesario para no pasar de 2 páginas. Logo de AVHUB enlazado arriba a la derecha de la página 1.
