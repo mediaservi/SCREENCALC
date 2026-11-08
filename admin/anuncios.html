@@ -118,12 +118,15 @@ input[type=color]{width:34px;height:28px;padding:0;border:1px solid var(--linea)
 
 /* catálogo */
 .catlista{display:flex;flex-direction:column;gap:4px;max-height:calc(100vh - 230px);overflow:auto;margin-top:8px}
-.catfila{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;text-align:left;border:1px solid var(--linea);background:#141417;border-radius:7px;padding:7px 9px;color:var(--txt);font-size:12px}
-.catfila b{font-size:13px}
-.catfila span{grid-column:1;color:var(--tenue);font-size:11px}
-.catfila i{grid-row:1/3;grid-column:2;align-self:center;font-style:normal;white-space:nowrap}
+.catfila{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:8px;align-items:center;text-align:left;border:1px solid var(--linea);background:#141417;border-radius:7px;padding:7px 9px;color:var(--txt);font-size:12px;cursor:pointer}
+.catinfo{display:flex;flex-direction:column;min-width:0}.catinfo b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.catinfo span{color:var(--tenue);font-size:11px}
+.catfila i{font-style:normal;white-space:nowrap}
+.catck{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--tenue);cursor:pointer}
+.catck input{width:18px;height:18px;accent-color:#00ff04;cursor:pointer}
+.catck.grande{flex-direction:row;gap:8px;font-size:11px;color:var(--txt);border:1px solid var(--linea);border-radius:7px;padding:6px 10px}
+.catpri{display:flex;align-items:center;gap:3px}.catpri button{border:1px solid var(--linea);background:#1e1e24;border-radius:5px;font-size:10px;padding:2px 6px;color:var(--txt)}.catpri button:disabled{opacity:.3}.catpri b{font-size:11px;min-width:28px;text-align:center}
 .catfila.on{border-color:var(--on);background:#0f1f10}
-.catfila.oculto{opacity:.5}
+.catfila.apagada{opacity:.5}
 .revision{border:1px solid var(--ambar);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px;background:#1e1a10}
 .revfila{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px}
 .revfila span{flex:1 1 220px}
@@ -131,6 +134,12 @@ input[type=color]{width:34px;height:28px;padding:0;border:1px solid var(--linea)
 .org{display:inline-block;font-size:9px;padding:0 4px;border-radius:3px;margin-left:4px;color:#000}
 .org-hoja{background:#9aa0a6}.org-web{background:#00b4ff}.org-manual{background:var(--ambar)}
 .app.sin-biblio{grid-template-columns:minmax(0,1fr)}.app.sin-biblio aside{display:none}
+
+.catgrid{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}
+.catder{position:sticky;top:76px}
+.tabs{flex-wrap:wrap;max-width:100%}
+@media (max-width:900px){.catgrid{grid-template-columns:1fr}.catder{position:relative;top:0}}
+@media (max-width:560px){.tabs button{padding:7px 9px;font-size:11px;letter-spacing:.04em}.catfila{grid-template-columns:auto minmax(0,1fr) auto}.catfila i{grid-column:2/-1;justify-self:start}.catlista{max-height:none}}
 
 :root{--chasis:#2A2A2A;--fondo:#18181c;--panel:#222226;--linea:#3a3a42;--txt:#e7e7ee;--tenue:#9a9aa8;--marca:#9900ff;--on:#00ff04;--ambar:#ffb000;--azul:#00b4ff;--rojo:#ff3b5c}
 *{box-sizing:border-box}
@@ -154,6 +163,7 @@ header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px
 .seg button.on{background:var(--marca);color:#fff}
 .bt{border:1px solid var(--linea);background:#2c2c33;border-radius:7px;padding:7px 12px;font-weight:700;font-size:12px}
 .bt:hover{border-color:#5a5a66}
+a.bt{color:var(--txt);text-decoration:none}
 .bt:disabled{opacity:.4;cursor:default}
 .bt.prim{background:#1e1e22;border-color:var(--linea);color:var(--tenue)}
 .bt.prim.sucio{background:var(--on);border-color:var(--on);color:#06210a;box-shadow:0 0 12px rgba(0,255,4,.45)}
@@ -1749,7 +1759,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
      ===================================================================== */
   var C = null, catSucio = false, catSel = null, catFiltro = 'todos', catBusca = '', catCargando = false, sincDiaria = null;
   var GRUPOS = [
-    ['Identificación', { crm: 'Referencia', family: 'Familia', subfamily: 'Subgama', class: 'Clase', tipo: 'Tipo', tech: 'Tecnología', disp: 'Disponibilidad', stock: 'Stock' }],
+    ['Identificación', { prioridad: 'Prioridad en su pitch (1 = primero)', crm: 'Referencia', family: 'Familia', subfamily: 'Subgama', class: 'Clase', tipo: 'Tipo', tech: 'Tecnología', disp: 'Disponibilidad', stock: 'Stock' }],
     ['Cabinet', { pitch: 'Pitch (mm)', pitchV: 'Pitch vertical', cabAncho: 'Ancho (mm)', cabAlto: 'Alto (mm)', thick: 'Fondo (mm)', cabPixAncho: 'Píxeles ancho', cabPixAlto: 'Píxeles alto', cabPix: 'Píxeles por cabinet', ar: 'Proporción', cabKg: 'Peso (kg)' }],
     ['Imagen y eléctrico', { nits: 'Brillo (nits)', hz: 'Refresco (Hz)', cabAmp: 'Corriente (A)', wTyp: 'Consumo medio (W/cabinet)', wMax: 'Consumo máximo (W/cabinet)' }],
     ['Instalación y documentación', { mant: 'Mantenimiento', card: 'Tarjeta receptora', cableado: 'Cableado', girok: 'Giro OK', obs: 'Observaciones', brochure: 'Ficha PDF', urlFoto: 'Foto', urlProd: 'Página del producto' }]
@@ -1779,7 +1789,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
   function informeMarketing() {
     var a = (C && C.avisosWeb) || []; if (!a.length) return '';
     return 'Hola,\n\nRevisando la web de producto LED he encontrado estas incoherencias. ¿Podéis corregirlas?\n\n' +
-      a.map(function (x, i) { return (i + 1) + '. ' + (x.codigo || x.titulo) + '\n   ' + x.url + '\n' + x.avisos.map(function (t) { return '   - ' + t; }).join('\n'); }).join('\n\n') +
+      a.map(function (x, i) { return (i + 1) + '. ' + (x.codigo || x.titulo) + '\n   Web: ' + x.url + (x.pdf ? '\n   Ficha PDF: ' + x.pdf : '') + '\n' + x.avisos.map(function (t) { return '   - ' + t; }).join('\n'); }).join('\n\n') +
       '\n\nGracias.\n';
   }
   function pintarCatalogo() {
@@ -1831,6 +1841,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     if (inf) {
       var mk = el('details', 'caja'); mk.innerHTML = '<summary class="caja-cab" style="cursor:pointer"><h2>Avisos para marketing · ' + C.avisosWeb.length + ' productos con incoherencias en la web</h2></summary>';
       var mc = el('div', 'caja-cuerpo'), ta = el('textarea'); ta.readOnly = true; ta.value = inf; ta.style.minHeight = '220px';
+      if (C.web && C.web.pdf) mc.appendChild(el('div', 'nota', 'Fichas PDF comparadas: ' + (C.web.pdf.comparados || 0) + (C.web.pdf.sinLeer ? ' · no legibles automáticamente: ' + C.web.pdf.sinLeer : '') + (C.web.pdf.pendientes ? ' · pendientes para la próxima sincronización: ' + C.web.pdf.pendientes : '') + (C.web.pdf.error ? '<br>' + esc(C.web.pdf.error) : '')));
       var cp = el('button', 'bt on', 'COPIAR TEXTO PARA EL CORREO'); cp.onclick = function () { copiarTexto(inf, 'Informe copiado: pégalo en el correo a marketing'); };
       var ml = el('a', 'bt', 'Abrir en el correo'); ml.href = 'mailto:?subject=' + encodeURIComponent('Incoherencias en la web de producto LED') + '&body=' + encodeURIComponent(inf.slice(0, 1800)); ml.target = '_blank'; ml.style.textDecoration = 'none';
       var fb = el('div', 'botones'); fb.appendChild(cp); fb.appendChild(ml);
@@ -1838,17 +1849,24 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     }
     if (C.fueraCalculo && Object.keys(C.fueraCalculo).length) cont.appendChild(el('div', 'nota', 'Productos de la web que no son de cabinets (cubos, holográficos, pósters…) y no entran en el cálculo: ' + Object.keys(C.fueraCalculo).length));
     /* lista + editor */
-    var grid = el('div', 'ed-grid'); grid.style.gridTemplateColumns = 'minmax(0,1fr) minmax(0,1.25fr)';
+    var grid = el('div', 'ed-grid catgrid');
     var izq = el('div', 'caja'), ic = el('div', 'caja-cuerpo');
     var bus = el('input'); bus.type = 'text'; bus.placeholder = 'Buscar referencia, familia, pitch…'; bus.value = catBusca;
     bus.oninput = function () { catBusca = bus.value; pintarLista(); };
     ic.appendChild(bus);
     var lista = el('div', 'catlista'); ic.appendChild(lista); izq.appendChild(ic); grid.appendChild(izq);
-    var der = el('div', 'sec'); der.style.position = 'sticky'; der.style.top = '76px'; grid.appendChild(der);
+    var der = el('div', 'sec catder'); grid.appendChild(der);
     cont.appendChild(grid);
+    function pr(m) { var x = parseFloat(m.prioridad); return isNaN(x) ? 999 : x; }
+    function grupo(m) { return C.modelos.filter(function (x) { return !x._oculto && x._estado !== 'nuevo' && parseFloat(x.pitch) === parseFloat(m.pitch); }).sort(function (a, b) { return pr(a) - pr(b) || String(a.crm).localeCompare(String(b.crm)); }); }
+    function moverPrioridad(m, d) {
+      var g = grupo(m), i = g.indexOf(m), j = i + d; if (i < 0 || j < 0 || j >= g.length) return;
+      cambioCat(function () { g.splice(j, 0, g.splice(i, 1)[0]); g.forEach(function (x, k) { x.prioridad = k + 1; (x._origen = x._origen || {}).prioridad = 'manual'; }); });
+      led('Orden del pitch ' + m.pitch + ': ' + g.map(function (x) { return x.crm; }).join(' → '), 'ok');
+    }
     function visibles() {
       var q = catBusca.trim().toLowerCase();
-      return C.modelos.filter(function (m) {
+      return C.modelos.slice().sort(function (a, b) { return (parseFloat(a.pitch) || 99) - (parseFloat(b.pitch) || 99) || pr(a) - pr(b) || String(a.crm).localeCompare(String(b.crm)); }).filter(function (m) {
         if (catFiltro === 'ocultos' ? !m._oculto : (catFiltro !== 'todos' && (m._oculto || m._estado !== catFiltro))) return false;
         return !q || [m.crm, m.family, m.subfamily, m.pitch, m.tipo, m.class].join(' ').toLowerCase().indexOf(q) >= 0;
       });
@@ -1858,10 +1876,21 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
       var vs = visibles();
       if (!vs.length) { lista.appendChild(el('div', 'nota', 'No hay modelos con este filtro.')); return; }
       vs.forEach(function (m) {
-        var f = el('button', 'catfila' + (m._id === catSel ? ' on' : '') + (m._oculto ? ' oculto' : ''));
-        var np = pendientes(m).length;
-        f.innerHTML = '<b>' + esc(m.crm) + '</b><span>' + esc([m.family, m.pitch ? 'P' + m.pitch : '', m.cabAncho && m.cabAlto ? m.cabAncho + '×' + m.cabAlto : '', m.tipo, m.class].filter(Boolean).join(' · ')) + '</span>' +
-          '<i class="chip ' + (m._estado === 'ok' ? 'activo' : m._estado === 'revisar' ? 'caducado' : m._estado === 'nuevo' ? 'programado' : 'desactivado') + '">' + (ESTADOS[m._estado] || m._estado) + (np ? ' · ' + np : '') + '</i>';
+        var f = el('div', 'catfila' + (m._id === catSel ? ' on' : '') + (m._oculto ? ' apagada' : ''));
+        var np = pendientes(m).length, g = m._oculto || m._estado === 'nuevo' ? [] : grupo(m), pos = g.indexOf(m);
+        var ck = el('label', 'catck', '<input type="checkbox"' + (m._oculto ? '' : ' checked') + '><span>Cálculos</span>'); ck.title = 'Marcado: el modelo se usa en los cálculos de la app. Desmarcado: queda oculto.';
+        ck.onclick = function (e) { e.stopPropagation(); };
+        ck.querySelector('input').onchange = function () { cambioCat(function () { m._oculto = !m._oculto; }); led(m.crm + (m._oculto ? ' oculto: no se usa en los cálculos' : ' se usa en los cálculos'), 'ok'); };
+        var info = el('div', 'catinfo', '<b>' + esc(m.crm) + '</b><span>' + esc([m.family, m.pitch ? 'P' + m.pitch : '', m.cabAncho && m.cabAlto ? m.cabAncho + '×' + m.cabAlto : '', m.tipo, m.class].filter(Boolean).join(' · ')) + '</span>');
+        var pri = el('div', 'catpri');
+        if (g.length > 1) {
+          pri.innerHTML = '<button title="Antes en la lista recomendada">▲</button><b title="Prioridad dentro del pitch ' + esc(m.pitch) + '">' + (pos + 1) + '/' + g.length + '</b><button title="Después en la lista recomendada">▼</button>';
+          pri.children[0].disabled = pos === 0; pri.children[2].disabled = pos === g.length - 1;
+          pri.children[0].onclick = function (e) { e.stopPropagation(); moverPrioridad(m, -1); };
+          pri.children[2].onclick = function (e) { e.stopPropagation(); moverPrioridad(m, 1); };
+        }
+        var chip = el('i', 'chip ' + (m._estado === 'ok' ? 'activo' : m._estado === 'revisar' ? 'caducado' : m._estado === 'nuevo' ? 'programado' : 'desactivado'), (ESTADOS[m._estado] || m._estado) + (np ? ' · ' + np : ''));
+        [ck, info, pri, chip].forEach(function (x) { f.appendChild(x); });
         f.onclick = function () { catSel = m._id; pintarLista(); pintarEditor(); };
         lista.appendChild(f);
       });
@@ -1877,7 +1906,8 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
       var cu = el('div', 'caja-cuerpo');
       var acc = el('div', 'botones');
       if (m._estado === 'nuevo') { var ap = el('button', 'bt on', 'APROBAR (entra en la app)'); ap.onclick = function () { cambioCat(function () { m._estado = pendientes(m).length ? 'revisar' : 'ok'; }); }; acc.appendChild(ap); }
-      var oc = el('button', 'bt', m._oculto ? 'Mostrar en la app' : 'Ocultar de la app'); oc.onclick = function () { cambioCat(function () { m._oculto = !m._oculto; }); }; acc.appendChild(oc);
+      var oc = el('label', 'catck grande', '<input type="checkbox"' + (m._oculto ? '' : ' checked') + '><span>' + (m._oculto ? 'OCULTO · no se usa en los cálculos' : 'SE USA EN LOS CÁLCULOS') + '</span>');
+      oc.querySelector('input').onchange = function () { cambioCat(function () { m._oculto = !m._oculto; }); }; acc.appendChild(oc);
       if (C.webLista && C.webLista.length) {
         var en = el('select'); en.style.width = 'auto';
         en.innerHTML = '<option value="">Enlazar con ficha web…</option>' + C.webLista.map(function (w) { return '<option value="' + esc(w.slug) + '"' + (m._web && m._web.slug === w.slug ? ' selected' : '') + '>' + esc(w.codigo || w.titulo) + '</option>'; }).join('');
@@ -1902,6 +1932,11 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
         });
         ((m._web && m._web.avisos) || []).forEach(function (t) { rv.appendChild(el('div', 'nota', '⚠ ' + esc(t))); });
         cu.appendChild(rv);
+      }
+      if (m._web && m._web.pdf) {
+        var pd = m._web.pdf, et = { nits: 'nits', hz: 'Hz', cabKg: 'kg', thick: 'mm fondo', wTypM2: 'W/m² medio', wMaxM2: 'W/m² máx.' };
+        cu.appendChild(el('div', 'nota', 'Ficha PDF: ' + Object.keys(et).filter(function (k) { return pd[k] != null; }).map(function (k) { return pd[k] + ' ' + et[k]; }).join(' · ') +
+          (pd.cabAncho ? ' · cabinet ' + pd.cabAncho + '×' + pd.cabAlto + ' mm' : '') + (pd.cabPixAncho ? ' · ' + pd.cabPixAncho + '×' + pd.cabPixAlto + ' px' : '')));
       }
       /* campos */
       var usados = {};
