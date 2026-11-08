@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.7**
+**Versión actual: v4.7.1**
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -73,7 +73,11 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v4.7)
+## Cambios de la versión actual (v4.7.1)
+
+- **Distancia de visionado:** una sola figura, en la distancia del pitch elegido, con cota desde la pantalla y etiqueta de pitch y distancia; las zonas CERCA / ACEPTABLE / ÓPTIMA van rotuladas dentro del suelo; los demás pitch disponibles aparecen en una regla técnica con etiquetas inclinadas que no se solapan.
+
+## Cambios de la versión v4.7
 
 - **Información:** la ventana de la app muestra solo un resumen breve de para qué sirve la web; el detalle técnico y los cambios quedan en este README.
 - **Cabecera:** la X de TRAULUX va sin fondo negro y pasa a ser el último icono, a la derecha.
