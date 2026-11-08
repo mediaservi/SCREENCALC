@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.9                              ║
+║                         Versión actual: v4.10                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.9
+ÚLTIMA ACTUALIZACIÓN: v4.10
+- v4.10: «Distancia de visionado» rediseñada (también en main como v4.7.1): una sola figura en la distancia del pitch elegido con cota y etiqueta, zonas CERCA / ACEPTABLE / ÓPTIMA rotuladas dentro del suelo y regla técnica con los pitch disponibles en etiquetas inclinadas que no se solapan; las zonas de anuncios de resultados se limitan a su ancho de 600 px (se ven como en la vista previa del panel, aunque la otra zona esté vacía); chip de TRAULUX en configuradores: «CALCULADORA DE PANTALLA LED»
+ANTERIOR: v4.9
 - v4.9: prioridad manual por modelo (pestaña CATÁLOGO del panel): a igual pitch manda el orden fijado ahí en las configuraciones recomendadas y en las listas; la casilla «Cálculos» decide qué modelos usa la app
 - v4.9: la sincronización del catálogo compara también con las fichas técnicas PDF para el informe a marketing
 ANTERIOR: v4.8
@@ -1538,7 +1540,8 @@ ANTERIOR: v4.1
       @media print { .ad-slot, .ad-fila, .ad-traulux { display: none !important; } }
       /* v4.5 · zonas de anuncios con el motor AVHUB ADS */
       .ad-fila:has(> .avad-zona), .avad-zona { flex-shrink: 0; }
-      .ad-fila > .avad-zona { flex: 1 1 360px; min-width: 0; }
+      .ad-fila > .avad-zona { flex: 1 1 360px; min-width: 0; max-width: 600px; }
+      .ad-fila:has(> .avad-zona) { justify-content: center; }
       @media (max-width: 767px) { .avad-zona[data-slot="panel"] { display: none !important; } .ad-fila:has(> .avad-zona) { flex-wrap: nowrap; } .ad-fila > .avad-zona { flex: 0 0 auto; width: 100%; } }
       /* ===== v4.25 · Iconos del bloque cabinet: color en el propio icono sobre botón claro con sombra ===== */
       .cab-ico-btn { background: #fff; border: 1px solid #d1d5db; box-shadow: 0 2px 4px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.9); }
@@ -5687,7 +5690,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.9</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.10</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -7191,7 +7194,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       const Dato = ({ k, v, strong }) => (
                         <div className="flex justify-between items-baseline gap-2 text-xs py-0.5"><span className="text-gray-500">{k}</span><span className={strong ? 'font-bold text-gray-900' : 'font-semibold text-gray-800'}>{v}</span></div>
                       );
-                      // Gráfico a escala: pantalla calculada, suelo con semáforo y figuras de 1,75 m a la distancia óptima de 4 pitch disponibles
+                      // Gráfico a escala: pantalla calculada, suelo por zonas rotuladas, una figura de 1,75 m en la distancia del pitch elegido y regla técnica con los pitch disponibles
                       const distGrafico = (() => {
                         const pSel = Number(selectedModel?.pitch) || 0;
                         if (!pSel) return null;
@@ -7200,34 +7203,59 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                         const mismos = modelos.filter(m => (!filterClass || m.class === filterClass) && (!filterTipo || normTipo(m.tipo) === filterTipo) && m.pitch > 0);
                         let ps = [...new Set(mismos.map(m => m.pitch))].sort((a, b) => a - b);
                         if (!ps.includes(pSel)) ps = [...ps, pSel].sort((a, b) => a - b);
-                        // pitch suficientemente distintos entre sí (para que las figuras no se solapen)
-                        const finos = [];
-                        ps.forEach(pp => { const u = finos[finos.length - 1]; if (u === undefined || pp >= u * 1.2) finos.push(pp); else if (pp === pSel) { finos.pop(); finos.push(pp); } });
-                        ps = finos;
                         const idx = ps.indexOf(pSel);
-                        const ini = Math.max(0, Math.min(idx - 1, ps.length - 4));
-                        const cuatro = ps.slice(ini, ini + 4);
-                        const maxD = Math.max(...cuatro.map(p => p * 3), pSel * 3) * 1.12;
-                        const W = 360, H = 180, fy = 142, x0 = 82;
-                        const ppm = Math.min(56, 104 / Math.max(hPant, 1.9));
-                        const humH = 1.75 * ppm, scrH = Math.min(hPant * ppm, 130);
-                        const k = (W - x0 - 14) / maxD;
+                        const ini = Math.max(0, Math.min(idx - 2, ps.length - 5));
+                        const cinco = ps.slice(ini, ini + 5);
+                        const maxD = Math.max(...cinco.map(p => p * 3), pSel * 3) * 1.25;
+                        const W = 360, fy = 128, x0 = 82, sw = 50, sk = 12, fb = fy + 12;
+                        const ppm = Math.min(52, 96 / Math.max(hPant, 1.9));
+                        const humH = 1.75 * ppm, scrH = Math.min(hPant * ppm, 118);
+                        const k = (W - x0 - 16) / maxD;
                         const xs = (d) => x0 + d * k;
                         const dMin = pSel, dOpt = pSel * 3;
-                        const estado = (d) => d < dMin ? 0 : d < dOpt ? 1 : 2;
-                        const col = ['#b91c1c', '#b45309', '#0f584c'];
-                        const zona = [['#fca5a5', 0, dMin], ['#fde68a', dMin, dOpt], ['#73ac44', dOpt, maxD]];
+                        const mono = 'ui-monospace, "Roboto Mono", Menlo, Consolas, monospace';
+                        const zonas = [['#fca5a5', '#7f1d1d', 0, dMin, ['CERCA']], ['#fde68a', '#78350f', dMin, dOpt, ['ACEPTABLE', 'ACEPT.']], ['#73ac44', '#ffffff', dOpt, maxD, ['ÓPTIMA', 'ÓPT.']]];
                         const hw = 445 / 1280 * humH;
                         const cols = Math.min(stats?.cols || 1, 16), rows = Math.min(stats?.rows || 1, 12);
-                        const sw = 50, sk = 12; // ancho visual y perspectiva de la pantalla
+                        const xIni = 14 + sw;
+                        const ry = fb + 9; // línea de la regla
+                        const cx = xs(dOpt);
+                        // etiquetas de la regla (inclinadas), sin solaparse: la elegida manda
+                        const marcas = cinco.map(p => ({ p, x: xs(p * 3), sel: p === pSel }));
+                        const visibles = [];
+                        [...marcas].sort((a, b) => (b.sel - a.sel) || (a.x - b.x)).forEach(m => { if (visibles.every(v => Math.abs(v.x - m.x) >= 11)) visibles.push(m); });
+                        // marcas menores de la regla cada paso «redondo»
+                        const pasoM = [0.25, 0.5, 1, 2, 5, 10].find(s => maxD / s <= 14) || 20;
+                        const menores = Array.from({ length: Math.floor(maxD / pasoM) + 1 }, (_, i) => i * pasoM);
+                        const etiq = `${fmtDist(dOpt)} ${unit}`;
+                        const pTxt = pSel + 'p', pW1 = 7 + pTxt.length * 6.1;
+                        const pillW = pW1 + 12 + etiq.length * 6.1;
+                        const pillX = Math.min(W - 4 - pillW, Math.max(xIni + 2, cx - pillW / 2));
+                        const topH = fy - humH;
+                        const H = ry + 50;
                         return (
                           <svg viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label="Distancia de visionado a escala" style={{ display: 'block' }}>
                             <defs>
                               <clipPath id="clipScr"><polygon points={`14,${fy - scrH} ${14 + sw},${fy - scrH - sk} ${14 + sw},${fy - sk} 14,${fy}`} /></clipPath>
+                              <pattern id="rayasSuelo" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#000" strokeOpacity="0.06" strokeWidth="2" /></pattern>
                             </defs>
-                            {/* suelo con semáforo */}
-                            {zona.map(([c, a, b], i) => b > a && <polygon key={i} points={`${Math.max(xs(a), 14 + sw)},${fy - sk} ${xs(b)},${fy - sk} ${xs(b)},${fy + 12} ${Math.max(xs(a), 14 + sw) - 8},${fy + 12}`} fill={c} opacity="0.85" />)}
-                            <polygon points={`14,${fy} ${14 + sw},${fy - sk} ${14 + sw},${fy + 12} 14,${fy + 12}`} fill="#d1d5db" />
+                            {/* suelo por zonas con el rótulo integrado */}
+                            {zonas.map(([c, tc, a, b, txt], i) => {
+                              if (b <= a) return null;
+                              const xa = Math.max(xs(a), xIni), xb = xs(b), ancho = xb - xa;
+                              // el rótulo evita la figura y se reduce si la franja es estrecha
+                              const ta = i === 2 ? Math.max(xa, cx + hw / 2 + 2) : xa, tb = i === 1 ? Math.min(xb, cx - hw / 2 - 2) : xb, util = tb - ta;
+                              const op = txt.filter(Boolean).flatMap(s => [[s, 8.5, 1.6], [s, 6.8, 0.4]]).find(([s, f, l]) => s.length * (f * 0.6 + l) + 6 <= util);
+                              return (
+                                <g key={i}>
+                                  <polygon points={`${xa},${fy - sk} ${xb},${fy - sk} ${xb - 8},${fb} ${xa - 8},${fb}`} fill={c} />
+                                  <polygon points={`${xa},${fy - sk} ${xb},${fy - sk} ${xb - 8},${fb} ${xa - 8},${fb}`} fill="url(#rayasSuelo)" />
+                                  {op && <text x={(ta + tb) / 2 - 4} y={fy + 3.5} textAnchor="middle" fontSize={op[1]} fontWeight="800" letterSpacing={op[2]} fill={tc} fontFamily={mono} transform={`translate(${(fy + 3.5) * 0.325} 0) skewX(-18)`}>{op[0]}</text>}
+                                </g>
+                              );
+                            })}
+                            {[dMin, dOpt].map((d, i) => d < maxD && <line key={i} x1={xs(d)} y1={fy - sk} x2={xs(d) - 8} y2={fb} stroke="#fff" strokeWidth="1.2" />)}
+                            <polygon points={`14,${fy} ${14 + sw},${fy - sk} ${14 + sw},${fb} 14,${fb}`} fill="#d1d5db" />
                             {/* pantalla */}
                             <g clipPath="url(#clipScr)">
                               <polygon points={`14,${fy - scrH} ${14 + sw},${fy - scrH - sk} ${14 + sw},${fy - sk} 14,${fy}`} fill="#0b1220" />
@@ -7236,22 +7264,33 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                               {Array.from({ length: rows + 1 }).map((_, r) => { const y = fy - scrH + scrH * r / rows; return <line key={'h' + r} x1="14" x2={14 + sw} y1={y} y2={y - sk} stroke="#ccff00" strokeWidth="0.5" opacity="0.8" />; })}
                             </g>
                             <polygon points={`14,${fy - scrH} ${14 + sw},${fy - scrH - sk} ${14 + sw},${fy - sk} 14,${fy}`} fill="none" stroke="#111827" strokeWidth="1.6" />
-                            <text x={14 + sw / 2} y={fy + 24} textAnchor="middle" fontSize="10" fontWeight="700" fill="#374151">{U(wPant).replace('.', ',')}×{U(hPant).replace('.', ',')} {unit}</text>
-                            {/* figuras */}
-                            {cuatro.map((p) => {
-                              const d = p * 3, sel = p === pSel, cx = xs(d), c = col[estado(d)];
-                              return (
-                                <g key={p}>
-                                  {sel && <rect x={cx - hw / 2 - 5} y={fy - humH - 24} width={hw + 10} height={humH + 36} rx="6" fill="#ccff00" opacity="0.55" stroke="#0f584c" strokeWidth="1.5" />}
-                                  <svg x={cx - hw / 2} y={fy - humH} width={hw} height={humH} viewBox="97 0 445 1280" preserveAspectRatio="xMidYMax meet">
-                                    <g transform="translate(0,1280) scale(0.1,-0.1)" fill={c} stroke="none"><path d={HUMAN_PATH} /></g>
-                                  </svg>
-                                  <rect x={cx - 23} y={fy - humH - 21} width="46" height="16" rx="8" fill={sel ? '#0f584c' : '#fff'} stroke="#0f584c" strokeWidth="1" />
-                                  <text x={cx} y={fy - humH - 9} textAnchor="middle" fontSize="10.5" fontWeight="800" fill={sel ? '#ccff00' : '#0f584c'}>{sel ? '★ ' : ''}{p}p</text>
-                                  <text x={cx} y={fy + 24} textAnchor="middle" fontSize="9.5" fontWeight={sel ? '800' : '600'} fill="#374151">{fmtDist(d)} {unit}</text>
-                                </g>
-                              );
-                            })}
+                            <text x={14 + sw / 2} y={ry + 14} textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#374151" fontFamily={mono}>{fmtDist(wPant)}×{fmtDist(hPant)}</text>
+                            <text x={14 + sw / 2} y={ry + 25} textAnchor="middle" fontSize="8.5" fontWeight="600" fill="#6b7280" fontFamily={mono}>{unit}</text>
+                            {/* figura en la distancia del pitch elegido */}
+                            <line x1={cx} y1={topH - 6} x2={cx} y2={ry} stroke="#0f584c" strokeWidth="0.8" strokeDasharray="2 2" />
+                            <svg x={cx - hw / 2} y={fy - humH} width={hw} height={humH} viewBox="97 0 445 1280" preserveAspectRatio="xMidYMax meet">
+                              <g transform="translate(0,1280) scale(0.1,-0.1)" fill="#0f584c" stroke="none"><path d={HUMAN_PATH} /></g>
+                            </svg>
+                            <g>
+                              <rect x={pillX} y={topH - 25} width={pillW} height="17" rx="3" fill="#0f584c" />
+                              <text x={pillX + 6} y={topH - 13} fontSize="10" fontWeight="800" fill="#ccff00" fontFamily={mono}>{pTxt}</text>
+                              <line x1={pillX + pW1 + 3} y1={topH - 22} x2={pillX + pW1 + 3} y2={topH - 11} stroke="#ccff00" strokeOpacity="0.5" />
+                              <text x={pillX + pW1 + 8} y={topH - 13} fontSize="10" fontWeight="700" fill="#ffffff" fontFamily={mono}>{etiq}</text>
+                            </g>
+                            {/* cota pantalla → espectador */}
+                            <g stroke="#0f584c" strokeWidth="0.9" fill="#0f584c">
+                              <line x1={x0} y1={topH + 8} x2={cx - hw / 2 - 3} y2={topH + 8} />
+                              <path d={`M${x0},${topH + 8} l5,-2.5 v5 z`} stroke="none" />
+                              <path d={`M${cx - hw / 2 - 3},${topH + 8} l-5,-2.5 v5 z`} stroke="none" />
+                            </g>
+                            {/* regla técnica */}
+                            <line x1={x0} y1={ry} x2={xs(maxD)} y2={ry} stroke="#374151" strokeWidth="1" />
+                            {menores.map((d, i) => <line key={'m' + i} x1={xs(d)} y1={ry} x2={xs(d)} y2={ry + 3} stroke="#6b7280" strokeWidth="0.6" />)}
+                            {marcas.map(m => <line key={'t' + m.p} x1={m.x} y1={ry - 3} x2={m.x} y2={ry + 6} stroke={m.sel ? '#0f584c' : '#374151'} strokeWidth={m.sel ? 2 : 1} />)}
+                            <text x={xs(maxD)} y={ry - 4} textAnchor="end" fontSize="8" fontWeight="700" fill="#6b7280" fontFamily={mono}>{unit}</text>
+                            {visibles.map(m => (
+                              <text key={'e' + m.p} x={m.x - 2} y={ry + 12} transform={`rotate(40 ${m.x - 2} ${ry + 12})`} textAnchor="start" fontSize="8.5" fontWeight={m.sel ? 800 : 600} fill={m.sel ? '#0f584c' : '#4b5563'} fontFamily={mono}>{m.sel ? '★' : ''}{m.p}p · {fmtDist(m.p * 3)}</text>
+                            ))}
                           </svg>
                         );
                       })();
@@ -7287,7 +7326,6 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                               </Tarjeta>
                               <Tarjeta titulo="Distancia de visionado" icono="ic:distancia" color="#b45309" bg="#fffbeb">
                                 {distGrafico}
-                                <div className="flex justify-between text-[10px] font-bold mt-1"><span style={{ color: '#b91c1c' }}>● cerca</span><span style={{ color: '#92400e' }}>● aceptable</span><span style={{ color: '#0f584c' }}>● óptima</span></div>
                                 <div className="mt-2 border-t border-gray-100 pt-1">
                                   <Dato k="Mínima" v={minViewC + ' ' + unit} strong />
                                   <Dato k="Óptima desde" v={optViewC + ' ' + unit} strong />
@@ -7901,7 +7939,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.9 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.10 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
