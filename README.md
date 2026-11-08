@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.11**
+**Versión actual: v4.12**
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -16,7 +16,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 
 ## Funciones
 
-- **Petición en lenguaje natural (📝):** se pega el texto del cliente y la app propone una pantalla. Si falta un dato, pregunta con un popup; lo que ya viene en el texto no se vuelve a preguntar. Se interpreta con reglas locales, sin servicios externos de IA.
+- **Petición en lenguaje natural (📝):** se pega el texto del cliente y la app propone una pantalla. Abre un solo popup «Datos del proyecto» con todos los datos en botones: lo que viene en el texto sale marcado con ✓, lo que falta lleva un valor por defecto que se cambia con un toque, y un único botón CALCULAR. Solo es obligatoria la medida (en metros), salvo si se pide una resolución. Entiende números dictados en palabras. Se interpreta con reglas locales, sin servicios externos de IA.
 - **Preguntas de proyecto llave en mano:** uso (interior, exterior, escaparate), instalación o alquiler, distancia del público, ¿cerca del mar o mucha humedad? (variante tropicalizada con contactos de oro), electrónica sí/no (con o sin backup, con o sin escalador, conexión RJ45 o rack con fibra), mediaserver (marca, Dante), número, tipo y resolución de las fuentes de vídeo y distancia de las fuentes.
 - **Panel de entrada manual:** INSTALL / RENTAL, INDOOR / OUTDOOR / ESCAPARATE, pitch y nits (valores de la tabla con flechas ▲▼), COLUMNAS y FILAS, ancho y alto con selector de unidad m / cm / mm (por defecto cm; el PDF sigue la unidad elegida), resolución mínima (HD / FHD / UHD 4K) y altura sobre el suelo. Muestra en vivo medidas, cabinets y resolución.
 - **Modo resumen:** si la petición se hizo en texto, el panel solo muestra lo elegido. Con "Editar a mano" se vuelve al panel completo. En móvil, el botón flotante ⚙ PANEL vuelve al panel desde los resultados.
@@ -74,7 +74,12 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v4.11)
+## Cambios de la versión actual (v4.12)
+
+- **Petición en lenguaje natural:** un solo popup «Datos del proyecto» sustituye a la cadena de preguntas. Todas las opciones a la vista con botones; lo detectado en la petición va marcado (✓ de tu petición / ✓ deducido), lo que falta lleva un valor por defecto y se cambia con un toque; las opciones de electrónica y de fuentes solo aparecen si se activa la electrónica o el mediaserver.
+- **Dictado:** entiende números en palabras («3 metros de alto por seis de ancho», «tres metros y medio», «sis metres d'amplada»), y si se pide cerca del mar propone exterior.
+
+## Cambios de la versión v4.11
 
 - **Minibanner de TRAULUX:** ahora dice «PRUEBA EL NUEVO CONFIGURADOR DE PANTALLAS LED DE TRAULUX» (traducido en cada idioma).
 
