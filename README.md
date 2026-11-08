@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.7.1**
+**Versión actual: v4.10**
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -35,9 +35,10 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **SCREENBOX:** el isotipo de la cabecera abre la sub-app SCREENBOX (https://screenboxsim.netlify.app/) para pantallas de una o varias paredes con proyectores y salas inmersivas.
 - **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
 - **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios, las consultas internas y la documentación (DOCS), que ya no es pública.
-- **Anuncios:** puntos de inserción localizados (bajo el panel de entrada y al final de los resultados) que se activan o desactivan desde el panel de administrador; cada banner admite varias fotos o vídeos y texto con viñetas, y todo él abre el enlace en una pestaña nueva (o `ads.json` mientras no esté publicado). Como afiliado de Amazon, se obtienen ingresos por las compras adscritas que cumplen los requisitos aplicables.
+- **Anuncios (motor AVHUB ADS):** 3 zonas (pie del menú y pie de resultados, izquierda y derecha). Cada zona admite varios anuncios con rotación; cada anuncio tiene formato estándar (horizontal 16:9, vertical 9:16, cuadrado 1:1, retrato 4:5, hero a sangre 21:9, banner 728×90, banner móvil 320×100, rectángulo 300×250, rascacielos 160×600), texto al lado, debajo, encima o sin texto, botón opcional, carrusel de fotos, vídeos y YouTube, fechas de inicio y fin, solo móvil o solo escritorio, y contador de clics. Todo el anuncio abre su enlace en una pestaña nueva (o `ads.json` mientras el panel no responda). Además, el minibanner fijo del configurador oficial de TRAULUX va encima de la zona del menú y se activa desde el panel.
 - **AVHUB ADMIN (`admin/anuncios.html`):** panel interno con 4 pestañas (la cuarta, **CATÁLOGO**, prepara el catálogo maestro de modelos y el informe de incoherencias de la web para marketing): **ANUNCIOS** (gestor visual con arrastrar y soltar y previo), **FIRMAS** (firmas de correo visuales con banners estáticos, animados en GIF o en mosaico y contador de clics, listas para pegar en Gmail, Outlook o Apple Mail) y **NEWSLETTER** (editor por bloques con vista escritorio y móvil, exportación HTML y envío desde el panel).
 - **Página de configuradores (`configuradores/`):** compara SCREENCALC y el configurador oficial de TRAULUX y lleva a cada uno (es / en / ca).
+- **Gestor de anuncios (`admin/anuncios.html`, pestaña ANUNCIOS):** pantalla visual para arrastrar anuncios entre zonas, arrastrar fotos entre anuncios o desde la biblioteca, subir fotos, elegir formato y ver al lado de cada anuncio el previo real en escritorio o móvil. En el panel de administrador guarda de verdad; abierto desde el repositorio funciona en modo demo (guarda en el navegador) y `index.html?anuncios=demo` muestra esos anuncios de prueba. Como afiliado de Amazon, se obtienen ingresos por las compras adscritas que cumplen los requisitos aplicables.
 - **Adaptada a PC y móvil:** el panel lateral de entrada va en 2 columnas sin scroll en PC y se ve en grande en móvil.
 
 - **AVHUB:** el logo de AVHUB en la cabecera (entre el logo de SCREENCALC y los iconos) lleva a https://avhub.mediaservi.com/. AVHUB es la nueva app en preparación que reunirá en un solo sitio SCREENCALC, el hardware de proyectos AV, novedades y VJSHOW, con el mismo idioma en todas las secciones.
@@ -53,7 +54,7 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 ## Ramas
 
 - `main`: versión oficial y pública, aprobada.
-- Betas numeradas (`beta-1`, `beta-2`…) para pruebas; solo pasan a `main` cuando se aprueban.
+- `beta`: última entrega para pruebas; `beta-anterior`: la entrega previa. Solo pasan a `main` cuando se aprueban.
 
 ## Paleta corporativa
 
@@ -73,11 +74,28 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v4.7.1)
+## Cambios de la versión actual (v4.10)
 
 - **Distancia de visionado:** una sola figura, en la distancia del pitch elegido, con cota desde la pantalla y etiqueta de pitch y distancia; las zonas CERCA / ACEPTABLE / ÓPTIMA van rotuladas dentro del suelo; los demás pitch disponibles aparecen en una regla técnica con etiquetas inclinadas que no se solapan.
+- **Anuncios de resultados:** cada zona se limita a su ancho de 600 px y se centra, así se ve igual que en la vista previa del panel aunque la otra zona esté vacía.
+- **Configuradores:** la tarjeta de TRAULUX se etiqueta «CALCULADORA DE PANTALLA LED».
 
-## Cambios de la versión v4.7
+## Cambios de la versión v4.9
+
+- **Prioridad y uso de cada modelo:** en la pestaña CATÁLOGO del panel, la casilla «Cálculos» decide qué modelos usa la app, y ▲▼ fija el orden entre modelos del mismo pitch (por ejemplo, que para P1.8 salga antes el modelo B que el C en la configuración recomendada).
+- **Informe para marketing más completo:** la sincronización del catálogo compara también cada ficha web con su ficha técnica PDF (brillo, refresco, peso, fondo, consumos, tamaño y resolución del cabinet) y detecta la tabla que corta la primera cifra del refresco.
+
+## Cambios de la v4.8
+
+- **Une las dos líneas de trabajo:** la v4.7 publicada (minibanner y X de TRAULUX, Información breve, configuradores con logos reales) con el motor de anuncios y el catálogo maestro que estaban en pruebas.
+- **Catálogo maestro:** la app lee los modelos del catálogo que se gestiona en el panel (pestaña CATÁLOGO): se importa una vez, se completa y contrasta automáticamente con las fichas de la web de producto, y se edita a mano lo que falte. Solo se envían los datos técnicos, nunca precios.
+- Si el panel no responde, la app usa el último catálogo guardado en el dispositivo o la consulta anterior como respaldo.
+
+- **Nuevo motor de anuncios AVHUB ADS**, el mismo que usará toda AVHUB: 9 formatos estándar, posición del texto (al lado, debajo, encima con contraste automático o sin texto), botón opcional, carrusel de fotos y vídeos, varios anuncios por zona (siempre el primero, rotar en orden, uno al azar por visita o rotar al azar), programación por fechas, solo móvil o solo escritorio y contador de clics.
+- **Gestor visual de anuncios:** arrastrar y soltar anuncios y fotos, biblioteca de media con subida de fotos, deshacer, y previo real de cada anuncio en escritorio y en móvil.
+- **Compatible** con la configuración de anuncios anterior: se convierte sola al nuevo formato.
+
+## Cambios de la v4.7
 
 - **Información:** la ventana de la app muestra solo un resumen breve de para qué sirve la web; el detalle técnico y los cambios quedan en este README.
 - **Cabecera:** la X de TRAULUX va sin fondo negro y pasa a ser el último icono, a la derecha.
