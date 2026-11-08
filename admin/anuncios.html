@@ -116,6 +116,22 @@ input[type=color]{width:34px;height:28px;padding:0;border:1px solid var(--linea)
 @media (max-width:1100px){.ed-grid{grid-template-columns:1fr}}
 @media (max-width:760px){.nl-grid{grid-template-columns:1fr}.paleta{position:relative;top:0;flex-direction:row;flex-wrap:wrap}.paleta button{flex:1 1 130px}}
 
+/* catálogo */
+.catlista{display:flex;flex-direction:column;gap:4px;max-height:calc(100vh - 230px);overflow:auto;margin-top:8px}
+.catfila{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;text-align:left;border:1px solid var(--linea);background:#141417;border-radius:7px;padding:7px 9px;color:var(--txt);font-size:12px}
+.catfila b{font-size:13px}
+.catfila span{grid-column:1;color:var(--tenue);font-size:11px}
+.catfila i{grid-row:1/3;grid-column:2;align-self:center;font-style:normal;white-space:nowrap}
+.catfila.on{border-color:var(--on);background:#0f1f10}
+.catfila.oculto{opacity:.5}
+.revision{border:1px solid var(--ambar);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px;background:#1e1a10}
+.revfila{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px}
+.revfila span{flex:1 1 220px}
+.revfila code{background:#0b0b0f;padding:1px 5px;border-radius:4px}
+.org{display:inline-block;font-size:9px;padding:0 4px;border-radius:3px;margin-left:4px;color:#000}
+.org-hoja{background:#9aa0a6}.org-web{background:#00b4ff}.org-manual{background:var(--ambar)}
+.app.sin-biblio{grid-template-columns:minmax(0,1fr)}.app.sin-biblio aside{display:none}
+
 :root{--chasis:#2A2A2A;--fondo:#18181c;--panel:#222226;--linea:#3a3a42;--txt:#e7e7ee;--tenue:#9a9aa8;--marca:#9900ff;--on:#00ff04;--ambar:#ffb000;--azul:#00b4ff;--rojo:#ff3b5c}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--fondo);color:var(--txt);font-family:Inter,system-ui,sans-serif;font-size:14px}
@@ -238,10 +254,10 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
 <header>
   <div class="marca">
     <svg viewBox="0 0 60 48" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9900ff"/><stop offset=".55" stop-color="#00b4ff"/><stop offset="1" stop-color="#00ff04"/></linearGradient></defs><path d="M8 44 L28 8 Q30 4 32 8 L54 44 Z" fill="none" stroke="url(#g)" stroke-width="7" stroke-linejoin="round"/><path d="M26 22 L38 30 L26 38 Z" fill="#9900ff"/></svg>
-    <div>AVHUB · ADMIN <span style="font-size:10px;color:var(--tenue)">v1.0</span><small>ANUNCIOS · FIRMAS · NEWSLETTER</small></div>
+    <div>AVHUB · ADMIN <span style="font-size:10px;color:var(--tenue)">v1.0</span><small>ANUNCIOS · FIRMAS · NEWSLETTER · CATÁLOGO</small></div>
   </div>
   <span id="modo" class="modo"></span>
-  <div class="tabs" id="tabs"><button data-s="ads" class="on">ANUNCIOS</button><button data-s="firmas">FIRMAS</button><button data-s="news">NEWSLETTER</button></div>
+  <div class="tabs" id="tabs"><button data-s="ads" class="on">ANUNCIOS</button><button data-s="firmas">FIRMAS</button><button data-s="news">NEWSLETTER</button><button data-s="catalogo">CATÁLOGO</button></div>
   <div id="led" class="led">Cargando…</div>
   <div class="cab-acciones">
     <div class="seg" id="vista"><button data-v="escritorio" class="on">Escritorio</button><button data-v="movil">Móvil</button></div>
@@ -262,6 +278,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
   <main id="zonas"></main>
   <main id="secFirmas" class="sec oculto"></main>
   <main id="secNews" class="sec oculto"></main>
+  <main id="secCatalogo" class="sec oculto"></main>
 </div>
 <script>
 /* ===== AVHUB ADS · motor de anuncios común (SCREENCALC v4.5 y gestor de anuncios) =====
@@ -486,7 +503,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
   function json(id) { try { var t = document.getElementById(id).textContent.trim(); return t && t.charAt(0) !== '<' ? JSON.parse(t) : null; } catch (e) { return null; } }
 
   /* ---------- historial / estado ---------- */
-  function snap() { return JSON.stringify({ D: D, F: F, N: N }); }
+  function snap() { return JSON.stringify({ D: D, F: F, N: N, C: C, cs: catSucio }); }
   function cambio(fn, sinRepintar) {
     hist.push(snap()); if (hist.length > 60) hist.shift();
     fn();
@@ -497,8 +514,11 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     $('#zonas').classList.toggle('oculto', seccion !== 'ads');
     $('#secFirmas').classList.toggle('oculto', seccion !== 'firmas');
     $('#secNews').classList.toggle('oculto', seccion !== 'news');
+    $('#secCatalogo').classList.toggle('oculto', seccion !== 'catalogo');
+    document.querySelector('.app').classList.toggle('sin-biblio', seccion === 'catalogo');
     $('#verapp').classList.toggle('oculto', seccion !== 'ads');
     if (seccion === 'ads') pintarTodo();
+    else if (seccion === 'catalogo') pintarCatalogo();
     else { pintarBiblio(); if (seccion === 'firmas') pintarFirmas(); else pintarNews(); }
   }
   function marcarSucio(v) {
@@ -509,7 +529,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
   }
   function deshacer() {
     if (!hist.length) return;
-    var h = JSON.parse(hist.pop()); D = h.D; F = h.F; N = h.N; marcarSucio(true); repintar(); led('Cambio deshecho');
+    var h = JSON.parse(hist.pop()); D = h.D; F = h.F; N = h.N; C = h.C; catSucio = h.cs; marcarSucio(true); repintar(); led('Cambio deshecho');
   }
   function buscar(id) {
     var r = null;
@@ -1703,9 +1723,202 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     caja.appendChild(cu);
   }
 
+  /* =====================================================================
+     CATÁLOGO DE PANTALLAS LED (sustituye a la hoja: se edita aquí y se contrasta con la web)
+     ===================================================================== */
+  var C = null, catSucio = false, catSel = null, catFiltro = 'todos', catBusca = '', catCargando = false, sincDiaria = null;
+  var GRUPOS = [
+    ['Identificación', { crm: 'Referencia', family: 'Familia', subfamily: 'Subgama', class: 'Clase', tipo: 'Tipo', tech: 'Tecnología', disp: 'Disponibilidad', stock: 'Stock' }],
+    ['Cabinet', { pitch: 'Pitch (mm)', pitchV: 'Pitch vertical', cabAncho: 'Ancho (mm)', cabAlto: 'Alto (mm)', thick: 'Fondo (mm)', cabPixAncho: 'Píxeles ancho', cabPixAlto: 'Píxeles alto', cabPix: 'Píxeles por cabinet', ar: 'Proporción', cabKg: 'Peso (kg)' }],
+    ['Imagen y eléctrico', { nits: 'Brillo (nits)', hz: 'Refresco (Hz)', cabAmp: 'Corriente (A)', wTyp: 'Consumo medio (W/cabinet)', wMax: 'Consumo máximo (W/cabinet)' }],
+    ['Instalación y documentación', { mant: 'Mantenimiento', card: 'Tarjeta receptora', cableado: 'Cableado', girok: 'Giro OK', obs: 'Observaciones', brochure: 'Ficha PDF', urlFoto: 'Foto', urlProd: 'Página del producto' }]
+  ];
+  var ETIQ = {}; GRUPOS.forEach(function (g) { Object.keys(g[1]).forEach(function (k) { ETIQ[k] = g[1][k]; }); });
+  var ESTADOS = { ok: 'Correcto', revisar: 'Revisar', nuevo: 'Nuevo en la web', sinweb: 'Sin ficha web' };
+  function pendientes(m) { return (m._revisar || []).filter(function (r) { return !r.decidido; }); }
+  function decodPublico(t) {
+    var b = atob(t), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
+    return JSON.parse(new TextDecoder().decode(u).split('').reverse().join(''));
+  }
+  function cargarCatalogo() {
+    if (catCargando) return; catCargando = true; led('Cargando el catálogo…');
+    var listo = function (c) { C = c || { modelos: [] }; C.modelos = C.modelos || []; C.modelos.forEach(function (m, i) { if (!m._id) m._id = 'm' + i + '-' + String(m.crm || '').replace(/\W/g, ''); }); catCargando = false; catSucio = false; led('Catálogo cargado: ' + C.modelos.length + ' modelos', 'ok'); if (seccion === 'catalogo') pintarCatalogo(); };
+    if (GAS) {
+      google.script.run.withSuccessHandler(function (t) { listo(JSON.parse(t)); }).withFailureHandler(function (e) { catCargando = false; led('No se pudo leer el catálogo: ' + e.message, 'err'); }).leerCatalogo();
+      google.script.run.withSuccessHandler(function (v) { sincDiaria = v; if (seccion === 'catalogo') pintarCatalogo(); }).estadoSincronizacion();
+    } else {
+      var g = null; try { g = JSON.parse(localStorage.getItem(CLAVE_DEMO + '-catalogo') || 'null'); } catch (e) { /* vacío */ }
+      if (g) { listo(g); return; }
+      fetch(ADMIN_URL + '?accion=catalogo', { cache: 'no-cache' }).then(function (r) { return r.json(); })
+        .then(function (j) { listo({ modelos: j && j.d ? decodPublico(j.d).map(function (m) { return Object.assign({ _estado: 'ok', _origen: {}, _revisar: [] }, m); }) : [], demo: true }); })
+        .catch(function () { listo({ modelos: [], demo: true }); });
+    }
+  }
+  function cambioCat(fn) { cambio(function () { fn(); catSucio = true; }); }
+  function informeMarketing() {
+    var a = (C && C.avisosWeb) || []; if (!a.length) return '';
+    return 'Hola,\n\nRevisando la web de producto LED he encontrado estas incoherencias. ¿Podéis corregirlas?\n\n' +
+      a.map(function (x, i) { return (i + 1) + '. ' + (x.codigo || x.titulo) + '\n   ' + x.url + '\n' + x.avisos.map(function (t) { return '   - ' + t; }).join('\n'); }).join('\n\n') +
+      '\n\nGracias.\n';
+  }
+  function pintarCatalogo() {
+    var cont = $('#secCatalogo'); cont.innerHTML = '';
+    if (!C) { cont.appendChild(el('div', 'vacia', 'Cargando el catálogo…')); cargarCatalogo(); return; }
+    var cuenta = function (e) { return C.modelos.filter(function (m) { return e === 'ocultos' ? m._oculto : m._estado === e && !m._oculto; }).length; };
+    /* cabecera */
+    var cab = el('div', 'caja'), cc = el('div', 'caja-cab');
+    cc.appendChild(el('h2', '', 'Catálogo de pantallas LED'));
+    var est = el('div', 'docs');
+    [['todos', 'Todos', C.modelos.length], ['revisar', 'Revisar', cuenta('revisar')], ['nuevo', 'Nuevos en la web', cuenta('nuevo')], ['sinweb', 'Sin ficha web', cuenta('sinweb')], ['ok', 'Correctos', cuenta('ok')], ['ocultos', 'Ocultos', cuenta('ocultos')]].forEach(function (f) {
+      var b = el('button', 'doc' + (catFiltro === f[0] ? ' on' : ''), esc(f[1]) + ' · ' + f[2]); b.onclick = function () { catFiltro = f[0]; pintarCatalogo(); }; est.appendChild(b);
+    });
+    cc.appendChild(est); cab.appendChild(cc);
+    var cu = el('div', 'caja-cuerpo'), bts = el('div', 'botones');
+    if (GAS) {
+      var imp = el('button', 'bt', 'IMPORTAR DESDE LA HOJA'); imp.title = 'Trae los modelos de la hoja actual. Lo que hayas editado a mano aquí no se toca.';
+      imp.onclick = function () {
+        if (catSucio) { led('Guarda antes los cambios del catálogo', 'err'); return; }
+        imp.disabled = true; led('Importando la hoja…');
+        google.script.run.withSuccessHandler(function (t) { var r = JSON.parse(t); C = null; led('Hoja importada: ' + r.filas + ' filas (' + r.nuevos + ' nuevas, ' + r.actualizados + ' actualizadas)', 'ok'); pintarCatalogo(); })
+          .withFailureHandler(function (e) { imp.disabled = false; led(e.message, 'err'); }).importarHoja();
+      };
+      var sin = el('button', 'bt on', 'SINCRONIZAR CON LA WEB');
+      sin.onclick = function () {
+        if (catSucio) { led('Guarda antes los cambios del catálogo', 'err'); return; }
+        sin.disabled = true; led('Leyendo las fichas de la web (1-2 minutos)…');
+        google.script.run.withSuccessHandler(function (t) { var r = JSON.parse(t); C = null; led('Web leída: ' + r.productosWeb + ' productos · ' + r.revisar + ' por revisar · ' + r.nuevos + ' nuevos · ' + r.sinweb + ' sin ficha', 'ok'); pintarCatalogo(); })
+          .withFailureHandler(function (e) { sin.disabled = false; led(e.message, 'err'); }).sincronizarWeb();
+      };
+      var sd = el('button', 'sw' + (sincDiaria ? ' on' : '')); sd.title = 'Sincronización automática cada noche (4:00)';
+      sd.onclick = function () { google.script.run.withSuccessHandler(function (v) { sincDiaria = v; led(v ? 'Sincronización diaria activada (cada noche a las 4:00)' : 'Sincronización diaria desactivada', 'ok'); pintarCatalogo(); }).withFailureHandler(function (e) { led(e.message, 'err'); }).activarSincronizacion(!sincDiaria); };
+      bts.appendChild(imp); bts.appendChild(sin);
+      var lsd = el('span', 'clics', 'Cada noche:'); lsd.style.marginLeft = '8px'; bts.appendChild(lsd); bts.appendChild(sd);
+    }
+    var nuevo = el('button', 'bt', '＋ Modelo');
+    nuevo.onclick = function () { cambioCat(function () { var m = { _id: 'n' + Date.now().toString(36), crm: 'NUEVO-MODELO', class: 'INSTALL', tipo: 'INDOOR', tech: 'SMD', _origen: {}, _revisar: [], _estado: 'sinweb' }; C.modelos.unshift(m); catSel = m._id; catFiltro = 'todos'; }); };
+    bts.appendChild(nuevo);
+    cu.appendChild(bts);
+    var info = [];
+    if (C.importado) info.push('Hoja importada: ' + new Date(C.importado).toLocaleString('es-ES'));
+    if (C.web && C.web.visto) info.push('Web leída: ' + new Date(C.web.visto).toLocaleString('es-ES') + ' (' + C.web.productos + ' productos)');
+    if (C.actualizado) info.push('Guardado: ' + new Date(C.actualizado).toLocaleString('es-ES'));
+    cu.appendChild(el('div', 'nota', info.length ? info.join('<br>') : (GAS ? 'Empieza con «IMPORTAR DESDE LA HOJA»<br>y después «SINCRONIZAR CON LA WEB».' : 'Modo demo: el catálogo se gestiona<br>desde el panel de administrador.')));
+    cu.appendChild(el('div', 'nota', 'La app solo usa los modelos correctos, por revisar y sin ficha web.<br>Los nuevos de la web no entran hasta que los apruebes. Los precios nunca salen hacia la app.'));
+    cab.appendChild(cu); cont.appendChild(cab);
+    /* avisos para marketing */
+    var inf = informeMarketing();
+    if (inf) {
+      var mk = el('details', 'caja'); mk.innerHTML = '<summary class="caja-cab" style="cursor:pointer"><h2>Avisos para marketing · ' + C.avisosWeb.length + ' productos con incoherencias en la web</h2></summary>';
+      var mc = el('div', 'caja-cuerpo'), ta = el('textarea'); ta.readOnly = true; ta.value = inf; ta.style.minHeight = '220px';
+      var cp = el('button', 'bt on', 'COPIAR TEXTO PARA EL CORREO'); cp.onclick = function () { copiarTexto(inf, 'Informe copiado: pégalo en el correo a marketing'); };
+      var ml = el('a', 'bt', 'Abrir en el correo'); ml.href = 'mailto:?subject=' + encodeURIComponent('Incoherencias en la web de producto LED') + '&body=' + encodeURIComponent(inf.slice(0, 1800)); ml.target = '_blank'; ml.style.textDecoration = 'none';
+      var fb = el('div', 'botones'); fb.appendChild(cp); fb.appendChild(ml);
+      mc.appendChild(fb); mc.appendChild(ta); mk.appendChild(mc); cont.appendChild(mk);
+    }
+    if (C.fueraCalculo && Object.keys(C.fueraCalculo).length) cont.appendChild(el('div', 'nota', 'Productos de la web que no son de cabinets (cubos, holográficos, pósters…) y no entran en el cálculo: ' + Object.keys(C.fueraCalculo).length));
+    /* lista + editor */
+    var grid = el('div', 'ed-grid'); grid.style.gridTemplateColumns = 'minmax(0,1fr) minmax(0,1.25fr)';
+    var izq = el('div', 'caja'), ic = el('div', 'caja-cuerpo');
+    var bus = el('input'); bus.type = 'text'; bus.placeholder = 'Buscar referencia, familia, pitch…'; bus.value = catBusca;
+    bus.oninput = function () { catBusca = bus.value; pintarLista(); };
+    ic.appendChild(bus);
+    var lista = el('div', 'catlista'); ic.appendChild(lista); izq.appendChild(ic); grid.appendChild(izq);
+    var der = el('div', 'sec'); der.style.position = 'sticky'; der.style.top = '76px'; grid.appendChild(der);
+    cont.appendChild(grid);
+    function visibles() {
+      var q = catBusca.trim().toLowerCase();
+      return C.modelos.filter(function (m) {
+        if (catFiltro === 'ocultos' ? !m._oculto : (catFiltro !== 'todos' && (m._oculto || m._estado !== catFiltro))) return false;
+        return !q || [m.crm, m.family, m.subfamily, m.pitch, m.tipo, m.class].join(' ').toLowerCase().indexOf(q) >= 0;
+      });
+    }
+    function pintarLista() {
+      lista.innerHTML = '';
+      var vs = visibles();
+      if (!vs.length) { lista.appendChild(el('div', 'nota', 'No hay modelos con este filtro.')); return; }
+      vs.forEach(function (m) {
+        var f = el('button', 'catfila' + (m._id === catSel ? ' on' : '') + (m._oculto ? ' oculto' : ''));
+        var np = pendientes(m).length;
+        f.innerHTML = '<b>' + esc(m.crm) + '</b><span>' + esc([m.family, m.pitch ? 'P' + m.pitch : '', m.cabAncho && m.cabAlto ? m.cabAncho + '×' + m.cabAlto : '', m.tipo, m.class].filter(Boolean).join(' · ')) + '</span>' +
+          '<i class="chip ' + (m._estado === 'ok' ? 'activo' : m._estado === 'revisar' ? 'caducado' : m._estado === 'nuevo' ? 'programado' : 'desactivado') + '">' + (ESTADOS[m._estado] || m._estado) + (np ? ' · ' + np : '') + '</i>';
+        f.onclick = function () { catSel = m._id; pintarLista(); pintarEditor(); };
+        lista.appendChild(f);
+      });
+    }
+    function pintarEditor() {
+      der.innerHTML = '';
+      var m = C.modelos.filter(function (x) { return x._id === catSel; })[0];
+      if (!m) { der.appendChild(el('div', 'vacia', 'Elige un modelo de la lista<br>para ver y editar sus datos.')); return; }
+      var c = el('div', 'caja'), h = el('div', 'caja-cab');
+      h.innerHTML = '<h2>' + esc(m.crm) + '</h2>' + (m._web && m._web.slug ? '<a class="bt" target="_blank" style="text-decoration:none" href="https://traulux.net/led/productos/' + esc(m._web.slug) + '/">Ficha web ↗</a>' : '') +
+        (m.brochure ? '<a class="bt" target="_blank" style="text-decoration:none" href="' + esc(m.brochure) + '">PDF ↗</a>' : '');
+      c.appendChild(h);
+      var cu = el('div', 'caja-cuerpo');
+      var acc = el('div', 'botones');
+      if (m._estado === 'nuevo') { var ap = el('button', 'bt on', 'APROBAR (entra en la app)'); ap.onclick = function () { cambioCat(function () { m._estado = pendientes(m).length ? 'revisar' : 'ok'; }); }; acc.appendChild(ap); }
+      var oc = el('button', 'bt', m._oculto ? 'Mostrar en la app' : 'Ocultar de la app'); oc.onclick = function () { cambioCat(function () { m._oculto = !m._oculto; }); }; acc.appendChild(oc);
+      if (C.webLista && C.webLista.length) {
+        var en = el('select'); en.style.width = 'auto';
+        en.innerHTML = '<option value="">Enlazar con ficha web…</option>' + C.webLista.map(function (w) { return '<option value="' + esc(w.slug) + '"' + (m._web && m._web.slug === w.slug ? ' selected' : '') + '>' + esc(w.codigo || w.titulo) + '</option>'; }).join('');
+        en.onchange = function () { cambioCat(function () { m._web = en.value ? { slug: en.value } : null; }); led('Enlazado: se contrastará en la próxima sincronización', 'ok'); };
+        acc.appendChild(en);
+      }
+      var del = el('button', 'bt peligro', 'Eliminar');
+      del.onclick = function () { if (!del.classList.contains('armado')) { del.classList.add('armado'); del.textContent = 'Pulsa otra vez'; setTimeout(function () { del.classList.remove('armado'); del.textContent = 'Eliminar'; }, 3000); return; } cambioCat(function () { C.modelos = C.modelos.filter(function (x) { return x !== m; }); catSel = null; }); };
+      acc.appendChild(del); cu.appendChild(acc);
+      /* diferencias con la web */
+      var pend = pendientes(m);
+      if (pend.length || (m._web && m._web.avisos && m._web.avisos.length)) {
+        var rv = el('div', 'revision');
+        rv.appendChild(el('span', 'etq', 'Diferencias con la web'));
+        pend.forEach(function (r) {
+          var f = el('div', 'revfila');
+          f.innerHTML = '<span><b>' + esc(ETIQ[r.campo] || r.campo) + '</b>: ahora <code>' + esc(r.actual === '' || r.actual == null ? '(vacío)' : r.actual) + '</code> · web <code>' + esc(r.web) + '</code>' + (r.deTexto ? ' <small>(del texto descriptivo)</small>' : '') + '</span>';
+          var uw = el('button', 'bt on', 'Usar web'), mt = el('button', 'bt', 'Mantener');
+          uw.onclick = function () { cambioCat(function () { m[r.campo] = r.web; m._origen[r.campo] = 'web'; r.decidido = 'web'; if (!pendientes(m).length && m._estado === 'revisar') m._estado = 'ok'; }); };
+          mt.onclick = function () { cambioCat(function () { r.decidido = 'mantener'; m._origen[r.campo] = m._origen[r.campo] === 'web' ? 'manual' : m._origen[r.campo]; if (!pendientes(m).length && m._estado === 'revisar') m._estado = 'ok'; }); };
+          f.appendChild(uw); f.appendChild(mt); rv.appendChild(f);
+        });
+        ((m._web && m._web.avisos) || []).forEach(function (t) { rv.appendChild(el('div', 'nota', '⚠ ' + esc(t))); });
+        cu.appendChild(rv);
+      }
+      /* campos */
+      var usados = {};
+      GRUPOS.forEach(function (g) {
+        cu.appendChild(el('span', 'etq', g[0]));
+        var fl = el('div', 'fila');
+        Object.keys(g[1]).forEach(function (k) { usados[k] = 1; fl.appendChild(campoCat(m, k, g[1][k])); });
+        cu.appendChild(fl);
+      });
+      var extra = Object.keys(m).filter(function (k) { return k.charAt(0) !== '_' && !usados[k]; });
+      if (extra.length) {
+        cu.appendChild(el('span', 'etq', 'Otros campos de la hoja (no se envían a la app)'));
+        var fe = el('div', 'fila'); extra.forEach(function (k) { fe.appendChild(campoCat(m, k, k)); }); cu.appendChild(fe);
+      }
+      cu.appendChild(el('div', 'nota', 'H = de la hoja · W = de la web · M = editado aquí'));
+      c.appendChild(cu); der.appendChild(c);
+    }
+    function campoCat(m, k, etq) {
+      var o = (m._origen || {})[k], g = el('label', 'grupo');
+      g.innerHTML = '<span class="etq">' + esc(etq) + (o ? ' <span class="org org-' + o + '">' + { hoja: 'H', web: 'W', manual: 'M' }[o] + '</span>' : '') + '</span>';
+      var i = el(k === 'obs' ? 'textarea' : 'input'); if (k !== 'obs') i.type = 'text';
+      i.value = m[k] == null ? '' : m[k];
+      i.onfocus = function () { hist.push(snap()); };
+      i.oninput = function () { m[k] = i.value; (m._origen = m._origen || {})[k] = 'manual'; catSucio = true; marcarSucio(true); };
+      i.onchange = function () { if (k === 'crm') pintarLista(); };
+      g.appendChild(i); return g;
+    }
+    pintarLista(); pintarEditor();
+  }
+
   /* ---------- guardar / cargar ---------- */
   function guardar(cb) {
     $$('input,textarea').forEach(function (x) { x.blur(); });
+    if (C && catSucio) {
+      var guardarCat = GAS ? function (sig) { google.script.run.withSuccessHandler(function (t) { C.actualizado = t; catSucio = false; sig(); }).withFailureHandler(function (e) { led('No se ha guardado el catálogo: ' + e.message, 'err'); }).guardarCatalogo(JSON.stringify(C)); }
+        : function (sig) { try { localStorage.setItem(CLAVE_DEMO + '-catalogo', JSON.stringify(C)); catSucio = false; sig(); } catch (e) { led('Modo demo: el catálogo no cabe en el navegador', 'err'); } };
+      return guardarCat(function () { guardar(cb); });
+    }
     if (GAS) {
       led('Guardando…');
       google.script.run.withSuccessHandler(function () { marcarSucio(false); led('Guardado · anuncios, firmas y newsletters', 'ok'); if (cb) cb(); })

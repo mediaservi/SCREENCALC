@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.5                              ║
+║                          Versión actual: v4.6                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.5
+ÚLTIMA ACTUALIZACIÓN: v4.6
+- v4.6: el catálogo de modelos sale del catálogo maestro del panel de administrador (editable y contrastado con la web de producto); la consulta anterior queda solo como respaldo si el panel no responde
+ANTERIOR: v4.5
 - v4.5: anuncios con el motor común de AVHUB (AVHUB ADS): 9 formatos estándar (horizontal 16:9, vertical 9:16, cuadrado 1:1, retrato 4:5, hero a sangre 21:9, banner 728×90, banner móvil 320×100, rectángulo 300×250, rascacielos 160×600), texto al lado / debajo / encima / sin texto, botón opcional, carrusel de fotos, varios anuncios por zona con rotación, programación por fechas, solo móvil / solo escritorio y contador de clics
 - v4.5: se gestionan desde el nuevo gestor visual de anuncios (arrastrar y soltar, previo en vivo); compatible con la configuración anterior
 - v4.5: modo de prueba ?anuncios=demo (muestra los anuncios guardados en el gestor en modo demo del mismo navegador)
@@ -3897,10 +3899,27 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
               && ['INSTALL', 'RENTAL'].includes(String(item.class || '').trim().toUpperCase())
               && ['INDOOR', 'OUTDOOR', 'ESCAPARATE'].includes(normTipo(item.tipo)));
           };
+          // v4.6: catálogo maestro del panel (ofuscado); la consulta anterior queda como respaldo
+          const leerMaestro = async () => {
+            if (!ADMIN_URL) return null;
+            try {
+              const r = await fetch(ADMIN_URL + '?accion=catalogo', { cache: 'no-store' });
+              if (!r.ok) return null;
+              const j = await r.json();
+              if (!j || !j.d) return null;
+              const b = atob(j.d), u = new Uint8Array(b.length);
+              for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
+              const filas = JSON.parse(new TextDecoder().decode(u).split('').reverse().join(''));
+              return Array.isArray(filas) && filas.length ? filas : null;
+            } catch (e) { return null; }
+          };
           const cargar = async () => {
-            const res = await fetch(ORIGEN_URL + '?gid=0&single=true&output=csv', { cache: 'no-store' });
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            const data = parseCSV(await res.text());
+            let data = await leerMaestro();
+            if (!data) {
+              const res = await fetch(ORIGEN_URL + '?gid=0&single=true&output=csv', { cache: 'no-store' });
+              if (!res.ok) throw new Error('HTTP ' + res.status);
+              data = parseCSV(await res.text());
+            }
             if (!data.length) return 0;
             await guardar(data);
             setModelos(filterNoShow(processNumericFields(data)));
@@ -5630,7 +5649,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.5</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.6</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -7837,14 +7856,14 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.5 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.6 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.5 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.6 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
                     </div>
                   </div>
               </main>
