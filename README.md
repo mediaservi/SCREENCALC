@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.14**
+**Versión actual: v4.15**
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -74,7 +74,12 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v4.14)
+## Cambios de la versión actual (v4.15)
+
+- **Módulo de petición:** sin título ni etiqueta «Entrada principal» (el texto guía ya lo explica) y con más alto para el texto. Los avisos del dictado y del audio aparecen como una capa flotante sobre el texto, destellan y se desvanecen solos (o al tocarlos). El bocadillo de ayuda del micrófono sale debajo y ya no tapa PROPONER PANTALLA.
+- **Popup «Datos del proyecto»:** cada dato en una tarjeta con fondo pastel según su sección (pantalla, sitio, electrónica, mediaserver, fuentes de vídeo), icono propio junto al título y botones más claros con el color de la sección.
+
+## Cambios de la versión v4.14
 
 - **Entorno:** el popup «Datos del proyecto» tiene siempre la fila ENTORNO (Estándar · Marino / tropical · Al alcance del público); cada opción lleva a otros tipos de cabinet (GOLD tropicalizado / LED protegido) y se activa o desactiva por separado. También están como botones en el panel manual (TIPO DE PANTALLA) y como etiquetas en el resumen.
 - **✎ EDITAR:** en «Solicitud aplicada» reabre el popup con lo elegido, para corregir cualquier dato que se haya interpretado mal y volver a calcular.

@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                         Versión actual: v4.14                              ║
+║                         Versión actual: v4.15                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.14
+ÚLTIMA ACTUALIZACIÓN: v4.15
+- v4.15: módulo de petición sin título ni etiqueta (el texto guía basta) y con más alto para el texto; los avisos del dictado y del audio salen como capa flotante sobre el texto, con destello, y se desvanecen solos (al pulsarla se cierra); el bocadillo de ayuda del micro sale debajo y ya no tapa PROPONER PANTALLA; popup «Datos del proyecto» con cada dato en su tarjeta de fondo pastel por sección (pantalla, sitio, electrónica, mediaserver, fuentes), icono propio junto a cada título y botones más claros con el color de la sección
+ANTERIOR: v4.14
 - v4.14: fila ENTORNO siempre visible en el popup (Estándar · Marino / tropical · Al alcance del público), con las dos opciones activables y desactivables por separado; ✎ EDITAR en «Solicitud aplicada» reabre el popup con lo elegido para corregir cualquier dato; botones MARINO / TROPICAL y AL ALCANCE DEL PÚBLICO también en el panel manual; el resumen los muestra como etiquetas
 ANTERIOR: v4.13
 - v4.13: la petición entiende «a una distancia de unos 6 metros», «de ancho son 12 metros» y similares; «público» ya no implica LED protegido salvo «espacio/lugar público»; fila «Resolución mínima» editable en el popup; la distancia del público se pregunta también cuando se pide una resolución; valores por defecto: interior, instalación fija, sin LED protegido, electrónica con backup, escalador y RJ45, sin mediaserver, 1 fuente HDMI; popup a dos columnas en pantallas anchas; el micrófono se apaga solo tras 3 s de silencio y PROPONER PANTALLA se ilumina con un halo para pulsarlo (también al terminar de transcribir un audio)
@@ -1304,21 +1306,28 @@ ANTERIOR: v4.1
       .nl-cab { padding: 12px 16px 8px; border-bottom: 1px solid #e5e7eb; text-align: center; }
       .nl-tit { font-size: 15px; font-weight: 800; color: #0f584c; text-transform: uppercase; letter-spacing: .06em; }
       .nl-sub { font-size: 12px; color: #6b7280; margin-top: 2px; }
-      .nl-cuerpo { overflow-y: auto; padding: 4px 16px 8px; flex: 1; min-height: 0; }
-      .nl-fila { padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
-      .nl-fila:last-child { border-bottom: 0; }
-      .nl-falta { background: #fefce8; margin: 0 -16px; padding: 8px 16px; }
-      .nl-et { font-size: 12px; font-weight: 800; color: #111827; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+      .nl-cuerpo { overflow-y: auto; padding: 10px 12px; flex: 1; min-height: 0; background: #f3f5f8; display: flex; flex-direction: column; gap: 8px; }
+      .nl-fila { --ac: #475569; --bg: #ffffff; --bd: #e2e8f0; background: var(--bg); border: 1px solid var(--bd); border-left: 4px solid var(--ac); border-radius: 10px; padding: 8px 10px 10px; }
+      .nl-g-pantalla { --ac: #00a792; --bg: #e9f8f5; --bd: #c4ebe3; }
+      .nl-g-sitio { --ac: #c2650a; --bg: #fff6ea; --bd: #f6dfbf; }
+      .nl-g-elec { --ac: #4f46e5; --bg: #eff1ff; --bd: #d3d8fb; }
+      .nl-g-media { --ac: #be185d; --bg: #fdf0f6; --bd: #f6cfe0; }
+      .nl-g-fuentes { --ac: #475569; --bg: #f1f4f8; --bd: #d9e0e8; }
+      .nl-falta { box-shadow: 0 0 0 2px #facc15; }
+      .nl-et { font-size: 12.5px; font-weight: 800; color: #111827; margin-bottom: 7px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+      .nl-ico { width: 18px; height: 18px; flex: none; color: var(--ac); }
       .nl-marca { font-size: 9.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: 1px 6px; border-radius: 9px; }
       .nl-det { background: #dcfce7; color: #0f584c; }
       .nl-ded { background: #e0f2fe; color: #075985; }
-      .nl-def { background: #f3f4f6; color: #6b7280; }
+      .nl-def { background: rgba(255,255,255,.75); color: #6b7280; border: 1px solid #e5e7eb; }
       .nl-req { background: #fde68a; color: #92400e; }
-      .nl-ops { display: flex; flex-wrap: wrap; gap: 5px; }
-      .nl-op { font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 6px; border: 1.5px solid #d1d5db; background: #fff; color: #374151; min-height: 0; line-height: 1.25; }
-      .nl-op.on { background: #00a792; border-color: #00a792; color: #fff; }
+      .nl-ops { display: flex; flex-wrap: wrap; gap: 6px; }
+      .nl-op { font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 8px; border: 1px solid #d5dbe3; background: #fff; color: #374151; min-height: 0; line-height: 1.25; box-shadow: 0 1px 1px rgba(15,23,42,.06); transition: background .12s, border-color .12s, color .12s; }
+      .nl-op:hover { border-color: var(--ac); color: var(--ac); }
+      .nl-op.on { background: var(--ac); border-color: var(--ac); color: #fff; box-shadow: 0 2px 6px rgba(15,23,42,.18); }
       .nl-pop button.nl-op { font-size: 13px !important; padding: 6px 11px !important; min-height: 32px !important; height: auto !important; width: auto !important; letter-spacing: normal !important; }
       .nl-pop .nl-num { font-size: 16px !important; min-height: 0 !important; }
+      @media (hover: none) { .nl-op:hover { border-color: #d5dbe3; color: #374151; } .nl-op.on:hover { border-color: var(--ac); color: #fff; } }
       .nl-medida { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; font-weight: 700; color: #374151; }
       .nl-medida label { display: flex; align-items: center; gap: 6px; }
       .nl-num { width: 84px; font-size: 16px; font-weight: 800; padding: 5px 8px; border: 2px solid #d1d5db; border-radius: 6px; text-align: center; }
@@ -1327,8 +1336,8 @@ ANTERIOR: v4.1
       .nl-pie { display: flex; gap: 8px; padding: 10px 16px; border-top: 1px solid #e5e7eb; background: #f9fafb; }
       .nl-pie button { flex: 1; height: 42px; font-size: 14px; }
       .nl-pie .nl-off { opacity: .45; }
-      @media (min-width: 1100px) { .nl-pop { max-width: 1000px; } .nl-cuerpo { display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; align-content: start; } .nl-falta { margin: 0; } }
-      @media (max-height: 500px) { .nl-cab { padding: 6px 16px 4px; } .nl-sub { display: none; } .nl-fila { padding: 5px 0; } .nl-pie { padding: 6px 16px; } .nl-pie button { height: 36px; } }
+      @media (min-width: 1100px) { .nl-pop { max-width: 1000px; } .nl-cuerpo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; align-content: start; } }
+      @media (max-height: 500px) { .nl-cab { padding: 6px 16px 4px; } .nl-sub { display: none; } .nl-fila { padding: 6px 10px 8px; } .nl-pie { padding: 6px 16px; } .nl-pie button { height: 36px; } }
       .halo-proponer { position: relative; animation: haloProponer 1.3s ease-in-out infinite; }
       @keyframes haloProponer { 0%, 100% { box-shadow: 0 0 0 0 rgba(204,255,0,.95), 0 0 6px rgba(204,255,0,.6); } 50% { box-shadow: 0 0 0 6px rgba(204,255,0,.35), 0 0 18px rgba(204,255,0,.9); } }
       .req-blink { animation: reqBlink 0.9s ease-in-out infinite; border-color: #ccff00 !important; }
@@ -1399,16 +1408,21 @@ ANTERIOR: v4.1
       .nl-badge { margin-left: auto; font-size: 9px; font-weight: 800; letter-spacing: .06em; color: #fff; background: #00a792; border-radius: 999px; padding: 2px 8px; }
       .nl-textarea { border-color: #00a792 !important; box-shadow: inset 0 1px 3px rgba(0,0,0,.08); }
       .nl-textarea:focus { border-color: #00a792 !important; box-shadow: inset 0 1px 3px rgba(0,0,0,.08), 0 0 0 3px rgba(0,150,136,.2); }
-      .controls-sidebar .nl-main textarea { height: 96px; }
+      .controls-sidebar .nl-main textarea { height: 112px; }
       .nl-actions { display: flex; align-items: center; gap: 6px; }
       .nl-tools { display: flex; flex-direction: row; gap: 6px; flex: none; }
       .nl-tool { width: 36px !important; height: 36px !important; min-height: 0 !important; padding: 0 !important; font-size: 16px !important; display: flex; align-items: center; justify-content: center; }
       .nl-hint { font-size: 11px; line-height: 1.35; color: #37505a; }
+      .nl-caja { position: relative; width: 100%; }
+      .nl-flota { position: absolute; left: 4px; right: 4px; top: 4px; z-index: 3; font-size: 11.5px; line-height: 1.3; font-weight: 700; color: #ecfccb; background: #0f584c; border-radius: 7px; padding: 5px 9px; box-shadow: 0 3px 10px rgba(0,0,0,.25); cursor: pointer; animation: nlFlota 6s ease forwards; }
+      .nl-flota-mic { background: #b91c1c; color: #fff; animation: nlParpadeo 1.2s ease-in-out infinite; }
+      @keyframes nlFlota { 0% { opacity: 0; transform: translateY(-4px); } 6% { opacity: 1; transform: none; box-shadow: 0 0 0 0 rgba(204,255,0,.9); } 14% { box-shadow: 0 0 0 5px rgba(204,255,0,0); } 22% { box-shadow: 0 0 0 0 rgba(204,255,0,.9); } 30% { box-shadow: 0 0 0 5px rgba(204,255,0,0); } 85% { opacity: 1; } 100% { opacity: 0; } }
+      @keyframes nlParpadeo { 0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,.7); } 50% { box-shadow: 0 0 0 5px rgba(239,68,68,0); } }
       .nl-estado { font-size: 12px; line-height: 1.3; font-weight: 700; color: #b45309; background: #fffbeb; border: 1px solid #fcd34d; border-radius: 6px; padding: 4px 8px; }
       @keyframes micPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,.55); } 50% { box-shadow: 0 0 0 7px rgba(239,68,68,0); } }
       .mic-activo { animation: micPulse 1.1s infinite; }
       @media (min-width: 1280px) and (max-height: 820px) {
-        .controls-sidebar .nl-main textarea { height: 50px; }
+        .controls-sidebar .nl-main textarea { height: 72px; }
         .nl-hint { font-size: 10px; line-height: 1.2; }
         .controls-sidebar > div > div { gap: 4px; }
         .controls-sidebar .sec-title { padding-bottom: 3px; }
@@ -1499,11 +1513,11 @@ ANTERIOR: v4.1
       }
       header.app-header .hdr-btn:hover { background: rgba(255,255,255,.12); }
       .nl-wrap { position: relative; }
-      .bocadillo { display: none; position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%); white-space: nowrap; z-index: 60;
+      .bocadillo { display: none; position: absolute; right: -4px; top: calc(100% + 10px); white-space: nowrap; z-index: 60;
         background: #fff; color: #0f584c; border: 2px solid #0f584c; border-radius: 14px; padding: 6px 12px; font-size: 12px; font-weight: 800;
         box-shadow: 0 4px 12px rgba(15,23,42,.25); align-items: center; gap: 6px; pointer-events: none; }
-      .bocadillo::after { content: ''; position: absolute; right: -8px; top: 50%; width: 12px; height: 12px; background: #fff;
-        border-top: 2px solid #0f584c; border-right: 2px solid #0f584c; transform: translateY(-50%) rotate(45deg); }
+      .bocadillo::after { content: ''; position: absolute; right: 14px; top: -8px; width: 12px; height: 12px; background: #fff;
+        border-top: 2px solid #0f584c; border-left: 2px solid #0f584c; transform: rotate(45deg); }
       @media (hover: hover) and (min-width: 1024px) { .nl-wrap:hover .bocadillo { display: inline-flex; } }
       .popup-fondo { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 12px; }
       .popup-caja { background: #fff; border-radius: 14px; max-width: 420px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 16px; box-shadow: 0 20px 50px rgba(0,0,0,.4); }
@@ -4564,26 +4578,44 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
         // Datos de la petición en un solo popup: una fila por dato, con botones. Lo que viene de la petición sale marcado con ✓;
         // lo que falta lleva un valor por defecto que se puede cambiar con un toque. Solo es obligatoria la medida (salvo si se pidió una resolución).
         const OPC_SINO = [['si', 'Sí'], ['no', 'No']];
+        // Iconos de línea para el popup «Datos del proyecto» (heredan el color de la sección)
+        const NL_ICO = {
+          medida: 'M3 7h18M3 7v4M21 7v4M7 7v2M11 7v2M15 7v2M5 14h14v5H5z',
+          resolucion: 'M3 5h18v12H3zM8 21h8M12 17v4M7 9h2M7 13h2M11 9h2M11 13h2M15 9h2M15 13h2',
+          ubicacion: 'M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
+          uso: 'M4 20h16M6 20V9l6-5 6 5v11M10 20v-6h4v6',
+          distancia: 'M2 12h20M2 12l4-4M2 12l4 4M22 12l-4-4M22 12l-4 4M12 9v6',
+          entorno: 'M12 3s-5 6-5 10a5 5 0 0 0 10 0c0-4-5-10-5-10zM3 20c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0',
+          elec: 'M7 7h10v10H7zM10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4',
+          backup: 'M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6zM9 12l2 2 4-4',
+          escalador: 'M4 14v6h6M20 10V4h-6M4 20l7-7M20 4l-7 7',
+          conexion: 'M9 3v5M15 3v5M7 8h10v4a5 5 0 0 1-10 0zM12 17v4',
+          media: 'M4 4h16v6H4zM4 14h16v6H4zM8 7h.01M8 17h.01M12 7h5M12 17h5',
+          fuentes: 'M3 5h18v11H3zM8 20h8M10 8.5v4l3.5-2z',
+          senal: 'M5 12a7 7 0 0 1 14 0M8 12a4 4 0 0 1 8 0M12 12v8M9 20h6',
+          cable: 'M4 4v5a3 3 0 0 0 3 3h10a3 3 0 0 1 3 3v5M2 4h4M18 20h4'
+        };
+        const NlIco = ({ n }) => <svg className="nl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={NL_ICO[n] || NL_ICO.medida} /></svg>;
         const filasSolicitud = (p, v) => {
           const quiereEntradas = v.elec === 'si' || (v.media && v.media !== 'ninguno');
           const distOps = [['1.5', 'Menos de 2 m'], ['2', 'De 2 a 4 m'], ['4', 'De 4 a 8 m'], ['8', 'De 8 a 15 m'], ['15', 'Más de 15 m'], ['', 'No lo sé']];
           if (p.dist && !distOps.some(o => Number(o[0]) === Number(p.dist))) distOps.unshift([String(p.dist), p.dist + ' m']);
           return [
-            { id: 'resModo', t: 'Resolución mínima', o: [['', 'Sin mínimo'], ['HD', 'HD 720p'], ['FULLHD', 'Full HD 1080p'], ['UHD4K', '4K / UHD']] },
-            { id: 'tipo', t: 'Ubicación', o: [['INDOOR', 'Interior'], ['OUTDOOR', 'Exterior'], ['ESCAPARATE', 'Escaparate'], ['', 'Sin preferencia']] },
-            { id: 'clase', t: 'Tipo de uso', o: [['INSTALL', 'Instalación fija'], ['RENTAL', 'Alquiler / eventos'], ['', 'Sin preferencia']] },
-            { id: 'dist', t: 'Distancia del público', o: distOps, si: !p.pitch },
+            { id: 'resModo', g: 'pantalla', ic: 'resolucion', t: 'Resolución mínima', o: [['', 'Sin mínimo'], ['HD', 'HD 720p'], ['FULLHD', 'Full HD 1080p'], ['UHD4K', '4K / UHD']] },
+            { id: 'tipo', g: 'sitio', ic: 'ubicacion', t: 'Ubicación', o: [['INDOOR', 'Interior'], ['OUTDOOR', 'Exterior'], ['ESCAPARATE', 'Escaparate'], ['', 'Sin preferencia']] },
+            { id: 'clase', g: 'sitio', ic: 'uso', t: 'Tipo de uso', o: [['INSTALL', 'Instalación fija'], ['RENTAL', 'Alquiler / eventos'], ['', 'Sin preferencia']] },
+            { id: 'dist', g: 'sitio', ic: 'distancia', t: 'Distancia del público', o: distOps, si: !p.pitch },
             // Entorno: cada opción lleva a otros tipos de cabinet (GOLD tropicalizado / LED protegido); se activan y desactivan por separado
-            { id: 'entorno', t: 'Entorno', multi: [['marino', 'Marino / tropical (humedad)'], ['protegido', 'Al alcance del público (LED protegido)']] },
-            { id: 'elec', t: 'Electrónica de control', o: OPC_SINO },
-            { id: 'elecTipo', t: 'Backup', o: [['backup', 'Sí, con backup'], ['linea', 'No, solo línea principal'], ['', 'Sin preferencia']], si: v.elec === 'si' },
-            { id: 'elecEsc', t: 'Escalador', o: [['con', 'Sí, con escalador'], ['sin', 'No, sin escalador'], ['', 'Sin preferencia']], si: v.elec === 'si' },
-            { id: 'elecCon', t: 'Conexión a la pantalla', o: [['directo', 'Directo por cable de red (RJ45)'], ['rack', 'En rack con fibra óptica'], ['', 'Sin preferencia']], si: v.elec === 'si' },
-            { id: 'media', t: 'Mediaserver', o: [['ninguno', 'No lo necesito'], ['todos', 'Sí, cualquier marca'], ['novastar', 'Sí, NovaStar'], ['pixelhue', 'Sí, PixelHue'], ['dante', 'Sí, con audio Dante']] },
-            { id: 'entradas', t: 'Fuentes de vídeo', o: [['1', '1 fuente'], ['2', '2 fuentes'], ['4', '3 o 4 fuentes'], ['8', '5 a 8 fuentes'], ['16', 'Más de 8'], ['0', 'No lo sé']], si: quiereEntradas },
-            { id: 'tipoEntrada', t: 'Señal de entrada', o: [['HDMI', 'HDMI'], ['DP', 'DisplayPort'], ['SDI', 'SDI (profesional)'], ['MIXTO', 'Varias / mezcla'], ['', 'No lo sé']], si: quiereEntradas },
-            { id: 'resEntrada', t: 'Resolución de entrada', o: [['HD', 'HD 720p'], ['FHD', 'Full HD 1080p'], ['4K', '4K / UHD'], ['', 'No lo sé']], si: quiereEntradas },
-            { id: 'cableM', t: 'Distancia de las fuentes', o: [['3', 'Hasta 3 m'], ['5', 'De 3 a 5 m'], ['10', 'De 5 a 10 m'], ['15', 'De 10 a 15 m'], ['20', 'De 15 a 20 m'], ['0', 'No lo sé (cable estándar)']], si: quiereEntradas }
+            { id: 'entorno', g: 'sitio', ic: 'entorno', t: 'Entorno', multi: [['marino', 'Marino / tropical (humedad)'], ['protegido', 'Al alcance del público (LED protegido)']] },
+            { id: 'elec', g: 'elec', ic: 'elec', t: 'Electrónica de control', o: OPC_SINO },
+            { id: 'elecTipo', g: 'elec', ic: 'backup', t: 'Backup', o: [['backup', 'Sí, con backup'], ['linea', 'No, solo línea principal'], ['', 'Sin preferencia']], si: v.elec === 'si' },
+            { id: 'elecEsc', g: 'elec', ic: 'escalador', t: 'Escalador', o: [['con', 'Sí, con escalador'], ['sin', 'No, sin escalador'], ['', 'Sin preferencia']], si: v.elec === 'si' },
+            { id: 'elecCon', g: 'elec', ic: 'conexion', t: 'Conexión a la pantalla', o: [['directo', 'Directo por cable de red (RJ45)'], ['rack', 'En rack con fibra óptica'], ['', 'Sin preferencia']], si: v.elec === 'si' },
+            { id: 'media', g: 'media', ic: 'media', t: 'Mediaserver', o: [['ninguno', 'No lo necesito'], ['todos', 'Sí, cualquier marca'], ['novastar', 'Sí, NovaStar'], ['pixelhue', 'Sí, PixelHue'], ['dante', 'Sí, con audio Dante']] },
+            { id: 'entradas', g: 'fuentes', ic: 'fuentes', t: 'Fuentes de vídeo', o: [['1', '1 fuente'], ['2', '2 fuentes'], ['4', '3 o 4 fuentes'], ['8', '5 a 8 fuentes'], ['16', 'Más de 8'], ['0', 'No lo sé']], si: quiereEntradas },
+            { id: 'tipoEntrada', g: 'fuentes', ic: 'senal', t: 'Señal de entrada', o: [['HDMI', 'HDMI'], ['DP', 'DisplayPort'], ['SDI', 'SDI (profesional)'], ['MIXTO', 'Varias / mezcla'], ['', 'No lo sé']], si: quiereEntradas },
+            { id: 'resEntrada', g: 'fuentes', ic: 'resolucion', t: 'Resolución de entrada', o: [['HD', 'HD 720p'], ['FHD', 'Full HD 1080p'], ['4K', '4K / UHD'], ['', 'No lo sé']], si: quiereEntradas },
+            { id: 'cableM', g: 'fuentes', ic: 'cable', t: 'Distancia de las fuentes', o: [['3', 'Hasta 3 m'], ['5', 'De 3 a 5 m'], ['10', 'De 5 a 10 m'], ['15', 'De 10 a 15 m'], ['20', 'De 15 a 20 m'], ['0', 'No lo sé (cable estándar)']], si: quiereEntradas }
           ].filter(f => f.si === undefined || f.si);
         };
         // Valores iniciales del popup: lo detectado en la petición y, para lo que falta, un valor por defecto
@@ -4729,6 +4761,12 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
               : 'No se pudo transcribir el audio (¿sin conexión para descargar el modelo?). Puedes dictarlo con el micrófono.');
           }
         };
+
+        useEffect(() => {
+          if (!nlEstado || escuchando || /…|\.\.\.|%/.test(nlEstado)) return;
+          const t = setTimeout(() => setNlEstado(''), 6000);
+          return () => clearTimeout(t);
+        }, [nlEstado, escuchando]);
 
         const procesarSolicitud = () => {
           setHaloProponer(false);
@@ -5768,7 +5806,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.14</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.15</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -5847,11 +5885,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                     
                     {/* SOLICITUD DEL CLIENTE EN LENGUAJE NATURAL: ENTRADA PRINCIPAL (escribir, dictar o subir audio) */}
                     <div className="nl-main space-y-2 p-3 rounded-lg">
-                      <div className="sec-title" style={{color: '#0f584c', borderBottom: 'none', paddingBottom: 0}}>
-                        <span className="sec-ico">✨</span> Petición del cliente
-                        <span className="nl-badge">ENTRADA PRINCIPAL</span>
-                      </div>
-                      <div style={{position: 'relative', width: '100%'}}>
+                      <div className="nl-caja">
                         <textarea
                           value={nlText}
                           onChange={e => setNlText(e.target.value)}
@@ -5859,10 +5893,11 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                           rows={5}
                           placeholder="Escribe, dicta o sube un audio con la petición…"
                           style={{display: 'block', width: '100%', boxSizing: 'border-box', fontSize: '14px', lineHeight: '1.35', resize: 'none'}}
-                          className="nl-textarea border-2 bg-white p-2 rounded outline-none"
+                          className={'nl-textarea border-2 bg-white p-2 rounded outline-none'}
                         />
+                        {/* Avisos del dictado / audio: capa flotante sobre el texto que se desvanece sola */}
+                        {nlEstado && <div key={nlEstado} className={'nl-flota' + (escuchando ? ' nl-flota-mic' : '')} onClick={() => setNlEstado('')} role="status">{nlEstado}</div>}
                       </div>
-                      {nlEstado && <div className="nl-estado">{nlEstado}</div>}
                       <div className="nl-actions">
                       <button onClick={procesarSolicitud} disabled={!nlText.trim()} style={{flex: 1, minWidth: 0, height: '36px', fontSize: '13px', lineHeight: '1'}}
                         className={`font-bold rounded transition ${nlText.trim() ? 'bg-corp-teal text-white hover:bg-opacity-90' : 'bg-gray-200 text-gray-400'}${haloProponer && nlText.trim() ? ' halo-proponer' : ''}`}>PROPONER PANTALLA</button>
@@ -8022,14 +8057,14 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.14 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.15 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.14 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.15 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
                     </div>
                   </div>
               </main>
@@ -8114,8 +8149,8 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                     <div className="nl-sub">Revisa, toca para cambiar y pulsa CALCULAR</div>
                   </div>
                   <div className="nl-cuerpo">
-                    <div className={'nl-fila' + (faltaMedida ? ' nl-falta' : '')}>
-                      <div className="nl-et">Medida de la pantalla {d.medidaDet || (d.medidaEd && !faltaMedida) ? marca(d.medidaEd ? 'elegido' : true) : (d.v.resModo ? <span className="nl-marca nl-def">opcional</span> : <span className="nl-marca nl-req">falta</span>)}</div>
+                    <div className={'nl-fila nl-g-pantalla' + (faltaMedida ? ' nl-falta' : '')}>
+                      <div className="nl-et"><NlIco n="medida" />Medida de la pantalla {d.medidaDet || (d.medidaEd && !faltaMedida) ? marca(d.medidaEd ? 'elegido' : true) : (d.v.resModo ? <span className="nl-marca nl-def">opcional</span> : <span className="nl-marca nl-req">falta</span>)}</div>
                       <div className="nl-medida">
                         <label>Ancho {campo('ancho')}</label><span>×</span><label>Alto {campo('alto')}</label><b>m</b>
                       </div>
@@ -8123,8 +8158,8 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       {d.error && <div className="nl-err">{d.error}</div>}
                     </div>
                     {filas.map(f => f.multi ? (
-                      <div key={f.id} className="nl-fila">
-                        <div className="nl-et">{f.t} {marca((d.cambiados || {})[f.id] ? 'elegido' : (f.multi.some(([k]) => d.det[k] && d.v[k] === 'si') ? true : false))}</div>
+                      <div key={f.id} className={'nl-fila nl-g-' + f.g}>
+                        <div className="nl-et"><NlIco n={f.ic} />{f.t} {marca((d.cambiados || {})[f.id] ? 'elegido' : (f.multi.some(([k]) => d.det[k] && d.v[k] === 'si') ? true : false))}</div>
                         <div className="nl-ops">
                           <button type="button" className={'nl-op' + (f.multi.every(([k]) => d.v[k] !== 'si') ? ' on' : '')}
                             onClick={() => setNlDialog({ ...d, v: { ...d.v, ...Object.fromEntries(f.multi.map(([k]) => [k, 'no'])) }, cambiados: { ...(d.cambiados || {}), [f.id]: true } })}>Estándar</button>
@@ -8135,8 +8170,8 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                         </div>
                       </div>
                     ) : (
-                      <div key={f.id} className="nl-fila">
-                        <div className="nl-et">{f.t} {marca((d.cambiados || {})[f.id] ? 'elegido' : (d.det[f.id] || false))}</div>
+                      <div key={f.id} className={'nl-fila nl-g-' + f.g}>
+                        <div className="nl-et"><NlIco n={f.ic} />{f.t} {marca((d.cambiados || {})[f.id] ? 'elegido' : (d.det[f.id] || false))}</div>
                         <div className="nl-ops">
                           {f.o.map(([val, lab]) => (
                             <button key={lab} type="button" className={'nl-op' + (String(d.v[f.id]) === String(val) ? ' on' : '')}
