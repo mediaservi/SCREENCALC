@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                         Versión actual: v4.15                              ║
+║                          Versión actual: v5.0                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.15
+ÚLTIMA ACTUALIZACIÓN: v5.0
+- v5.0 (PROPUESTA): nueva estética AVHUB en toda la app en pantalla, con un solo sistema visual: chasis gris neutrón, verde eléctrico para lo activado, violeta de marca para la acción principal, tipografía Inter y displays Share Tech Mono (incluidas en la app, sin servicios externos); cabecera con botones metálicos redondos; panel de control en módulos de rack; interruptores con estado inequívoco (apagado metal / encendido verde con brillo); pitch y nits en display LED; tarjetas de resultados oscuras con filete de color por sección; cabeceras de bloque en violeta; simulación sobre rejilla técnica; esquema de conexiones, distancia de visionado, popups y anuncios adaptados al modo oscuro. El PDF no cambia. En móvil y tablet el margen inferior del panel va dentro de la zona desplazable (sin franja vacía). ?tema=clasico muestra la estética anterior (se recuerda en el navegador) y ?tema=avhub la recupera
+ANTERIOR: v4.15
 - v4.15: módulo de petición sin título ni etiqueta (el texto guía basta) y con más alto para el texto; los avisos del dictado y del audio salen como capa flotante sobre el texto, con destello, y se desvanecen solos (al pulsarla se cierra); el bocadillo de ayuda del micro sale debajo y ya no tapa PROPONER PANTALLA; popup «Datos del proyecto» con cada dato en su tarjeta de fondo pastel por sección (pantalla, sitio, electrónica, mediaserver, fuentes), icono propio junto a cada título y botones más claros con el color de la sección
 ANTERIOR: v4.14
 - v4.14: fila ENTORNO siempre visible en el popup (Estándar · Marino / tropical · Al alcance del público), con las dos opciones activables y desactivables por separado; ✎ EDITAR en «Solicitud aplicada» reabre el popup con lo elegido para corregir cualquier dato; botones MARINO / TROPICAL y AL ALCANCE DEL PÚBLICO también en el panel manual; el resumen los muestra como etiquetas
@@ -1683,6 +1685,519 @@ ANTERIOR: v4.1
 .avad-estrecho .avad-txt ul{display:inline-block}
 @media print{.avad,.avad-zona{display:none!important}}
     </style>
+    <script>/* Estética AVHUB: activa por defecto; ?tema=clasico vuelve a la anterior (se recuerda), ?tema=avhub la recupera */
+      (function(){var d=document.documentElement,t='avhub',q=null;try{q=new URLSearchParams(location.search).get('tema');}catch(e){}if(q){t=q;try{localStorage.setItem('screencalc_tema',q);}catch(e){}}else{try{t=localStorage.getItem('screencalc_tema')||'avhub';}catch(e){}}if(t!=='clasico'){d.classList.add('av');var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#232325');}})();
+    </script>
+    <style id="tema-avhub">
+/*TEMA-AVHUB-INICIO*/
+/* ===== v5.0 · Estética AVHUB (rack digital): una sola piel para toda la app en pantalla.
+   Solo pantalla: el PDF (impresión) conserva su diseño. Desactivable con ?tema=clasico ===== */
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/inter-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/inter-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/inter-latin-600-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: swap; src: url(assets/fonts/inter-latin-700-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 800 900; font-display: swap; src: url(assets/fonts/inter-latin-800-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Share Tech Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/share-tech-mono-latin-400-normal.woff2) format('woff2'); }
+
+@media screen {
+html.av {
+  --av-bg: #121213; --av-chasis: #1a1a1c; --av-panel: #262629; --av-panel-2: #2d2d31; --av-hundido: #141416; --av-tinta: #0d0d0e;
+  --av-borde: #3a3a3f; --av-borde-2: #303035; --av-linea: rgba(255,255,255,.07);
+  --av-txt: #f2f2f3; --av-txt-2: #d2d2d6; --av-tenue: #a1a1a8; --av-tenue-2: #74747b;
+  --av-verde: #00ff04; --av-verde-txt: #39ff3f; --av-verde-dim: rgba(0,255,4,.12); --av-verde-borde: rgba(0,255,4,.55);
+  --av-violeta: #9900ff; --av-violeta-2: #5d00b8; --av-violeta-dim: rgba(153,0,255,.22); --av-violeta-txt: #c58bff;
+  --av-azul: #00b4ff; --av-ambar: #ffb000; --av-magenta: #e100ff; --av-lima: #9dff00; --av-rojo: #ff4d5e;
+  --av-metal: linear-gradient(180deg, #3a3a3e 0%, #2b2b2e 100%);
+  --av-metal-hi: linear-gradient(180deg, #444449 0%, #313135 100%);
+  --av-sombra: 0 1px 0 rgba(255,255,255,.06) inset, 0 2px 0 #000, 0 6px 14px rgba(0,0,0,.35);
+  --av-mono: 'Share Tech Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  color-scheme: dark;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+html.av, html.av body { background: var(--av-bg) !important; color: var(--av-txt); }
+html.av body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+html.av body, html.av button, html.av input, html.av textarea, html.av select, html.av .popup-caja, html.av .nl-pop { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-feature-settings: 'cv11', 'ss01'; }
+html.av ::selection { background: rgba(153,0,255,.55); color: #fff; }
+html.av * { scrollbar-width: thin; scrollbar-color: #45454b transparent; }
+html.av ::-webkit-scrollbar { width: 9px; height: 9px; }
+html.av ::-webkit-scrollbar-thumb { background: #3d3d42; border-radius: 9px; border: 2px solid var(--av-bg); }
+html.av ::-webkit-scrollbar-track { background: transparent; }
+
+/* ---------- Utilidades de color (mapa claro → oscuro) ---------- */
+html.av .bg-white { background-color: var(--av-panel) !important; }
+html.av .bg-gray-50, html.av .bg-slate-50 { background-color: #1c1c1f !important; }
+html.av .bg-gray-100 { background-color: #1f1f22 !important; }
+html.av .bg-gray-200 { background-color: #2e2e33 !important; }
+html.av .bg-gray-300 { background-color: #38383e !important; }
+html.av .bg-slate-100, html.av .bg-tech-gray { background-color: var(--av-bg) !important; }
+html.av .bg-black { background-color: #000 !important; }
+html.av .bg-yellow-50, html.av .bg-amber-50, html.av .bg-amber-100 { background-color: rgba(255,176,0,.10) !important; }
+html.av .bg-blue-50, html.av .bg-blue-100 { background-color: rgba(0,180,255,.10) !important; }
+html.av .bg-green-50, html.av .bg-green-100 { background-color: rgba(0,255,4,.08) !important; }
+html.av .bg-red-50 { background-color: rgba(255,77,94,.10) !important; }
+html.av .text-gray-900, html.av .text-gray-800, html.av .text-slate-900 { color: var(--av-txt) !important; }
+html.av .text-gray-700 { color: #e2e2e5 !important; }
+html.av .text-gray-600 { color: var(--av-txt-2) !important; }
+html.av .text-gray-500 { color: var(--av-tenue) !important; }
+html.av .text-gray-400, html.av .text-slate-400, html.av .text-gray-300 { color: var(--av-tenue-2) !important; }
+html.av .text-corp-green, html.av .text-corp-teal, html.av .text-green-800, html.av .text-green-700 { color: var(--av-verde-txt) !important; }
+html.av .text-blue-900, html.av .text-blue-800, html.av .text-blue-700 { color: #7fd6ff !important; }
+html.av .text-amber-800, html.av .text-yellow-800, html.av .text-orange-700, html.av .text-orange-600 { color: #ffc94d !important; }
+html.av .text-purple-800, html.av .text-purple-700 { color: var(--av-violeta-txt) !important; }
+html.av .text-red-600 { color: #ff7a87 !important; }
+html.av .border-gray-100, html.av .border-gray-200 { border-color: var(--av-borde-2) !important; }
+html.av .border-gray-300, html.av .border-gray-400, html.av .border-gray-500 { border-color: var(--av-borde) !important; }
+html.av .border-gray-600 { border-color: #55555c !important; }
+html.av .border-yellow-200, html.av .border-amber-300, html.av .border-yellow-400 { border-color: rgba(255,176,0,.45) !important; }
+html.av .border-blue-300, html.av .border-blue-400 { border-color: rgba(0,180,255,.5) !important; }
+html.av .shadow-sm, html.av .shadow, html.av .shadow-md, html.av .shadow-lg { box-shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 4px 14px rgba(0,0,0,.35) !important; }
+
+/* ---------- Cabecera ---------- */
+html.av header.app-header {
+  background: linear-gradient(180deg, #2c2c2f 0%, #232325 100%) !important;
+  border-bottom: 1px solid #000; box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 4px 14px rgba(0,0,0,.45) !important;
+}
+html.av header.app-header .hdr-btn {
+  width: 36px; height: 36px; padding: 0 !important; border-radius: 50% !important; justify-content: center;
+  color: #d8d8dc !important; background: var(--av-metal); border: 1px solid #000;
+  box-shadow: 0 2px 4px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.09);
+  transition: color .15s, box-shadow .15s, transform .06s;
+}
+html.av header.app-header .hdr-btn .ic { width: 20px !important; height: 20px !important; }
+html.av header.app-header .hdr-btn:hover { color: var(--av-verde) !important; background: var(--av-metal-hi); box-shadow: 0 0 0 1px var(--av-verde-borde), 0 0 12px rgba(0,255,4,.25), inset 0 1px 0 rgba(255,255,255,.09); }
+html.av header.app-header .hdr-btn:active { transform: translateY(1px); }
+html.av header.app-header .hdr-btn.hdr-tx { background: #000; }
+html.av header.app-header .hdr-btn.hdr-tx img { width: 20px !important; height: 20px !important; }
+html.av header.app-header .flex.items-center.gap-2 { gap: 8px !important; }
+html.av header.app-header .text-gray-300 { color: var(--av-tenue) !important; font-family: var(--av-mono) !important; letter-spacing: .06em; }
+@media (max-width: 480px) {
+  html.av header.app-header .hdr-btn { width: 28px; height: 28px; }
+  html.av header.app-header .hdr-btn .ic, html.av header.app-header .hdr-btn.hdr-tx img { width: 17px !important; height: 17px !important; }
+  html.av header.app-header .flex.items-center.gap-2 { gap: 4px !important; }
+}
+@media (max-width: 400px) { html.av header.app-header .text-gray-300 { display: none !important; } }
+@media (max-height: 500px) and (orientation: landscape) {
+  html.av header.app-header .hdr-btn { width: 28px; height: 28px; }
+  html.av header.app-header .hdr-btn .ic, html.av header.app-header .hdr-btn.hdr-tx img { width: 15px !important; height: 15px !important; }
+}
+
+/* ---------- Panel de control (columna izquierda) ---------- */
+html.av aside.controls-sidebar { background: var(--av-chasis) !important; border-right: 1px solid #000 !important; }
+html.av .controls-sidebar > div > div,
+html.av .controls-sidebar > div > .col-der > .card-sec {
+  background: linear-gradient(180deg, #2a2a2d 0%, #242427 100%) !important;
+  border: 1px solid #0b0b0c !important; border-radius: 11px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 3px 10px rgba(0,0,0,.35) !important;
+}
+html.av .controls-sidebar > div > .col-der { background: none !important; border: none !important; box-shadow: none !important; }
+html.av .controls-sidebar > div > .nl-main {
+  background: linear-gradient(180deg, #2b2533 0%, #231f29 100%) !important;
+  border: 1px solid rgba(153,0,255,.55) !important;
+  box-shadow: 0 0 0 1px rgba(153,0,255,.15), 0 0 22px rgba(153,0,255,.18), inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+html.av .controls-sidebar .sec-title {
+  color: #e9e9ec !important; font-weight: 700; letter-spacing: .14em; font-size: 10.5px;
+  border-bottom: 1px solid var(--av-linea) !important;
+  text-shadow: 0 1px 0 #000;
+}
+html.av .controls-sidebar .sec-title .sec-ico, html.av .controls-sidebar .sec-title .ic, html.av .controls-sidebar label .ic { color: var(--av-verde) !important; }
+html.av .controls-sidebar .sec-sub { color: var(--av-tenue) !important; letter-spacing: .14em; }
+html.av .controls-sidebar label { color: var(--av-tenue) !important; letter-spacing: .06em; }
+html.av .controls-sidebar label .ic { opacity: .9; }
+html.av .controls-sidebar p, html.av .controls-sidebar .text-\[10px\], html.av .controls-sidebar .text-\[11px\] { color: var(--av-tenue); }
+
+/* Textos de ayuda y textarea de la petición */
+html.av textarea, html.av input[type="text"], html.av input[type="number"], html.av input:not([type]), html.av input[type="search"], html.av select {
+  background: var(--av-hundido) !important; color: var(--av-txt) !important;
+  border-color: var(--av-borde) !important; caret-color: var(--av-verde);
+}
+html.av textarea::placeholder, html.av input::placeholder { color: #6f6f76 !important; }
+html.av textarea:focus, html.av input:focus, html.av select:focus { border-color: var(--av-verde) !important; box-shadow: 0 0 0 3px var(--av-verde-dim) !important; outline: none; }
+html.av .nl-textarea { border: 1px solid #45404d !important; box-shadow: inset 0 2px 6px rgba(0,0,0,.45) !important; border-radius: 8px !important; }
+html.av .nl-textarea:focus { border-color: var(--av-verde) !important; box-shadow: inset 0 2px 6px rgba(0,0,0,.45), 0 0 0 3px var(--av-verde-dim) !important; }
+html.av .nl-tool { background: var(--av-metal) !important; color: #d8d8dc !important; border: 1px solid #000 !important; box-shadow: 0 2px 0 #000, inset 0 1px 0 rgba(255,255,255,.08) !important; }
+html.av .nl-tool:hover { color: var(--av-verde) !important; }
+html.av .nl-tool.mic-activo { background: linear-gradient(180deg, #ff4d5e, #b8122a) !important; color: #fff !important; }
+html.av .nl-flota { background: #0d1f0e !important; color: var(--av-verde-txt) !important; border: 1px solid var(--av-verde-borde); font-family: var(--av-mono); letter-spacing: .02em; }
+html.av .nl-flota-mic { background: #2a0b10 !important; color: #ff8a96 !important; border-color: rgba(255,77,94,.7); }
+html.av .bocadillo { background: #fff; color: #111 !important; border: 0 !important; box-shadow: 0 6px 18px rgba(0,0,0,.55); font-weight: 600 !important; }
+html.av .bocadillo::after { border: 0 !important; background: #fff; }
+html.av .bocadillo .ic { color: var(--av-violeta); }
+
+/* ---------- Botones ---------- */
+/* Base: el relieve 3D antiguo se sustituye por metal */
+html.av button[class*="bg-"]:not([class*="bg-transparent"]):not(.toggle-switch-btn) { background-image: none; }
+/* Interruptores (estado inequívoco: apagado metal / encendido verde) */
+html.av .av-tog {
+  background: var(--av-metal) !important; color: #c9c9ce !important;
+  border: 1px solid #0b0b0c !important; border-radius: 7px !important;
+  box-shadow: 0 2px 0 #000, inset 0 1px 0 rgba(255,255,255,.07) !important;
+  letter-spacing: .06em; font-weight: 700 !important; text-shadow: 0 1px 0 #000;
+  transition: color .12s, box-shadow .12s, background .12s, transform .06s;
+}
+html.av .av-tog:hover:not(:disabled) { color: #fff !important; background: var(--av-metal-hi) !important; filter: none !important; }
+html.av .av-tog:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 1px 0 #000, inset 0 2px 4px rgba(0,0,0,.4) !important; }
+html.av .av-tog.bg-corp-teal, html.av .av-tog.av-on, html.av .av-tog-elec.border-gray-900 {
+  background: linear-gradient(180deg, rgba(0,255,4,.16), rgba(0,255,4,.07)), #141a14 !important;
+  color: var(--av-verde) !important; border-color: var(--av-verde) !important;
+  box-shadow: 0 0 0 1px rgba(0,255,4,.25), 0 0 14px rgba(0,255,4,.28), inset 0 0 10px rgba(0,255,4,.10) !important;
+  text-shadow: 0 0 8px rgba(0,255,4,.45);
+}
+/* Acciones pequeñas (▲▼, + −, elevación) */
+html.av .av-acc, html.av .spin-btn {
+  background: var(--av-metal) !important; color: var(--av-verde) !important;
+  border: 1px solid #0b0b0c !important; box-shadow: 0 2px 0 #000, inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+html.av .av-acc:hover:not(:disabled), html.av .spin-btn:hover:not(:disabled) { background: var(--av-metal-hi) !important; filter: none !important; box-shadow: 0 2px 0 #000, 0 0 10px rgba(0,255,4,.25), inset 0 1px 0 rgba(255,255,255,.08) !important; }
+html.av .av-acc:active:not(:disabled), html.av .spin-btn:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 1px 0 #000, inset 0 2px 4px rgba(0,0,0,.4) !important; }
+/* Acción principal: violeta de marca */
+html.av .av-pri.bg-corp-teal, html.av .av-pri.bg-corp-green, html.av .nl-pie .av-pri {
+  background: linear-gradient(90deg, #9900ff 0%, #6a00cc 100%) !important; color: #fff !important;
+  border: 1px solid #2a004f !important;
+  box-shadow: 0 0 16px rgba(153,0,255,.35), 0 2px 0 #000, inset 0 1px 0 rgba(255,255,255,.25) !important;
+  letter-spacing: .1em; text-shadow: 0 1px 1px rgba(0,0,0,.45);
+}
+html.av .av-pri.bg-corp-teal:hover:not(:disabled), html.av .av-pri.bg-corp-green:hover:not(:disabled), html.av .nl-pie .av-pri:hover { filter: brightness(1.12) !important; }
+html.av .av-pri.bg-gray-200, html.av .av-pri:disabled { background: #2a2a2e !important; color: #85858d !important; border: 1px solid #1a1a1c !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.04) !important; text-shadow: none; }
+/* Secundarias (metal) */
+html.av .av-sec, html.av button.bg-gray-200, html.av button.bg-gray-300 {
+  background: var(--av-metal) !important; color: #dcdce0 !important;
+  border: 1px solid #0b0b0c !important; box-shadow: 0 2px 0 #000, inset 0 1px 0 rgba(255,255,255,.08) !important;
+  letter-spacing: .08em; text-shadow: 0 1px 0 #000;
+}
+html.av .av-sec:hover:not(:disabled), html.av button.bg-gray-200:hover:not(:disabled), html.av button.bg-gray-300:hover:not(:disabled) { background: var(--av-metal-hi) !important; color: #fff !important; filter: none !important; }
+html.av .av-simular .ic { color: var(--av-verde); }
+html.av .av-chip { background: rgba(0,255,4,.08) !important; color: var(--av-verde) !important; border: 1px solid var(--av-verde-borde) !important; box-shadow: none !important; }
+html.av .halo-proponer { animation: avHalo 1.3s ease-in-out infinite !important; }
+@keyframes avHalo { 0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,4,.9), 0 0 10px rgba(153,0,255,.5); } 50% { box-shadow: 0 0 0 6px rgba(0,255,4,0), 0 0 24px rgba(0,255,4,.7); } }
+
+/* Valores tipo display (pitch / nits) */
+html.av .av-lcd {
+  background: #0a0c0a !important; border: 1px solid #000 !important; border-radius: 6px !important;
+  color: var(--av-verde) !important; font-family: var(--av-mono) !important; font-weight: 400 !important; font-size: 22px !important;
+  text-shadow: 0 0 8px rgba(0,255,4,.55); box-shadow: inset 0 2px 8px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.05) !important; letter-spacing: .04em;
+}
+
+/* Regla de unidades */
+html.av .regla { border: 1px solid #000 !important; background: linear-gradient(180deg, #34343a 0, #2a2a2e 58%, #1d1d20 58%, #1d1d20 100%) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 2px 0 #000 !important; }
+html.av .regla::before { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='20'><rect x='1' y='0' width='2' height='20' fill='%2300ff04' fill-opacity='.75'/><rect x='15' y='0' width='2' height='11' fill='%2300ff04' fill-opacity='.45'/></svg>") !important; }
+
+/* Selector de cabinet */
+html.av .controls-sidebar input[class*="bg-[#ccff00]"], html.av .controls-sidebar .bg-corp-lime {
+  background: var(--av-hundido) !important; color: var(--av-verde) !important; border-color: var(--av-verde-borde) !important;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,.5), 0 0 0 1px rgba(0,255,4,.12) !important;
+}
+html.av .tam-resumen, html.av .tam-resumen * { color: var(--av-txt) !important; }
+
+/* ---------- Área de resultados ---------- */
+html.av main.printable-area { background: var(--av-bg) !important; }
+html.av .visualizer-container {
+  background:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px) 0 0 / 40px 40px,
+    radial-gradient(120% 90% at 60% 40%, #1d1d21 0%, #121214 70%) !important;
+  border-bottom: 1px solid #000 !important;
+}
+html.av .visualizer-container .border-gray-600 { border-color: #4a4a50 !important; }
+html.av .car-screen { background: var(--av-bg) !important; border-color: #000 !important; }
+
+/* Tarjetas de características */
+html.av .car-tarjeta.car-tarjeta {
+  background: linear-gradient(180deg, #27272a 0%, #222225 100%) !important;
+  border: 1px solid #0b0b0c !important; border-top: 0 !important; position: relative;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 4px 14px rgba(0,0,0,.35) !important;
+}
+html.av .car-tarjeta::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--av-ac2, var(--av-violeta)); box-shadow: 0 0 10px var(--av-ac2, var(--av-violeta)); }
+html.av .car-tarjeta > div:first-child { color: var(--av-ac2, var(--av-violeta-txt)) !important; letter-spacing: .14em !important; }
+html.av .car-tarjeta[style*="#00a792"] { --av-ac2: #9dff00; }
+html.av .car-tarjeta[style*="#1d4ed8"] { --av-ac2: #00b4ff; }
+html.av .car-tarjeta[style*="#b45309"] { --av-ac2: #ffb000; }
+html.av .car-tarjeta[style*="#4338ca"] { --av-ac2: #b566ff; }
+html.av .car-tarjeta[style*="#73ac44"] { --av-ac2: #e100ff; }
+html.av .car-tarjeta[style*="#dc2626"] { --av-ac2: #ff4d5e; }
+html.av .car-tarjeta .border-gray-100 { border-color: var(--av-linea) !important; }
+
+/* Cabeceras de bloque (violeta de marca, como el mockup) */
+html.av .caract-header, html.av main.printable-area [class*="bg-[#0f584c]"], html.av main.printable-area [class*="bg-[#00a792]"] {
+  background: linear-gradient(90deg, rgba(153,0,255,.55) 0%, rgba(153,0,255,.12) 70%, rgba(153,0,255,.04) 100%), #1f1a26 !important;
+  color: #fff !important; border-bottom: 1px solid #000 !important; letter-spacing: .14em !important;
+}
+html.av .caract-header { border-radius: 10px 10px 0 0; }
+html.av .data-table-container { background: transparent !important; border-radius: 10px; overflow: hidden; border: 1px solid #0b0b0c; box-shadow: 0 4px 14px rgba(0,0,0,.35) !important; }
+html.av .resumen-pantalla { color: var(--av-txt-2) !important; }
+
+/* Bloques de electrónica / mediaserver / cableado / esquema */
+html.av .elec-pdf, html.av .media-pdf, html.av .cableado-pdf, html.av .obs-pdf, html.av .esquema-sec > div {
+  background: var(--av-panel) !important; border: 1px solid #0b0b0c !important; border-radius: 10px; overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 4px 14px rgba(0,0,0,.35) !important;
+}
+html.av .elec-bubble {
+  background: linear-gradient(180deg, #2c2c30, #252528) !important; border: 1px solid #0b0b0c !important; border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 2px 0 #000 !important; transition: box-shadow .15s, border-color .15s;
+}
+html.av .elec-bubble:hover { border-color: #55555c !important; }
+html.av .elec-bubble.elec-sel { border-color: var(--av-verde) !important; background: linear-gradient(180deg, rgba(0,255,4,.10), rgba(0,255,4,.03)), #202420 !important; box-shadow: 0 0 0 1px rgba(0,255,4,.35), 0 0 16px rgba(0,255,4,.22) !important; }
+html.av .elec-bubble .elec-title { color: #fff !important; }
+
+/* Pie */
+html.av .footer-pantalla { color: var(--av-tenue-2) !important; }
+html.av .footer-pantalla a { color: var(--av-tenue) !important; }
+html.av .footer-pantalla a:hover { color: var(--av-verde) !important; }
+html.av .footer-pantalla .ic { color: var(--av-violeta); }
+html.av .admin-btn { color: var(--av-tenue-2) !important; }
+
+/* ---------- Popups ---------- */
+html.av .popup-fondo, html.av .nl-velo { background: rgba(0,0,0,.7) !important; backdrop-filter: blur(2px); }
+html.av .popup-caja, html.av .readme-caja {
+  background: #232326 !important; color: var(--av-txt) !important; border: 1px solid #000; border-radius: 14px !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+html.av .popup-caja h2 {
+  margin: -16px -16px 12px !important; padding: 12px 16px; color: #fff !important; font-size: 13px !important; letter-spacing: .14em; text-transform: uppercase;
+  background: linear-gradient(90deg, #9900ff, #4d0099); border-radius: 14px 14px 0 0;
+}
+html.av .popup-caja [style*="color: rgb(55, 65, 81)"], html.av .popup-caja p { color: var(--av-txt-2) !important; }
+html.av .popup-caja a { color: var(--av-verde-txt) !important; }
+html.av .lang-op { background: #1b1b1d !important; border: 1px solid #3a3a3f !important; color: var(--av-txt) !important; }
+html.av .lang-op.sel { border-color: var(--av-verde) !important; color: var(--av-verde) !important; background: var(--av-verde-dim) !important; }
+html.av .readme-md, html.av .readme-md p, html.av .readme-md li { color: var(--av-txt-2) !important; }
+html.av .readme-md h1, html.av .readme-md h2, html.av .readme-md h3, html.av .readme-md h4 { color: #fff !important; border-color: var(--av-linea) !important; }
+html.av .readme-md a { color: var(--av-verde-txt) !important; }
+html.av .readme-md code, html.av .readme-md pre { background: #151517 !important; color: #e6e6e9 !important; }
+html.av .readme-md th, html.av .readme-md td { border-color: #3a3a3f !important; }
+html.av .readme-md th { background: #2d2d31 !important; color: #fff !important; }
+html.av .readme-cerrar { background: var(--av-metal) !important; color: #fff !important; border: 1px solid #000 !important; }
+
+/* Popup «Datos del proyecto» */
+html.av .nl-pop { background: #1e1e21 !important; border: 1px solid #000; box-shadow: 0 24px 60px rgba(0,0,0,.7) !important; }
+html.av .nl-cab { background: linear-gradient(90deg, #9900ff, #4d0099) !important; border-bottom: 1px solid #000 !important; }
+html.av .nl-tit { color: #fff !important; letter-spacing: .16em; }
+html.av .nl-sub { color: rgba(255,255,255,.8) !important; }
+html.av .nl-cuerpo { background: #18181a !important; }
+html.av .nl-fila { --bg: #232326; --bd: #0b0b0c; background: linear-gradient(90deg, color-mix(in srgb, var(--ac) 9%, #232326), #232326 60%) !important; border-color: #0b0b0c !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
+html.av .nl-g-pantalla { --ac: #9dff00; }
+html.av .nl-g-sitio { --ac: #ffb000; }
+html.av .nl-g-elec { --ac: #00b4ff; }
+html.av .nl-g-media { --ac: #e100ff; }
+html.av .nl-g-fuentes { --ac: #b566ff; }
+html.av .nl-et { color: #f0f0f2 !important; }
+html.av .nl-op { background: var(--av-metal) !important; color: #cfcfd4 !important; border: 1px solid #0b0b0c !important; box-shadow: 0 2px 0 #000, inset 0 1px 0 rgba(255,255,255,.07) !important; }
+html.av .nl-op:hover { color: #fff !important; border-color: #0b0b0c !important; }
+html.av .nl-op.on { background: linear-gradient(180deg, rgba(0,255,4,.16), rgba(0,255,4,.07)), #141a14 !important; color: var(--av-verde) !important; border-color: var(--av-verde) !important; box-shadow: 0 0 0 1px rgba(0,255,4,.25), 0 0 12px rgba(0,255,4,.25) !important; }
+html.av .nl-det { background: rgba(0,255,4,.12) !important; color: var(--av-verde-txt) !important; }
+html.av .nl-ded { background: rgba(0,180,255,.14) !important; color: #7fd6ff !important; }
+html.av .nl-def { background: rgba(255,255,255,.05) !important; color: var(--av-tenue) !important; border-color: #3a3a3f !important; }
+html.av .nl-req { background: rgba(255,176,0,.18) !important; color: #ffc94d !important; }
+html.av .nl-medida { color: var(--av-tenue) !important; }
+html.av .nl-num { background: var(--av-hundido) !important; color: var(--av-verde) !important; border: 1px solid #3a3a3f !important; font-family: var(--av-mono); }
+html.av .nl-nota { color: var(--av-tenue) !important; }
+html.av .nl-falta { box-shadow: 0 0 0 1px var(--av-ambar), 0 0 14px rgba(255,176,0,.25) !important; }
+html.av .nl-pie { background: #1e1e21 !important; border-top: 1px solid #000 !important; }
+
+/* Anuncios */
+html.av .avad { background: #222225 !important; border: 1px solid #333338 !important; color: var(--av-txt) !important; }
+html.av .avad-txt, html.av .avad-sinmedia .avad-txt { color: var(--av-txt) !important; }
+html.av .avad-tag { color: var(--av-tenue-2) !important; }
+html.av .avad-encima { background: #0b0b0f !important; }
+html.av .ad-slot { background: #222225 !important; border-color: #333338 !important; }
+/* ---------- Estilos en línea heredados (claro → oscuro) ---------- */
+html.av [style*="background: rgb(255, 255, 255)"], html.av [style*="background-color: rgb(255, 255, 255)"],
+html.av [style*="background: rgb(249, 250, 251)"], html.av [style*="background-color: rgb(249, 250, 251)"] { background-color: var(--av-panel) !important; }
+html.av [style*="background: rgb(243, 244, 246)"], html.av [style*="background-color: rgb(243, 244, 246)"],
+html.av [style*="background: rgb(241, 245, 249)"], html.av [style*="background-color: rgb(241, 245, 249)"],
+html.av [style*="background: rgb(248, 248, 248)"], html.av [style*="background-color: rgb(248, 248, 248)"] { background-color: #1c1c1f !important; }
+html.av [style*="background: rgb(240, 253, 244)"], html.av [style*="background: rgb(220, 252, 231)"], html.av [style*="background: rgb(240, 253, 250)"], html.av [style*="background: rgb(230, 246, 244)"] { background-color: rgba(0,255,4,.07) !important; }
+html.av [style*="background: rgb(254, 242, 242)"] { background-color: rgba(255,77,94,.09) !important; }
+html.av [style*="background: rgb(255, 251, 235)"], html.av [style*="background: rgb(254, 243, 199)"] { background-color: rgba(255,176,0,.09) !important; }
+html.av [style*="background: rgb(239, 246, 255)"], html.av [style*="background: rgb(238, 242, 255)"] { background-color: rgba(0,180,255,.08) !important; }
+html.av [style*="border-color: rgb(209, 213, 219)"], html.av [style*="border: 2px solid rgb(209, 213, 219)"], html.av [style*="border: 1px solid rgb(209, 213, 219)"],
+html.av [style*="border-color: rgb(229, 231, 235)"], html.av [style*="border: 1px solid rgb(229, 231, 235)"], html.av [style*="border-top: 1px solid rgb(229, 231, 235)"], html.av [style*="border-bottom: 1px solid rgb(209, 213, 219)"] { border-color: var(--av-borde) !important; }
+html.av [style*="color: rgb(15, 88, 76)"] { color: var(--av-verde-txt) !important; }
+html.av [style*="color: rgb(55, 65, 81)"], html.av [style*="color: rgb(31, 41, 55)"] { color: #e2e2e5 !important; }
+html.av [style*="color: rgb(17, 24, 39)"] { color: var(--av-txt) !important; }
+html.av [style*="color: rgb(107, 114, 128)"], html.av [style*="color: rgb(75, 85, 99)"] { color: var(--av-tenue) !important; }
+html.av [style*="color: rgb(156, 163, 175)"] { color: var(--av-tenue-2) !important; }
+html.av [style*="color: rgb(185, 28, 28)"], html.av [style*="color: rgb(220, 38, 38)"] { color: #ff6b7a !important; }
+html.av [style*="color: rgb(180, 83, 9)"], html.av [style*="color: rgb(146, 64, 14)"], html.av [style*="color: rgb(161, 98, 7)"] { color: #ffc24d !important; }
+html.av [style*="color: rgb(29, 78, 216)"] { color: #59c8ff !important; }
+html.av [style*="color: rgb(67, 56, 202)"] { color: #c08bff !important; }
+html.av [style*="border-color: rgb(115, 172, 68)"] { border-color: rgba(0,255,4,.5) !important; }
+html.av [style*="border-color: rgb(220, 38, 38)"] { border-color: rgba(255,77,94,.65) !important; }
+
+/* ---------- Simulación ---------- */
+html.av .humano-svg { color: #6b6b75 !important; filter: drop-shadow(0 0 1px rgba(255,255,255,.25)) drop-shadow(0 6px 10px rgba(0,0,0,.6)); }
+html.av .av-resumen { background: linear-gradient(180deg, #232326, #1c1c1f) !important; border: 1px solid #000; box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 4px 12px rgba(0,0,0,.4) !important; }
+html.av .av-resumen svg { stroke: var(--av-verde); opacity: 1 !important; }
+html.av .av-resumen svg[fill="#ffffff"] { fill: var(--av-verde); stroke: none; }
+html.av .av-resumen .text-white { color: var(--av-txt) !important; font-family: var(--av-mono); font-weight: 400 !important; letter-spacing: .03em; }
+html.av .resolution-box-print > .bg-white { border-color: #000 !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 4px 12px rgba(0,0,0,.4) !important; }
+html.av .resolution-box-print .bg-black { border: 1px solid var(--av-verde-borde); box-shadow: 0 0 12px rgba(0,255,4,.18); }
+html.av .resolution-box-print .bg-black .font-black { color: var(--av-verde) !important; text-shadow: 0 0 8px rgba(0,255,4,.5); }
+html.av .av-barra-movil { background: #1a1a1c !important; border-bottom: 1px solid #000 !important; color: var(--av-txt-2) !important; font-family: var(--av-mono) !important; }
+html.av .av-panel-flot { background: linear-gradient(90deg, #9900ff, #6a00cc) !important; border: 1px solid #2a004f !important; box-shadow: 0 0 16px rgba(153,0,255,.45), 0 4px 12px rgba(0,0,0,.5) !important; letter-spacing: .08em; }
+
+/* Gráfico de distancia (tarjeta) */
+html.av .dv-svg polygon[fill="#fca5a5"] { fill: rgba(255,77,94,.38); }
+html.av .dv-svg polygon[fill="#fde68a"] { fill: rgba(255,176,0,.34); }
+html.av .dv-svg polygon[fill="#73ac44"] { fill: rgba(0,255,4,.30); }
+html.av .dv-svg polygon[fill="#d1d5db"] { fill: #2e2e33; }
+html.av .dv-svg text[fill="#7f1d1d"] { fill: #ff9aa5; }
+html.av .dv-svg text[fill="#78350f"] { fill: #ffd27a; }
+html.av .dv-svg text[fill="#ffffff"] { fill: #c8ffc9; }
+html.av .dv-svg line[stroke="#fff"] { stroke: #121214; }
+html.av .dv-svg text[fill="#374151"] { fill: #d2d2d6; }
+html.av .dv-svg text[fill="#6b7280"], html.av .dv-svg text[fill="#4b5563"] { fill: #9a9aa1; }
+html.av .dv-svg text[fill="#0f584c"] { fill: var(--av-verde); }
+html.av .dv-svg line[stroke="#374151"] { stroke: #75757c; }
+html.av .dv-svg line[stroke="#6b7280"] { stroke: #56565c; }
+html.av .dv-svg line[stroke="#0f584c"], html.av .dv-svg g[stroke="#0f584c"] { stroke: var(--av-verde); }
+html.av .dv-svg g[fill="#0f584c"], html.av .dv-svg path[fill="#0f584c"] { fill: var(--av-verde); }
+html.av .dv-svg g[fill="#0f584c"] path { fill: inherit; }
+html.av .dv-svg svg g[fill="#0f584c"] { fill: #c9c9cf; }
+html.av .dv-svg rect[fill="#0f584c"] { fill: #0d1f0e; stroke: var(--av-verde-borde); stroke-width: 1; }
+
+/* Niveles HD / FHD / 4K / 8K y cajas de datos */
+html.av .car-tarjeta .rounded-full.border { background: #1b1b1d !important; border-color: #3a3a3f !important; color: #7a7a81 !important; }
+html.av .car-tarjeta .rounded-full.border[style*="rgb(220, 252, 231)"] { background: rgba(0,255,4,.10) !important; border-color: var(--av-verde-borde) !important; color: var(--av-verde-txt) !important; }
+html.av .car-tarjeta svg rect[fill="#0b1220"] { fill: #0a0c0a; }
+
+/* Observaciones y cableado */
+html.av main.printable-area [class*="border-[#00a792]"] { border-color: var(--av-violeta) !important; }
+html.av main.printable-area [class*="text-[#00a792]"] { color: var(--av-violeta-txt) !important; letter-spacing: .12em; }
+html.av .cableado-pdf h3 { letter-spacing: .08em !important; font-size: 12px !important; }
+html.av .cableado-pdf .esquema-grid { border-color: #000 !important; }
+html.av .cableado-pdf .bg-gray-200, html.av .cableado-pdf strong.bg-gray-200 { background: #2e2e33 !important; color: #fff !important; }
+
+/* Cabinet: iconos, interruptor 90° */
+html.av .cab-ico-btn { background: var(--av-metal) !important; border: 1px solid #000 !important; box-shadow: 0 2px 0 #000, inset 0 1px 0 rgba(255,255,255,.08) !important; }
+html.av .cab-ico-btn .ic { filter: none !important; }
+html.av a.cab-ico-btn { color: #d8d8dc !important; }
+html.av a.cab-ico-btn:hover { color: var(--av-verde) !important; }
+html.av .toggle-switch-btn { background: #121214 !important; border: 1px solid #000; box-shadow: inset 0 2px 4px rgba(0,0,0,.7); }
+html.av .toggle-switch-btn[class*="bg-[#00a792]"] { background: rgba(0,255,4,.25) !important; box-shadow: inset 0 0 6px rgba(0,255,4,.4), 0 0 8px rgba(0,255,4,.3); }
+html.av .toggle-switch-thumb { background: linear-gradient(180deg, #e8e8ea, #a8a8ae) !important; }
+html.av .toggle-switch-btn[class*="bg-[#00a792]"] .toggle-switch-thumb { background: var(--av-verde) !important; box-shadow: 0 0 6px rgba(0,255,4,.8) !important; }
+
+/* Esquema de conexiones (plano oscuro) */
+html.av svg.esq-svg { background: #18181b !important; border-radius: 8px; }
+html.av .esq-svg [fill="#fff"] { fill: #26262a; }
+html.av .esq-svg text[fill="#fff"] { fill: #fff; }
+html.av .esq-svg text[fill="#111827"] { fill: #e6e6ea; }
+html.av .esq-svg rect[fill="#0f584c"], html.av .esq-svg [fill="#0f584c"] { fill: #5d00b8; }
+html.av .esq-svg [stroke="#0f584c"] { stroke: #8f45ff; }
+html.av .esq-svg rect[fill="#111827"] { fill: #000; }
+html.av .esq-svg [stroke="#111827"] { stroke: #6a6a72; }
+html.av .esq-svg [fill="#475569"] { fill: #3d4654; }
+html.av .esq-svg [stroke="#475569"] { stroke: #64748b; }
+html.av .esq-svg [fill="#e2e8f0"] { fill: #3a3a40; }
+html.av .esq-svg [fill="#334155"] { fill: #9a9aa3; }
+html.av .esq-svg [stroke="#334155"] { stroke: #9a9aa3; }
+html.av .esq-svg [fill="#ccfbf1"] { fill: rgba(153,0,255,.18); }
+html.av .esq-svg [fill="#ecfdf5"] { fill: #1d1a24; }
+html.av .esq-svg [fill="#f5f3ff"] { fill: #1f1630; }
+html.av .esq-svg [fill="#fef2f2"] { fill: #2a1418; }
+html.av .esq-svg [fill="#fff7ed"] { fill: #2a1b10; }
+html.av .esq-svg [fill="#fef9c3"] { fill: #2a2510; }
+html.av .esq-svg [fill="#854d0e"], html.av .esq-svg [fill="#b45309"] { fill: #ffc24d; }
+html.av .esq-svg [stroke="#a16207"] { stroke: #ffb000; }
+html.av .esq-svg [fill="#1d4ed8"] { fill: #4da3ff; }
+html.av .esq-svg [stroke="#1d4ed8"] { stroke: #3b8bff; }
+html.av .esq-svg [fill="#7c3aed"] { fill: #b07cff; }
+html.av .esq-svg [stroke="#7c3aed"] { stroke: #a066ff; }
+html.av .esq-svg [fill="#dc2626"] { fill: #ff5a68; }
+html.av .esq-svg [stroke="#dc2626"] { stroke: #ff4d5e; }
+html.av .esq-svg [fill="#b91c1c"] { fill: #ff7a87; }
+html.av .esq-bom thead tr, html.av .esquema-bom thead tr { background: #1c1c1f !important; }
+html.av .esquema-bom th { color: var(--av-tenue) !important; text-transform: uppercase; font-size: 10px; letter-spacing: .1em; }
+html.av .esquema-bom td { color: var(--av-txt-2); }
+html.av .esquema-bom tr { border-color: #303035 !important; }
+html.av .esquema-bom [style*="background: rgb(17, 24, 39)"] { background: #e6e6ea !important; }
+
+/* Desplegable de modelos */
+html.av .controls-sidebar input[class*="bg-[#ccff00]"] { font-weight: 700 !important; letter-spacing: .02em; }
+html.av .controls-sidebar input[class*="bg-[#ccff00]"] + button { color: var(--av-verde) !important; }
+html.av .controls-sidebar .absolute.z-50.border-gray-900 { background: #1d1d20 !important; border: 1px solid #000 !important; box-shadow: 0 14px 30px rgba(0,0,0,.6), 0 0 0 1px rgba(0,255,4,.25) !important; }
+html.av .controls-sidebar .absolute.z-50.border-gray-900 > div { color: #e6e6ea !important; border-bottom: 1px solid #28282c; font-family: var(--av-mono); letter-spacing: .02em; }
+html.av .controls-sidebar .absolute.z-50.border-gray-900 > div[style*="rgb(0, 102, 204)"] { color: #59c8ff !important; }
+html.av .controls-sidebar .absolute.z-50.border-gray-900 > div:hover { background: #2c2c31 !important; color: #fff !important; }
+html.av .controls-sidebar .absolute.z-50.border-gray-900 > div[class~="bg-[#ccff00]"] { background: rgba(0,255,4,.12) !important; color: var(--av-verde) !important; box-shadow: inset 3px 0 0 var(--av-verde); }
+html.av .esquema-bom [style*="background: rgb(15, 88, 76)"] { background: #9d5cff !important; }
+@media (max-width: 640px) {
+  html.av .caract-header, html.av main.printable-area [class*="bg-[#0f584c]"], html.av main.printable-area [class*="bg-[#00a792]"] { letter-spacing: .07em !important; }
+}
+
+/* Popup de contenido de pantalla */
+html.av .av-media-caja { background: #232326 !important; border: 1px solid #000; box-shadow: 0 20px 50px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.06) !important; }
+html.av .av-media-cab { margin: -12px -12px 12px !important; padding: 10px 12px 10px 14px; background: linear-gradient(90deg, #9900ff, #4d0099); border-radius: 14px 14px 0 0; }
+html.av .av-media-cab > div { color: #fff !important; font-size: 13px !important; letter-spacing: .14em; }
+html.av .av-media-cab > button { color: #fff !important; }
+html.av .av-media-caja label[style*="border: 1px solid rgb(0, 167, 146)"] { border-color: var(--av-verde) !important; background: rgba(0,255,4,.08) !important; color: var(--av-verde) !important; }
+html.av .av-media-caja label { color: var(--av-txt-2); }
+html.av .av-media-caja label[style*="dashed"] { border-color: #55555c !important; color: var(--av-txt-2) !important; }
+html.av input[type="radio"], html.av input[type="checkbox"] { accent-color: var(--av-verde); }
+
+@media (max-width: 380px) {
+  html.av header.app-header { padding-left: 6px !important; padding-right: 6px !important; }
+  html.av header.app-header .hdr-btn { width: 26px; height: 26px; }
+  html.av header.app-header .hdr-btn .ic, html.av header.app-header .hdr-btn.hdr-tx img { width: 15px !important; height: 15px !important; }
+  html.av header.app-header .flex.items-center.gap-2 { gap: 3px !important; }
+  html.av header.app-header img.app-logo { height: 21px !important; }
+  html.av header.app-header .avhub-hdr img { height: 20px !important; }
+}
+/* Cabeceras de bloque con enlace: sin espaciado extra y con salto si no cabe */
+html.av main.printable-area [class*="bg-[#0f584c]"] { flex-wrap: wrap; row-gap: 4px; }
+html.av main.printable-area [class*="bg-[#0f584c]"] a { letter-spacing: normal !important; color: rgba(255,255,255,.85) !important; }
+html.av main.printable-area [class*="bg-[#0f584c]"] a:hover { color: var(--av-verde) !important; }
+/* Leyenda de puertos sobre color: más legible */
+html.av .cableado-pdf .flex-wrap.gap-1 > * { text-shadow: 0 1px 2px rgba(0,0,0,.55); }
+
+/* Filtro rápido, avisos y botones de color heredados */
+html.av .bg-purple-100 { background: linear-gradient(180deg, rgba(153,0,255,.16), rgba(153,0,255,.07)) !important; }
+html.av .border-purple-400 { border-color: rgba(153,0,255,.6) !important; }
+html.av .bg-purple-100 select { background: var(--av-hundido) !important; color: var(--av-violeta-txt) !important; }
+html.av button.bg-red-500 { background: linear-gradient(180deg, #ff4d5e, #b8122a) !important; border: 1px solid #4a0610 !important; box-shadow: 0 2px 0 #000, inset 0 1px 0 rgba(255,255,255,.2) !important; }
+html.av .bg-blue-500, html.av .bg-blue-600 { background-color: #0091d1 !important; }
+html.av .bg-cyan-50, html.av .bg-sky-50 { background-color: rgba(0,180,255,.08) !important; }
+
+/* Panel en 2 columnas: el espacio sobrante va a la última fila (ningún bloque se estira) */
+@media (min-width: 1280px) {
+  html.av aside.controls-sidebar > div { grid-template-rows: min-content min-content 1fr; }
+  html.av aside.controls-sidebar > div > :nth-child(1), html.av aside.controls-sidebar > div > :nth-child(2), html.av aside.controls-sidebar > div > :nth-child(3) { align-self: start; }
+}
+@media (max-width: 1279px) and (orientation: landscape) {
+  html.av aside.controls-sidebar > div { grid-template-rows: min-content min-content 1fr; }
+  html.av aside.controls-sidebar > div > :nth-child(1), html.av aside.controls-sidebar > div > :nth-child(2), html.av aside.controls-sidebar > div > :nth-child(3) { align-self: start; }
+}
+/* Banner con texto encima: texto y botón en una línea para que quepan en 90-100 px */
+html.av .avad-encima.avad-banner .avad-txt { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: none !important; }
+html.av .avad-encima.avad-banner .avad-btn { margin-top: 0; flex: none; }
+
+html.av .avad-encima.avad-banner .avad-tag { left: 8px; right: auto; }
+
+/* Avisos de sugerencia (giro 90°, combinación, combinación activa) */
+html.av .bg-yellow-100 { background: linear-gradient(180deg, rgba(255,176,0,.16), rgba(255,176,0,.06)) !important; }
+html.av .border-yellow-400 { border-color: rgba(255,176,0,.6) !important; }
+html.av .border-green-500 { border-color: var(--av-verde-borde) !important; }
+html.av .border-blue-400 { border-color: rgba(0,180,255,.55) !important; }
+html.av .bg-yellow-100 .bg-white { background: var(--av-hundido) !important; }
+html.av button.bg-blue-600 { background: linear-gradient(180deg, #19b6ff, #0079b3) !important; border: 1px solid #00334d !important; box-shadow: 0 2px 0 #000, inset 0 1px 0 rgba(255,255,255,.25) !important; }
+html.av .text-cyan-200 { color: #7fe8ff !important; }
+
+/* Móvil y tablet: el margen inferior de seguridad va dentro del panel desplazable (sin franja muerta abajo) */
+@media screen and (max-width: 1024px) {
+  html.av aside.controls-sidebar { padding-bottom: 0 !important; }
+  html.av aside.controls-sidebar > div { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 72px) !important; }
+}
+
+/* Palabras largas (euskera, etc.) en móvil: sin recortes */
+@media (max-width: 480px) {
+  html.av .av-tog { letter-spacing: .01em !important; padding-left: 4px !important; padding-right: 4px !important; overflow-wrap: anywhere; word-break: normal; }
+  html.av .av-tog-elec { font-size: 12px !important; }
+}
+
+}
+/*TEMA-AVHUB-FIN*/
+    </style>
   </head>
     <!-- React 18.3.1 UMD — inline, zero CDN -->
     <script>
@@ -2861,7 +3376,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
         const cabsC = Math.min(d.cols || 1, 12), cabsR = Math.min(d.rows || 1, 7);
         const cw = (bw - 24) / cabsC, ch = Math.min(60 / cabsR, cw * 0.75);
         return (
-          <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block', background: '#fff' }} role="img" aria-label="Esquema de conexiones del proyecto">
+          <svg className="esq-svg" viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block', background: '#fff' }} role="img" aria-label="Esquema de conexiones del proyecto">
             <defs>
               {Object.keys(COL_SENAL).map(c => (
                 <marker key={c} id={'ar-' + c} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill={COL_SENAL[c]} /></marker>
@@ -4556,7 +5071,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
         const selectorUnidad = (
           <div className="regla" style={{display: 'flex', justifyContent: 'center', gap: '6px'}}>
             {['m', 'cm', 'mm'].map(u => (
-              <button key={u} onClick={() => setUnit(u)} className={`rounded font-bold border-2 transition ${unit === u ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300'}`}
+              <button key={u} onClick={() => setUnit(u)} className={`av-tog rounded font-bold border-2 transition ${unit === u ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300'}`}
                 style={{minHeight: 0, padding: '2px 10px', fontSize: '11px', lineHeight: '1.3'}}>{u}</button>
             ))}
           </div>
@@ -4568,7 +5083,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
 <div title="Cómo se cablea la pantalla: AUTO elige el cosido con menos líneas sin partir columnas ni filas">
                           <div style={{display: 'flex', flex: 1, gap: '4px'}}>
                             {[['auto', 'AUTO'], ['vertical', 'VERTICAL'], ['horizontal', 'HORIZ.']].map(([k, lab]) => (
-                              <button key={k} onClick={() => setCosidoModo(k)} className={'cosido-btn flex-1 rounded font-bold ' + (cosidoModo === k ? 'bg-corp-teal text-white' : 'bg-white text-gray-700 border border-gray-300')} style={{fontSize: '10px', padding: '4px 2px', minHeight: 0}}>{lab}</button>
+                              <button key={k} onClick={() => setCosidoModo(k)} className={'av-tog cosido-btn flex-1 rounded font-bold ' + (cosidoModo === k ? 'bg-corp-teal text-white' : 'bg-white text-gray-700 border border-gray-300')} style={{fontSize: '10px', padding: '4px 2px', minHeight: 0}}>{lab}</button>
                             ))}
                           </div>
                         </div>
@@ -5806,7 +6321,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.15</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v5.0</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -5840,8 +6355,8 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                     <p>SCREENCALC es una alternativa que realiza cálculos más complejos: no solo de la pantalla, sino del proyecto completo.</p>
                   </div>
                   <div className="space-y-2">
-                    <button onClick={() => { setShowInfo(false); abrirReadme(); }} className="w-full py-2 rounded bg-corp-teal text-white font-bold text-sm">1. INFORMACIÓN</button>
-                    <button onClick={() => { setShowInfo(false); setDescEstado(''); setShowDescarga(true); }} className="w-full py-2 rounded bg-corp-teal text-white font-bold text-sm">2. DESCARGAR APP</button>
+                    <button onClick={() => { setShowInfo(false); abrirReadme(); }} className="av-pri w-full py-2 rounded bg-corp-teal text-white font-bold text-sm">1. INFORMACIÓN</button>
+                    <button onClick={() => { setShowInfo(false); setDescEstado(''); setShowDescarga(true); }} className="av-pri w-full py-2 rounded bg-corp-teal text-white font-bold text-sm">2. DESCARGAR APP</button>
                     <button onClick={() => setShowInfo(false)} className="w-full py-2 rounded bg-gray-200 text-gray-700 font-bold text-sm">CERRAR</button>
                   </div>
                 </div>
@@ -5867,7 +6382,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                     {descEstado && <p style={{fontWeight: 800, color: descEstado.startsWith('✔') ? '#0f584c' : descEstado.startsWith('⚠') ? '#b45309' : '#374151'}}>{descEstado}</p>}
                   </div>
                   <div className="flex gap-2 mt-3">
-                    <button onClick={descargarApp} className="flex-1 py-2 rounded bg-corp-teal text-white font-bold text-sm">DESCARGAR APP</button>
+                    <button onClick={descargarApp} className="av-pri flex-1 py-2 rounded bg-corp-teal text-white font-bold text-sm">DESCARGAR APP</button>
                     <button onClick={() => setShowDescarga(false)} className="flex-1 py-2 rounded bg-gray-200 text-gray-700 font-bold text-sm">CANCELAR</button>
                   </div>
                 </div>
@@ -5900,7 +6415,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       </div>
                       <div className="nl-actions">
                       <button onClick={procesarSolicitud} disabled={!nlText.trim()} style={{flex: 1, minWidth: 0, height: '36px', fontSize: '13px', lineHeight: '1'}}
-                        className={`font-bold rounded transition ${nlText.trim() ? 'bg-corp-teal text-white hover:bg-opacity-90' : 'bg-gray-200 text-gray-400'}${haloProponer && nlText.trim() ? ' halo-proponer' : ''}`}>PROPONER PANTALLA</button>
+                        className={`av-pri font-bold rounded transition ${nlText.trim() ? 'bg-corp-teal text-white hover:bg-opacity-90' : 'bg-gray-200 text-gray-400'}${haloProponer && nlText.trim() ? ' halo-proponer' : ''}`}>PROPONER PANTALLA</button>
                         <div className="nl-tools">
                           <div className="nl-wrap"><span className="bocadillo"><Ic n="oido" /> Díctame lo que necesitas</span>
                           <button type="button" onClick={alternarMic} title="Dictar la petición con el micrófono" aria-label="Dictar con el micrófono" className={(escuchando ? 'bg-red-500 text-white mic-activo' : 'bg-white text-gray-700') + ' nl-tool rounded-full border border-gray-300'}><Ic n="mic" /></button></div>
@@ -5920,7 +6435,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       </div>
                       <div style={{display: 'flex', flexWrap: 'wrap', gap: '6px'}}>
                         {[filterClass, filterTipo, 'Pitch ' + filterPitch + ' mm', '≥ ' + filterNits + ' nits', resolucionModo !== 'NONE' ? 'Resol. mín. ' + (RESOLUCIONES_MINIMAS[resolucionModo].displayLabel.split(' ')[0]) : '', (filterGold || proyecto.marino) ? 'MARINO / TROPICAL' : '', protegidoSel ? 'LED PROTEGIDO' : ''].filter(Boolean).map(l => (
-                          <span key={l} style={{height: '30px', display: 'inline-flex', alignItems: 'center', padding: '0 10px', fontSize: '11px', fontWeight: 700}} className="bg-corp-teal text-white rounded">{l}</span>
+                          <span key={l} style={{height: '30px', display: 'inline-flex', alignItems: 'center', padding: '0 10px', fontSize: '11px', fontWeight: 700}} className="av-chip bg-corp-teal text-white rounded">{l}</span>
                         ))}
                       </div>
                       <div style={{fontSize: '11px', color: '#6b7280', lineHeight: '1.3'}}>{nlSummary}</div>
@@ -5932,20 +6447,20 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       <div className="sec-title"><span className="sec-ico"><Ic n="tipo" /></span> Tipo de pantalla</div>
                       <div style={{display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '6px'}}>
                         <button onClick={() => setFilterClass(filterClass === 'INSTALL' ? '' : 'INSTALL')} style={{gridColumn: 'span 3', height: '30px', fontSize: '11px', lineHeight: '1'}}
-                          className={`font-bold rounded transition border ${filterClass === 'INSTALL' ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>INSTALL</button>
+                          className={`av-tog font-bold rounded transition border ${filterClass === 'INSTALL' ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>INSTALL</button>
                         <button onClick={() => setFilterClass(filterClass === 'RENTAL' ? '' : 'RENTAL')} style={{gridColumn: 'span 3', height: '30px', fontSize: '11px', lineHeight: '1'}}
-                          className={`font-bold rounded transition border ${filterClass === 'RENTAL' ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>RENTAL</button>
+                          className={`av-tog font-bold rounded transition border ${filterClass === 'RENTAL' ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>RENTAL</button>
                         <button onClick={() => setFilterTipo(filterTipo === 'INDOOR' ? '' : 'INDOOR')} style={{gridColumn: 'span 2', height: '30px', fontSize: '11px', lineHeight: '1'}}
-                          className={`font-bold rounded transition border ${filterTipo === 'INDOOR' ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>INDOOR</button>
+                          className={`av-tog font-bold rounded transition border ${filterTipo === 'INDOOR' ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>INDOOR</button>
                         <button onClick={() => setFilterTipo(filterTipo === 'OUTDOOR' ? '' : 'OUTDOOR')} style={{gridColumn: 'span 2', height: '30px', fontSize: '11px', lineHeight: '1'}}
-                          className={`font-bold rounded transition border ${filterTipo === 'OUTDOOR' ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>OUTDOOR</button>
+                          className={`av-tog font-bold rounded transition border ${filterTipo === 'OUTDOOR' ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>OUTDOOR</button>
                         <button onClick={() => setFilterTipo(filterTipo === 'ESCAPARATE' ? '' : 'ESCAPARATE')} style={{gridColumn: 'span 2', height: '30px', fontSize: '11px', lineHeight: '1'}}
-                          className={`font-bold rounded transition border ${filterTipo === 'ESCAPARATE' ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>ESCAPARATE</button>
+                          className={`av-tog font-bold rounded transition border ${filterTipo === 'ESCAPARATE' ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>ESCAPARATE</button>
                         {/* Entorno: activan otros tipos de cabinet (GOLD tropicalizado / LED protegido) */}
                         <button onClick={() => { const n = !filterGold; setFilterGold(n); setProyecto(pr => ({ ...pr, marino: n })); }} title="Ambiente marino o muy húmedo: cabinets tropicalizados con contactos de oro (GOLD)" style={{gridColumn: 'span 3', height: '30px', fontSize: '10px', lineHeight: '1'}}
-                          className={`font-bold rounded transition border ${filterGold ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>MARINO / TROPICAL</button>
+                          className={`av-tog font-bold rounded transition border ${filterGold ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>MARINO / TROPICAL</button>
                         <button onClick={() => setProtegidoSel(!protegidoSel)} title="Al alcance del público: LED protegido contra golpes y contacto" style={{gridColumn: 'span 3', height: '30px', fontSize: '10px', lineHeight: '1'}}
-                          className={`font-bold rounded transition border ${protegidoSel ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>AL ALCANCE DEL PÚBLICO</button>
+                          className={`av-tog font-bold rounded transition border ${protegidoSel ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}>AL ALCANCE DEL PÚBLICO</button>
                       </div>
 
                       <div className="sec-sub">Definición y brillo</div>
@@ -5955,7 +6470,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                             <Ic n="pitch" /> Pitch (mm)
                           </label>
                           <div style={{display: 'flex', alignItems: 'stretch', gap: '4px', height: '44px'}}>
-                            <div style={{flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #d1d5db', background: '#fff', borderRadius: '4px', fontWeight: 800, fontSize: '18px'}}>{filterPitch}</div>
+                            <div className="av-lcd" style={{flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #d1d5db', background: '#fff', borderRadius: '4px', fontWeight: 800, fontSize: '18px'}}>{filterPitch}</div>
                             <div style={{display: 'flex', flexDirection: 'column', gap: '2px', width: '30px', flexShrink: 0}}>
                               <button onClick={() => setFilterPitch(stepValor(pitchOptions, filterPitch, 1))} title="Subir pitch" style={{flex: 1, minHeight: 0, padding: 0, fontSize: '11px', lineHeight: '1'}} className="spin-btn bg-corp-teal text-white rounded hover:bg-opacity-90 transition font-bold">▲</button>
                               <button onClick={() => setFilterPitch(stepValor(pitchOptions, filterPitch, -1))} title="Bajar pitch" style={{flex: 1, minHeight: 0, padding: 0, fontSize: '11px', lineHeight: '1'}} className="spin-btn bg-corp-teal text-white rounded hover:bg-opacity-90 transition font-bold">▼</button>
@@ -5967,7 +6482,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                             <Ic n="nits" /> NITS mín.
                           </label>
                           <div style={{display: 'flex', alignItems: 'stretch', gap: '4px', height: '44px'}}>
-                            <div style={{flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #d1d5db', background: '#fff', borderRadius: '4px', fontWeight: 800, fontSize: '18px'}}>{filterNits}</div>
+                            <div className="av-lcd" style={{flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #d1d5db', background: '#fff', borderRadius: '4px', fontWeight: 800, fontSize: '18px'}}>{filterNits}</div>
                             <div style={{display: 'flex', flexDirection: 'column', gap: '2px', width: '30px', flexShrink: 0}}>
                               <button onClick={() => setFilterNits(stepValor(nitsOptions, filterNits, 1))} title="Subir nits" style={{flex: 1, minHeight: 0, padding: 0, fontSize: '11px', lineHeight: '1'}} className="spin-btn bg-corp-teal text-white rounded hover:bg-opacity-90 transition font-bold">▲</button>
                               <button onClick={() => setFilterNits(stepValor(nitsOptions, filterNits, -1))} title="Bajar nits" style={{flex: 1, minHeight: 0, padding: 0, fontSize: '11px', lineHeight: '1'}} className="spin-btn bg-corp-teal text-white rounded hover:bg-opacity-90 transition font-bold">▼</button>
@@ -6156,7 +6671,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                         {stats && <div>Resultado: <strong>{U(stats.widthM)} × {U(stats.heightM)} {unit}</strong> · {stats.cols}×{stats.rows} cabinets · <strong>{stats.resW}×{stats.resH} px</strong>{(() => { const ri = getResolutionInfo(stats.resW, stats.resH); return ri ? ' · ' + ri.displayName : ''; })()}</div>}
                       </div>
                       <div className="flex gap-2 pt-2">
-                        <button onClick={() => setPanelModo('manual')} className="flex-1 py-2 lg:py-2.5 bg-corp-green text-white text-xs lg:text-sm font-bold rounded hover:bg-corp-teal transition uppercase">EDITAR A MANO</button>
+                        <button onClick={() => setPanelModo('manual')} className="av-sec flex-1 py-2 lg:py-2.5 bg-corp-green text-white text-xs lg:text-sm font-bold rounded hover:bg-corp-teal transition uppercase">EDITAR A MANO</button>
                         <button onClick={handleReset} className="flex-1 py-2 lg:py-2.5 bg-gray-300 text-gray-700 text-xs lg:text-sm font-bold rounded hover:bg-gray-400 transition uppercase">RESET</button>
                       </div>
                     </div>
@@ -6205,7 +6720,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                           <div className="flex items-center gap-0.5 lg:gap-1">
                             <button 
                               onClick={() => setCols(Math.max(1, cols - 1))}
-                              className="bg-corp-teal text-white w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center hover:bg-opacity-90 transition text-base lg:text-lg font-bold rounded flex-shrink-0"
+                              className="av-acc bg-corp-teal text-white w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center hover:bg-opacity-90 transition text-base lg:text-lg font-bold rounded flex-shrink-0"
                               title="Reducir columnas"
                             >
                               −
@@ -6215,7 +6730,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                             </div>
                             <button 
                               onClick={() => setCols(Math.min(64, cols + 1))}
-                              className="bg-corp-teal text-white w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center hover:bg-opacity-90 transition text-base lg:text-lg font-bold rounded flex-shrink-0"
+                              className="av-acc bg-corp-teal text-white w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center hover:bg-opacity-90 transition text-base lg:text-lg font-bold rounded flex-shrink-0"
                               title="Aumentar columnas"
                             >
                               +
@@ -6266,7 +6781,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                           <div className="flex items-center gap-0.5 lg:gap-1">
                             <button 
                               onClick={() => setRows(Math.max(1, rows - 1))}
-                              className="bg-corp-teal text-white w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center hover:bg-opacity-90 transition text-base lg:text-lg font-bold rounded flex-shrink-0"
+                              className="av-acc bg-corp-teal text-white w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center hover:bg-opacity-90 transition text-base lg:text-lg font-bold rounded flex-shrink-0"
                               title="Reducir filas"
                             >
                               −
@@ -6276,7 +6791,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                             </div>
                             <button 
                               onClick={() => setRows(Math.min(48, rows + 1))}
-                              className="bg-corp-teal text-white w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center hover:bg-opacity-90 transition text-base lg:text-lg font-bold rounded flex-shrink-0"
+                              className="av-acc bg-corp-teal text-white w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center hover:bg-opacity-90 transition text-base lg:text-lg font-bold rounded flex-shrink-0"
                               title="Aumentar filas"
                             >
                               +
@@ -6297,7 +6812,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                             <button
                               key={key}
                               onClick={() => handleClickResolucionModo(key)}
-                              className={`quick-res-btn rounded font-bold uppercase text-center transition border-2 ${resolucionModo === key ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}
+                              className={`av-tog quick-res-btn rounded font-bold uppercase text-center transition border-2 ${resolucionModo === key ? 'bg-corp-teal text-white border-corp-teal' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}`}
                             >
                               {r.label.split('\n').map((linea, i) => (
                                 <div key={i}>{linea}</div>
@@ -6314,7 +6829,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       <div className="flex gap-2 pt-2">
                         <button 
                           onClick={handleCalcular}
-                          className="flex-1 py-2 lg:py-2.5 bg-corp-green text-white text-xs lg:text-sm font-bold rounded hover:bg-corp-teal transition uppercase"
+                          className="av-pri flex-1 py-2 lg:py-2.5 bg-corp-green text-white text-xs lg:text-sm font-bold rounded hover:bg-corp-teal transition uppercase"
                         >
                           CALCULAR
                         </button>
@@ -6335,7 +6850,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
               </aside>
 
               <main className={`flex-1 flex-col min-w-0 overflow-y-auto bg-slate-100 printable-area ${activeTab === 'view' ? 'flex' : 'hidden lg:flex'}`}>
-                  <button onClick={() => setActiveTab('config')} className="lg:hidden no-print" title="Volver al panel de control" style={{position:'fixed',left:'12px',bottom:'12px',zIndex:50,background:'#00a792',color:'#fff',fontWeight:700,fontSize:'13px',padding:'10px 14px',borderRadius:'9999px',boxShadow:'0 2px 8px rgba(0,0,0,.35)'}}>⚙ PANEL</button>
+                  <button onClick={() => setActiveTab('config')} className="av-panel-flot lg:hidden no-print" title="Volver al panel de control" style={{position:'fixed',left:'12px',bottom:'12px',zIndex:50,background:'#00a792',color:'#fff',fontWeight:700,fontSize:'13px',padding:'10px 14px',borderRadius:'9999px',boxShadow:'0 2px 8px rgba(0,0,0,.35)'}}>⚙ PANEL</button>
                 
                 {/* --- CABECERA PARA IMPRESIÓN PDF - UNA SOLA LÍNEA --- */}
                 <div className="print-header hidden print:flex" style={{display: 'none'}}>
@@ -6406,7 +6921,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
 
                         {/* RESUMEN RÁPIDO - Cabinets / Pitch / Ancho / Alto */}
                         {stats && (
-                          <div className="rounded shadow-md" style={{ backgroundColor: '#0f584c', flex: isMobile ? '1 1 0' : 'none', minWidth: 0, padding: isMobile ? '4px 8px' : '6px 12px', display: 'flex', alignItems: 'center' }}>
+                          <div className="av-resumen rounded shadow-md" style={{ backgroundColor: '#0f584c', flex: isMobile ? '1 1 0' : 'none', minWidth: 0, padding: isMobile ? '4px 8px' : '6px 12px', display: 'flex', alignItems: 'center' }}>
                             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr', gap: isMobile ? '3px 8px' : '3px', width: '100%' }}>
                               <div className="flex items-center" style={{ gap: isMobile ? '6px' : '8px' }}>
                                 <svg viewBox="0 0 24 24" width={isMobile ? 12 : 14} height={isMobile ? 12 : 14} fill="none" stroke="#ffffff" strokeWidth="2" style={{flexShrink:0, opacity:0.85}}>
@@ -6438,7 +6953,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       {/* Botón de contenido: mismo ancho que el resumen verde */}
                       {!isMobile && (
                         <button onClick={() => setShowMedia(true)} title="Simular contenido en la pantalla"
-                          className="bg-corp-teal text-white font-bold rounded hidden lg:flex items-center justify-center gap-2 uppercase"
+                          className="av-sec av-simular bg-corp-teal text-white font-bold rounded hidden lg:flex items-center justify-center gap-2 uppercase"
                           style={{ width: '100%', padding: '8px 6px', fontSize: '11px', lineHeight: 1.1, letterSpacing: '.04em' }}>
                           <Ic n="contenido" size="18px" /> Simular contenido
                         </button>
@@ -7019,12 +7534,12 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                               fontSize: isMobile ? 'clamp(12px, 3.2vw, 16px)' : '12px'
                            }}>
                               <button onClick={() => setFloorDist_cm(Math.max(0, floorDist_cm - 10))} disabled={floorDist_cm <= 0} title="Bajar la pantalla 10 cm" aria-label="Bajar la pantalla"
-                                className="bg-corp-teal text-white rounded flex items-center justify-center" style={{ width: isMobile ? '32px' : '24px', height: isMobile ? '28px' : '22px', minHeight: 0, minWidth: 0, padding: 0, fontSize: '12px', opacity: floorDist_cm <= 0 ? 0.4 : 1 }}>▼</button>
+                                className="av-acc bg-corp-teal text-white rounded flex items-center justify-center" style={{ width: isMobile ? '32px' : '24px', height: isMobile ? '28px' : '22px', minHeight: 0, minWidth: 0, padding: 0, fontSize: '12px', opacity: floorDist_cm <= 0 ? 0.4 : 1 }}>▼</button>
                               <span className="font-bold text-gray-700" style={{ fontSize: 'inherit' }}>
                                 {isMobile ? `Elevación ${U(floorDist_cm / 100)}${unit}` : `Elevación desde el suelo ${U(floorDist_cm / 100)}${unit}`}
                               </span>
                               <button onClick={() => setFloorDist_cm(Math.min(500, floorDist_cm + 10))} disabled={floorDist_cm >= 500} title="Subir la pantalla 10 cm" aria-label="Subir la pantalla"
-                                className="bg-corp-teal text-white rounded flex items-center justify-center" style={{ width: isMobile ? '32px' : '24px', height: isMobile ? '28px' : '22px', minHeight: 0, minWidth: 0, padding: 0, fontSize: '12px', opacity: floorDist_cm >= 500 ? 0.4 : 1 }}>▲</button>
+                                className="av-acc bg-corp-teal text-white rounded flex items-center justify-center" style={{ width: isMobile ? '32px' : '24px', height: isMobile ? '28px' : '22px', minHeight: 0, minWidth: 0, padding: 0, fontSize: '12px', opacity: floorDist_cm >= 500 ? 0.4 : 1 }}>▲</button>
                            </div>
 
                         </div>
@@ -7049,7 +7564,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
 
                 {/* === BARRA INFO MÓVIL - Horizontal, ancho completo === */}
                 {isMobile && stats && (
-                  <div style={{
+                  <div className="av-barra-movil" style={{
                     width: '100%',
                     padding: '10px 12px',
                     backgroundColor: '#f3f4f6',
@@ -7304,7 +7819,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       const arBox = arN > 0 ? (arN >= 1 ? { w: 64, h: 64 / arN } : { w: 64 * arN, h: 64 }) : { w: 64, h: 36 };
                       const cC = Math.min(stats?.cols || 1, 14), cR = Math.min(stats?.rows || 1, 10), cs = Math.min(64 / cC, 44 / cR);
                       const Tarjeta = ({ titulo, icono, color, bg, children }) => (
-                        <div className="rounded-xl overflow-hidden min-w-0" style={{ background: bg, border: '1px solid ' + color + '33', borderTop: '3px solid ' + color, boxShadow: '0 3px 10px rgba(15,23,42,0.12), 0 1px 3px rgba(15,23,42,0.08)' }}>
+                        <div className="car-tarjeta rounded-xl overflow-hidden min-w-0" style={{ '--ac': color, background: bg, border: '1px solid ' + color + '33', borderTop: '3px solid ' + color, boxShadow: '0 3px 10px rgba(15,23,42,0.12), 0 1px 3px rgba(15,23,42,0.08)' }}>
                           <div className="px-3 pt-2 flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider" style={{ color }}><span style={{ fontSize: '15px', lineHeight: 1 }}>{String(icono).startsWith('ic:') ? <Ic n={icono.slice(3)} size="18px" /> : icono}</span>{titulo}</div>
                           <div className="px-3 pb-3 pt-1">{children}</div>
                         </div>
@@ -7352,7 +7867,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                         const topH = fy - humH;
                         const H = ry + 50;
                         return (
-                          <svg viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label="Distancia de visionado a escala" style={{ display: 'block' }}>
+                          <svg className="dv-svg" viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label="Distancia de visionado a escala" style={{ display: 'block' }}>
                             <defs>
                               <clipPath id="clipScr"><polygon points={`14,${fy - scrH} ${14 + sw},${fy - scrH - sk} ${14 + sw},${fy - sk} 14,${fy}`} /></clipPath>
                               <pattern id="rayasSuelo" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#000" strokeOpacity="0.06" strokeWidth="2" /></pattern>
@@ -7556,13 +8071,13 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       <div className="grid grid-cols-2 gap-2 mb-2">
                         <button 
                           onClick={() => setFiltroElecTipo('linea')}
-                          className={`py-2 text-xs font-bold uppercase transition ${filtroElecTipo === 'linea' ? 'bg-white text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}
+                          className={`av-tog av-tog-elec py-2 text-xs font-bold uppercase transition ${filtroElecTipo === 'linea' ? 'bg-white text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}
                         >
                           SOLO LÍNEA
                         </button>
                         <button 
                           onClick={() => setFiltroElecTipo('backup')}
-                          className={`py-2 text-xs font-bold uppercase transition ${filtroElecTipo === 'backup' ? 'bg-[#ccff00] text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}
+                          className={`av-tog av-tog-elec py-2 text-xs font-bold uppercase transition ${filtroElecTipo === 'backup' ? 'bg-[#ccff00] text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}
                         >
                           LÍNEA+BACKUP
                         </button>
@@ -7570,13 +8085,13 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       <div className="grid grid-cols-2 gap-2">
                         <button 
                           onClick={() => setFiltroElecEscalador('sin')}
-                          className={`py-2 text-xs font-bold uppercase transition ${filtroElecEscalador === 'sin' ? 'bg-white text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}
+                          className={`av-tog av-tog-elec py-2 text-xs font-bold uppercase transition ${filtroElecEscalador === 'sin' ? 'bg-white text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}
                         >
                           SIN ESCALADOR
                         </button>
                         <button 
                           onClick={() => setFiltroElecEscalador('con')}
-                          className={`py-2 text-xs font-bold uppercase transition ${filtroElecEscalador === 'con' ? 'bg-[#ccff00] text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}
+                          className={`av-tog av-tog-elec py-2 text-xs font-bold uppercase transition ${filtroElecEscalador === 'con' ? 'bg-[#ccff00] text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}
                         >
                           CON ESCALADOR
                         </button>
@@ -7584,13 +8099,13 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       <div className="grid grid-cols-2 gap-2 mt-2">
                         <button 
                           onClick={() => setFiltroElecConexion('directo')}
-                          className={`py-2 text-xs font-bold uppercase transition ${filtroElecConexion === 'directo' ? 'bg-[#ccff00] text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}
+                          className={`av-tog av-tog-elec py-2 text-xs font-bold uppercase transition ${filtroElecConexion === 'directo' ? 'bg-[#ccff00] text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}
                         >
                           DIRECTO RJ45
                         </button>
                         <button 
                           onClick={() => setFiltroElecConexion('rack')}
-                          className={`py-2 text-xs font-bold uppercase transition ${filtroElecConexion === 'rack' ? 'bg-[#ccff00] text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}
+                          className={`av-tog av-tog-elec py-2 text-xs font-bold uppercase transition ${filtroElecConexion === 'rack' ? 'bg-[#ccff00] text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}
                         >
                           RACK+FIBRA+CVT
                         </button>
@@ -7622,13 +8137,13 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         {[['ninguno','NINGUNO'],['todos','TODOS'],['novastar','NOVASTAR'],['pixelhue','PIXELHUE']].map(([k, l]) => (
                           <button key={k} onClick={() => setFiltroMedia(k)}
-                            className={`py-2 text-xs font-bold uppercase transition ${filtroMedia === k ? 'bg-[#ccff00] text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}>{l}</button>
+                            className={`av-tog av-tog-elec py-2 text-xs font-bold uppercase transition ${filtroMedia === k ? 'bg-[#ccff00] text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}>{l}</button>
                         ))}
                       </div>
                       {filtroMedia !== 'ninguno' && (
                         <div className="grid grid-cols-1 gap-2 mt-2">
                           <button onClick={() => setFiltroMediaDante(!filtroMediaDante)}
-                            className={`py-2 text-xs font-bold uppercase transition ${filtroMediaDante ? 'bg-[#ccff00] text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}>AUDIO DANTE</button>
+                            className={`av-tog av-tog-elec py-2 text-xs font-bold uppercase transition ${filtroMediaDante ? 'bg-[#ccff00] text-gray-900 border-2 border-gray-900' : 'bg-white text-gray-600 border-2 border-gray-300'}`}>AUDIO DANTE</button>
                         </div>
                       )}
                     </div>
@@ -8057,14 +8572,14 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.15 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v5.0 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.15 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v5.0 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
                     </div>
                   </div>
               </main>
@@ -8082,8 +8597,8 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             };
             return (
               <div className="no-print" onClick={() => setShowMedia(false)} style={{position: 'fixed', inset: 0, zIndex: 90, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px'}}>
-                <div onClick={e => e.stopPropagation()} style={{background: '#fff', borderRadius: '14px', boxShadow: '0 12px 40px rgba(0,0,0,0.35)', width: '100%', maxWidth: '340px', maxHeight: '80vh', overflowY: 'auto', padding: '12px'}}>
-                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}}>
+                <div className="av-media-caja" onClick={e => e.stopPropagation()} style={{background: '#fff', borderRadius: '14px', boxShadow: '0 12px 40px rgba(0,0,0,0.35)', width: '100%', maxWidth: '340px', maxHeight: '80vh', overflowY: 'auto', padding: '12px'}}>
+                  <div className="av-media-cab" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}}>
                     <div style={{fontSize: '15px', fontWeight: 800, color: '#0f584c'}}>🎬 CONTENIDO PANTALLA</div>
                     <button onClick={() => setShowMedia(false)} aria-label="Cerrar" style={{fontSize: '22px', lineHeight: 1, minHeight: 0, padding: '2px 8px', color: '#6b7280'}}>×</button>
                   </div>
@@ -8119,8 +8634,8 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                     </label>
                   </div>
                   <div style={{display: 'flex', gap: '8px', marginTop: '10px'}}>
-                    <button onClick={aplicar} className="bg-corp-teal text-white font-bold rounded" style={{flex: 1, height: '34px', fontSize: '13px', minHeight: 0}}>APLICAR</button>
-                    <button onClick={() => { setCustomContent(null); setCustomContentType(null); setIsHovering(false); setMediaCycle(0); setFuenteSel(0); setUrlPropia(''); setShowMedia(false); }} className="bg-amber-100 text-amber-800 font-bold rounded" title="Volver a la imagen de fondo estática inicial" style={{flex: 1, height: '34px', fontSize: '13px', minHeight: 0}}>REINICIAR</button>
+                    <button onClick={aplicar} className="av-pri bg-corp-teal text-white font-bold rounded" style={{flex: 1, height: '34px', fontSize: '13px', minHeight: 0}}>APLICAR</button>
+                    <button onClick={() => { setCustomContent(null); setCustomContentType(null); setIsHovering(false); setMediaCycle(0); setFuenteSel(0); setUrlPropia(''); setShowMedia(false); }} className="av-sec bg-amber-100 text-amber-800 font-bold rounded" title="Volver a la imagen de fondo estática inicial" style={{flex: 1, height: '34px', fontSize: '13px', minHeight: 0}}>REINICIAR</button>
                     <button onClick={() => setShowMedia(false)} className="bg-gray-200 text-gray-700 font-bold rounded" style={{flex: 1, height: '34px', fontSize: '13px', minHeight: 0}}>CERRAR</button>
                   </div>
                 </div>
@@ -8183,7 +8698,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   <div className="nl-pie">
                     <button onClick={() => setNlDialog(null)} className="bg-gray-200 text-gray-700 font-bold rounded">CANCELAR</button>
-                    <button onClick={confirmarSolicitud} className={'bg-corp-teal text-white font-bold rounded' + (faltaMedida ? ' nl-off' : '')}>CALCULAR</button>
+                    <button onClick={confirmarSolicitud} className={'av-pri bg-corp-teal text-white font-bold rounded' + (faltaMedida ? ' nl-off' : '')}>CALCULAR</button>
                   </div>
                 </div>
               </div>
@@ -8205,7 +8720,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
       // viewBox ajustado al contorno (proporción 0,347) para que escale con la altura sin deformarse.
       const HUMAN_PATH = 'M3140 12790 c-83 -20 -128 -46 -333 -191 -74 -53 -84 -68 -113 -181 -51 -197 -56 -233 -39 -280 19 -55 20 -51 -17 -71 -65 -36 -73 -58 -70 -190 2 -136 15 -172 62 -182 16 -4 34 -4 39 -1 9 6 14 -39 27 -223 l6 -93 -108 7 c-60 4 -138 10 -174 14 -98 10 -153 -9 -185 -63 -14 -23 -25 -53 -25 -65 0 -33 -82 -238 -140 -349 -52 -100 -60 -139 -35 -182 20 -34 19 -74 -2 -92 -10 -9 -43 -23 -73 -33 -143 -45 -280 -147 -362 -268 -22 -32 -68 -118 -103 -190 -52 -108 -72 -165 -109 -312 -126 -501 -307 -1431 -360 -1853 -46 -357 -62 -778 -37 -952 18 -125 53 -265 111 -440 77 -230 83 -239 198 -314 53 -35 109 -77 124 -92 30 -33 81 -141 72 -155 -3 -5 0 -9 6 -9 18 0 50 19 113 67 67 52 88 51 118 -8 12 -24 33 -46 53 -56 42 -20 45 -31 52 -203 5 -106 2 -168 -15 -290 -44 -325 -52 -431 -52 -705 0 -295 9 -393 60 -630 44 -209 59 -326 78 -622 22 -334 22 -771 -1 -1050 -9 -111 -16 -240 -16 -287 0 -84 0 -85 61 -201 33 -64 59 -117 57 -118 -35 -18 -49 -34 -80 -93 -20 -38 -39 -87 -43 -110 -7 -46 14 -158 51 -276 l24 -77 -35 -119 c-43 -146 -47 -242 -14 -302 21 -37 21 -39 4 -91 -10 -30 -51 -119 -92 -198 l-73 -144 0 -138 c0 -133 1 -139 25 -168 27 -32 130 -76 300 -129 l90 -28 108 47 c120 53 170 86 191 127 8 17 15 76 19 157 2 72 8 138 12 147 3 9 20 21 36 27 16 6 58 36 94 67 l64 57 -6 92 c-6 88 -4 95 21 141 50 89 186 420 209 508 21 82 21 88 5 97 -17 9 -17 12 -2 41 15 29 14 36 -10 122 -79 280 -167 936 -152 1141 13 194 110 647 197 920 38 120 41 140 43 255 3 109 10 158 60 389 l58 264 -16 114 c-22 161 -22 163 14 163 l30 0 0 -115 c0 -80 6 -143 21 -208 81 -362 149 -697 158 -777 21 -184 52 -757 54 -985 2 -195 -1 -238 -15 -280 -26 -75 -68 -425 -68 -567 0 -145 15 -187 86 -240 95 -70 96 -71 96 -115 -1 -30 -10 -54 -35 -90 -19 -26 -46 -69 -61 -95 l-27 -47 69 -35 69 -35 15 -134 c13 -110 23 -150 51 -216 29 -66 37 -98 42 -174 12 -185 3 -165 134 -296 l118 -117 5 -59 c5 -67 69 -208 116 -258 66 -71 163 -89 431 -85 l175 3 32 80 c36 87 44 174 23 250 -6 22 -64 146 -129 275 l-118 235 25 65 c16 44 28 103 35 180 9 108 8 122 -15 220 l-25 105 27 20 c14 10 41 34 59 53 40 42 41 75 7 227 l-26 110 35 67 c49 94 66 188 66 364 0 185 -11 255 -125 824 -52 256 -92 476 -89 490 2 14 13 198 24 410 12 212 31 525 43 695 22 305 22 312 4 410 -11 62 -21 188 -27 330 -5 127 -12 284 -16 351 -6 102 -4 130 11 178 10 31 22 59 27 62 4 3 40 -23 79 -57 l70 -63 103 52 c57 29 107 52 112 52 24 0 202 204 453 520 68 85 133 163 144 173 20 18 21 29 26 565 13 1266 6 1598 -40 1734 -21 64 -162 368 -369 798 -78 162 -169 353 -201 424 -34 72 -95 181 -141 249 l-82 121 -178 85 -178 85 0 61 c0 66 3 61 -98 185 -43 54 -108 181 -177 348 -51 125 -77 152 -144 152 -28 0 -66 -7 -85 -17 -30 -14 -37 -14 -52 -2 -15 12 -14 16 14 39 39 33 82 97 82 124 0 12 9 40 20 64 26 58 18 133 -20 175 l-27 30 28 56 c28 55 29 59 29 228 0 159 -2 178 -25 238 -67 179 -143 274 -251 314 -130 49 -290 71 -374 51z';
       const HumanSVG = ({ height }) => (
-         <svg viewBox="97 0 445 1280" height={height} className="drop-shadow-sm" style={{color: '#374151'}} preserveAspectRatio="xMidYMax meet">
+         <svg viewBox="97 0 445 1280" height={height} className="humano-svg drop-shadow-sm" style={{color: '#374151'}} preserveAspectRatio="xMidYMax meet">
             <g transform="translate(0,1280) scale(0.1,-0.1)" fill="currentColor" stroke="none">
               <path d={HUMAN_PATH} />
             </g>
