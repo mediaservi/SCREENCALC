@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.12**
+**Versión actual: v4.13**
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -74,7 +74,13 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v4.12)
+## Cambios de la versión actual (v4.13)
+
+- **Petición:** entiende frases dictadas como «se vea bien a una distancia de unos 6 metros» o «la pared de ancho son 12 metros»; «público» ya no se toma como LED protegido salvo si se dice espacio o lugar público.
+- **Popup «Datos del proyecto»:** nueva fila «Resolución mínima» (Full HD, 4K…) editable; la distancia del público también aparece cuando se pide una resolución; valores por defecto: interior, instalación fija, sin LED protegido, electrónica con backup, escalador y conexión RJ45, sin mediaserver, 1 fuente HDMI; en pantallas anchas se muestra a dos columnas.
+- **Dictado:** el micrófono se apaga solo tras 3 s de silencio y el botón PROPONER PANTALLA se ilumina con un halo para pulsarlo (también al terminar de transcribir un audio).
+
+## Cambios de la versión v4.12
 
 - **Petición en lenguaje natural:** un solo popup «Datos del proyecto» sustituye a la cadena de preguntas. Todas las opciones a la vista con botones; lo detectado en la petición va marcado (✓ de tu petición / ✓ deducido), lo que falta lleva un valor por defecto y se cambia con un toque; las opciones de electrónica y de fuentes solo aparecen si se activa la electrónica o el mediaserver.
 - **Dictado:** entiende números en palabras («3 metros de alto por seis de ancho», «tres metros y medio», «sis metres d'amplada»), y si se pide cerca del mar propone exterior.
