@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.8**
+**Versión actual: v4.9**
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -74,7 +74,12 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v4.8)
+## Cambios de la versión actual (v4.9)
+
+- **Prioridad y uso de cada modelo:** en la pestaña CATÁLOGO del panel, la casilla «Cálculos» decide qué modelos usa la app, y ▲▼ fija el orden entre modelos del mismo pitch (por ejemplo, que para P1.8 salga antes el modelo B que el C en la configuración recomendada).
+- **Informe para marketing más completo:** la sincronización del catálogo compara también cada ficha web con su ficha técnica PDF (brillo, refresco, peso, fondo, consumos, tamaño y resolución del cabinet) y detecta la tabla que corta la primera cifra del refresco.
+
+## Cambios de la v4.8
 
 - **Une las dos líneas de trabajo:** la v4.7 publicada (minibanner y X de TRAULUX, Información breve, configuradores con logos reales) con el motor de anuncios y el catálogo maestro que estaban en pruebas.
 - **Catálogo maestro:** la app lee los modelos del catálogo que se gestiona en el panel (pestaña CATÁLOGO): se importa una vez, se completa y contrasta automáticamente con las fichas de la web de producto, y se edita a mano lo que falte. Solo se envían los datos técnicos, nunca precios.

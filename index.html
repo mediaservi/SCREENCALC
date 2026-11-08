@@ -2,10 +2,13 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.8                              ║
+║                          Versión actual: v4.9                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.8
+ÚLTIMA ACTUALIZACIÓN: v4.9
+- v4.9: prioridad manual por modelo (pestaña CATÁLOGO del panel): a igual pitch manda el orden fijado ahí en las configuraciones recomendadas y en las listas; la casilla «Cálculos» decide qué modelos usa la app
+- v4.9: la sincronización del catálogo compara también con las fichas técnicas PDF para el informe a marketing
+ANTERIOR: v4.8
 - v4.8: une las dos líneas de trabajo del 8-nov: la v4.7 publicada (minibanner TRAULUX, X en la cabecera, Información breve, configuradores con logos reales) + el motor de anuncios AVHUB ADS y el catálogo maestro del panel (antes en beta como v4.5 y v4.6)
 - v4.8: catálogo maestro del panel (editable y contrastado con la web de producto); la consulta anterior queda solo como respaldo si el panel no responde
 - v4.8: anuncios con el motor común AVHUB ADS: 9 formatos estándar, texto al lado / debajo / encima / sin texto, botón, carrusel, rotación por zona, fechas, dispositivo y contador de clics; modo de prueba ?anuncios=demo
@@ -3251,6 +3254,12 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
         }
         return stock * 10 + f;
       };
+      // v4.8: prioridad manual del catálogo (1 = primero) entre modelos del mismo pitch
+      const prioManual = (a, b) => {
+        if (Number(a.pitch) !== Number(b.pitch)) return 0;
+        const pa = parseFloat(a.prioridad), pb = parseFloat(b.prioridad);
+        return (isNaN(pa) ? 999 : pa) - (isNaN(pb) ? 999 : pb);
+      };
       const normClase = (v) => String(v || '').trim().toUpperCase();
       const buscarConfigsPorResolucion = (anchoCm, altoCm, minResW, minResH, listaModelos, claseFiltro, tipoFiltro = '', soloGold = false, protegido = false) => {
         const anchoMm = anchoCm * 10;
@@ -3276,6 +3285,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
         const tieneStock = (modelo) => (modelo.disp === 'STOCK' || modelo.stock === 'STOCK' || modelo.stock === 'SI');
         
         resultados.sort((a, b) => {
+          const pm = prioManual(a.modelo, b.modelo); if (pm) return pm; // prioridad manual del catálogo (mismo pitch)
           const rA = prioridadRank(a.modelo, protegido), rB = prioridadRank(b.modelo, protegido);
           if (rA !== rB) return rA - rB; // 1º en stock, 2º familia prioritaria
           if (a.modelo.pitch !== b.modelo.pitch) return b.modelo.pitch - a.modelo.pitch; // mayor pitch primero
@@ -3999,6 +4009,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             if (a.pitch !== b.pitch) {
               return a.pitch - b.pitch; // Menor pitch primero
             }
+            const pm = prioManual(a, b); if (pm) return pm; // prioridad manual del catálogo
             const rA = prioridadRank(a, protegidoSel), rB = prioridadRank(b, protegidoSel);
             if (rA !== rB) return rA - rB; // a igual pitch: en stock y familia prioritaria
             if (a.nits !== b.nits) {
@@ -4021,6 +4032,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
           if (filterNits > 0) result = result.filter(m => m.nits >= filterNits);
           result.sort((a, b) => {
             if (a.pitch !== b.pitch) return a.pitch - b.pitch;
+            const pm = prioManual(a, b); if (pm) return pm;
             const rA = prioridadRank(a, protegidoSel), rB = prioridadRank(b, protegidoSel);
             if (rA !== rB) return rA - rB;
             if (a.nits !== b.nits) return a.nits - b.nits;
@@ -4531,7 +4543,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             const cands = lista.filter(m => m.cabAncho && m.cabAlto && m.cabPixAncho && m.cabPixAlto && m.pitch >= pitchSel).map(m => {
               const cols = Math.ceil(ro.w / m.cabPixAncho), rows = Math.ceil(ro.h / m.cabPixAlto);
               return { m, cols, rows, area: cols * m.cabAncho * rows * m.cabAlto };
-            }).sort((a, b) => (a.area - b.area) || (prioridadRank(a.m, protegido) - prioridadRank(b.m, protegido)));
+            }).sort((a, b) => (a.area - b.area) || prioManual(a.m, b.m) || (prioridadRank(a.m, protegido) - prioridadRank(b.m, protegido)));
             if (cands.length) {
               const b0 = cands[0];
               w = Math.round(b0.cols * b0.m.cabAncho / 10); h = Math.round(b0.rows * b0.m.cabAlto / 10);
@@ -5675,7 +5687,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.8</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.9</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -7889,14 +7901,14 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.8 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.9 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.8 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.9 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
                     </div>
                   </div>
               </main>
