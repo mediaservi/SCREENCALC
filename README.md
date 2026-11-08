@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.28**
+**Versión actual: v4.3**
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -29,14 +29,16 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **Enlaces e imágenes de producto:** icono de enlace (a la ficha o a la búsqueda de Charmex por modelo) y, en electrónica, pila de logo, vista frontal y trasera con visor al 80 % de la pantalla. Se leen de la hoja ELECTRONICAS (columnas `url`, `front`, `back`, `logo`) cada vez que se abre la app; las imágenes no van al PDF.
 - **Contenido de la pantalla (🖼):** el icono de imagen abre un popup centrado con FUENTES MULTIMEDIA DE PRUEBA (la primera es fija y va preseleccionada; las otras 5 son editables y se guardan en el navegador), URL propia (YouTube normal, /live/, /shorts/, listas, Vimeo, imagen o vídeo) y subida de archivo.
 - **Esquemas de cableado:** propuesta de cableado de señal y eléctrico.
-- **PDF:** "PDF pantalla" y "PDF cableado", cada uno en una hoja A4 más la página 2 del esquema cuando hay electrónica o mediaserver.
+- **PDF:** un único PDF desde el icono de la cabecera, con páginas continuas: resultados, simulación de la pantalla, cosidos (cableado de señal y eléctrico), cabinet y electrónica, y esquema de conexiones con su listado de material. Ningún bloque se corta entre páginas.
 - **Información (ⓘ):** el icono de la cabecera ofrece 2 opciones: **INFORMACIÓN** (este README en una ventana al 80 % que se puede desplazar y cerrar) y **DESCARGAR APP** (uso sin conexión).
 - **Logo:** sin enlace; al pulsarlo se reinicia la app para un nuevo cálculo (igual que RESET).
 - **SCREENBOX:** el isotipo de la cabecera abre la sub-app SCREENBOX (https://screenboxsim.netlify.app/) para pantallas de una o varias paredes con proyectores y salas inmersivas.
 - **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
-- **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios y las consultas internas.
+- **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios, las consultas internas y la documentación (DOCS), que ya no es pública.
 - **Anuncios:** puntos de inserción localizados (bajo el panel de entrada y al final de los resultados) que se activan o desactivan desde el panel de administrador (o `ads.json` mientras no esté publicado). Como afiliado de Amazon, se obtienen ingresos por las compras adscritas que cumplen los requisitos aplicables.
 - **Adaptada a PC y móvil:** el panel lateral de entrada va en 2 columnas sin scroll en PC y se ve en grande en móvil.
+
+- **AVHUB:** el logo de AVHUB en la cabecera (entre el logo de SCREENCALC y los iconos) lleva a https://avhub.mediaservi.com/. AVHUB es la nueva app en preparación que reunirá en un solo sitio SCREENCALC, el hardware de proyectos AV, novedades y VJSHOW, con el mismo idioma en todas las secciones.
 
 ## Datos
 
@@ -69,7 +71,14 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v4.28)
+## Cambios de la versión actual (v4.3)
+
+- **PDF único:** un solo botón PDF, en forma de icono en la cabecera. Genera un PDF con resultados, simulación, cosidos, cabinet/electrónica y esquema de conexiones en páginas continuas, sin bloques cortados ni grandes espacios en blanco. Se eliminan los botones inferiores PDF PANTALLA y PDF CABLEADO.
+- **DOCS:** el botón deja de ser público; el enlace pasa al panel de administrador.
+- **AVHUB:** logo de AVHUB en la cabecera, entre el logo y los iconos, con el aviso «Nueva app en preparación» al pasar el ratón. Se elimina del pie el anuncio de VJSHOW (y su texto).
+- **Versión:** se redondea la numeración a v4.3 e integra en `main` todo lo de las betas 1-4 (v4.25-v4.28).
+
+## Cambios de la v4.28
 
 - **Carta de ajuste:** nueva carta 4K (3840×2160) con el logo AVHUB sobre la luna, marcos de relación de aspecto (2.39:1, 1.85:1, 4:3, 1:1, 9:16), retícula, barras de color y grises; sustituye a la anterior como fondo de la pantalla simulada y del PDF.
 
@@ -135,6 +144,7 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 
 ## Historial de versiones
 
+- **v4.24.1:** el anuncio del pie pasa de VJSHOW a AVHUB (sustituido en v4.3 por el logo en la cabecera).
 - **v4.19:** columna derecha del panel en bloques (Tamaño, Cosido, Resolución) con iconos y regla en las unidades.
 - **v4.18:** corrección de filtros INDOOR / OUTDOOR / GOLD en el filtro de resolución, auditoría del catálogo y aviso de modelos sin consumo.
 - **v4.17:** panel profesional, dictado y audio a texto, botones 3D, líneas por columnas/filas completas con botones de cosido, una medida + formato, «solo sending» y silueta SVG.
@@ -161,4 +171,4 @@ Distribuido bajo la licencia **GNU General Public License v3.0** (GPL-3.0). Cons
 
 ## Autoría
 
-Proyecto de [mediaservi.com](https://mediaservi.com). Si te gusta, prueba también [VJSHOW](https://mediaservi.github.io/VJSHOW/) (visuales audio-reactivos).
+Proyecto de [mediaservi.com](https://mediaservi.com). Si te gusta, prueba también [AVHUB](https://avhub.mediaservi.com/).
