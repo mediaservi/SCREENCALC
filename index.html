@@ -2,10 +2,14 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v4.3.2                            ║
+║                          Versión actual: v4.4                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v4.3.2 (beta-6)
+ÚLTIMA ACTUALIZACIÓN: v4.4
+- v4.4: numeración de versiones con 2 cifras (v4.4 … v99.99)
+- v4.4: PDF siempre en 2 páginas: P1 características pantalla + observaciones + características del cabinet + simulación; P2 electrónica y mediaserver elegidos (una fila) + esquema + cableado de señal y eléctrico + aviso IA; el esquema se encoge lo necesario para caber. Logo AVHUB enlazado arriba a la derecha de la página 1, encima de la fecha
+- v4.4: anuncios auto-expandibles (media vertical más grande), vídeos de YouTube (normal y Shorts) incrustados; en móvil solo AD2 y AD3 apilados al final; nunca en el PDF
+ANTERIOR: v4.3.2 (beta-6)
 - v4.3.2: anuncios en 3 formatos: AD1 pie del menú (foto | texto), AD2 pie de resultados «hero» (foto/vídeo a sangre con el texto encima y contraste automático: texto oscuro sobre fondo claro, blanco sobre oscuro, blanco con filete negro si no se puede medir) y AD3 pie de resultados final (foto | foto | texto); AD2 y AD3 lado a lado
 ANTERIOR: v4.3.1 (beta-5)
 - v4.3.1: banner de anuncio con varias fotos o vídeos y texto amplio con viñetas (una por línea); todo el banner (texto, fotos y vídeos) abre el enlace en una pestaña nueva
@@ -548,6 +552,34 @@ ANTERIOR: v4.1
           display: none !important;
         }
         
+        /* ========== 5A-bis. PDF EN 2 PÁGINAS (v4.4) ========== */
+        main.printable-area.pdf-unico > :not(.print-header):not(.pdf-pag):not(.print-footer) { display: none !important; }
+        main.printable-area.pdf-unico { padding-bottom: 0 !important; }
+        main.printable-area.pdf-unico .pdf-pag {
+          display: flex !important; flex-direction: column !important; gap: 6px !important;
+          overflow: hidden !important; width: 100% !important; box-sizing: border-box !important;
+          padding: 0 4px !important;
+        }
+        main.printable-area.pdf-unico .pdf-pag > * { order: 0 !important; margin: 0 !important; flex: 0 0 auto !important; break-inside: avoid !important; page-break-inside: avoid !important; }
+        /* página 1: alto de hoja menos cabecera y pie de aviso */
+        main.printable-area.pdf-unico .pdf-pag1 { height: calc(100vh - 112px) !important; break-after: page !important; page-break-after: always !important; }
+        main.printable-area.pdf-unico .pdf-pag1 > .visualizer-container { flex: 0 1 auto !important; min-height: 0 !important; overflow: hidden !important; }
+        /* página 2: una hoja exacta; el esquema absorbe el espacio y se encoge si hace falta */
+        main.printable-area.pdf-unico .pdf-pag2 { height: calc(100vh - 40px) !important; break-before: page !important; page-break-before: always !important; }
+        main.printable-area.pdf-unico .pdf-fila-elec { display: flex !important; gap: 8px !important; }
+        main.printable-area.pdf-unico .pdf-fila-elec > div { flex: 1 1 0 !important; min-width: 0 !important; }
+        main.printable-area.pdf-unico .pdf-fila-elec .border-b-2 { display: none !important; }
+        main.printable-area.pdf-unico .pdf-fila-elec .elec-grid { display: block !important; padding: 4px !important; }
+        main.printable-area.pdf-unico .pdf-fila-elec .elec-bubble:not(.elec-sel) { display: none !important; }
+        main.printable-area.pdf-unico .pdf-fila-elec .elec-bubble { padding: 4px 6px !important; font-size: 8pt !important; }
+        main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec { flex: 1 1 auto !important; min-height: 0 !important; display: flex !important; flex-direction: column !important; padding: 0 !important; overflow: hidden !important; }
+        main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec > div { flex: 1 1 auto !important; min-height: 0 !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; }
+        main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec > div > div { flex: 0 0 auto !important; break-inside: auto !important; }
+        main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec > div > div:nth-child(2) { flex: 1 1 auto !important; min-height: 0 !important; display: flex !important; justify-content: center !important; align-items: center !important; padding: 4px !important; overflow: hidden !important; }
+        main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec svg { height: 100% !important; width: auto !important; max-width: 100% !important; max-height: 100% !important; }
+        main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec .esquema-bom td, main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec .esquema-bom th { padding: 1px 5px !important; font-size: 7.5pt !important; }
+        main.printable-area.pdf-unico .pdf-pag2 > .cableado-pdf .grid { gap: 8px !important; padding: 4px !important; }
+
         /* ========== 5A. PDF ÚNICO: resultados, simulación, cosidos y esquema en páginas continuas ========== */
         main.printable-area.pdf-unico .grid.grid-cols-1.lg\:grid-cols-2 {
           display: grid !important;
@@ -635,6 +667,8 @@ ANTERIOR: v4.1
           display: inline !important;
         }
         
+        .print-header-avhub { display: block !important; text-align: right !important; line-height: 0 !important; margin-bottom: 2pt !important; }
+        .print-header-avhub img { height: 18pt !important; width: auto !important; display: inline-block !important; }
         .print-header-date {
           display: table-cell !important;
           vertical-align: middle !important;
@@ -1445,29 +1479,43 @@ ANTERIOR: v4.1
       }
       /* ===== v4.25 · Resumen destacado de TAMAÑO PANTALLA (3 líneas) ===== */
       /* ===== v4.25 · Anuncios y acceso de administrador ===== */
-      /* Anuncios v4.3.2: AD1 menú (media|texto), AD2 hero (media a sangre + texto encima), AD3 final (media|media|texto) */
+      /* Anuncios v4.4: auto-expandibles (la altura la marca la foto o el vídeo; admiten media vertical grande).
+         AD1 menú (media | texto), AD2 hero (media a sangre + texto encima), AD3 final (media | media | texto). Nunca en el PDF. */
       .ad-slot { position: relative; margin: 10px 0; border: 1px dashed #cbd5e1; border-radius: 10px; background: #fff; font-size: 13px; overflow: hidden; }
       .ad-slot .ad-tag { position: absolute; top: 3px; right: 8px; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: #94a3b8; pointer-events: none; z-index: 3; }
-      .ad-slot .ad-link { display: grid; align-items: center; gap: 10px; padding: 10px 12px; color: #0f584c; font-weight: 700; text-decoration: none; cursor: pointer; min-height: 100px; }
-      .ad-slot img, .ad-slot video { pointer-events: none; display: block; }
-      .ad-slot .ad-m { display: flex; align-items: center; justify-content: center; height: 100%; }
-      .ad-slot .ad-m img, .ad-slot .ad-m video { max-width: 100%; max-height: 120px; object-fit: contain; border-radius: 6px; }
+      .ad-slot .ad-link { display: grid; align-items: center; gap: 10px; padding: 18px 12px 12px; color: #0f584c; font-weight: 700; text-decoration: none; cursor: pointer; }
+      .ad-slot img, .ad-slot video, .ad-slot iframe { pointer-events: none; display: block; }
+      .ad-slot .ad-m { display: block; min-width: 0; }
+      .ad-slot .ad-m img, .ad-slot .ad-m video { width: 100%; height: auto; max-height: 640px; object-fit: contain; border-radius: 6px; }
+      .ad-slot .ad-yt { display: block; position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; background: #000; }
+      .ad-slot .ad-yt.ad-yt-v { aspect-ratio: 9 / 16; max-height: 640px; margin: 0 auto; width: auto; height: auto; }
+      .ad-slot .ad-yt iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
       .ad-slot ul.ad-texto { margin: 0; padding-left: 18px; text-align: left; list-style: disc; font-weight: 600; line-height: 1.45; }
       .ad-slot .ad-link:hover .ad-texto { text-decoration: underline; }
       .ad-menu .ad-link { grid-template-columns: 1fr 1fr; }
-      .ad-final .ad-link { grid-template-columns: auto auto 1fr; }
-      .ad-final .ad-m img, .ad-final .ad-m video { max-width: 140px; }
+      .ad-final .ad-link { grid-template-columns: 1fr 1fr 1.2fr; }
+      /* AD2 hero: la media va a todo el ancho y marca la altura; el texto va encima */
       .ad-hero { border-style: solid; border-color: transparent; }
-      .ad-hero .ad-link { position: relative; display: flex; min-height: 130px; padding: 14px 16px; }
-      .ad-hero .ad-fondo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
-      .ad-hero .ad-txt { position: relative; z-index: 1; font-size: 16px; font-weight: 800; max-width: 70%; }
+      .ad-hero .ad-link { display: block; position: relative; padding: 0; min-height: 120px; }
+      .ad-hero .ad-fondo { width: 100%; height: auto; max-height: 720px; object-fit: cover; }
+      .ad-hero .ad-yt-fondo { border-radius: 0; }
+      .ad-hero .ad-yt-fondo.ad-yt-v { width: 100%; max-height: 720px; aspect-ratio: 9 / 16; }
+      .ad-hero .ad-txt { position: absolute; left: 16px; right: 16px; top: 50%; transform: translateY(-50%); z-index: 1; font-size: 17px; font-weight: 800; max-width: 70%; }
+      .ad-hero .ad-txt:only-child { position: relative; top: auto; transform: none; display: block; padding: 22px 16px 14px; }
       .ad-hero .ad-txt ul.ad-texto { font-weight: 700; }
       .ad-tono-oscuro { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.75); }
       .ad-tono-claro { color: #111; text-shadow: 0 0 4px rgba(255,255,255,.9), 0 0 2px #fff; }
       .ad-tono-filete { color: #fff; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 2px 6px rgba(0,0,0,.8); }
-      .ad-fila { display: flex; flex-wrap: wrap; gap: 12px; }
+      .ad-fila { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px; }
       .ad-fila > .ad-slot { flex: 1 1 360px; margin: 10px 0; }
-      @media (max-width: 520px) { .ad-final .ad-link { grid-template-columns: 1fr 1fr; } .ad-final .ad-txt { grid-column: 1 / -1; } .ad-hero .ad-txt { max-width: 100%; } }
+      /* Móvil: solo AD2 y AD3, apilados al final */
+      @media (max-width: 767px) {
+        .ad-slot[data-slot="panel"] { display: none !important; }
+        .ad-fila { flex-direction: column; align-items: stretch; }
+        .ad-fila > .ad-slot { flex: 0 0 auto; }
+        .ad-final .ad-link { grid-template-columns: 1fr 1fr; } .ad-final .ad-txt { grid-column: 1 / -1; } .ad-hero .ad-txt { max-width: 100%; }
+      }
+      @media print { .ad-slot, .ad-fila { display: none !important; } }
       /* ===== v4.25 · Iconos del bloque cabinet: color en el propio icono sobre botón claro con sombra ===== */
       .cab-ico-btn { background: #fff; border: 1px solid #d1d5db; box-shadow: 0 2px 4px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.9); }
       .cab-ico-btn .ic { filter: drop-shadow(0 0 0.6px rgba(15,88,76,.9)); }
@@ -2222,15 +2270,25 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
       // Todo el banner es un único enlace que abre en pestaña nueva. Texto: una viñeta por línea.
       const adLista = (v) => (Array.isArray(v) ? v : String(v || '').split(/[\n,]+/)).map(x => String(x).trim()).filter(x => /^https?:\/\//i.test(x));
       const adEsVideo = (u) => /\.(mp4|webm|ogg|mov)(\?|#|$)/i.test(u);
-      const AdMedia = ({ u, fondo }) => adEsVideo(u)
-        ? <video src={u} autoPlay muted loop playsInline className={fondo ? 'ad-fondo' : ''} />
-        : <img src={u} alt="" className={fondo ? 'ad-fondo' : ''} />;
+      // YouTube (watch, youtu.be, shorts, embed, live): se incrusta en silencio, en bucle y sin controles.
+      // El iframe no recibe clics (pointer-events: none), así que tocarlo abre el enlace del anuncio.
+      const adYoutubeId = (u) => {
+        const m = String(u).match(/(?:youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i);
+        return m ? m[1] : null;
+      };
+      const AdMedia = ({ u, fondo }) => {
+        const yt = adYoutubeId(u);
+        if (yt) return <span className={(fondo ? 'ad-yt ad-yt-fondo' : 'ad-yt') + (/\/shorts\//i.test(u) ? ' ad-yt-v' : '')}><iframe src={'https://www.youtube-nocookie.com/embed/' + yt + '?autoplay=1&mute=1&loop=1&playlist=' + yt + '&controls=0&modestbranding=1&rel=0&playsinline=1&disablekb=1&iv_load_policy=3'} title="Vídeo del anuncio" allow="autoplay; encrypted-media; picture-in-picture" tabIndex={-1} /></span>;
+        return adEsVideo(u)
+          ? <video src={u} autoPlay muted loop playsInline className={fondo ? 'ad-fondo' : ''} />
+          : <img src={u} alt="" className={fondo ? 'ad-fondo' : ''} />;
+      };
       const AdTexto = ({ lineas }) => lineas.length > 1
         ? <ul className="ad-texto">{lineas.map((l, i) => <li key={i}>{l}</li>)}</ul>
         : <span className="ad-texto">{lineas[0]}</span>;
       // Luminosidad media de una imagen (0 oscuro … 1 claro); null si no se puede leer (CORS o vídeo)
       const adLuminancia = (u) => new Promise(res => {
-        if (adEsVideo(u)) return res(null);
+        if (adEsVideo(u) || adYoutubeId(u)) return res(null);
         const im = new Image(); im.crossOrigin = 'anonymous';
         im.onload = () => {
           try {
@@ -2589,7 +2647,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
         const [visor, setVisor] = useState(null);
         const hay = !!(front || back || logo);
         return (
-        <div className="elec-bubble bg-white p-3 border-2 min-w-0 overflow-hidden" onClick={onSel} title={onSel ? (sel ? 'Quitar del proyecto' : 'Elegir para el proyecto y el esquema') : undefined}
+        <div className={'elec-bubble bg-white p-3 border-2 min-w-0 overflow-hidden' + (sel ? ' elec-sel' : '')} onClick={onSel} title={onSel ? (sel ? 'Quitar del proyecto' : 'Elegir para el proyecto y el esquema') : undefined}
           style={{ ...(hay ? { display: 'flex', gap: '8px' } : {}), cursor: onSel ? 'pointer' : 'default', borderColor: sel ? '#00a792' : '#d1d5db', background: sel ? '#f0fdfa' : '#fff', boxShadow: sel ? '0 0 0 2px #00a792, 0 3px 10px rgba(0,150,136,.25)' : 'none' }}>
           {hay && (
             <div className="no-print" style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '56px', flexShrink: 0 }}>
@@ -3482,7 +3540,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
               const naturalH = inner.scrollHeight;
               const isCompleto = false;
               const targetW = 730; // ancho aprovechable en A4 con los márgenes actuales (en px CSS)
-              const targetH = isCompleto ? 860 : 420; // alto disponible: página propia vs compartida con tabla
+              const targetH = isCompleto ? 860 : 540; // alto disponible en la página 1 (comparte hoja con características, observaciones y cabinet)
               const factor = Math.min(1.0, Math.max(0.3, Math.min(targetW / naturalW, targetH / naturalH)));
               document.documentElement.style.setProperty('--print-zoom', factor.toFixed(3));
               inner.style.setProperty('zoom', factor.toFixed(3), 'important');
@@ -3975,30 +4033,43 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             mainEl.classList.add('pdf-unico');
           }
           
-          // Manipulación de DOM solo para el PDF PANTALLA (lite):
-          // mover el visualizador justo después del bloque de resultados para que
-          // aparezca en la misma página y con el zoom correcto
-          let vizEl = null, vizParent = null, vizNextSib = null;
+          // PDF en 2 páginas (v4.4). Se agrupan temporalmente los bloques en dos contenedores de una hoja:
+          //  Página 1: características pantalla + observaciones + características del cabinet + simulación
+          //  Página 2: electrónica y mediaserver elegidos (una fila) + esquema + cableado de señal y eléctrico
+          // El esquema se encoge lo necesario para que la página 2 quepa entera. Todo se restaura en afterprint.
+          const movidos = [];
+          const mover = (el, destino) => { if (!el) return; movidos.push([el, el.parentNode, el.nextSibling]); destino.appendChild(el); };
           const resultsDiv = mainEl && mainEl.querySelector('.p-4.space-y-4, .p-4.lg\\:p-6.space-y-4');
-          const vizCandidate = mainEl && mainEl.querySelector('.visualizer-container');
-          if (vizCandidate && resultsDiv && !resultsDiv.contains(vizCandidate)) {
-            vizEl = vizCandidate;
-            vizParent = vizEl.parentNode;
-            vizNextSib = vizEl.nextSibling;
-            const inner = vizEl.querySelector(':scope > div');
-            const w = inner ? inner.offsetWidth : (containerSizeRef.current?.w || 1000);
-            const h = inner ? inner.offsetHeight : (containerSizeRef.current?.h || 450);
-            const factor = Math.min(2.0, Math.max(0.4, Math.min(730 / w, 340 / h)));
-            if (inner) inner.style.setProperty('zoom', factor.toFixed(3), 'important');
-            document.documentElement.style.setProperty('--print-zoom', factor.toFixed(3));
-            // Orden del PDF: resultados -> simulación -> cosidos (cableado) -> resto
-            const wiringGrid = mainEl.querySelector('.grid.grid-cols-1.lg\\:grid-cols-2');
-            const wiringBox = wiringGrid && wiringGrid.parentElement;
-            if (wiringBox && wiringBox !== resultsDiv && resultsDiv.contains(wiringBox)) {
-              wiringBox.parentNode.insertBefore(vizEl, wiringBox);
-            } else {
-              resultsDiv.parentNode.insertBefore(vizEl, resultsDiv.nextSibling);
+          let pag1 = null, pag2 = null, filaElec = null;
+          if (mainEl && resultsDiv) {
+            const hijo = (sel) => [...resultsDiv.children].find(k => k.matches(sel));
+            pag1 = document.createElement('div'); pag1.className = 'pdf-pag pdf-pag1';
+            pag2 = document.createElement('div'); pag2.className = 'pdf-pag pdf-pag2';
+            resultsDiv.parentNode.insertBefore(pag1, resultsDiv);
+            resultsDiv.parentNode.insertBefore(pag2, resultsDiv);
+            const vizEl = mainEl.querySelector('.visualizer-container');
+            const inner = vizEl && vizEl.querySelector(':scope > div');
+            if (inner) {
+              const factor = Math.min(2.0, Math.max(0.4, Math.min(730 / inner.offsetWidth, 340 / inner.offsetHeight)));
+              inner.style.setProperty('zoom', factor.toFixed(3), 'important');
+              document.documentElement.style.setProperty('--print-zoom', factor.toFixed(3));
             }
+            mover(hijo('.resumen-pdf'), pag1);
+            mover(hijo('.data-table-container'), pag1);
+            mover(hijo('.obs-pdf'), pag1);
+            mover(hijo('.cabinet-block-print'), pag1);
+            mover(vizEl, pag1);
+            const elecs = [hijo('.elec-pdf'), hijo('.media-pdf')].filter(el => el && el.querySelector('.elec-sel'));
+            if (elecs.length) {
+              filaElec = document.createElement('div'); filaElec.className = 'pdf-fila-elec';
+              pag2.appendChild(filaElec);
+              elecs.forEach(el => mover(el, filaElec));
+              // solo la electrónica / el mediaserver elegidos para el proyecto
+              filaElec.querySelectorAll('.elec-bubble:not(.elec-sel)').forEach(b => { b.dataset.pdfOculto = '1'; b.style.setProperty('display', 'none', 'important'); });
+              filaElec.querySelectorAll('.elec-grid').forEach(g => { g.dataset.pdfOculto = '1'; g.style.setProperty('display', 'block', 'important'); });
+            }
+            mover(mainEl.querySelector('.esquema-sec'), pag2);
+            mover(hijo('.cableado-pdf'), pag2);
           }
           
           // Registrar función de restauración que se invoca desde afterprint,
@@ -4007,15 +4078,14 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
           window._screencalc_print_restore = () => {
             document.title = originalTitle;
             if (mainEl) mainEl.classList.remove('pdf-unico');
-            if (vizEl && vizParent) {
-              const inner = vizEl.querySelector(':scope > div');
-              if (inner) inner.style.removeProperty('zoom');
-              if (vizNextSib) {
-                vizParent.insertBefore(vizEl, vizNextSib);
-              } else {
-                vizParent.appendChild(vizEl);
-              }
+            for (let i = movidos.length - 1; i >= 0; i--) {
+              const [el, padre, sig] = movidos[i];
+              if (sig && sig.parentNode === padre) padre.insertBefore(el, sig); else padre.appendChild(el);
             }
+            document.querySelectorAll('[data-pdf-oculto]').forEach(b => { b.style.removeProperty('display'); delete b.dataset.pdfOculto; });
+            [filaElec, pag1, pag2].forEach(el => { if (el && el.parentNode) el.parentNode.removeChild(el); });
+            const vz = document.querySelector('.visualizer-container > div');
+            if (vz) vz.style.removeProperty('zoom');
           };
           
           window.print();
@@ -5350,7 +5420,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.3.2</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v4.4</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -5881,6 +5951,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                     <a href="https://screencalc.mediaservi.com" style={{fontStyle:'italic',color:'#555',fontSize:'7pt',textDecoration:'none'}}>screencalc.mediaservi.com</a>
                   </div>
                   <div className="print-header-date">
+                    <a href={AVHUB_URL} className="print-header-avhub" title="AVHUB"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                     {new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })} · {new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
@@ -7041,7 +7112,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   )}
 
                   {/* ELECTRÓNICA NOVASTAR */}
-                  <div className="bg-gray-100 shadow-sm overflow-hidden" style={{ border: 'none' }}>
+                  <div className="bg-gray-100 shadow-sm overflow-hidden elec-pdf" style={{ border: 'none' }}>
                     <div className="bg-[#0f584c] text-white px-4 py-3 flex items-center justify-center gap-3">
                       <img src="https://www.novastar.tech/static/img/01index/logo01.png" alt="Novastar" style={{height: '22px', objectFit: 'contain', filter: 'brightness(10)'}} />
                       <a href="https://novastar.show/h-series-configurator" target="_blank" rel="noopener noreferrer" 
@@ -7113,7 +7184,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
 
                   {/* MEDIASERVER */}
-                  <div className="bg-gray-100 shadow-sm overflow-hidden" style={{ border: 'none' }}>
+                  <div className="bg-gray-100 shadow-sm overflow-hidden media-pdf" style={{ border: 'none' }}>
                     <div className="bg-[#0f584c] text-white px-4 py-3 flex items-center justify-center gap-3">
                       <span className="text-sm font-bold uppercase tracking-wide">MEDIASERVER</span>
                     </div>
@@ -7150,7 +7221,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
 
                   {/* HIERROS o COMPONENTES DE KIT */}
                   {(kitInfo || (selectedModel?.obs && String(selectedModel.obs).trim())) && (
-                    <div className="bg-white shadow-sm overflow-hidden" style={{ border: 'none' }}>
+                    <div className="bg-white shadow-sm overflow-hidden obs-pdf" style={{ border: 'none' }}>
                       {kitInfo ? (
                         <div className="grid grid-cols-2 gap-4 p-4 bg-white border-t-4 border-[#00a792]">
                           {/* Indicador de cantidad de kits */}
@@ -7206,7 +7277,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
 
                   {/* ESQUEMAS DE CABLEADO - DOS COLUMNAS */}
                   {(cosidoSenal || distribucionElectrica) && (
-                    <div className="bg-white shadow-sm overflow-hidden" style={{ border: 'none' }}>
+                    <div className="bg-white shadow-sm overflow-hidden cableado-pdf" style={{ border: 'none' }}>
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
                         
                         {/* PROPUESTA CABLEADO DE SEÑAL */}
@@ -7556,14 +7627,14 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.3.2 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v4.4 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.3.2 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v4.4 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
                     </div>
                   </div>
               </main>
