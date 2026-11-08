@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v4.4**
+**Versión actual: v4.5**
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -34,8 +34,9 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **Logo:** sin enlace; al pulsarlo se reinicia la app para un nuevo cálculo (igual que RESET).
 - **SCREENBOX:** el isotipo de la cabecera abre la sub-app SCREENBOX (https://screenboxsim.netlify.app/) para pantallas de una o varias paredes con proyectores y salas inmersivas.
 - **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
-- **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios, las consultas internas y la documentación (DOCS), que ya no es pública.
-- **Anuncios:** puntos de inserción localizados (bajo el panel de entrada y al final de los resultados) que se activan o desactivan desde el panel de administrador; cada banner admite varias fotos o vídeos y texto con viñetas, y todo él abre el enlace en una pestaña nueva (o `ads.json` mientras no esté publicado). Como afiliado de Amazon, se obtienen ingresos por las compras adscritas que cumplen los requisitos aplicables.
+- **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se abren el gestor de anuncios, las consultas internas y la documentación (DOCS), que ya no es pública.
+- **Anuncios (motor AVHUB ADS):** 3 zonas (pie del menú y pie de resultados, izquierda y derecha). Cada zona admite varios anuncios con rotación; cada anuncio tiene formato estándar (horizontal 16:9, vertical 9:16, cuadrado 1:1, retrato 4:5, hero a sangre 21:9, banner 728×90, banner móvil 320×100, rectángulo 300×250, rascacielos 160×600), texto al lado, debajo, encima o sin texto, botón opcional, carrusel de fotos, vídeos y YouTube, fechas de inicio y fin, solo móvil o solo escritorio, y contador de clics. Todo el anuncio abre su enlace en una pestaña nueva (o `ads.json` mientras el panel no responda).
+- **Gestor de anuncios (`admin/anuncios.html`):** pantalla visual para arrastrar anuncios entre zonas, arrastrar fotos entre anuncios o desde la biblioteca, subir fotos, elegir formato y ver al lado de cada anuncio el previo real en escritorio o móvil. En el panel de administrador guarda de verdad; abierto desde el repositorio funciona en modo demo (guarda en el navegador) y `index.html?anuncios=demo` muestra esos anuncios de prueba. Como afiliado de Amazon, se obtienen ingresos por las compras adscritas que cumplen los requisitos aplicables.
 - **Adaptada a PC y móvil:** el panel lateral de entrada va en 2 columnas sin scroll en PC y se ve en grande en móvil.
 
 - **AVHUB:** el logo de AVHUB en la cabecera (entre el logo de SCREENCALC y los iconos) lleva a https://avhub.mediaservi.com/. AVHUB es la nueva app en preparación que reunirá en un solo sitio SCREENCALC, el hardware de proyectos AV, novedades y VJSHOW, con el mismo idioma en todas las secciones.
@@ -51,7 +52,7 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 ## Ramas
 
 - `main`: versión oficial y pública, aprobada.
-- Betas numeradas (`beta-1`, `beta-2`…) para pruebas; solo pasan a `main` cuando se aprueban.
+- `beta`: última entrega para pruebas; `beta-anterior`: la entrega previa. Solo pasan a `main` cuando se aprueban.
 
 ## Paleta corporativa
 
@@ -71,7 +72,13 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v4.4)
+## Cambios de la versión actual (v4.5)
+
+- **Nuevo motor de anuncios AVHUB ADS**, el mismo que usará toda AVHUB: 9 formatos estándar, posición del texto (al lado, debajo, encima con contraste automático o sin texto), botón opcional, carrusel de fotos y vídeos, varios anuncios por zona (siempre el primero, rotar en orden, uno al azar por visita o rotar al azar), programación por fechas, solo móvil o solo escritorio y contador de clics.
+- **Gestor visual de anuncios:** arrastrar y soltar anuncios y fotos, biblioteca de media con subida de fotos, deshacer, y previo real de cada anuncio en escritorio y en móvil.
+- **Compatible** con la configuración de anuncios anterior: se convierte sola al nuevo formato.
+
+## Cambios de la v4.4
 
 - **Numeración:** las versiones usan 2 cifras (v4.4, v4.5 … hasta v99.99).
 - **PDF en 2 páginas** con el orden fijo: página 1 (características pantalla, observaciones, características del cabinet, simulación) y página 2 (electrónica y mediaserver elegidos en una fila, esquema, cableado de señal, cableado eléctrico y aviso IA). El esquema se encoge lo necesario para no pasar de 2 páginas. Logo de AVHUB enlazado arriba a la derecha de la página 1.
