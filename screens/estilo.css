@@ -175,6 +175,7 @@ select.sel { width: 100%; background: var(--hundido); color: var(--verde); borde
 .esc-barra .tog { min-height: 28px; padding: 4px 9px; font-size: 10.5px; background: rgba(30,30,33,.85); backdrop-filter: blur(6px); }
 .esc-barra .tog.on { background: rgba(10,26,10,.85); }
 .esc-info { position: absolute; left: 10px; bottom: 10px; font: 400 11.5px var(--mono); color: var(--tenue); background: rgba(10,10,12,.7); border: 1px solid #000; padding: 5px 9px; border-radius: 6px; pointer-events: none; }
+.esc-info { max-width: calc(100% - 20px); line-height: 1.4; }
 .esc-aviso { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; color: var(--tenue); font-size: 13px; line-height: 1.5; }
 .res { background: var(--chasis); border-top: 1px solid #000; padding: 10px; display: grid; gap: 10px; overflow-y: auto; max-height: 44vh; }
 .res-tot { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
@@ -323,3 +324,13 @@ select.sel { width: 100%; background: var(--hundido); color: var(--verde); borde
 .vt-shift small { color: var(--tenue); }
 .vt-h { font-size: 11.5px; white-space: nowrap; }
 @media print { .vt-modos, .vt-sup, .vt-shift { display: none !important; } }
+
+/* v8.4 · fuera de especificación: activo en ámbar */
+.tog.ambar.on { background: linear-gradient(180deg, rgba(255,176,0,.2), rgba(255,176,0,.07)), #1d1606; color: #ffb000; border-color: #ffb000; box-shadow: 0 0 10px rgba(255,176,0,.35), 0 2px 0 #000; text-shadow: 0 0 6px rgba(255,176,0,.5); }
+/* v8.4 · la escena 3D recibe el teclado (flechas, + y −) al pulsarla */
+#escena canvas:focus { outline: none; }
+#escena canvas:focus-visible { outline: 2px solid var(--verde); outline-offset: -2px; }
+
+/* v8.4 · secciones en pruebas (todo menos una pantalla LED): aviso de beta en la caja de la petición, en ámbar tipo LCD */
+.con-nl input[type="text"].beta { border-color: rgba(255,176,0,.45); }
+.con-nl input[type="text"].beta::placeholder { color: #ffb000; font-family: 'Share Tech Mono', ui-monospace, monospace; letter-spacing: .05em; text-shadow: 0 0 6px rgba(255,176,0,.55); opacity: 1; }

@@ -74,6 +74,15 @@ export function interpretar(texto) {
   else if (/(?:proyector|projector)[^.]{0,40}\ben horizontal|\bin landscape\b/.test(t)) { c.proy.orient = 'horizontal'; vistos.push({ k: 'horizontal' }); }
   const dP = t.match(/(?:proyector(?:es)?|projector(?:s)?|projectors|torres?|towers?)[^.\d]{0,40}?(?:\ba|\bat|desde|from)\s*(\d+(?:\.\d+)?)\s*(?:m|metros|metres)\b/) || t.match(/(?:\ba|\bat)\s*(\d+(?:\.\d+)?)\s*(?:m|metros|metres)\s*(?:de|from|of)\s*(?:la |el |the )?(?:fachada|pared|pantalla|superficie|edificio|facade|wall|screen|facana|paret|edifici)/);
   if (dP) { c.proy.dist = n(dP[1]); vistos.push({ k: 'distProy', v: c.proy.dist }); }
+  // v8.4 · en un mapping, «a 40 m (de distancia)» sin hablar del público es la distancia de los proyectores a la fachada
+  else if (c.proy.tipo === 'mapping' && c.sueltas.dist != null && !/publico|public|audiencia|audience|espectador|viewer/.test(t)) {
+    c.proy.dist = c.sueltas.dist; delete c.sueltas.dist;
+    const iv = vistos.findIndex(x => x.k === 'publico'); if (iv >= 0) vistos.splice(iv, 1); vistos.push({ k: 'distProy', v: c.proy.dist });
+  }
+  else if (c.proy.tipo === 'mapping' && c.sueltas.dist == null) {   // «fachada de 12 x 20 a 40 m»
+    const am = t.match(/(?:\ba|\bat|desde|from)\s*(\d+(?:\.\d+)?)\s*(?:m|metros|metres)\b(?!\s*(?:de alto|de ancho|high|wide|d'alt|d'ample))/);
+    if (am) { c.proy.dist = n(am[1]); vistos.push({ k: 'distProy', v: c.proy.dist }); }
+  }
   const torre = t.match(/(?:torre|tower|torres|towers)\s*(?:de|of)?\s*(\d+(?:\.\d+)?)\s*(?:m|metros|metres)?/);
   const colg = t.match(/(?:colgad[oa]s?|truss|penjats?|hung|hanging)[^.\d]{0,25}?(?:a|at|de)?\s*(\d+(?:\.\d+)?)\s*(?:m|metros|metres)\b/);
   if (torre) { c.proy.montaje = 'apoyado'; c.proy.altura = n(torre[1]); vistos.push({ k: 'montaje', v: 'apoyado', h: c.proy.altura }); }
