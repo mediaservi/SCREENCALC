@@ -38,8 +38,16 @@ export class Escena {
     this.grupo = new THREE.Group(); esc.add(this.grupo);
     this.figuraGeo = this._figura();
     this.vistaActual = 'exterior';
-    new ResizeObserver(() => this.ajustar()).observe(lienzo.parentElement);
+    this._ro = new ResizeObserver(() => this.ajustar()); this._ro.observe(lienzo.parentElement);
     this.ajustar();
+  }
+  // v7.0 · al cambiar de modo en la consola la escena se suelta entera (sin bucles ni contextos WebGL colgando)
+  destruir() {
+    this._animando = false; this._vivos = [];
+    try { this._ro.disconnect(); } catch (e) {}
+    try { this.ctrl.dispose(); } catch (e) {}
+    try { this._limpiar(); } catch (e) {}
+    try { this.renderer.dispose(); this.renderer.forceContextLoss(); } catch (e) {}
   }
 
   ajustar() {

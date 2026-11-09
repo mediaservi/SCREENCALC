@@ -264,7 +264,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
 <header>
   <div class="marca">
     <svg viewBox="0 0 60 48" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9900ff"/><stop offset=".55" stop-color="#00b4ff"/><stop offset="1" stop-color="#00ff04"/></linearGradient></defs><path d="M8 44 L28 8 Q30 4 32 8 L54 44 Z" fill="none" stroke="url(#g)" stroke-width="7" stroke-linejoin="round"/><path d="M26 22 L38 30 L26 38 Z" fill="#9900ff"/></svg>
-    <div>AVHUB · ADMIN <span style="font-size:10px;color:var(--tenue)">v1.0</span><small>ANUNCIOS · FIRMAS · NEWSLETTER · CATÁLOGO</small></div>
+    <div>AVHUB · ADMIN <span style="font-size:10px;color:var(--tenue)">v1.1</span><small>ANUNCIOS · FIRMAS · NEWSLETTER · CATÁLOGO</small></div>
   </div>
   <span id="modo" class="modo"></span>
   <div class="tabs" id="tabs"><button data-s="ads" class="on">ANUNCIOS</button><button data-s="firmas">FIRMAS</button><button data-s="news">NEWSLETTER</button><button data-s="catalogo">CATÁLOGO</button></div>
@@ -998,6 +998,8 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
   var REDES = { linkedin: 'LinkedIn', facebook: 'Facebook', x: 'X', instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok', whatsapp: 'WhatsApp', teams: 'Teams', avhub: 'AVHUB' };
   var CONFIGURADORES = 'https://screens.mediaservi.com/configuradores/';
   var PROMO = 'https://screens.mediaservi.com/assets/promo/';
+  // Imágenes de las firmas: PNG enlazados en screens.mediaservi.com (dominio definitivo), nunca adjuntos ni incrustados
+  var LOGO_CHARMEX = 'https://screens.mediaservi.com/assets/firmas/charmex-logo.png';
   var FUENTES = ['Arial', 'Helvetica', 'Verdana', 'Tahoma', 'Trebuchet MS', 'Georgia'];
   var ACENTOS = ['#9900ff', '#00a792', '#0f584c', '#00b4ff', '#e100ff', '#ff3b5c', '#ffb000', '#2A2A2A'];
   var TEMAS_ICONO = { linea: 'Línea negra', lineablanca: 'Línea blanca', oscuro: 'Círculo gris oscuro', marca: 'Círculo violeta', verde: 'Círculo verde', gris: 'Círculo gris claro' };
@@ -1022,6 +1024,16 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
       redes: Object.keys(REDES).reduce(function (m, k) { m[k] = r[k] || ''; return m; }, {}),
       banner: { img: b.img || '', url: b.url || '' }, legal: o.legal || '',
       bannerId: o.bannerId || '', bannerPos: o.bannerPos || 'final' };
+  }
+  function firmaCharmex(o) {
+    var tx = (F.banners || []).filter(function (x) { return /traulux/i.test(x.nombre || ''); })[0];
+    return firmaBase(Object.assign({ nombre: 'Charmex · Josep Tarroja', plantilla: 'charmex',
+      datos: { nombre: 'Josep Tarroja', cargo: 'Consultor AV', empresa: 'Charmex', telefono: '(+34) 933 036 620', movil: '677.439.966',
+        email: 'jtarroja@charmex.net', web: 'www.charmex.net', direccion: 'Barcelona - C/ Maresme 103-105 · 08019', logo: LOGO_CHARMEX },
+      estilo: { acento: '#539d26', fuente: 'Arial', tam: 14, iconos: 'gris', iconoAvhub: 'redondo' },
+      // en los correos del trabajo el icono de AVHUB lleva a la página para elegir entre SCREENS y TRAULUX
+      redes: { linkedin: 'https://www.linkedin.com/in/joseptarroja', whatsapp: '+34 677 43 99 66', teams: 'jtarroja@charmex.net', avhub: CONFIGURADORES },
+      bannerId: tx ? tx.id : '', bannerPos: 'final' }, o || {}));
   }
   function newsBase(o) {
     o = o || {}; var e = o.estilo || {};
@@ -1066,7 +1078,20 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     var imgLogo = function (h, centro) { return logo ? '<img src="' + ea(logo) + '" height="' + h + '" alt="' + ea(d.empresa || 'logo') + '" style="display:' + (centro ? 'inline-block' : 'block') + ';border:0;height:' + h + 'px;width:auto;max-width:220px">' : ''; };
     var base = 'font-family:' + ff + ';font-size:' + t + 'px;color:#333;line-height:1.45';
     var cuerpo, html;
-    if (f.plantilla === 'compacta') {
+    if (f.plantilla === 'charmex') {
+      var gr = '#636363', tl = [];
+      if (d.movil) tl.push('<b>Móvil.: <a href="' + ea(telUrl(d.movil)) + '" style="color:' + gr + ';text-decoration:none">' + esc(d.movil) + '</a></b>');
+      if (d.telefono) tl.push('Tfn.: <a href="' + ea(telUrl(d.telefono)) + '" style="color:' + gr + ';text-decoration:none">' + esc(d.telefono) + '</a>');
+      var dw = [d.direccion ? esc(d.direccion) : '', d.web ? '<a href="' + ea(webUrl(d.web)) + '" style="color:' + gr + ';text-decoration:underline" target="_blank">' + esc(String(d.web).replace(/^https?:\/\//i, '').replace(/\/$/, '')) + '</a>' : ''].filter(Boolean).join(' · ');
+      cuerpo = (d.nombre ? '<div style="font-size:' + (t + 5) + 'px;font-weight:bold;color:#242424;line-height:1.2">' + esc(d.nombre) + '</div>' : '') +
+        (d.cargo ? '<div style="font-size:' + (t + 1) + 'px;font-weight:bold;color:' + ac + ';line-height:1.3">' + esc(d.cargo) + '</div>' : '') +
+        (bnr && f.bannerPos === 'nombre' ? '<div style="margin-top:8px">' + bnr + '</div>' : '') +
+        (logo ? '<div style="margin-top:14px"><img src="' + ea(logo) + '" width="250" height="50" alt="' + ea(d.empresa || 'Charmex') + '" style="display:block;border:0;width:250px;height:50px"></div>' : '') +
+        (d.email ? '<div style="margin-top:16px;font-weight:bold"><a href="mailto:' + ea(d.email) + '" style="color:' + gr + ';text-decoration:none">' + esc(d.email) + '</a></div>' : '') +
+        (tl.length ? '<div style="margin-top:10px;color:' + gr + '">' + tl.join(' - ') + '</div>' : '') +
+        (dw ? '<div style="margin-top:8px;color:#666666">' + dw + '</div>' : '') + redes.replace('margin-top:10px', 'margin-top:14px');
+      html = '<table cellpadding="0" cellspacing="0" border="0" style="' + base + ';color:' + gr + '"><tr><td style="vertical-align:top">' + cuerpo + '</td></tr>';
+    } else if (f.plantilla === 'compacta') {
       cuerpo = '<div style="font-size:' + (t + 3) + 'px;font-weight:bold;color:#111">' + esc(d.nombre) + (cargo ? '<span style="font-weight:normal;color:' + ac + '"> &nbsp;|&nbsp; ' + cargo + '</span>' : '') + '</div>' +
         (bnr && f.bannerPos === 'nombre' ? '<div style="margin-top:6px">' + bnr + '</div>' : '') + lin(tels.concat(cont)) + dir + redes;
       html = '<table cellpadding="0" cellspacing="0" border="0" style="' + base + '"><tr>' + (logo ? '<td style="padding-right:12px;vertical-align:middle">' + imgLogo(36) + '</td>' : '') +
@@ -1082,7 +1107,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
       html = '<table cellpadding="0" cellspacing="0" border="0" style="' + base + '"><tr>' + (izq ? '<td style="padding-right:16px;vertical-align:top">' + izq + '</td>' : '') +
         '<td style="border-left:3px solid ' + ac + ';padding-left:16px;vertical-align:top">' + cuerpo + '</td></tr>';
     }
-    var cols = f.plantilla === 'centrada' || !(f.plantilla === 'logo' ? logo : foto) ? 1 : 2;
+    var cols = f.plantilla === 'centrada' || f.plantilla === 'charmex' || !(f.plantilla === 'logo' ? logo : foto) ? 1 : 2;
     if (f.plantilla === 'compacta') cols = logo ? 2 : 1;
     if (bnr && f.bannerPos !== 'nombre') html += '<tr><td colspan="' + cols + '" style="padding-top:12px">' + bnr + '</td></tr>';
     if (urlOk(f.banner.img)) {
@@ -1269,6 +1294,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
   function svgPlantilla(k) {
     var a = '#9b9bb0', b = '#5d5d70';
     var s = {
+      charmex: '<rect x="6" y="4" width="34" height="5" fill="' + a + '"/><rect x="6" y="11" width="26" height="3" fill="#539d26"/><rect x="6" y="18" width="40" height="9" rx="4" fill="#7cc243"/><rect x="6" y="31" width="30" height="3" fill="' + b + '"/><rect x="6" y="36" width="52" height="3" fill="' + b + '"/><rect x="6" y="41" width="60" height="3" fill="' + b + '"/>',
       clasica: '<circle cx="18" cy="22" r="11" fill="' + a + '"/><rect x="34" y="8" width="2" height="30" fill="' + a + '"/><rect x="42" y="10" width="40" height="5" fill="' + a + '"/><rect x="42" y="19" width="28" height="3" fill="' + b + '"/><rect x="42" y="26" width="46" height="3" fill="' + b + '"/><rect x="42" y="32" width="36" height="3" fill="' + b + '"/>',
       logo: '<rect x="4" y="12" width="26" height="18" rx="3" fill="' + a + '"/><rect x="34" y="8" width="2" height="30" fill="' + a + '"/><rect x="42" y="10" width="40" height="5" fill="' + a + '"/><rect x="42" y="19" width="28" height="3" fill="' + b + '"/><rect x="42" y="26" width="46" height="3" fill="' + b + '"/><rect x="42" y="32" width="36" height="3" fill="' + b + '"/>',
       compacta: '<rect x="4" y="14" width="16" height="16" rx="3" fill="' + a + '"/><rect x="26" y="15" width="60" height="5" fill="' + a + '"/><rect x="26" y="25" width="74" height="3" fill="' + b + '"/>',
@@ -1289,18 +1315,18 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     var cont = $('#secFirmas'); cont.innerHTML = '';
     if (!firmaSel || !F.lista.some(function (x) { return x.id === firmaSel; })) firmaSel = F.lista[0] ? F.lista[0].id : null;
     cont.appendChild(selector('Firmas de correo', F.lista, firmaSel, function (id) { firmaSel = id; pintarFirmas(); },
-      function () { cambio(function () { var f = firmaBase({ nombre: 'Firma ' + (F.lista.length + 1) }); F.lista.push(f); firmaSel = f.id; }); },
+      function () { cambio(function () { var f = firmaCharmex(F.lista.length ? { nombre: 'Firma ' + (F.lista.length + 1) } : {}); F.lista.push(f); firmaSel = f.id; }); },
       function () { cambio(function () { var o = F.lista.filter(function (x) { return x.id === firmaSel; })[0], c = firmaBase(JSON.parse(JSON.stringify(o))); c.id = A.nuevoId(); c.nombre = o.nombre + ' (copia)'; F.lista.push(c); firmaSel = c.id; }); },
       function () { cambio(function () { F.lista = F.lista.filter(function (x) { return x.id !== firmaSel; }); firmaSel = null; }); led('Firma eliminada (puedes deshacer)'); }));
     var f = F.lista.filter(function (x) { return x.id === firmaSel; })[0];
-    if (!f) { cont.appendChild(el('div', 'vacia', 'Aún no hay firmas.<br>Pulsa «＋ Nueva» para crear la primera.')); pintarBanners(cont); return; }
+    if (!f) { cont.appendChild(el('div', 'vacia', 'Aún no hay firmas.<br>Pulsa «＋ Nueva»: empieza con la firma oficial de Charmex y tus datos.')); pintarBanners(cont); return; }
     var grid = el('div', 'ed-grid'), form = el('div', 'form'), prevCaja = el('div', 'caja');
     var vivo = function () { pintarPrevFirma(f, prevCaja); };
     var bloque = function (titulo) { var c = el('div', 'caja'); c.appendChild(el('div', 'caja-cab', '<h2>' + esc(titulo) + '</h2>')); var b = el('div', 'caja-cuerpo'); c.appendChild(b); form.appendChild(c); return b; };
     var b1 = bloque('Diseño');
     b1.appendChild(campo('Nombre interno', f.nombre, function (v) { f.nombre = v; }));
     var pls = el('div', 'plantillas');
-    [['clasica', 'Clásica'], ['logo', 'Con logo'], ['compacta', 'Compacta'], ['centrada', 'Centrada']].forEach(function (p) {
+    [['charmex', 'Charmex oficial'], ['clasica', 'Clásica'], ['logo', 'Con logo'], ['compacta', 'Compacta'], ['centrada', 'Centrada']].forEach(function (p) {
       var b = el('button', 'pl' + (f.plantilla === p[0] ? ' on' : ''), svgPlantilla(p[0]) + p[1]);
       b.onclick = function () { cambio(function () { f.plantilla = p[0]; }); }; pls.appendChild(b);
     });
@@ -1359,6 +1385,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     var c3 = el('button', 'bt', 'Descargar .html'); c3.onclick = function () { descargar('firma-' + f.nombre, '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>' + firmaHTML(f) + '</body></html>'); };
     bts.appendChild(c1); bts.appendChild(c2); bts.appendChild(c3); cu.appendChild(bts);
     cu.appendChild(el('div', 'nota', 'Gmail: Configuración → Ver todos los ajustes → Firma → pega.<br>Outlook: Configuración → Correo → Firmas → pega.<br>Apple Mail: Ajustes → Firmas → pega y desmarca «usar tipo de letra por omisión».' +
+      '<br><b>Imágenes:</b> van enlazadas a screens.mediaservi.com (PNG por https), sin adjuntos, para que no se rompan al responder.<br>Si tu firma antigua enlazaba a screencalc.mediaservi.com, sustitúyela por esta.' +
       (GAS ? '' : '<br><b>Modo demo:</b> las fotos subidas aquí solo se ven en este navegador;<br>usa enlaces o el panel real para que se vean en el correo.')));
     caja.appendChild(cu);
   }
@@ -2010,7 +2037,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
   $('#deshacer').onclick = deshacer;
   $('#guardar').onclick = function () { guardar(); };
   $('#verapp').onclick = function () {
-    var abrir = function () { window.open(GAS ? 'https://screens.mediaservi.com/?led' : '../index.html?anuncios=demo', '_blank', 'noopener'); };
+    var abrir = function () { window.open(GAS ? 'https://screens.mediaservi.com/?led' : '../led.html?anuncios=demo', '_blank', 'noopener'); };
     if (sucio) guardar(abrir); else abrir();
   };
   document.addEventListener('keydown', function (e) {

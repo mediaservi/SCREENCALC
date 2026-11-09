@@ -2,22 +2,22 @@
 
 # SCREENS
 
-Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Al entrar se elige **una o varias superficies** y **LED o proyección**:
+Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Se entra directamente a la **consola de SCREENS**, un cuadro de mandos fijo:
 
-- **Una pantalla LED** → cálculo de una pantalla (la raíz del repositorio, descrito en este README).
-- **Varias pantallas, salas inmersivas o proyección** → `screens/`, con simulación 3D renderizada.
+- **Arriba, siempre a mano:** el modo (**una o varias** superficies · **LED o proyección**) y la **petición en lenguaje natural** por texto, voz o audio, que sirve para todas las combinaciones.
+- **Debajo, la zona de trabajo,** que se adapta a la combinación elegida:
+  - **una pantalla LED** → el cálculo de una pantalla (`led.html`, descrito en este README), dentro de la misma consola;
+  - **una pantalla de proyección, varias pantallas o salas inmersivas** → `screens/`, con simulación 3D renderizada.
 
-Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo.
+Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREENS es uno de los apartados de AVHUB, cada uno con su subdominio definitivo: screens.mediaservi.com (con HARDWARE como parte suya en hardware.mediaservi.com), news, vjshow y msgame; avhub.mediaservi.com es la máquina que los reúne. Sin redirecciones: la consola es la propia página de inicio (`index.html`).
 
 ## Una pantalla LED
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v6.9** (estética AVHUB · SCREENS como página de inicio)
+**Versión actual: v7.0** (estética AVHUB · consola fija de SCREENS)
 
-Web principal: **https://screens.mediaservi.com** (sustituye a screencalc.mediaservi.com y screenbox.mediaservi.com, que dejan de usarse). Para abrir directamente el cálculo de una pantalla LED: https://screens.mediaservi.com/?led
-
-Copia redundante: https://mediaservi.github.io/SCREENS/ (el repositorio pasa a llamarse SCREENS).
+Web principal: **https://screens.mediaservi.com** (sustituye a screencalc.mediaservi.com y screenbox.mediaservi.com, que dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
 ## Para qué sirve
 
@@ -25,7 +25,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 
 ## Funciones
 
-- **Petición en lenguaje natural (📝):** se pega el texto del cliente y la app propone una pantalla. Abre un solo popup «Datos del proyecto» con todos los datos en botones: lo que viene en el texto sale marcado con ✓, lo que falta lleva un valor por defecto que se cambia con un toque, y un único botón CALCULAR. Solo es obligatoria la medida (en metros), salvo si se pide una resolución. Entiende números dictados en palabras. Se interpreta con reglas locales, sin servicios externos de IA.
+- **Petición en lenguaje natural:** se escribe, se dicta o se sube un audio en la barra de la consola y la app propone una pantalla. Abre un solo popup «Datos del proyecto» con todos los datos en botones: lo que viene en el texto sale marcado con ✓, lo que falta lleva un valor por defecto que se cambia con un toque, y un único botón CALCULAR. Solo es obligatoria la medida (en metros), salvo si se pide una resolución. Entiende números dictados en palabras. Se interpreta con reglas locales, sin servicios externos de IA.
 - **Preguntas de proyecto llave en mano:** uso (interior, exterior, escaparate), instalación o alquiler, distancia del público, ¿cerca del mar o mucha humedad? (variante tropicalizada con contactos de oro), electrónica sí/no (con o sin backup, con o sin escalador, conexión RJ45 o rack con fibra), mediaserver (marca, Dante), número, tipo y resolución de las fuentes de vídeo y distancia de las fuentes.
 - **Panel de entrada manual:** INSTALL / RENTAL, INDOOR / OUTDOOR / ESCAPARATE, pitch y nits (valores de la tabla con flechas ▲▼), COLUMNAS y FILAS, ancho y alto con selector de unidad m / cm / mm (por defecto cm; el PDF sigue la unidad elegida), resolución mínima (HD / FHD / UHD 4K) y altura sobre el suelo. Muestra en vivo medidas, cabinets y resolución.
 - **Modo resumen:** si la petición se hizo en texto, el panel solo muestra lo elegido. Con "Editar a mano" se vuelve al panel completo. En móvil, el botón flotante ⚙ PANEL vuelve al panel desde los resultados.
@@ -39,10 +39,10 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **Contenido de la pantalla (🖼):** el icono de imagen abre un popup centrado con FUENTES MULTIMEDIA DE PRUEBA (la primera es fija y va preseleccionada; las otras 5 son editables y se guardan en el navegador), URL propia (YouTube normal, /live/, /shorts/, listas, Vimeo, imagen o vídeo) y subida de archivo.
 - **Esquemas de cableado:** propuesta de cableado de señal y eléctrico.
 - **PDF:** un único PDF de 2 páginas desde el icono de la cabecera, en claro sobre papel blanco y con los mismos bloques que la pantalla (tarjetas con filete de color, icono y título; datos en Share Tech Mono y textos en Inter). Cabecera en una línea: logo de SCREENS, web y fecha, y logo de AVHUB (con enlace) al margen derecho. Página 1: título, características de la pantalla en tarjetas, observaciones, características del cabinet en fichas y simulación ajustada al hueco de la hoja. Página 2: electrónica y mediaserver elegidos para el proyecto (en una fila), esquema de conexiones con su material, propuestas de cableado de señal y eléctrico, y el aviso de cálculo por IA. Si no cabe, el esquema se reduce para mantener las 2 páginas. Los anuncios no salen en el PDF.
-- **Información (ⓘ):** el icono de la cabecera ofrece 2 opciones: **INFORMACIÓN** (este README en una ventana al 80 % que se puede desplazar y cerrar) y **DESCARGAR APP** (uso sin conexión).
+- **Información (ⓘ):** el icono de la cabecera (con una pantalla LED) ofrece 2 opciones: **INFORMACIÓN** (este README en una ventana al 80 % que se puede desplazar y cerrar) y **DESCARGAR APP** (uso sin conexión).
 - **Logo:** sin enlace; al pulsarlo se reinicia la app para un nuevo cálculo (igual que RESET).
 - **Ficha de equipo común:** cabinets, proyectores, electrónicas y mediaservers se muestran con la misma ficha en el cálculo de una pantalla y en el de varias (`comun/ficha.js` y `comun/ficha.css`): foto del fabricante, marca y modelo, especificaciones clave, piezas de los equipos montados por módulos, stock y enlace a la ficha. El motor de electrónica también es común (`comun/electronica.js`).
-- **Inicio (SCREENS):** la web abre el selector de SCREENS (una o varias superficies · LED o proyección); «Una + LED» abre el cálculo de una pantalla LED. El botón INICIO (casa) de la cabecera vuelve al selector y el botón Atrás del navegador vuelve al cálculo. El idioma elegido es el mismo en SCREENS y en SCREENS.
+- **Consola de SCREENS:** la web abre directamente el cuadro de mandos, sin página de selector. El modo se cambia con un toque en la barra de la consola; el botón NUEVO CÁLCULO (casa) y el logo vuelven a los valores por defecto sin salir del modo. El idioma, el PDF y la petición son los mismos para todas las combinaciones. La raíz sin parámetros abre la consola; `?led` abre el cálculo de una pantalla LED solo.
 - **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
 - **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios, las consultas internas y la documentación (DOCS), que ya no es pública.
 - **Anuncios (motor AVHUB ADS):** 3 zonas (pie del menú y pie de resultados, izquierda y derecha). Cada zona admite varios anuncios con rotación; cada anuncio tiene formato estándar (horizontal 16:9, vertical 9:16, cuadrado 1:1, retrato 4:5, hero a sangre 21:9, banner 728×90, banner móvil 320×100, rectángulo 300×250, rascacielos 160×600), texto al lado, debajo, encima o sin texto, botón opcional, carrusel de fotos, vídeos y YouTube, fechas de inicio y fin, solo móvil o solo escritorio, y contador de clics. Todo el anuncio abre su enlace en una pestaña nueva (o `ads.json` mientras el panel no responda). Además, el minibanner fijo del configurador oficial de TRAULUX va encima de la zona del menú y se activa desde el panel.
@@ -59,7 +59,7 @@ La app obtiene el catálogo en vivo y lo guarda cifrado en el dispositivo; no se
 
 ## Tecnología y despliegue
 
-Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No necesita compilación. Los recursos gráficos están en `assets/` y se referencian con rutas relativas, por lo que funciona igual en Netlify y en GitHub Pages.
+Consola (`index.html` + módulos de `screens/`, JavaScript sin compilación y three.js r160). Cálculo de una pantalla LED: archivo único `led.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No necesita compilación. Los recursos gráficos están en `assets/` y se referencian con rutas relativas, por lo que funciona igual en Netlify y en GitHub Pages.
 
 ## Ramas
 
@@ -88,7 +88,32 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v6.9)
+## Cambios de la versión actual (v7.0)
+
+- **Consola fija de SCREENS:** se entra directamente al cuadro de mandos, sin página de selector ni redirecciones: la consola es la propia página de inicio (`index.html`) y el cálculo de una pantalla LED pasa a `led.html`.
+  - **Barra de la consola**, debajo de la cabecera y siempre a la vista:
+    - modo: **UNA / VARIAS** y **LED / PROYECCIÓN**, con un toque;
+    - **petición en lenguaje natural** para todas las combinaciones: se escribe, se **dicta** con el micrófono o se **sube un audio** (wav, mp3, m4a, ogg…; se transcribe en el propio navegador y no sale del dispositivo), y CALCULAR;
+    - lo dictado o transcrito se añade a lo ya escrito;
+    - el texto guía elige la versión que cabe entera en la caja.
+  - **Qué entiende la petición** (castellano, inglés y catalán): sala inmersiva o N pantallas, medidas «8 × 6 × 3,5», paredes (número o nombres) y suelo, en línea o en arco, distancia del público, luz de la sala en lx («a oscuras» = 10 lx), ganancia, alto del techo, LED o proyección, interior o exterior, alquiler, backup y fibra. Debajo se resume lo entendido, en el idioma de la app.
+  - **Una pantalla LED dentro de la consola:** su cálculo completo se carga en la zona de trabajo, sin cabecera, caja de petición ni pie duplicados.
+    - La consola le pasa la petición, que abre su popup «Datos del proyecto».
+    - También le pasa el PDF de 2 páginas, el idioma, el nuevo cálculo y la información (ⓘ).
+  - **Cabecera común:** información (con una pantalla LED), PDF, nuevo cálculo e idioma. El pie lleva el acceso de administración en todas las combinaciones.
+  - **Zona de trabajo adaptable:** con una pantalla de proyección, varias pantallas o una sala, el panel de rack, la simulación 3D y los resultados de siempre.
+  - **Móvil apaisado:** cabecera y consola compactas; con una pantalla LED, su cálculo ocupa toda la altura.
+- **Escena 3D sin fugas:** al cambiar de modo se libera la simulación anterior, sin bucles ni contextos WebGL colgando.
+- **Página de configuradores:** las dos cartas tienen el mismo tamaño, con los puntos agrupados en dos columnas. El botón siempre está a la vista en pantallas de escritorio, y junto a cada logo hay una minicaptura de la pantalla inicial de su herramienta.
+- **PDF de SCREENS:** nada se sale de la hoja por la derecha (las tablas anchas parten líneas).
+- **AVHUB ADMIN v1.1 · FIRMAS:**
+  - nueva plantilla **Charmex oficial**, la de cada firma nueva: nombre, cargo en verde, logo de Charmex, email, móvil y teléfono, dirección y web, y los iconos de LinkedIn, WhatsApp, Teams y AVHUB (que lleva a la página de configuradores);
+  - el icono de WhatsApp es el original;
+  - icono de móvil nuevo: smartphone con auricular;
+  - todas las imágenes van enlazadas como PNG en screens.mediaservi.com, nunca adjuntas.
+- **Textos con variables repetidas:** la ayuda de la posición del proyector ya muestra los lx de la sala en los dos sitios donde aparecen.
+
+## Cambios de la versión v6.9
 
 - **Proyección al nivel del calculador oficial de Epson**, que se usa como referencia y doble verificación:
   - **luz de la sala** en lx (140 por defecto) y **ganancia de pantalla** (1,0 por defecto);

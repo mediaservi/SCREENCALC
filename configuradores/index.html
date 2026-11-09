@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Configuradores de pantallas LED</title>
-<meta name="description" content="Elige entre SCREENS (proyecto técnico completo con electrónica y PDF) y el configurador oficial de TRAULUX (presupuesto con un especialista).">
-<meta property="og:title" content="Configuradores de pantallas LED">
+<title>Configuradores de pantallas</title>
+<meta name="description" content="Elige entre SCREENS (una o varias pantallas LED o de proyección, hasta salas inmersivas, con proyecto técnico completo y PDF) y el configurador oficial de TRAULUX (presupuesto con un especialista).">
+<meta property="og:title" content="Configuradores de pantallas">
 <meta property="og:description" content="SCREENS o el configurador oficial de TRAULUX: elige el que necesitas.">
 <meta property="og:image" content="https://screens.mediaservi.com/assets/promo/traulux-banner-728x90.png">
 <link rel="icon" href="../assets/favicon.svg">
@@ -14,42 +14,51 @@
 :root{--fondo:#121216;--chasis:#2A2A2A;--txt:#ececf2;--tenue:#a3a3b2;--marca:#9900ff;--on:#00ff04;--azul:#00b4ff}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;background:radial-gradient(1200px 600px at 20% -10%,#2a0d44 0%,transparent 60%),radial-gradient(900px 500px at 110% 110%,#06301a 0%,transparent 60%),var(--fondo);color:var(--txt);font-family:Inter,system-ui,sans-serif}
-body{display:flex;flex-direction:column;justify-content:center;min-height:100vh;min-height:100dvh;padding:max(20px,env(safe-area-inset-top)) 16px max(20px,env(safe-area-inset-bottom))}
-.top{display:flex;justify-content:space-between;align-items:center;max-width:1040px;width:100%;margin:0 auto}
+body{display:flex;flex-direction:column;justify-content:center;min-height:100vh;min-height:100dvh;padding:max(18px,env(safe-area-inset-top)) 16px max(18px,env(safe-area-inset-bottom))}
+.top{display:flex;justify-content:space-between;align-items:center;max-width:1200px;width:100%;margin:0 auto}
 .top a{color:var(--tenue);text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.14em}
 .idiomas{display:flex;gap:4px}
 .idiomas button{border:1px solid #3a3a44;background:transparent;color:var(--tenue);border-radius:6px;padding:5px 8px;font:700 11px Inter,sans-serif;cursor:pointer}
 .idiomas button.on{border-color:var(--on);color:var(--on)}
-h1{margin:28px auto 6px;text-align:center;font-size:clamp(24px,4vw,40px);font-weight:800;letter-spacing:-.01em}
-.sub{text-align:center;color:var(--tenue);font-size:15px;line-height:1.6;margin:0 auto 26px}
-.cartas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:1040px;width:100%;margin:0 auto}
-.carta{position:relative;display:flex;flex-direction:column;gap:14px;padding:24px;border-radius:16px;background:linear-gradient(180deg,#24242b,#1b1b21);border:1px solid #34343e;box-shadow:0 10px 30px rgba(0,0,0,.35);transition:transform .2s,border-color .2s}
+h1{margin:18px auto 4px;text-align:center;font-size:clamp(24px,3.4vw,38px);font-weight:800;letter-spacing:-.01em}
+.sub{text-align:center;color:var(--tenue);font-size:15px;line-height:1.5;margin:0 auto 20px}
+/* las dos cartas comparten filas (subgrid): mismo alto y cada bloque a la misma altura en las dos */
+.cartas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(6,auto);column-gap:20px;max-width:1200px;width:100%;margin:0 auto}
+.carta{grid-row:span 6;display:grid;grid-template-rows:subgrid;row-gap:13px;padding:22px 24px;border-radius:16px;background:linear-gradient(180deg,#24242b,#1b1b21);border:1px solid #34343e;box-shadow:0 10px 30px rgba(0,0,0,.35);transition:transform .2s,border-color .2s;min-width:0}
+@supports not (grid-template-rows:subgrid){.carta{display:flex;flex-direction:column}.carta .ideal{margin-top:auto}}
 .carta:hover{transform:translateY(-3px)}
 .carta.sc:hover{border-color:var(--marca)}
 .carta.tx:hover{border-color:#fff}
-.marca{display:flex;align-items:center;gap:12px;min-height:44px}
-.marca .nom{font-size:24px;font-weight:800;letter-spacing:.12em}
-.marca .logo{display:block;height:38px;width:auto;margin-bottom:6px}
+.cab{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:16px}
+.id{display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0}
+.id .logo{display:block;height:38px;width:auto;max-width:100%}
 .top .avlogo img{display:block;height:34px;width:auto}
-.marca .tipo{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--tenue)}
+.tipo{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--tenue)}
 .chip{align-self:flex-start;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:5px 9px;border-radius:5px;border:1px solid}
 .sc .chip{color:#d9a6ff;border-color:var(--marca)}
 .tx .chip{color:#fff;border-color:#fff}
-.resumen{font-size:15px;line-height:1.55;color:#d6d6e0;margin:0}
-ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
-li{display:flex;gap:10px;font-size:14px;line-height:1.45;color:#cfcfda}
+/* minicaptura de la pantalla inicial de cada herramienta, junto al logo */
+.mini{display:block;width:clamp(150px,17vw,230px);aspect-ratio:16/9;border-radius:9px;overflow:hidden;background:#0d0d10;border:1px solid #3a3a46;box-shadow:0 8px 22px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.04)}
+.mini img{display:block;width:100%;height:100%;object-fit:cover;object-position:top left}
+.resumen{font-size:15px;line-height:1.5;color:#d6d6e0;margin:0}
+ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 18px;align-content:start}
+li{display:flex;gap:10px;font-size:14px;line-height:1.4;color:#cfcfda;min-width:0}
 li::before{content:'';flex:none;width:8px;height:8px;margin-top:6px;border-radius:2px;background:var(--on)}
 .tx li::before{background:#fff}
-.ideal{font-size:13px;color:var(--tenue);line-height:1.5;border-top:1px solid #33333c;padding-top:12px;margin-top:auto}
+.ideal{font-size:13px;color:var(--tenue);line-height:1.5;border-top:1px solid #33333c;padding-top:12px}
 .ideal b{color:var(--txt)}
-.ir{display:flex;justify-content:center;align-items:center;gap:8px;padding:14px 18px;border-radius:999px;font-weight:800;font-size:14px;letter-spacing:.06em;text-decoration:none;text-transform:uppercase}
+.ir{display:flex;justify-content:center;align-items:center;gap:8px;padding:13px 18px;border-radius:999px;font-weight:800;font-size:14px;letter-spacing:.06em;text-decoration:none;text-transform:uppercase;text-align:center}
 .sc .ir{background:var(--marca);color:#fff;box-shadow:0 0 18px rgba(153,0,255,.45)}
 .tx .ir{background:#fff;color:#1b1b21}
 .ir:focus-visible{outline:3px solid var(--on);outline-offset:3px}
 .aviso{font-size:11px;color:#8b8b99;text-align:center;line-height:1.5}
-footer{text-align:center;color:#8b8b99;font-size:12px;margin-top:22px}
+footer{text-align:center;color:#8b8b99;font-size:12px;margin-top:18px}
 footer a{color:var(--tenue);text-decoration:none}
-@media (max-width:760px){.cartas{grid-template-columns:1fr}.carta{padding:20px}h1{margin-top:18px}}
+/* pantallas bajas de escritorio: todo a la vista, sin que el botón quede cortado */
+@media (min-width:761px) and (max-height:800px){h1{margin-top:10px;font-size:clamp(22px,2.8vw,32px)}.sub{margin-bottom:14px;font-size:14px}.carta{row-gap:10px;padding:18px 20px}.mini{width:clamp(140px,14vw,190px)}.resumen{font-size:14px}li{font-size:13.5px}.ideal{padding-top:9px}.ir{padding:11px 16px}footer{margin-top:12px}}
+@media (max-width:760px){.cartas{grid-template-columns:minmax(0,1fr);grid-template-rows:none;row-gap:16px}.carta{grid-row:auto;display:flex;flex-direction:column;padding:20px}h1{margin-top:14px}.mini{width:clamp(120px,34vw,190px)}}
+/* móvil estrecho: el logo comparte fila con la minicaptura; el tipo y el chip van debajo a todo el ancho */
+@media (max-width:440px){ul{grid-template-columns:minmax(0,1fr)}.cab{column-gap:12px;row-gap:7px}.id{display:contents}.id .logo{grid-column:1;grid-row:1;align-self:center;height:30px}.mini{grid-column:2;grid-row:1;width:120px}.tipo,.chip{grid-column:1 / -1}.chip{justify-self:start}}
 </style>
 </head>
 <body>
@@ -61,21 +70,21 @@ footer a{color:var(--tenue);text-decoration:none}
 <p class="sub" data-t="sub"></p>
 <div class="cartas">
   <section class="carta sc">
-    <div class="marca">
-      <div><img class="logo logo-sc" src="../assets/screens-logo.svg" alt="SCREENS"><div class="tipo" data-t="sc_tipo"></div></div>
+    <div class="cab">
+      <div class="id"><img class="logo logo-sc" src="../assets/screens-logo.svg" alt="SCREENS"><div class="tipo" data-t="sc_tipo"></div><span class="chip" data-t="sc_chip"></span></div>
+      <a class="mini" href="https://screens.mediaservi.com/" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img src="captura-screens.webp" alt="" width="480" height="270"></a>
     </div>
-    <span class="chip" data-t="sc_chip"></span>
     <p class="resumen" data-t="sc_res"></p>
     <ul data-l="sc_lista"></ul>
     <div class="ideal" data-t="sc_ideal"></div>
-    <a class="ir" href="https://screens.mediaservi.com/?led" target="_blank" rel="noopener" data-t="sc_ir"></a>
+    <a class="ir" href="https://screens.mediaservi.com/" target="_blank" rel="noopener" data-t="sc_ir"></a>
     <div class="aviso" data-t="sc_aviso"></div>
   </section>
   <section class="carta tx">
-    <div class="marca">
-      <div><img class="logo logo-tx" src="../assets/traulux-logo-blanco.svg" alt="TRAULUX"><div class="tipo" data-t="tx_tipo"></div></div>
+    <div class="cab">
+      <div class="id"><img class="logo logo-tx" src="../assets/traulux-logo-blanco.svg" alt="TRAULUX"><div class="tipo" data-t="tx_tipo"></div><span class="chip" data-t="tx_chip"></span></div>
+      <a class="mini" href="https://traulux.net/led/configurador" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img src="captura-traulux.webp" alt="" width="480" height="270"></a>
     </div>
-    <span class="chip" data-t="tx_chip"></span>
     <p class="resumen" data-t="tx_res"></p>
     <ul data-l="tx_lista"></ul>
     <div class="ideal" data-t="tx_ideal"></div>
@@ -88,44 +97,44 @@ footer a{color:var(--tenue);text-decoration:none}
 (function () {
   var T = {
     es: {
-      titulo: '¿Qué configurador necesitas?', sub: 'Dos herramientas para tu pantalla LED.<br>Elige según lo que quieras conseguir.',
-      sc_tipo: 'Calculadora de proyecto', sc_chip: 'Proyecto técnico completo',
-      sc_res: 'Asistente con IA que te configurará un primer boceto completo del proyecto.',
-      sc_lista: ['Petición en lenguaje natural, escrita o por voz', 'Modelo de cabinet, medidas, resolución y distancias de visión', 'Simulación a escala con figura humana y contenido de prueba', 'Electrónica de control y mediaserver recomendados', 'Esquema de conexiones, cableado de señal y eléctrico', 'PDF del proyecto en 2 páginas'],
-      sc_ideal: '<b>Ideal para</b> integradores y técnicos<br>que necesitan dimensionar todo el proyecto.',
-      sc_ir: 'Abrir SCREENS →', sc_aviso: 'Herramienta experimental con cálculo asistido por IA.<br>Verifica siempre los resultados.',
+      titulo: '¿Qué configurador necesitas?', sub: 'Dos herramientas para tus pantallas: elige según lo que quieras conseguir.',
+      sc_tipo: 'Calculadora de pantallas', sc_chip: 'Proyecto técnico completo',
+      sc_res: 'Del cálculo de la pantalla al proyecto técnico completo.',
+      sc_lista: ['Una o varias pantallas LED o de proyección, hasta salas inmersivas', 'Petición escrita, por voz o con un audio', 'Cabinets y proyectores con foto y ficha', 'Proyección con blending, brillo y contraste real', 'Simulación 3D y safety zone del público', 'Electrónica, mediaserver, cableado y PDF del proyecto'],
+      sc_ideal: '<b>Ideal para</b> integradores y técnicos que dimensionan todo el proyecto.',
+      sc_ir: 'Abrir SCREENS →', sc_aviso: 'Herramienta experimental con cálculo asistido por IA: verifica siempre los resultados.',
       tx_tipo: 'Configurador oficial', tx_chip: 'CALCULADORA DE PANTALLA LED',
-      tx_res: 'Configura la pantalla que necesita tu proyecto',
-      tx_lista: ['Instalación fija o alquiler, interior o exterior', 'Elección de modelo y pitch', 'Medidas ajustadas a cabinets completos, con ajuste por columnas', 'Ficha del cabinet y distancias de visión', 'Impresión o PDF de la configuración', 'Solicitud de presupuesto con asesoramiento y plazos'],
-      tx_ideal: '<b>Ideal para</b> pedir ofertas y plazos<br>directamente al distribuidor',
+      tx_res: 'Configura la pantalla LED que necesita tu proyecto.',
+      tx_lista: ['Instalación fija o alquiler, interior o exterior', 'Elección de modelo y pitch', 'Medidas ajustadas a cabinets completos', 'Ficha del cabinet y distancias de visión', 'Impresión o PDF de la configuración', 'Presupuesto con asesoramiento y plazos'],
+      tx_ideal: '<b>Ideal para</b> pedir ofertas y plazos directamente al distribuidor.',
       tx_ir: 'Ir al configurador TRAULUX →', tx_aviso: 'Tu asesor te ayudará con el resto de material.',
       pie: 'AVHUB · TOOLS FOR AV PEOPLE'
     },
     en: {
-      titulo: 'Which configurator do you need?', sub: 'Two tools for your LED screen.<br>Choose according to what you want to achieve.',
-      sc_tipo: 'Project calculator', sc_chip: 'Complete technical project',
-      sc_res: 'AI assistant that builds a complete first draft of your project.',
-      sc_lista: ['Natural-language request, typed or by voice', 'Cabinet model, size, resolution and viewing distances', 'Scale simulation with human figure and test content', 'Recommended control electronics and media server', 'Connection diagram, signal and power cabling', '2-page project PDF'],
-      sc_ideal: '<b>Ideal for</b> integrators and technicians<br>who need to size the whole project.',
-      sc_ir: 'Open SCREENS →', sc_aviso: 'Experimental tool with AI-assisted calculation.<br>Always verify the results.',
+      titulo: 'Which configurator do you need?', sub: 'Two tools for your screens: choose according to what you want to achieve.',
+      sc_tipo: 'Screen calculator', sc_chip: 'Complete technical project',
+      sc_res: 'From the screen calculation to the complete technical project.',
+      sc_lista: ['One or several LED or projection screens, up to immersive rooms', 'Typed, spoken or audio request', 'Cabinets and projectors with photo and data sheet', 'Projection with blending, brightness and real contrast', '3D simulation and audience safety zone', 'Electronics, media server, cabling and project PDF'],
+      sc_ideal: '<b>Ideal for</b> integrators and technicians who size the whole project.',
+      sc_ir: 'Open SCREENS →', sc_aviso: 'Experimental tool with AI-assisted calculation: always verify the results.',
       tx_tipo: 'Official configurator', tx_chip: 'LED SCREEN CALCULATOR',
-      tx_res: 'Configure the screen your project needs',
-      tx_lista: ['Fixed installation or rental, indoor or outdoor', 'Choice of model and pitch', 'Size snapped to full cabinets, with column-by-column adjustment', 'Cabinet data sheet and viewing distances', 'Print or PDF of the configuration', 'Quote request with advice and lead times'],
-      tx_ideal: '<b>Ideal for</b> requesting offers and lead times<br>directly from the distributor',
+      tx_res: 'Configure the LED screen your project needs.',
+      tx_lista: ['Fixed installation or rental, indoor or outdoor', 'Choice of model and pitch', 'Size snapped to full cabinets', 'Cabinet data sheet and viewing distances', 'Print or PDF of the configuration', 'Quote with advice and lead times'],
+      tx_ideal: '<b>Ideal for</b> requesting offers and lead times directly from the distributor.',
       tx_ir: 'Go to the TRAULUX configurator →', tx_aviso: 'Your advisor will help you with the rest of the equipment.',
       pie: 'AVHUB · TOOLS FOR AV PEOPLE'
     },
     ca: {
-      titulo: 'Quin configurador necessites?', sub: 'Dues eines per a la teva pantalla LED.<br>Tria segons el que vulguis aconseguir.',
-      sc_tipo: 'Calculadora de projecte', sc_chip: 'Projecte tècnic complet',
-      sc_res: 'Assistent amb IA que et configurarà un primer esbós complet del projecte.',
-      sc_lista: ['Petició en llenguatge natural, escrita o per veu', 'Model de cabinet, mides, resolució i distàncies de visió', 'Simulació a escala amb figura humana i contingut de prova', 'Electrònica de control i mediaserver recomanats', 'Esquema de connexions, cablejat de senyal i elèctric', 'PDF del projecte en 2 pàgines'],
-      sc_ideal: '<b>Ideal per a</b> integradors i tècnics<br>que han de dimensionar tot el projecte.',
-      sc_ir: 'Obrir SCREENS →', sc_aviso: 'Eina experimental amb càlcul assistit per IA.<br>Verifica sempre els resultats.',
+      titulo: 'Quin configurador necessites?', sub: 'Dues eines per a les teves pantalles: tria segons el que vulguis aconseguir.',
+      sc_tipo: 'Calculadora de pantalles', sc_chip: 'Projecte tècnic complet',
+      sc_res: 'Del càlcul de la pantalla al projecte tècnic complet.',
+      sc_lista: ['Una o diverses pantalles LED o de projecció, fins a sales immersives', 'Petició escrita, per veu o amb un àudio', 'Cabinets i projectors amb foto i fitxa', 'Projecció amb blending, brillantor i contrast real', 'Simulació 3D i safety zone del públic', 'Electrònica, mediaserver, cablejat i PDF del projecte'],
+      sc_ideal: '<b>Ideal per a</b> integradors i tècnics que dimensionen tot el projecte.',
+      sc_ir: 'Obrir SCREENS →', sc_aviso: 'Eina experimental amb càlcul assistit per IA: verifica sempre els resultats.',
       tx_tipo: 'Configurador oficial', tx_chip: 'CALCULADORA DE PANTALLA LED',
-      tx_res: 'Configura la pantalla que necessita el teu projecte',
-      tx_lista: ['Instal·lació fixa o lloguer, interior o exterior', 'Elecció de model i pitch', 'Mides ajustades a cabinets complets, amb ajust per columnes', 'Fitxa del cabinet i distàncies de visió', 'Impressió o PDF de la configuració', 'Sol·licitud de pressupost amb assessorament i terminis'],
-      tx_ideal: '<b>Ideal per</b> demanar ofertes i terminis<br>directament al distribuïdor',
+      tx_res: 'Configura la pantalla LED que necessita el teu projecte.',
+      tx_lista: ['Instal·lació fixa o lloguer, interior o exterior', 'Elecció de model i pitch', 'Mides ajustades a cabinets complets', 'Fitxa del cabinet i distàncies de visió', 'Impressió o PDF de la configuració', 'Pressupost amb assessorament i terminis'],
+      tx_ideal: '<b>Ideal per</b> demanar ofertes i terminis directament al distribuïdor.',
       tx_ir: 'Anar al configurador TRAULUX →', tx_aviso: 'El teu assessor t\'ajudarà amb la resta de material.',
       pie: 'AVHUB · TOOLS FOR AV PEOPLE'
     }

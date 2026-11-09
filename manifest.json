@@ -2,7 +2,7 @@
   "name": "SCREENS",
   "short_name": "SCREENS",
   "description": "Pantallas LED y proyección: una o varias pantallas y salas inmersivas",
-  "start_url": "./screens/#inicio",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#121213",
