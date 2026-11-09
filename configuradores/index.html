@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Configuradores de pantallas LED</title>
-<meta name="description" content="Elige entre SCREENCALC (proyecto técnico completo con electrónica y PDF) y el configurador oficial de TRAULUX (presupuesto con un especialista).">
-<meta property="og:title" content="Configuradores de pantallas LED">
-<meta property="og:description" content="SCREENCALC o el configurador oficial de TRAULUX: elige el que necesitas.">
+<title>Configuradores de pantallas</title>
+<meta name="description" content="Elige entre SCREENS (una o varias pantallas LED o de proyección, hasta salas inmersivas, con proyecto técnico completo y PDF) y el configurador oficial de TRAULUX (presupuesto con un especialista).">
+<meta property="og:title" content="Configuradores de pantallas">
+<meta property="og:description" content="SCREENS o el configurador oficial de TRAULUX: elige el que necesitas.">
 <meta property="og:image" content="https://screens.mediaservi.com/assets/promo/traulux-banner-728x90.png">
 <link rel="icon" href="../assets/favicon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -62,13 +62,13 @@ footer a{color:var(--tenue);text-decoration:none}
 <div class="cartas">
   <section class="carta sc">
     <div class="marca">
-      <div><img class="logo logo-sc" src="../assets/logo-verde.svg" alt="SCREENCALC"><div class="tipo" data-t="sc_tipo"></div></div>
+      <div><img class="logo logo-sc" src="../assets/screens-logo.svg" alt="SCREENS"><div class="tipo" data-t="sc_tipo"></div></div>
     </div>
     <span class="chip" data-t="sc_chip"></span>
     <p class="resumen" data-t="sc_res"></p>
     <ul data-l="sc_lista"></ul>
     <div class="ideal" data-t="sc_ideal"></div>
-    <a class="ir" href="https://screens.mediaservi.com/?led" target="_blank" rel="noopener" data-t="sc_ir"></a>
+    <a class="ir" href="https://screens.mediaservi.com/" target="_blank" rel="noopener" data-t="sc_ir"></a>
     <div class="aviso" data-t="sc_aviso"></div>
   </section>
   <section class="carta tx">
@@ -88,12 +88,12 @@ footer a{color:var(--tenue);text-decoration:none}
 (function () {
   var T = {
     es: {
-      titulo: '¿Qué configurador necesitas?', sub: 'Dos herramientas para tu pantalla LED.<br>Elige según lo que quieras conseguir.',
-      sc_tipo: 'Calculadora de proyecto', sc_chip: 'Proyecto técnico completo',
-      sc_res: 'Asistente con IA que te configurará un primer boceto completo del proyecto.',
-      sc_lista: ['Petición en lenguaje natural, escrita o por voz', 'Modelo de cabinet, medidas, resolución y distancias de visión', 'Simulación a escala con figura humana y contenido de prueba', 'Electrónica de control y mediaserver recomendados', 'Esquema de conexiones, cableado de señal y eléctrico', 'PDF del proyecto en 2 páginas'],
+      titulo: '¿Qué configurador necesitas?', sub: 'Dos herramientas para tus pantallas.<br>Elige según lo que quieras conseguir.',
+      sc_tipo: 'Calculadora de pantallas', sc_chip: 'Proyecto técnico completo',
+      sc_res: 'Una pantalla o varias, LED o de proyección, hasta salas inmersivas: un primer boceto completo del proyecto.',
+      sc_lista: ['Una pantalla o varias, LED o de proyección, hasta salas inmersivas de 4 paredes y suelo', 'Petición en lenguaje natural: escrita, por voz o con un audio', 'Cabinets y proyectores del catálogo, con foto y ficha de cada equipo', 'Proyección: blending, distancia óptica–pared, brillo y contraste real según la luz de la sala', 'Simulación 3D con figura humana, puertas, obstáculos y contenido propio', 'Safety zone: dónde puede estar el público sin hacer sombra', 'Electrónica de control, mediaserver, cables y accesorios', 'Esquema de conexiones, cableado de señal y eléctrico', 'Informe PDF del proyecto en 2 páginas'],
       sc_ideal: '<b>Ideal para</b> integradores y técnicos<br>que necesitan dimensionar todo el proyecto.',
-      sc_ir: 'Abrir SCREENCALC →', sc_aviso: 'Herramienta experimental con cálculo asistido por IA.<br>Verifica siempre los resultados.',
+      sc_ir: 'Abrir SCREENS →', sc_aviso: 'Herramienta experimental con cálculo asistido por IA.<br>Verifica siempre los resultados.',
       tx_tipo: 'Configurador oficial', tx_chip: 'CALCULADORA DE PANTALLA LED',
       tx_res: 'Configura la pantalla que necesita tu proyecto',
       tx_lista: ['Instalación fija o alquiler, interior o exterior', 'Elección de modelo y pitch', 'Medidas ajustadas a cabinets completos, con ajuste por columnas', 'Ficha del cabinet y distancias de visión', 'Impresión o PDF de la configuración', 'Solicitud de presupuesto con asesoramiento y plazos'],
@@ -102,12 +102,12 @@ footer a{color:var(--tenue);text-decoration:none}
       pie: 'AVHUB · TOOLS FOR AV PEOPLE'
     },
     en: {
-      titulo: 'Which configurator do you need?', sub: 'Two tools for your LED screen.<br>Choose according to what you want to achieve.',
-      sc_tipo: 'Project calculator', sc_chip: 'Complete technical project',
-      sc_res: 'AI assistant that builds a complete first draft of your project.',
-      sc_lista: ['Natural-language request, typed or by voice', 'Cabinet model, size, resolution and viewing distances', 'Scale simulation with human figure and test content', 'Recommended control electronics and media server', 'Connection diagram, signal and power cabling', '2-page project PDF'],
+      titulo: 'Which configurator do you need?', sub: 'Two tools for your screens.<br>Choose according to what you want to achieve.',
+      sc_tipo: 'Screen calculator', sc_chip: 'Complete technical project',
+      sc_res: 'One screen or several, LED or projection, up to immersive rooms: a complete first draft of your project.',
+      sc_lista: ['One screen or several, LED or projection, up to immersive rooms with 4 walls and floor', 'Natural-language request: typed, by voice or with an audio file', 'Catalogue cabinets and projectors, with a photo and data sheet for each unit', 'Projection: edge blending, lens-to-wall distance, brightness and real contrast for the room light', '3D simulation with human figure, doors, obstacles and your own content', 'Safety zone: where the audience can stand without casting shadows', 'Control electronics, media server, cables and accessories', 'Connection diagram, signal and power cabling', '2-page project PDF report'],
       sc_ideal: '<b>Ideal for</b> integrators and technicians<br>who need to size the whole project.',
-      sc_ir: 'Open SCREENCALC →', sc_aviso: 'Experimental tool with AI-assisted calculation.<br>Always verify the results.',
+      sc_ir: 'Open SCREENS →', sc_aviso: 'Experimental tool with AI-assisted calculation.<br>Always verify the results.',
       tx_tipo: 'Official configurator', tx_chip: 'LED SCREEN CALCULATOR',
       tx_res: 'Configure the screen your project needs',
       tx_lista: ['Fixed installation or rental, indoor or outdoor', 'Choice of model and pitch', 'Size snapped to full cabinets, with column-by-column adjustment', 'Cabinet data sheet and viewing distances', 'Print or PDF of the configuration', 'Quote request with advice and lead times'],
@@ -116,12 +116,12 @@ footer a{color:var(--tenue);text-decoration:none}
       pie: 'AVHUB · TOOLS FOR AV PEOPLE'
     },
     ca: {
-      titulo: 'Quin configurador necessites?', sub: 'Dues eines per a la teva pantalla LED.<br>Tria segons el que vulguis aconseguir.',
-      sc_tipo: 'Calculadora de projecte', sc_chip: 'Projecte tècnic complet',
-      sc_res: 'Assistent amb IA que et configurarà un primer esbós complet del projecte.',
-      sc_lista: ['Petició en llenguatge natural, escrita o per veu', 'Model de cabinet, mides, resolució i distàncies de visió', 'Simulació a escala amb figura humana i contingut de prova', 'Electrònica de control i mediaserver recomanats', 'Esquema de connexions, cablejat de senyal i elèctric', 'PDF del projecte en 2 pàgines'],
+      titulo: 'Quin configurador necessites?', sub: 'Dues eines per a les teves pantalles.<br>Tria segons el que vulguis aconseguir.',
+      sc_tipo: 'Calculadora de pantalles', sc_chip: 'Projecte tècnic complet',
+      sc_res: 'Una pantalla o diverses, LED o de projecció, fins a sales immersives: un primer esbós complet del projecte.',
+      sc_lista: ['Una pantalla o diverses, LED o de projecció, fins a sales immersives de 4 parets i terra', 'Petició en llenguatge natural: escrita, per veu o amb un àudio', 'Cabinets i projectors del catàleg, amb foto i fitxa de cada equip', 'Projecció: blending, distància òptica–paret, brillantor i contrast real segons la llum de la sala', 'Simulació 3D amb figura humana, portes, obstacles i contingut propi', 'Safety zone: on pot estar el públic sense fer ombra', 'Electrònica de control, mediaserver, cables i accessoris', 'Esquema de connexions, cablejat de senyal i elèctric', 'Informe PDF del projecte en 2 pàgines'],
       sc_ideal: '<b>Ideal per a</b> integradors i tècnics<br>que han de dimensionar tot el projecte.',
-      sc_ir: 'Obrir SCREENCALC →', sc_aviso: 'Eina experimental amb càlcul assistit per IA.<br>Verifica sempre els resultats.',
+      sc_ir: 'Obrir SCREENS →', sc_aviso: 'Eina experimental amb càlcul assistit per IA.<br>Verifica sempre els resultats.',
       tx_tipo: 'Configurador oficial', tx_chip: 'CALCULADORA DE PANTALLA LED',
       tx_res: 'Configura la pantalla que necessita el teu projecte',
       tx_lista: ['Instal·lació fixa o lloguer, interior o exterior', 'Elecció de model i pitch', 'Mides ajustades a cabinets complets, amb ajust per columnes', 'Fitxa del cabinet i distàncies de visió', 'Impressió o PDF de la configuració', 'Sol·licitud de pressupost amb assessorament i terminis'],
