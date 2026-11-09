@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v6.1.2** (estética AVHUB)
+**Versión actual: v6.2** (estética AVHUB · beta con el módulo SCREENS)
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -32,7 +32,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **PDF:** un único PDF de 2 páginas desde el icono de la cabecera, en claro sobre papel blanco y con los mismos bloques que la pantalla (tarjetas con filete de color, icono y título; datos en Share Tech Mono y textos en Inter). Cabecera en una línea: logo de SCREENCALC, web y fecha, y logo de AVHUB (con enlace) al margen derecho. Página 1: título, características de la pantalla en tarjetas, observaciones, características del cabinet en fichas y simulación ajustada al hueco de la hoja. Página 2: electrónica y mediaserver elegidos para el proyecto (en una fila), esquema de conexiones con su material, propuestas de cableado de señal y eléctrico, y el aviso de cálculo por IA. Si no cabe, el esquema se reduce para mantener las 2 páginas. Los anuncios no salen en el PDF.
 - **Información (ⓘ):** el icono de la cabecera ofrece 2 opciones: **INFORMACIÓN** (este README en una ventana al 80 % que se puede desplazar y cerrar) y **DESCARGAR APP** (uso sin conexión).
 - **Logo:** sin enlace; al pulsarlo se reinicia la app para un nuevo cálculo (igual que RESET).
-- **SCREENBOX:** el isotipo de la cabecera abre la sub-app SCREENBOX (https://screenboxsim.netlify.app/) para pantallas de una o varias paredes con proyectores y salas inmersivas.
+- **SCREENS (beta):** el isotipo de la cabecera abre `screens/`, el módulo que une SCREENCALC (LED) y SCREENBOX (proyección) para una o varias pantallas y salas inmersivas de hasta 4 paredes y suelo, con simulación 3D renderizada.
 - **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
 - **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios, las consultas internas y la documentación (DOCS), que ya no es pública.
 - **Anuncios (motor AVHUB ADS):** 3 zonas (pie del menú y pie de resultados, izquierda y derecha). Cada zona admite varios anuncios con rotación; cada anuncio tiene formato estándar (horizontal 16:9, vertical 9:16, cuadrado 1:1, retrato 4:5, hero a sangre 21:9, banner 728×90, banner móvil 320×100, rectángulo 300×250, rascacielos 160×600), texto al lado, debajo, encima o sin texto, botón opcional, carrusel de fotos, vídeos y YouTube, fechas de inicio y fin, solo móvil o solo escritorio, y contador de clics. Todo el anuncio abre su enlace en una pestaña nueva (o `ads.json` mientras el panel no responda). Además, el minibanner fijo del configurador oficial de TRAULUX va encima de la zona del menú y se activa desde el panel.
@@ -78,7 +78,26 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v6.1.2)
+## Cambios de la versión actual (v6.2 · beta)
+
+- **Nuevo módulo SCREENS** (`screens/`, desde el icono de la cabecera que llevaba a SCREENBOX). Primer paso de la fusión de SCREENCALC y SCREENBOX en una sola interfaz.
+  - **Selector inicial:** una o varias superficies, y LED o proyección. Con «una pantalla LED» se abre SCREENCALC.
+  - **Espacio:** sala inmersiva de hasta 4 paredes y suelo (ancho, fondo, alto, alto de imagen y elevación), o varias pantallas en línea o en arco (número, medidas, separación, ángulo y distancia del público).
+  - **LED:**
+    - catálogo en vivo, el mismo que SCREENCALC, y el mismo cabinet en todas las superficies;
+    - pitch automático según la distancia del público y ajuste dentro de la pared o al tamaño más cercano;
+    - en las esquinas, las paredes laterales descuentan el fondo del cabinet;
+    - resultados por superficie y totales: cabinets, lienzo de contenido en píxeles, peso, consumo, líneas Ethernet y salidas 4K.
+  - **Proyección:**
+    - motor de SCREENBOX revisado, con blending de solape mínimo elegible (15, 20 o 25 %), tiro con el zoom más corto y aviso si no cabe en la sala;
+    - resolución resultante del conjunto y brillo estimado en nits;
+    - suelo con rejilla de proyectores cenitales;
+    - en pantallas sueltas, si cubrir el alto obliga a un solape excesivo, se usa un proyector menos con recorte vertical.
+  - **Simulación 3D renderizada:** vista exterior seccionada, dentro (a la altura de los ojos) y planta; contenido de carta de ajuste, panorámica o apagado; las pantallas LED iluminan la sala; haces de luz de los proyectores; figura de 1,75 m y cotas.
+  - Estética AVHUB y textos en español, inglés y catalán.
+- **Pendiente:** el catálogo de proyectores es el heredado de SCREENBOX. Hay que pasarlo a la hoja o al panel para que salga en vivo, como el de LED.
+
+## Cambios de la versión v6.1.2
 
 - **Referencias comerciales de Charmex en las tarjetas H Series:**
   - salida H-OUTC-20XRJ45 en conexión directa;

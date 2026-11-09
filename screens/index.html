@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!--
+  SCREENS · módulo de SCREENCALC (beta): una o varias pantallas LED o de proyección, hasta salas inmersivas.
+  Reúne SCREENCALC (LED) y SCREENBOX (proyección) en una sola interfaz con simulación 3D renderizada.
+  Licencia GPL-3.0 · mediaservi.com
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SCREENS · SCREENCALC</title>
+  <meta name="description" content="SCREENS: cálculo y simulación 3D de varias pantallas LED o de proyección y salas inmersivas de hasta 4 paredes y suelo.">
+  <meta name="theme-color" content="#232325">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="estilo.css">
+  <script type="importmap">
+  { "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  } }
+  </script>
+</head>
+<body>
+  <header class="cab">
+    <div class="cab-izq">
+      <a class="hdr-btn" id="btn-sc" href="../" aria-label="SCREENCALC"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+      <div class="marca"><b>SCREEN<i>S</i></b><small>SCREENCALC + SCREENBOX</small></div>
+    </div>
+    <div class="cab-centro"><a href="https://avhub.mediaservi.com/" target="_blank" rel="noopener" aria-label="AVHUB"><img src="../assets/avhub-logo.svg" alt="AVHUB"></a></div>
+    <div class="cab-der">
+      <button type="button" class="hdr-btn" id="btn-inicio" data-accion="inicio" aria-label="Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></button>
+      <button type="button" class="hdr-btn" id="btn-idioma" data-accion="idioma">ES</button>
+    </div>
+  </header>
+  <div id="app" style="flex:1; display:flex; flex-direction:column; min-height:0"></div>
+  <footer class="pie" id="pie"></footer>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

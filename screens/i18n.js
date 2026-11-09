@@ -1,0 +1,106 @@
+// SCREENS · textos en español, inglés y catalán (nativos)
+const T = {
+  es: {
+    lema: 'Pantallas LED y proyección para una o varias superficies, hasta salas inmersivas de 4 paredes y suelo.',
+    titulo: '¿Qué vas a calcular?', cuantas: 'Superficies', tecno: 'Tecnología',
+    una: 'Una pantalla', unaD: 'Una sola superficie', varias: 'Varias · sala inmersiva', variasD: 'Dos o más pantallas, o una sala de hasta 4 paredes y suelo',
+    led: 'LED', ledD: 'Cabinets del catálogo en vivo', proy: 'Proyección', proyD: 'Proyectores con blending (motor SCREENBOX)',
+    empezar: 'Empezar', irSc: 'Abrir SCREENCALC', inicio: 'Inicio', volverSc: 'Volver a SCREENCALC', idioma: 'Idioma',
+    espacio: 'Espacio', sala: 'Sala inmersiva', pantallas: 'Pantallas', ancho: 'Ancho', fondo: 'Fondo', alto: 'Alto',
+    superficies: 'Superficies', frontal: 'Frontal', izquierda: 'Izquierda', derecha: 'Derecha', trasera: 'Trasera', suelo: 'Suelo',
+    altoPant: 'Alto de imagen', elev: 'Elevación', altoAyuda: 'Alto de imagen 0 = toda la altura de la pared.',
+    num: 'Número', disp: 'Disposición', linea: 'En línea', arco: 'En arco', sep: 'Separación', angulo: 'Ángulo', dist: 'Distancia del público',
+    pantalla: 'Pantalla', restablecer: 'Restablecer',
+    ledMod: 'Pantalla LED', uso: 'Uso', modelo: 'Modelo de cabinet', auto: 'AUTO', ajuste: 'Ajuste a la pared', dentro: 'Dentro', cercano: 'Más cercano',
+    autoAyudaLed: 'AUTO elige el mayor pitch cuya distancia mínima de visión (1 m por mm) cabe en la distancia del público ({d} m). Mismo cabinet en todas las superficies.',
+    ajusteAyuda: 'Dentro: los cabinets nunca sobresalen de la pared. Más cercano: el tamaño más próximo al pedido.',
+    proyMod: 'Proyección', proyector: 'Proyector', solape: 'Solape mínimo', proySuelo: 'Proyector del suelo',
+    autoAyudaProy: 'AUTO elige el proyector que cubre todas las paredes con menos equipos, cabiendo en la sala y con más brillo.',
+    datosProy: 'Catálogo de proyectores heredado de SCREENBOX: pendiente de pasar a la hoja para que salga en vivo.',
+    resultados: 'Resultados', cabinets: 'Cabinets', lienzo: 'Lienzo de contenido', peso: 'Peso', consumo: 'Consumo', lineas: 'Líneas Ethernet', salidas: 'Salidas 4K',
+    proyectores: 'Proyectores', brillo: 'Brillo estimado', lumenes: 'Lúmenes', tiro: 'Tiro', supCol: 'Superficie', medida: 'Medida', resol: 'Resolución',
+    cabCol: 'Cabinets', pesoCol: 'Peso', potCol: 'Potencia', linCol: 'Líneas', proyCol: 'Proyectores', solCol: 'Solape', tiroCol: 'Distancia de tiro', brCol: 'Brillo',
+    exterior: 'Exterior', interior: 'Dentro', planta: 'Planta', carta: 'Carta', panorama: 'Panorámica', apagado: 'Apagado', etiquetas: 'Rótulos',
+    cargando: 'Cargando el catálogo de cabinets…', sinCat: 'No se ha podido cargar el catálogo de cabinets. Revisa la conexión y vuelve a intentarlo.',
+    sinWebgl: 'Este navegador no puede mostrar la simulación 3D (WebGL desactivado).',
+    fuera: 'El tiro no cabe en la sala', limite: 'Imagen limitada por el tamaño máximo del proyector', solapeAlto: 'Solape excesivo',
+    nada: 'Activa al menos una superficie.', p: 'P',
+    lienzoAyuda: 'Las paredes en orden izquierda → frontal → derecha → trasera, a la misma altura.',
+    brilloAyuda: 'Estimado en pared mate de ganancia 1; una pantalla LED interior da 600–1.000 nits.',
+    vista3d: 'Arrastra para girar · rueda o pellizco para acercar', descarga: 'Imagen',
+    pie: 'es un proyecto hecho con', beta: 'beta',
+    sueloLed: 'Suelo LED: necesita cabinets de suelo específicos; consúltalo aparte.', recorte: 'Recorte vertical'
+  },
+  en: {
+    lema: 'LED screens and projection for one or more surfaces, up to immersive rooms with 4 walls and floor.',
+    titulo: 'What are you calculating?', cuantas: 'Surfaces', tecno: 'Technology',
+    una: 'One screen', unaD: 'A single surface', varias: 'Several · immersive room', variasD: 'Two or more screens, or a room with up to 4 walls and floor',
+    led: 'LED', ledD: 'Cabinets from the live catalogue', proy: 'Projection', proyD: 'Projectors with edge blending (SCREENBOX engine)',
+    empezar: 'Start', irSc: 'Open SCREENCALC', inicio: 'Home', volverSc: 'Back to SCREENCALC', idioma: 'Language',
+    espacio: 'Space', sala: 'Immersive room', pantallas: 'Screens', ancho: 'Width', fondo: 'Depth', alto: 'Height',
+    superficies: 'Surfaces', frontal: 'Front', izquierda: 'Left', derecha: 'Right', trasera: 'Back', suelo: 'Floor',
+    altoPant: 'Image height', elev: 'Elevation', altoAyuda: 'Image height 0 = full wall height.',
+    num: 'Number', disp: 'Layout', linea: 'In line', arco: 'In arc', sep: 'Gap', angulo: 'Angle', dist: 'Audience distance',
+    pantalla: 'Screen', restablecer: 'Reset',
+    ledMod: 'LED screen', uso: 'Use', modelo: 'Cabinet model', auto: 'AUTO', ajuste: 'Fit to wall', dentro: 'Inside', cercano: 'Nearest',
+    autoAyudaLed: 'AUTO picks the largest pitch whose minimum viewing distance (1 m per mm) fits the audience distance ({d} m). Same cabinet on every surface.',
+    ajusteAyuda: 'Inside: cabinets never exceed the wall. Nearest: the size closest to the one requested.',
+    proyMod: 'Projection', proyector: 'Projector', solape: 'Minimum overlap', proySuelo: 'Floor projector',
+    autoAyudaProy: 'AUTO picks the projector that covers every wall with the fewest units, fits the room and gives the most brightness.',
+    datosProy: 'Projector catalogue inherited from SCREENBOX: to be moved to the sheet so it loads live.',
+    resultados: 'Results', cabinets: 'Cabinets', lienzo: 'Content canvas', peso: 'Weight', consumo: 'Power', lineas: 'Ethernet lines', salidas: '4K outputs',
+    proyectores: 'Projectors', brillo: 'Estimated brightness', lumenes: 'Lumens', tiro: 'Throw', supCol: 'Surface', medida: 'Size', resol: 'Resolution',
+    cabCol: 'Cabinets', pesoCol: 'Weight', potCol: 'Power', linCol: 'Lines', proyCol: 'Projectors', solCol: 'Overlap', tiroCol: 'Throw distance', brCol: 'Brightness',
+    exterior: 'Outside', interior: 'Inside', planta: 'Plan', carta: 'Test card', panorama: 'Panorama', apagado: 'Off', etiquetas: 'Labels',
+    cargando: 'Loading the cabinet catalogue…', sinCat: 'The cabinet catalogue could not be loaded. Check the connection and try again.',
+    sinWebgl: 'This browser cannot show the 3D simulation (WebGL disabled).',
+    fuera: 'The throw does not fit in the room', limite: 'Image limited by the projector maximum size', solapeAlto: 'Overlap too large',
+    nada: 'Turn on at least one surface.', p: 'P',
+    lienzoAyuda: 'Walls in order left → front → right → back, at the same height.',
+    brilloAyuda: 'Estimated on a matte gain 1 wall; an indoor LED screen gives 600–1,000 nits.',
+    vista3d: 'Drag to rotate · wheel or pinch to zoom', descarga: 'Image',
+    pie: 'is a project made with', beta: 'beta',
+    sueloLed: 'LED floor: needs specific floor cabinets; quote it separately.', recorte: 'Vertical crop'
+  },
+  ca: {
+    lema: 'Pantalles LED i projecció per a una o diverses superfícies, fins a sales immersives de 4 parets i terra.',
+    titulo: 'Què calcularàs?', cuantas: 'Superfícies', tecno: 'Tecnologia',
+    una: 'Una pantalla', unaD: 'Una sola superfície', varias: 'Diverses · sala immersiva', variasD: 'Dues o més pantalles, o una sala de fins a 4 parets i terra',
+    led: 'LED', ledD: 'Cabinets del catàleg en viu', proy: 'Projecció', proyD: 'Projectors amb blending (motor SCREENBOX)',
+    empezar: 'Començar', irSc: 'Obrir SCREENCALC', inicio: 'Inici', volverSc: 'Tornar a SCREENCALC', idioma: 'Idioma',
+    espacio: 'Espai', sala: 'Sala immersiva', pantallas: 'Pantalles', ancho: 'Amplada', fondo: 'Fons', alto: 'Alçada',
+    superficies: 'Superfícies', frontal: 'Frontal', izquierda: 'Esquerra', derecha: 'Dreta', trasera: 'Posterior', suelo: 'Terra',
+    altoPant: 'Alçada d\'imatge', elev: 'Elevació', altoAyuda: 'Alçada d\'imatge 0 = tota l\'alçada de la paret.',
+    num: 'Nombre', disp: 'Disposició', linea: 'En línia', arco: 'En arc', sep: 'Separació', angulo: 'Angle', dist: 'Distància del públic',
+    pantalla: 'Pantalla', restablecer: 'Restablir',
+    ledMod: 'Pantalla LED', uso: 'Ús', modelo: 'Model de cabinet', auto: 'AUTO', ajuste: 'Ajust a la paret', dentro: 'Dins', cercano: 'Més proper',
+    autoAyudaLed: 'AUTO tria el pitch més gran la distància mínima de visió del qual (1 m per mm) cap en la distància del públic ({d} m). Mateix cabinet a totes les superfícies.',
+    ajusteAyuda: 'Dins: els cabinets mai no sobresurten de la paret. Més proper: la mida més propera a la demanada.',
+    proyMod: 'Projecció', proyector: 'Projector', solape: 'Solapament mínim', proySuelo: 'Projector del terra',
+    autoAyudaProy: 'AUTO tria el projector que cobreix totes les parets amb menys equips, que cap a la sala i amb més brillantor.',
+    datosProy: 'Catàleg de projectors heretat de SCREENBOX: pendent de passar-lo al full perquè surti en viu.',
+    resultados: 'Resultats', cabinets: 'Cabinets', lienzo: 'Llenç de contingut', peso: 'Pes', consumo: 'Consum', lineas: 'Línies Ethernet', salidas: 'Sortides 4K',
+    proyectores: 'Projectors', brillo: 'Brillantor estimada', lumenes: 'Lúmens', tiro: 'Tir', supCol: 'Superfície', medida: 'Mida', resol: 'Resolució',
+    cabCol: 'Cabinets', pesoCol: 'Pes', potCol: 'Potència', linCol: 'Línies', proyCol: 'Projectors', solCol: 'Solapament', tiroCol: 'Distància de tir', brCol: 'Brillantor',
+    exterior: 'Exterior', interior: 'Dins', planta: 'Planta', carta: 'Carta', panorama: 'Panoràmica', apagado: 'Apagat', etiquetas: 'Rètols',
+    cargando: 'Carregant el catàleg de cabinets…', sinCat: 'No s\'ha pogut carregar el catàleg de cabinets. Revisa la connexió i torna-ho a provar.',
+    sinWebgl: 'Aquest navegador no pot mostrar la simulació 3D (WebGL desactivat).',
+    fuera: 'El tir no cap a la sala', limite: 'Imatge limitada per la mida màxima del projector', solapeAlto: 'Solapament excessiu',
+    nada: 'Activa almenys una superfície.', p: 'P',
+    lienzoAyuda: 'Les parets en ordre esquerra → frontal → dreta → posterior, a la mateixa alçada.',
+    brilloAyuda: 'Estimada en paret mat de guany 1; una pantalla LED interior dona 600–1.000 nits.',
+    vista3d: 'Arrossega per girar · roda o pessic per apropar', descarga: 'Imatge',
+    pie: 'és un projecte fet amb', beta: 'beta',
+    sueloLed: 'Terra LED: necessita cabinets de terra específics; consulta-ho a part.', recorte: 'Retall vertical'
+  }
+};
+export const IDIOMAS = ['es', 'en', 'ca'];
+let actual = 'es';
+export function idiomaInicial() {
+  let l = null; try { l = localStorage.getItem('screens_idioma') || localStorage.getItem('screencalc_idioma'); } catch (e) {}
+  if (!l) { const n = (navigator.language || 'es').slice(0, 2).toLowerCase(); l = n === 'ca' ? 'ca' : n === 'en' ? 'en' : 'es'; }
+  actual = IDIOMAS.includes(l) ? l : 'es'; return actual;
+}
+export function fijarIdioma(l) { actual = IDIOMAS.includes(l) ? l : 'es'; try { localStorage.setItem('screens_idioma', actual); } catch (e) {} document.documentElement.lang = actual; }
+export const idioma = () => actual;
+export function t(k, vars) { let s = (T[actual] && T[actual][k]) || T.es[k] || k; if (vars) Object.keys(vars).forEach(v => { s = s.replace('{' + v + '}', vars[v]); }); return s; }
