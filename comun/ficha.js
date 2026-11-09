@@ -2,7 +2,7 @@
   SCREENS · ficha de equipo común (selector de material de todas las pantallas de cálculo)
   Una sola pieza para cabinets LED, proyectores, electrónicas y mediaservers: foto del fabricante,
   marca y modelo, especificaciones clave, piezas (equipos montados por módulos), avisos y enlace.
-  Se usa con import en SCREENS y como script clásico en SCREENCALC (globalThis.SC_FICHA).
+  Se usa con import en SCREENS y como script clásico en led.html (globalThis.SC_FICHA).
   Licencia GPL-3.0 · mediaservi.com
 */
 (function () {

@@ -1,5 +1,5 @@
-// SCREENS · geometría del espacio y cálculo LED por superficie (misma lógica que SCREENCALC).
-export const PX_PUERTO = 650000;            // píxeles por puerto Ethernet (8 bit, 60 Hz), igual que SCREENCALC
+// SCREENS · geometría del espacio y cálculo LED por superficie (misma lógica que led.html).
+export const PX_PUERTO = 650000;            // píxeles por puerto Ethernet (8 bit, 60 Hz), igual que led.html
 export const PX_SALIDA_4K = 3840 * 2160;   // una salida 4K UHD de mediaserver
 
 // Superficies del espacio. Sala centrada en el origen, suelo en y = 0; el público mira hacia la pared frontal (−z).

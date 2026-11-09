@@ -238,11 +238,11 @@ const T = {
 export const IDIOMAS = ['es', 'en', 'ca'];
 let actual = 'es';
 export function idiomaInicial() {
-  // idioma común con SCREENCALC (misma clave); SCREENS se ofrece en es / en / ca
-  let l = null; try { l = localStorage.getItem('screencalc_lang') || localStorage.getItem('screens_idioma'); } catch (e) {}
+  // idioma común con el cálculo de una pantalla LED (misma clave); SCREENS se ofrece en es / en / ca
+  let l = null; try { l = localStorage.getItem('screens_idioma'); } catch (e) {}
   if (!l) { const n = (navigator.language || 'es').slice(0, 2).toLowerCase(); l = n === 'ca' ? 'ca' : n === 'en' ? 'en' : 'es'; }
   actual = IDIOMAS.includes(l) ? l : 'es'; return actual;
 }
-export function fijarIdioma(l, recordar = true) { actual = IDIOMAS.includes(l) ? l : 'es'; if (recordar) try { localStorage.setItem('screencalc_lang', actual); localStorage.setItem('screens_idioma', actual); } catch (e) {} document.documentElement.lang = actual; }
+export function fijarIdioma(l, recordar = true) { actual = IDIOMAS.includes(l) ? l : 'es'; if (recordar) try { localStorage.setItem('screens_idioma', actual); } catch (e) {} document.documentElement.lang = actual; }
 export const idioma = () => actual;
 export function t(k, vars) { let s = (T[actual] && T[actual][k]) || T.es[k] || k; if (vars) Object.keys(vars).forEach(v => { s = s.split('{' + v + '}').join(vars[v]); }); return s; }

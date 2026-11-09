@@ -8,7 +8,7 @@ import '../comun/voz.js';
 import { interpretar } from './peticion.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v7.1';
+const VERSION = 'v7.2';
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   cantidad: 'varias', tecnologia: 'led',
@@ -115,7 +115,7 @@ function costeInstalacion(filas, S) {
 // puertas (solo en sala, en paredes) y obstáculos del espacio
 const puertasDe = (esp) => (esp.tipo === 'sala' ? (esp.obst || []).filter(o => o.tipo === 'puerta') : []);
 const obstaculosDe = (esp) => (esp.obst || []).filter(o => o.tipo === 'obstaculo').map(o => obstaculoMundo(o, esp));
-// Electrónica de control (LED) y mediaserver (LED y proyección) con el motor común de SCREENCALC
+// Electrónica de control (LED) y mediaserver (LED y proyección) con el motor común (comun/electronica.js)
 function electronica(c) {
   const e = E.elec, out = { procesadores: [], proc: null, medias: [], media: null, need: 0 };
   if (E.tecnologia === 'led' && c.tot) {

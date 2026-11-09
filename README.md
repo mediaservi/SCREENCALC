@@ -15,9 +15,9 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v7.1** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v7.2** (estética AVHUB · consola fija de SCREENS)
 
-Web principal: **https://screens.mediaservi.com** (sustituye a screencalc.mediaservi.com y screenbox.mediaservi.com, que dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
+Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
 ## Para qué sirve
 
@@ -88,7 +88,14 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v7.1)
+## Cambios de la versión actual (v7.2)
+
+- **El nombre anterior de la app desaparece de todas partes:** textos, este README (el que abre ⓘ), comentarios del código, nombres internos y el service worker.
+- **Preferencias guardadas:** el idioma, el tema, la pared y las fuentes de prueba pasan solas, una sola vez, a las claves nuevas (`screens_*`).
+- **Uso sin conexión:** la copia guardada del service worker cambia de nombre y se borran las de versiones anteriores.
+- **AVHUB ADMIN v1.3:** solo cambian textos.
+
+## Cambios de la versión v7.1
 
 - **Casillas numéricas con flechas ▲▼** en la consola de SCREENS, como en el cálculo de una pantalla LED. Se aplican a todas:
   - medidas de la sala y de las pantallas;
@@ -141,7 +148,7 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 ## Cambios de la versión v6.8
 
-- **Todo es SCREENS:** desaparecen el nombre y el logo de SCREENCALC.
+- **Todo es SCREENS:** desaparecen el nombre y el logo anteriores.
   - SCREENS es la calculadora de pantallas: una pantalla o varias / sala inmersiva, LED o proyección.
   - El logo SCREENS con el isotipo del cubo va en las dos opciones: cabecera, título, pie, PDF (en negro), textos de ayuda, configuradores y app instalable.
   - El repositorio pasa a llamarse **SCREENS**.
@@ -187,10 +194,10 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 - **Ficha de equipo común** para todas las pantallas de cálculo (`comun/ficha.js` y `comun/ficha.css`):
   - foto del fabricante, marca y modelo, especificaciones en rejilla, piezas de los equipos montados por módulos, stock y enlace a la ficha;
-  - en SCREENCALC sustituye al resumen del cabinet;
+  - en el cálculo de una pantalla LED sustituye al resumen del cabinet;
   - en SCREENS se usa para el cabinet, el proyector, la electrónica y el mediaserver;
   - si no hay foto, sale un dibujo del tipo de equipo.
-- **Motor de electrónica común** (`comun/electronica.js`): el mismo cálculo en SCREENCALC y en SCREENS. Las líneas salen en plural («24 líneas»).
+- **Motor de electrónica común** (`comun/electronica.js`): el mismo cálculo para una pantalla LED y para varias. Las líneas salen en plural («24 líneas»).
 - **SCREENS · electrónica de control LED** para todas las superficies a la vez:
   - con o sin backup, con o sin escalador, RJ45 directo o rack con fibra;
   - propuestas del catálogo, con H Series montada por piezas;
@@ -211,24 +218,24 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 ## Cambios de la versión v6.4
 
-- **SCREENS es la página de inicio.** La web principal pasa a **screens.mediaservi.com**; screencalc.mediaservi.com y screenbox.mediaservi.com dejan de usarse.
-  - Al entrar se elige una o varias superficies y LED o proyección. «Una + LED» abre SCREENCALC; el resto, el módulo SCREENS.
-  - Enlace directo a SCREENCALC: `?led`.
-- **Cabecera de SCREENCALC:** el botón que llevaba a SCREENS pasa a ser **INICIO** (casa) y vuelve al selector.
-- **Logo SCREENS:** isotipo CUBO (el cubo de SCREENBOX montado con los paneles de SCREENCALC) y el rótulo de SCREENCALC con las dos S grandes.
+- **SCREENS es la página de inicio.** La web principal pasa a **screens.mediaservi.com**; las direcciones anteriores dejan de usarse.
+  - Al entrar se elige una o varias superficies y LED o proyección. «Una + LED» abre el cálculo de una pantalla LED; el resto, el módulo de varias pantallas.
+  - Enlace directo al cálculo de una pantalla LED: `?led`.
+- **Cabecera del cálculo de una pantalla LED:** el botón que llevaba a SCREENS pasa a ser **INICIO** (casa) y vuelve al selector.
+- **Logo SCREENS:** isotipo CUBO (un cubo montado con paneles LED) y el rótulo con las dos S grandes.
   - Va en la cabecera de SCREENS, que al pulsarlo vuelve al inicio.
   - Icono propio de la página y de la app instalable (SCREENS).
 - **Navegación:** el botón Atrás del navegador alterna entre el selector y el cálculo, y al recargar se queda donde estabas. SCREENS también funciona sin conexión con el mismo service worker.
-- **Idioma común:** el idioma elegido se comparte entre SCREENCALC y SCREENS.
+- **Idioma común:** el idioma elegido se comparte entre el cálculo de una pantalla y el de varias.
 - **Textos y enlaces:** sin referencias a SCREENBOX en la interfaz, y todos los enlaces, el pie y el PDF apuntan a screens.mediaservi.com.
 
 ## Cambios de la versión v6.3
 
-- **Fusión de SCREENCALC y SCREENBOX: nuevo módulo SCREENS** (`screens/`, desde el icono de la cabecera que llevaba a SCREENBOX). Primer paso de la fusión de SCREENCALC y SCREENBOX en una sola interfaz.
-  - **Selector inicial:** una o varias superficies, y LED o proyección. Con «una pantalla LED» se abre SCREENCALC.
+- **Fusión de las calculadoras de pantallas: nuevo módulo SCREENS** (`screens/`, desde un icono de la cabecera). Primer paso para unir el cálculo de LED y el de proyección en una sola interfaz.
+  - **Selector inicial:** una o varias superficies, y LED o proyección. Con «una pantalla LED» se abre su cálculo.
   - **Espacio:** sala inmersiva de hasta 4 paredes y suelo (ancho, fondo, alto, alto de imagen y elevación), o varias pantallas en línea o en arco (número, medidas, separación, ángulo y distancia del público).
   - **LED:**
-    - catálogo en vivo, el mismo que SCREENCALC, y el mismo cabinet en todas las superficies;
+    - catálogo en vivo, el mismo que el cálculo de una pantalla LED, y el mismo cabinet en todas las superficies;
     - pitch automático según la distancia del público y ajuste dentro de la pared o al tamaño más cercano;
     - en las esquinas, las paredes laterales descuentan el fondo del cabinet;
     - resultados por superficie y totales: cabinets, lienzo de contenido en píxeles, peso, consumo, líneas Ethernet y salidas 4K.
@@ -267,7 +274,7 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 ## Cambios de la versión v5.3 · propuesta
 
-- **PDF con la estética AVHUB sobre papel blanco:** cabecera en una sola línea (logo SCREENCALC, web y fecha, logo AVHUB grande al margen derecho); las características de la pantalla salen en las mismas tarjetas que en pantalla (filete de color, icono y título) con los datos en Share Tech Mono y los textos en Inter, más grandes; cabeceras de bloque en tinte violeta claro con texto violeta oscuro, legibles y sin gastar tinta.
+- **PDF con la estética AVHUB sobre papel blanco:** cabecera en una sola línea (logo, web y fecha, logo AVHUB grande al margen derecho); las características de la pantalla salen en las mismas tarjetas que en pantalla (filete de color, icono y título) con los datos en Share Tech Mono y los textos en Inter, más grandes; cabeceras de bloque en tinte violeta claro con texto violeta oscuro, legibles y sin gastar tinta.
 - **Cabinet en fichas de dato:** cada característica con su etiqueta encima del valor, sin huecos entre ambos.
 - **Simulación a medida de la hoja:** se escala para ocupar exactamente el hueco que queda en la página 1, sin recortes; cotas recuadradas en azul como en pantalla.
 - **Página 2:** electrónica y mediaserver elegidos, esquema, material y cableado con la misma tipografía y bloques; el aviso «Desliza…» ya no se imprime; pie en dos líneas (aviso y lema).
@@ -362,8 +369,8 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 - **Minibanner del configurador oficial de TRAULUX:** fijo en la posición del AD1 (pie del menú), siempre arriba; si hay otro AD1 activo, va debajo. Fondo negro, logo de la X de TRAULUX y el texto «PRUEBA EL NUEVO CONFIGURADOR OFICIAL DE TRAULUX», sin indicador de publicidad. Se activa o desactiva desde el panel de administrador (tarjeta «TRAULUX · configurador oficial»). Como el AD1, no aparece en móvil.
 - **Cabecera:** la X de TRAULUX sustituye al icono de descarga y abre la página de configuradores. «Descargar app» sigue en Información.
-- **Información:** empieza con la nota de que SCREENCALC se basa en las especificaciones de los productos LED de TRAULUX, el enlace a su configurador oficial y que SCREENCALC es una alternativa que calcula el proyecto completo.
-- **Página de configuradores:** logos reales de AVHUB, SCREENCALC y TRAULUX, y textos nuevos.
+- **Información:** empieza con la nota de que la app se basa en las especificaciones de los productos LED de TRAULUX, el enlace a su configurador oficial y que la app es una alternativa que calcula el proyecto completo.
+- **Página de configuradores:** logos reales de AVHUB, de la app y de TRAULUX, y textos nuevos.
 
 ## Cambios de la v4.5
 
@@ -418,7 +425,7 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - **Petición con varios pixel pitch:** se reconocen todos los pitch del texto; se usa el primero y se avisa para poder elegir otro.
 - **Anuncios y administrador:** puntos de inserción activables y acceso de administrador en el pie.
 - **Avisos:** el aviso «APP experimental…» pasa del pie de la pantalla a este README (en el PDF se mantiene).
-- **URL principal:** screencalc.mediaservi.com, con las copias de GitHub Pages y Netlify.
+- **URL principal:** la web propia de la app, con copias en GitHub Pages y Netlify.
 
 ## Cambios de la v4.24
 

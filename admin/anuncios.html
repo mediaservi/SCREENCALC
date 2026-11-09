@@ -8,7 +8,7 @@
 <title>AVHUB · Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-/* ===== AVHUB ADS · motor de anuncios común (SCREENCALC v4.5 y gestor) ===== */
+/* ===== AVHUB ADS · motor de anuncios común (SCREENS y gestor de anuncios) ===== */
 .avad{position:relative;margin:10px 0;border-radius:10px;overflow:hidden;font-family:Inter,system-ui,sans-serif;font-size:13px;line-height:1.35;background:#fff;border:1px dashed #cbd5e1;color:#0f172a}
 .avad *{box-sizing:border-box}
 .avad-tag{position:absolute;top:3px;right:8px;z-index:4;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;pointer-events:none}
@@ -264,7 +264,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
 <header>
   <div class="marca">
     <svg viewBox="0 0 60 48" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9900ff"/><stop offset=".55" stop-color="#00b4ff"/><stop offset="1" stop-color="#00ff04"/></linearGradient></defs><path d="M8 44 L28 8 Q30 4 32 8 L54 44 Z" fill="none" stroke="url(#g)" stroke-width="7" stroke-linejoin="round"/><path d="M26 22 L38 30 L26 38 Z" fill="#9900ff"/></svg>
-    <div>AVHUB · ADMIN <span style="font-size:10px;color:var(--tenue)">v1.2</span><small>ANUNCIOS · FIRMAS · NEWSLETTER · CATÁLOGO</small></div>
+    <div>AVHUB · ADMIN <span style="font-size:10px;color:var(--tenue)">v1.3</span><small>ANUNCIOS · FIRMAS · NEWSLETTER · CATÁLOGO</small></div>
   </div>
   <span id="modo" class="modo"></span>
   <div class="tabs" id="tabs"><button data-s="ads" class="on">ANUNCIOS</button><button data-s="firmas">FIRMAS</button><button data-s="news">NEWSLETTER</button><button data-s="catalogo">CATÁLOGO</button></div>
@@ -292,7 +292,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
   <main id="secCatalogo" class="sec oculto"></main>
 </div>
 <script>
-/* ===== AVHUB ADS · motor de anuncios común (SCREENCALC v4.5 y gestor de anuncios) =====
+/* ===== AVHUB ADS · motor de anuncios común (SCREENS y gestor de anuncios) =====
    Datos v2: { version:2, zonas:{ <id>:{ rotacion, segundos, anuncios:[anuncio…] } }, borradores:[anuncio…] }
    anuncio: { id, nombre, activo, formato, textoPos, texto, boton, url, medios:[url…], medioSeg, ajuste,
               desde, hasta, dispositivo }
@@ -1385,7 +1385,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     var c3 = el('button', 'bt', 'Descargar .html'); c3.onclick = function () { descargar('firma-' + f.nombre, '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>' + firmaHTML(f) + '</body></html>'); };
     bts.appendChild(c1); bts.appendChild(c2); bts.appendChild(c3); cu.appendChild(bts);
     cu.appendChild(el('div', 'nota', 'Gmail: Configuración → Ver todos los ajustes → Firma → pega.<br>Outlook: Configuración → Correo → Firmas → pega.<br>Apple Mail: Ajustes → Firmas → pega y desmarca «usar tipo de letra por omisión».' +
-      '<br><b>Imágenes:</b> van enlazadas a screens.mediaservi.com (PNG por https), sin adjuntos, para que no se rompan al responder.<br>Si tu firma antigua enlazaba a screencalc.mediaservi.com, sustitúyela por esta.' +
+      '<br><b>Imágenes:</b> van enlazadas a screens.mediaservi.com (PNG por https), sin adjuntos, para que no se rompan al responder.<br>Si en tu firma antigua salen imágenes rotas, sustitúyela por esta.' +
       (GAS ? '' : '<br><b>Modo demo:</b> las fotos subidas aquí solo se ven en este navegador;<br>usa enlaces o el panel real para que se vean en el correo.')));
     caja.appendChild(cu);
   }

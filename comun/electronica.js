@@ -1,8 +1,8 @@
 /*
-  SCREENS · motor común de electrónica de control LED (SCREENCALC y SCREENS)
+  SCREENS · motor común de electrónica de control LED (una pantalla LED y varias)
   Procesadores, tarjetas, conversores y mediaservers con especificaciones de fabricante,
   y el cálculo de las configuraciones adecuadas para un proyecto (líneas Ethernet y píxeles).
-  Se carga como script clásico en SCREENCALC y con import en SCREENS: expone globalThis.SC_ELEC.
+  Se carga como script clásico en led.html y con import en la consola de SCREENS: expone globalThis.SC_ELEC.
   Licencia GPL-3.0 · mediaservi.com
 */
 (function () {

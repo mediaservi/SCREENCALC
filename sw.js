@@ -1,11 +1,12 @@
-/* SCREENCALC · service worker: uso sin conexión.
+/* SCREENS · service worker: uso sin conexión.
    Estrategia: red primero (datos siempre actualizados) y, si no hay red, la copia guardada
    (aplicación, librerías e imágenes). */
-const CACHE = 'screencalc-offline-v1';
+const CACHE = 'screens-offline-v1';
 const EXCLUIR = /youtube|googlevideo|ytimg|google-analytics|script\.google\.com|docs\.google\.com|googleusercontent|google\.com/;
 
 self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+// al activarse borra las copias guardadas con otro nombre (versiones anteriores)
+self.addEventListener('activate', (e) => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())));
 
 self.addEventListener('fetch', (e) => {
   const req = e.request;

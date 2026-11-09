@@ -1,4 +1,4 @@
-// SCREENS · catálogo LED en vivo (mismo origen y misma caché cifrada que SCREENCALC).
+// SCREENS · catálogo LED en vivo (mismo origen y misma caché cifrada que led.html).
 // Nunca usa datos de muestra: si no hay conexión ni caché, devuelve una lista vacía y la interfaz lo avisa.
 const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbwkc12y4LODbFe-kQidnR2MbbA6cbW1WbhU3UiqmDmshx-ncAdGYrFRy8PNjm9Wg6Mx3w/exec';
 const CLAVE = 'sc_m1';
@@ -9,7 +9,7 @@ const deB64 = (t) => Uint8Array.from(atob(t), c => c.charCodeAt(0));
 const getKey = async () => {
   const enc = new TextEncoder();
   const base = await crypto.subtle.importKey('raw', enc.encode(String.fromCharCode(83, 67, 45, 99, 97, 116, 45, 107, 101, 121, 45, 52, 50)), 'PBKDF2', false, ['deriveKey']);
-  return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: enc.encode('screencalc'), iterations: 20000, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: enc.encode('screens'), iterations: 20000, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
 };
 async function guardar(data) {
   try {
@@ -95,7 +95,7 @@ export async function cargarCatalogo(alActualizar) {
   else if (!cache || !cache.length) alActualizar([], 'error');
 }
 export const enStock = (m) => String(m.disp || m.stock || '').toUpperCase() === 'STOCK' || String(m.stock || '').toUpperCase() === 'SI';
-// Prioridad a igual pitch (misma regla que SCREENCALC): prioridad manual, stock y familia preferente
+// Prioridad a igual pitch (misma regla que led.html): prioridad manual, stock y familia preferente
 export function ordenar(lista) {
   const fam = (m) => String(m.family || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const rank = (m) => {
