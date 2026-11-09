@@ -6,9 +6,10 @@ import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
 import { interpretar } from './peticion.js';
+import { vistasTecnicas, activarVistas } from './vistas.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v8.2';
+const VERSION = 'v8.3';
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   cantidad: 'varias', tecnologia: 'led',
@@ -19,7 +20,7 @@ const DEF = () => ({
   led: { clase: 'INSTALL', tipo: 'INDOOR', crm: '', ajuste: 'dentro' },
   proy: { tipo: 'pared', cuerpo: '', optica: '', idSuelo: '', solape: 15, lux: 140, ganancia: 1, dist: 0, orient: 'auto', montaje: 'auto', altura: 0, oos: false },
   elec: { backup: false, escalador: 'con', conexion: 'directo', sel: '', marca: 'todos', dante: false, selMedia: '' },
-  vista: { contenido: 'carta', etiquetas: true, camara: 'exterior', zona: true, modo: 'continuo' }
+  vista: { contenido: 'carta', etiquetas: true, camara: 'exterior', zona: true, modo: 'continuo', tec: 'todas', vtSup: 0 }
 });
 let E = DEF();
 try { const g = JSON.parse(localStorage.getItem('screens_estado') || 'null'); if (g && g.esp) { const d = DEF(); E = Object.assign(d, g, { elec: Object.assign(d.elec, g.elec || {}), vista: Object.assign(d.vista, g.vista || {}), proy: Object.assign(d.proy, g.proy || {}), esp: Object.assign(d.esp, g.esp, { sueltas: Object.assign(d.esp.sueltas, (g.esp || {}).sueltas || {}) }) }); } } catch (e) {}
@@ -345,6 +346,16 @@ function modProy(c) {
   h += `<p class="ayuda">${t('autoAyudaProy')}</p><p class="ayuda">${t('datosProy')}</p>`;
   return h + '</section>';
 }
+// v8.3 · el proyector arrastrado en las vistas técnicas (o el desplazamiento de la óptica) fija la distancia y la altura, con su candado
+function fijarDesdeVistas(o, d) {
+  if (o.dist != null) E.proy.dist = Math.round(o.dist * 100) / 100;
+  if (o.yL != null) {
+    const m = E.proy.montaje === 'auto' ? (d.apoyo ? 'apoyado' : 'colgado') : E.proy.montaje;
+    const alt = m === 'apoyado' ? o.yL - d.altoCh / 2 : o.yL + (d.q.rows - 1) * d.paso + d.altoCh / 2 + 0.05;
+    E.proy.montaje = m; E.proy.altura = Math.max(0.01, Math.round(alt * 100) / 100);
+  }
+  actualizar();
+}
 // v8.2 · casilla con candado: sin candado, enseña lo que calcula AUTO; con candado, el valor queda fijo y AUTO lo respeta
 const CANDADO = (on) => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/>${on ? '<path d="M8 11V7.5a4 4 0 018 0V11"/>' : '<path d="M8 11V7.5a4 4 0 017.6-1.7"/>'}</svg>`;
 const campoLock = (lab, k, on, html, activo = true) => `<div class="campo"><div class="campo-cab"><span class="lab">${lab}<i class="${on ? 'fijo' : 'auto'}">${on ? t('fijo') : 'AUTO'}</i></span>` +
@@ -411,6 +422,7 @@ function vistaResultados(c) {
     h += `<div class="tabla-caja"><table class="tabla"><thead><tr><th>${t('supCol')}</th><th>${t('medida')}</th><th>${t('proyCol')}</th><th>${t('resol')}</th><th>${t('solCol')}</th><th>${t('tiroCol')}</th><th>${t('brCol')}</th></tr></thead><tbody>
       ${c.filas.map(f => { const q = f.p; return `<tr><td>${f.nombre}</td><td>${fmt(f.s.ancho)} × ${fmt(f.s.alto)} m</td><td>${q.cols ? q.cols + '×' + q.rows + ' = ' : ''}${q.n}${q.vert ? ' · ' + t('vert') : ''}</td><td>${q.resW}×${q.resH}</td><td>${fmt(q.solapeRel * 100, 0)} %</td><td>${fmt(q.tiro, 2)} m${q.fuera ? ' ⚠' : ''}</td><td>${fmt(q.nits, 0)} nits</td></tr>`; }).join('')}
     </tbody></table></div>`;
+    h += vistasTecnicas(c, E.vista.tec || 'todas', Number(E.vista.vtSup) || 0);   // v8.3 · vistas técnicas (lateral, frontal y cenital)
     h += vistaPosicion(c);
     h += vistaSombras(c);
   }
@@ -620,6 +632,7 @@ function actualizar(sinEscena) {
   pan.innerHTML = modEspacio() + (E.tecnologia === 'led' ? modLed(calculo) : modProy(calculo)) + modElec(calculo) + modSuperficies(calculo);
   pan.scrollTop = sc;
   $('#res').innerHTML = vistaResultados(calculo);
+  activarVistas($('#res'), calculo, fijarDesdeVistas);
   barraEscena();
   if (!sinEscena) { clearTimeout(tEsc); tEsc = setTimeout(construirEscena, 60); }
 }
@@ -737,6 +750,7 @@ document.addEventListener('click', (ev) => {
     else if (pw) { if (E.proy.montaje === 'auto') E.proy.montaje = pw.pos.apoyo ? 'apoyado' : 'colgado'; E.proy.altura = Math.max(0.01, r2(pw.pos.altura)); }
     actualizar(); return; }
   if (a === 'proy-oos') { E.proy.oos = !E.proy.oos; actualizar(); return; }
+  if (a === 'vt-modo') { E.vista.tec = b.dataset.v; actualizar(true); return; }   // v8.3 · distribución de las vistas técnicas
 });
 let tNum = 0, tRep = 0, nRep = 0, pasoPendiente = false;
 // ▲▼: un toque = un paso; mantener pulsado repite (x5 y x10 al rato). Se recalcula al soltar (no a mitad de la pulsación).
@@ -782,6 +796,7 @@ document.addEventListener('change', (ev) => {
   if (s.dataset.sel) { fijar(s.dataset.sel, s.value); if (s.dataset.sel === 'proy.cuerpo') E.proy.optica = ''; actualizar(); }   // otro proyector: su óptica vuelve a AUTO
   if (s.dataset.rango) { fijar(s.dataset.rango, Math.round(Number(s.value) * 100) / 100); actualizar(); }   // v8.2 · deslizador del zoom: fija la distancia
   if (s.dataset.uso && s.value) { E.proy.lux = Number(s.value); actualizar(); }
+  if (s.dataset.vtSel) { E.vista.vtSup = Number(s.value) || 0; actualizar(true); }   // v8.3 · superficie de las vistas técnicas
 });
 
 // PDF: hoja A4 en claro con cabecera, captura 3D, resultados, equipos, electrónica y avisos (se imprime con el navegador)
