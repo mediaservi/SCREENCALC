@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v7.2** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v7.3** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -88,7 +88,15 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v7.2)
+## Cambios de la versión actual (v7.3)
+
+- **Cada casilla actúa sola**, sin esperar a otro dato. Si un valor choca con otro, se ajusta el que depende de él y se avisa en el propio módulo:
+  - un alto de imagen mayor que la pared sube el alto de la sala para que quepa;
+  - con la elevación pasa lo mismo cuando hay alto de imagen;
+  - si se baja el alto de la sala, baja la imagen o la elevación;
+  - una puerta se queda dentro de su pared y un obstáculo dentro de la sala.
+
+## Cambios de la versión v7.2
 
 - **El nombre anterior de la app desaparece de todas partes:** textos, este README (el que abre ⓘ), comentarios del código, nombres internos y el service worker.
 - **Preferencias guardadas:** el idioma, el tema, la pared y las fuentes de prueba pasan solas, una sola vez, a las claves nuevas (`screens_*`).

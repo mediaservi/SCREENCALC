@@ -8,7 +8,7 @@ import '../comun/voz.js';
 import { interpretar } from './peticion.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v7.2';
+const VERSION = 'v7.3';
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   cantidad: 'varias', tecnologia: 'led',
@@ -196,6 +196,7 @@ function modEspacio() {
     h += `<div class="etq">${t('superficies')}</div><div class="fila c3">${['frontal', 'izquierda', 'derecha'].map(tp).join('')}</div><div class="fila c2">${['trasera', 'suelo'].map(tp).join('')}</div>`;
     if (E.tecnologia === 'led') h += `<p class="ayuda">${t('sueloLed')}</p>`;
     h += `<div class="fila c2">${campo(t('altoPant'), numIn('esp.altoCubierto', e.altoCubierto, 'm', 0.1, 0, 20))}${campo(t('elev'), numIn('esp.elev', e.elev, 'm', 0.1, 0, 10))}</div><p class="ayuda">${t('altoAyuda')}</p>`;
+    if (ajuste.esp) h += `<p class="aviso">${ajuste.esp}</p>`;
   } else {
     if (E.cantidad === 'varias') h += `<div class="fila c2">${campo(t('num'), numIn('esp.sueltas.n', s.n, 'u', 1, 2, 8))}<div class="campo"><label>${t('disp')}</label><div class="fila c2">${tog(s.disp === 'linea', 'data-set="esp.sueltas.disp" data-v="linea"', t('linea'))}${tog(s.disp === 'arco', 'data-set="esp.sueltas.disp" data-v="arco"', t('arco'))}</div></div></div>`;
     h += `<div class="fila c3">${campo(t('ancho'), numIn('esp.sueltas.ancho', s.ancho, 'm', 0.1, 0.3, 40))}${campo(t('alto'), numIn('esp.sueltas.alto', s.alto, 'm', 0.1, 0.3, 20))}${campo(t('elev'), numIn('esp.sueltas.elev', s.elev, 'm', 0.1, 0, 10))}</div>`;
@@ -209,6 +210,7 @@ function modEspacio() {
 function bloqueObst(sala) {
   const e = E.esp, L = e.obst || [];
   let h = `<div class="etq">${t('obstTit')}</div><div class="fila ${sala ? 'c2' : 'c1'}">${sala ? `<button type="button" class="sec-btn" data-accion="obst-add" data-tipo="puerta">＋ ${t('puerta')}</button>` : ''}<button type="button" class="sec-btn" data-accion="obst-add" data-tipo="obstaculo">＋ ${t('obst')}</button></div>`;
+  if (ajuste.obst) h += `<p class="aviso">${ajuste.obst}</p>`;
   L.forEach((o, i) => {
     if (o.tipo === 'puerta' && !sala) return;
     const k = 'esp.obst.' + i;
@@ -515,6 +517,32 @@ async function crearEscena() {
 }
 
 // ---------- eventos ----------
+// v7.3 · cada casilla actúa sola: si un valor choca con otro (la imagen más alta que la sala, una puerta fuera de su pared…),
+// se ajusta el que depende de él y se avisa en el propio módulo, en vez de ignorar el valor en silencio
+const ajuste = { esp: '', obst: '' };
+function coherencia(k) {
+  const e = E.esp, r2 = (v) => Math.round(v * 100) / 100, sala = e.tipo === 'sala' && E.cantidad === 'varias';
+  ajuste.esp = ''; ajuste.obst = '';
+  if (!sala) return;
+  if ((k === 'esp.altoCubierto' || k === 'esp.elev') && e.altoCubierto > 0 && e.elev + e.altoCubierto > e.alto) { e.alto = r2(e.elev + e.altoCubierto); ajuste.esp = t('ajSala', { v: fmt(e.alto) }); }
+  if (k === 'esp.elev' && !(e.altoCubierto > 0) && e.elev > e.alto - 0.5) { e.elev = r2(Math.max(0, e.alto - 0.5)); ajuste.esp = t('ajElev', { v: fmt(e.elev) }); }
+  if (k === 'esp.alto') {
+    if (e.elev > e.alto - 0.5) { e.elev = r2(Math.max(0, e.alto - 0.5)); ajuste.esp = t('ajElev', { v: fmt(e.elev) }); }
+    if (e.altoCubierto > 0 && e.elev + e.altoCubierto > e.alto) { e.altoCubierto = r2(Math.max(0.1, e.alto - e.elev)); ajuste.esp = t('ajImagen', { v: fmt(e.altoCubierto) }); }
+  }
+  // puertas dentro de su pared y obstáculos dentro de la sala (su x y su z son el centro)
+  const m = /^esp\.obst\.(\d+)\./.exec(k), todas = /^esp\.(ancho|fondo|alto)$/.test(k);
+  if (!m && !todas) return;
+  (e.obst || []).forEach((o, i) => {
+    if (m && +m[1] !== i) return;
+    const antes = JSON.stringify(o);
+    if (o.tipo === 'puerta') { const L = o.pared === 'izquierda' || o.pared === 'derecha' ? e.fondo : e.ancho;
+      o.ancho = r2(Math.min(o.ancho, L)); o.x = r2(Math.min(Math.max(0, o.x), L - o.ancho)); o.alto = r2(Math.min(o.alto, e.alto)); }
+    else { o.ancho = r2(Math.min(o.ancho, e.ancho)); o.fondo = r2(Math.min(o.fondo, e.fondo)); o.alto = r2(Math.min(o.alto, e.alto));
+      o.x = r2(Math.min(Math.max(o.ancho / 2, o.x), e.ancho - o.ancho / 2)); o.z = r2(Math.min(Math.max(o.fondo / 2, o.z), e.fondo - o.fondo / 2)); }
+    if (JSON.stringify(o) !== antes) ajuste.obst = t(o.tipo === 'puerta' ? 'ajPuerta' : 'ajObst', { n: (o.tipo === 'puerta' ? t('puerta') : t('obst')) + ' ' + ((e.obst || []).slice(0, i + 1).filter(x => x.tipo === o.tipo).length) });
+  });
+}
 function fijar(ruta, valor) { const p = ruta.split('.'); let o = E; for (let i = 0; i < p.length - 1; i++) o = o[p[i]]; o[p[p.length - 1]] = valor; }
 document.addEventListener('click', (ev) => {
   const b = ev.target.closest('button, a[data-accion]'); if (!b || b.disabled) return;
@@ -568,7 +596,7 @@ function pasoNum(k, dir) {
   if (k === 'proy.dist' && !v && dir > 0 && calculo) { const pw = calculo.filas.find(f => f.s.tipo !== 'suelo'); if (pw && pw.p.tMin) v = Math.round(pw.p.tMin / paso) * paso - paso; }
   let nv = Math.round((v + dir * paso * mult) / paso) * paso;
   if (!isNaN(min)) nv = Math.max(min, nv); if (!isNaN(max)) nv = Math.min(max, nv);
-  nv = Number(nv.toFixed(dec)); i.value = nv; ajustarCasilla(i); fijar(k, nv); pasoPendiente = true; clearTimeout(tNum);
+  nv = Number(nv.toFixed(dec)); i.value = nv; ajustarCasilla(i); fijar(k, nv); coherencia(k); pasoPendiente = true; clearTimeout(tNum);
 }
 function pararRep() { clearTimeout(tRep); tRep = 0; nRep = 0; if (pasoPendiente) { pasoPendiente = false; clearTimeout(tNum); tNum = setTimeout(() => actualizar(), 30); } }
 document.addEventListener('pointerdown', (ev) => {
@@ -585,7 +613,7 @@ document.addEventListener('input', (ev) => {
   const v = parseFloat(String(i.value).replace(',', '.'));
   if (isNaN(v)) return;
   const min = parseFloat(i.min), max = parseFloat(i.max);
-  fijar(i.dataset.num, Math.min(isNaN(max) ? v : max, Math.max(isNaN(min) ? v : min, i.step === '1' ? Math.round(v) : v)));
+  fijar(i.dataset.num, Math.min(isNaN(max) ? v : max, Math.max(isNaN(min) ? v : min, i.step === '1' ? Math.round(v) : v))); coherencia(i.dataset.num);
   clearTimeout(tNum); tNum = setTimeout(() => { const foco = i.dataset.num, pos = i.selectionStart; actualizar(); const n = document.querySelector(`[data-num="${foco}"]`); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} } }, 350);
 });
 document.addEventListener('change', (ev) => {
