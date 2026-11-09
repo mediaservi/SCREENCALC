@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 /* ===== AVHUB ADS · motor de anuncios común (SCREENS y gestor de anuncios) ===== */
-.avad{position:relative;margin:10px 0;border-radius:10px;overflow:hidden;font-family:Inter,system-ui,sans-serif;font-size:13px;line-height:1.35;background:#fff;border:1px dashed #cbd5e1;color:#0f172a}
+.avad{position:relative;margin:10px 0;border-radius:var(--avad-radio,10px);overflow:hidden;font-family:var(--avad-fuente,Inter,system-ui,sans-serif);font-size:13px;line-height:1.35;background:var(--avad-fondo,#fff);border:1px dashed #cbd5e1;color:#0f172a}
 .avad *{box-sizing:border-box}
 .avad-tag{position:absolute;top:3px;right:8px;z-index:4;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;pointer-events:none}
 .avad-encima .avad-tag{color:rgba(255,255,255,.85);text-shadow:0 1px 2px rgba(0,0,0,.8)}
@@ -17,12 +17,12 @@
 .avad-media{position:relative;width:100%;max-width:calc(var(--maxh) * var(--ar));aspect-ratio:var(--ar);margin:0 auto;border-radius:6px;overflow:hidden;background:#0b0b0f}
 .avad-capa{position:absolute;inset:0;opacity:0;transition:opacity .6s ease}
 .avad-capa.on{opacity:1}
-.avad-capa img,.avad-capa video{width:100%;height:100%;display:block;pointer-events:none;object-fit:var(--fit,cover)}
+.avad-capa img,.avad-capa video{width:100%;height:100%;display:block;pointer-events:none;object-fit:var(--fit,cover);object-position:var(--avad-foco,50% 50%)}
 .avad-capa iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}
-.avad-txt{min-width:0;font-weight:700;color:#0f584c}
-.avad-txt ul{margin:0;padding-left:18px;list-style:disc;font-weight:600;line-height:1.45;text-align:left}
+.avad-txt{min-width:0;font-size:var(--avad-tam,13px);font-weight:var(--avad-peso,700);color:var(--avad-color,#0f584c)}
+.avad-txt ul{margin:0;padding-left:18px;list-style:disc;font-weight:var(--avad-peso,600);line-height:1.45;text-align:left}
 .avad-txt .avad-t1{display:block}
-.avad-btn{display:inline-block;margin-top:8px;padding:7px 14px;border-radius:999px;background:#9900ff;color:#fff;font-weight:800;font-size:12px;letter-spacing:.03em;text-shadow:none}
+.avad-btn{display:inline-block;margin-top:8px;padding:7px 14px;border-radius:999px;background:var(--avad-btn-bg,#9900ff);color:var(--avad-btn-fg,#fff);font-weight:800;font-size:calc(var(--avad-tam,13px) * .92);letter-spacing:.03em;text-shadow:none}
 .avad-link:hover .avad-btn{filter:brightness(1.15)}
 .avad-link:hover .avad-txt ul,.avad-link:hover .avad-t1{text-decoration:underline}
 /* posiciones del texto */
@@ -33,12 +33,12 @@
 .avad-debajo .avad-txt{text-align:center}
 .avad-debajo .avad-txt ul{display:inline-block}
 .avad-ninguno .avad-link{grid-template-columns:1fr}
-.avad-encima{border-style:solid;border-color:transparent;background:#0b0b0f}
+.avad-encima{border-style:solid;border-color:transparent;background:var(--avad-fondo,#0b0b0f)}
 .avad-encima .avad-link{display:block;position:relative;padding:0}
 .avad-encima .avad-media{border-radius:0;width:100%;max-width:calc(var(--maxh) * var(--ar))}
-.avad-encima .avad-txt{position:absolute;left:16px;right:16px;top:50%;transform:translateY(-50%);z-index:3;font-size:17px;font-weight:800;max-width:72%}
-.avad-encima.avad-banner .avad-txt{font-size:14px;max-width:80%}
-.avad-sinmedia .avad-txt{position:relative!important;top:auto!important;transform:none!important;padding:22px 16px 14px;max-width:100%!important;color:#0f584c}
+.avad-encima .avad-txt{position:absolute;left:16px;right:16px;top:50%;transform:translateY(-50%);z-index:3;font-size:var(--avad-tam,17px);font-weight:var(--avad-peso,800);max-width:72%}
+.avad-encima.avad-banner .avad-txt{font-size:var(--avad-tam,14px);max-width:80%}
+.avad-sinmedia .avad-txt{position:relative!important;top:auto!important;transform:none!important;padding:22px 16px 14px;max-width:100%!important;color:var(--avad-color,#0f584c)}
 /* formatos fijos IAB: tamaño nativo como máximo, centrados */
 .avad-fijo{max-width:var(--maxw);margin-left:auto;margin-right:auto}
 .avad-fijo.avad-encima .avad-media,.avad-fijo.avad-ninguno .avad-media{max-width:100%}
@@ -52,7 +52,29 @@
 .avad-estrecho.avad-lado.avad-vert .avad-media{width:100%}
 .avad-estrecho .avad-txt{text-align:center}
 .avad-estrecho .avad-txt ul{display:inline-block}
-@media print{.avad,.avad-zona{display:none!important}}
+/* estilo de cada anuncio (editor de AVHUB ADMIN) */
+.avad-al-izq .avad-txt{text-align:left!important}
+.avad-al-centro .avad-txt{text-align:center!important}
+.avad-al-der .avad-txt{text-align:right!important}
+.avad-al-centro .avad-txt ul,.avad-al-der .avad-txt ul{display:inline-block;text-align:left}
+.avad-encima.avad-al-centro .avad-txt{left:50%;right:auto;transform:translate(-50%,-50%);width:max-content;max-width:84%}
+.avad-encima.avad-al-der .avad-txt{left:auto;right:16px}
+.avad-conborde{border:2px solid var(--avad-borde)!important}
+.avad-sombra{box-shadow:0 8px 22px rgba(0,0,0,.3)}
+.avad-btn-redondeado .avad-btn{border-radius:6px}
+.avad-btn-recto .avad-btn{border-radius:0}
+.avad-velo .avad-media::after{content:'';position:absolute;inset:0;z-index:2;background:rgba(0,0,0,var(--avad-velo,.3));pointer-events:none}
+.avad-tr-corte .avad-capa{transition:none}
+.avad-tr-deslizar .avad-capa{opacity:1;transform:translateX(100%);transition:transform .7s ease}
+.avad-tr-deslizar .avad-capa.on{transform:none}
+.avad-tr-deslizar .avad-capa.fuera{transform:translateX(-100%)}
+.avad-tr-deslizar .avad-capa.sin-tr{transition:none}
+.avad-tr-zoom .avad-capa{transform:scale(1.08);transition:opacity .9s ease,transform 6s ease-out}
+.avad-tr-zoom .avad-capa.on{transform:scale(1)}
+.avad-hueco{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;aspect-ratio:var(--ar,1.78);min-height:110px;max-height:240px;margin:10px 0;border:2px dashed rgba(153,0,255,.45);border-radius:10px;background:repeating-linear-gradient(45deg,rgba(153,0,255,.05) 0 12px,rgba(153,0,255,.11) 12px 24px);color:#5b21b6;font:600 12px/1.3 Inter,system-ui,sans-serif;text-align:center;padding:8px}
+.avad-hueco b{font:800 18px/1 Inter,system-ui,sans-serif;letter-spacing:.08em}
+.avad-hueco small{font-size:11px;color:#7c3aed}
+@media print{.avad,.avad-zona,.avad-hueco{display:none!important}}
 
 /* ===== FIRMAS y NEWSLETTER ===== */
 .tabs{display:inline-flex;border:1px solid var(--linea);border-radius:8px;overflow:hidden;background:#141417}
@@ -254,6 +276,182 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
 @media (max-width:1180px){.ad{grid-template-columns:1fr}.prev{border-left:0;border-top:1px solid var(--linea)}}
 @media (max-width:860px){.app{grid-template-columns:1fr}aside{position:relative;top:0;max-height:none}.biblio{grid-template-columns:repeat(auto-fill,minmax(64px,1fr));max-height:220px}.zona-cab .rot{margin-left:0}}
 @media (max-width:520px){header{padding:8px}.app{padding:8px}.dos{grid-template-columns:1fr}.fmt{width:64px}}
+/* ===== ESTUDIO DE ANUNCIOS (v1.4): página fija con herramientas, lienzo con la web real, capas, propiedades y biblioteca ===== */
+html.estudio-fijo,html.estudio-fijo body{height:100%;overflow:hidden}
+html.estudio-fijo body{display:flex;flex-direction:column}
+html.estudio-fijo header{position:relative;flex:none}
+.app.modo-estudio{display:block;flex:1 1 auto;min-height:0;padding:0}
+.app.modo-estudio>aside{display:none}
+.estudio{-webkit-user-select:none;user-select:none;display:grid;grid-template-columns:52px minmax(0,1fr) 360px;grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"herr lienzo pn" "herr tira pn";height:100%;min-height:0;background:#121215}
+.estudio input,.estudio textarea{-webkit-user-select:text;user-select:text}
+.herr{grid-area:herr;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;background:linear-gradient(90deg,#28282e,#1f1f24);border-right:1px solid #000;overflow-y:auto;scrollbar-width:none}
+.herr::-webkit-scrollbar{display:none}
+.herr button{width:38px;height:38px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid transparent;background:transparent;color:#b9b9c6;padding:0}
+.herr button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.herr button:hover:not(:disabled){color:#fff;border-color:var(--linea);background:#2c2c33}
+.herr button.on{background:var(--marca);border-color:var(--marca);color:#fff;box-shadow:0 0 10px rgba(153,0,255,.5)}
+.herr button:disabled{opacity:.28;cursor:default}
+.herr hr{width:26px;flex:none;border:0;border-top:1px solid var(--linea);margin:4px 0}
+.lz-col{grid-area:lienzo;display:flex;flex-direction:column;min-width:0;min-height:0}
+.lz-barra{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:6px 10px;background:#1c1c21;border-bottom:1px solid #000;font-size:12px;min-height:44px}
+.lz-barra .lz-pag{padding:5px 9px;border:1px solid var(--linea);border-radius:7px;background:#141417;font-weight:700;white-space:nowrap}
+.lz-barra .seg button{padding:5px 10px}
+.lz-barra .ir{display:inline-flex;gap:4px}
+.lz-barra .ir .bt{padding:5px 9px;font-family:'Share Tech Mono',monospace;font-size:12px}
+.lz-barra .bt.on{background:var(--on);border-color:var(--on);color:#06210a}
+.lz-barra .nota{font-size:11px;color:var(--ambar);text-align:left}
+.lz-barra .esp{flex:1 1 0}
+.lz-barra .zoom{font-family:'Share Tech Mono',monospace;color:var(--ambar);min-width:48px;text-align:right}
+.bt.ico{display:inline-flex;align-items:center;justify-content:center;padding:4px 7px}
+.bt.ico svg,.acciones .bt svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
+.lz-marco{position:relative;flex:1 1 auto;min-height:0}
+.lz-vp{position:absolute;inset:0;overflow:auto;background-color:#2a2a30;background-image:linear-gradient(45deg,#25252a 25%,transparent 25%,transparent 75%,#25252a 75%),linear-gradient(45deg,#25252a 25%,transparent 25%,transparent 75%,#25252a 75%);background-size:24px 24px;background-position:0 0,12px 12px}
+.lz-tam{position:relative;margin:16px auto}
+.lz-disp{position:absolute;left:0;top:0;transform-origin:0 0;background:#fff;box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 0 1px #000}
+.lz-disp iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff;display:block}
+.lz-marcas{position:absolute;inset:0;pointer-events:none;z-index:2}
+.lz-clip{position:absolute;overflow:hidden;pointer-events:none}
+.lzm{position:absolute;border:2px dashed #9900ff;border-radius:6px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.55);pointer-events:none;transition:background-color .12s}
+.lzm.fija{border-color:#00b4ff}
+.lzm.sel{border:2px solid var(--on);box-shadow:0 0 0 3px rgba(0,255,4,.28),inset 0 0 0 1px rgba(0,0,0,.25)}
+.lzm.sobre{background:rgba(0,255,4,.18);border:3px solid var(--on)}
+.lzm-et{position:absolute;left:-2px;bottom:100%;display:flex;align-items:center;gap:5px;max-width:none;padding:3px 5px 3px 7px;border-radius:6px 6px 0 0;background:#9900ff;color:#fff;font:800 11px/1 Inter,sans-serif;letter-spacing:.04em;white-space:nowrap;transform:scale(var(--inv,1));transform-origin:0 0;pointer-events:auto;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.45)}
+.lzm.fija .lzm-et{background:#00b4ff;color:#001826}
+.lzm-et{transform-origin:0 100%}
+.lzm-et.dentro{bottom:auto;top:-2px;border-radius:5px 0 8px 0;transform-origin:0 0}
+.lz-marcas.compacto .lzm-et .nom{display:none}
+.lzm.sel .lzm-et{background:var(--on);color:#06210a}
+.lzm-et .cod{font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:.06em}
+.lzm-et .nom{font-weight:700;letter-spacing:.02em}
+.lzm-et .ch{width:24px;height:24px;flex:none;border-radius:5px;border:2px solid rgba(255,255,255,.75);background:#0b0b0f center/cover no-repeat;color:#fff;font:800 11px/20px Inter,sans-serif;text-align:center;cursor:grab;padding:0}
+.lzm-et .ch.on{border-color:#fff;box-shadow:0 0 0 2px #06210a,0 0 0 4px #00ff04}
+.lzm-et .ch.apagado{opacity:.45}
+.lzm-et .mas{width:24px;height:24px;flex:none;border-radius:5px;border:1px dashed rgba(255,255,255,.8);background:rgba(0,0,0,.2);color:inherit;font-size:15px;line-height:1;padding:0}
+.lzm-et .sw{transform:scale(.8);transform-origin:left center}
+.estudio.arrastrando .lz-marcas,.estudio.arrastrando .lz-clip,.estudio.arrastrando .lzm{pointer-events:auto}
+.lz-vp.mano .lz-marcas{pointer-events:auto;cursor:grab}
+.lz-vp.mano.agarrando .lz-marcas{cursor:grabbing}
+.lz-vp.mano .lzm-et{pointer-events:none}
+.lz-borde{position:absolute;left:0;right:0;z-index:4;display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:0 10px;pointer-events:none}
+.lz-borde.arriba{top:8px}.lz-borde.abajo{bottom:10px}
+.lz-borde button{pointer-events:auto;border:1px solid #000;border-radius:999px;background:#9900ff;color:#fff;font:800 11px/1 Inter,sans-serif;letter-spacing:.04em;padding:7px 12px;box-shadow:0 3px 12px rgba(0,0,0,.55)}
+.lz-borde button:hover{background:#ad2bff}
+.lz-aviso{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:5;width:min(440px,calc(100% - 24px));display:flex;flex-direction:column;align-items:center;gap:12px;padding:18px;border-radius:12px;background:rgba(18,18,21,.94);border:1px solid var(--linea);text-align:center;font-size:13px;line-height:1.6;color:var(--txt);box-shadow:0 10px 30px rgba(0,0,0,.6)}
+/* paneles de la derecha */
+.pn-col{grid-area:pn;display:flex;flex-direction:column;min-width:0;min-height:0;background:#1a1a1f;border-left:1px solid #000}
+.pn-tabs{display:none;grid-area:tabs}
+.pn-tira{grid-area:tira;display:flex;align-items:center;gap:12px;min-width:0;padding:8px 10px;background:#1a1a1f;border-top:1px solid #000}
+.tira-et{flex:none;display:flex;flex-direction:column;gap:4px;width:118px}
+.tira-et b{font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.tira-et small{font-size:10px;line-height:1.4;color:var(--tenue)}
+.tira-cuerpo{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:8px}
+.tira-cuerpo .dropzona{flex:none;width:104px;height:64px;padding:6px;font-size:11px;line-height:1.3;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.tira-cuerpo .dropzona small{font-size:10px}
+.tira-cuerpo .fila-url{flex:0 1 240px;min-width:150px}
+.tira-cuerpo .biblio{flex:1 1 auto;min-width:0;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding-bottom:2px}
+.tira-cuerpo .biblio .mini{flex:none;width:64px;height:64px;aspect-ratio:auto;cursor:pointer}
+.tira-cuerpo .biblio .ayuda{white-space:nowrap;text-align:left}
+.pn{display:flex;flex-direction:column;min-height:0;border-bottom:1px solid #000}
+.pn>h3{flex:none;margin:0;padding:8px 12px;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;background:linear-gradient(#2c2c33,#25252b);border-bottom:1px solid #000;display:flex;align-items:baseline;gap:8px}
+.pn>h3 small{font-size:10px;letter-spacing:.06em;text-transform:none;color:var(--tenue);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pn>div{overflow-y:auto;min-height:0;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.pn[data-p="capas"]{flex:0 1 auto;max-height:44%}
+.pn[data-p="props"]{flex:1 1 auto}
+/* capas */
+.cp-zona{border:1px solid var(--linea);border-radius:8px;background:#202026;overflow:hidden;flex:none}
+.cp-zona.sel{border-color:var(--on)}
+.cp-zona.fija .cp-cab b{background:#00b4ff;color:#001826}
+.cp-cab{display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;min-width:0}
+.cp-cab b{flex:none;min-width:30px;text-align:center;padding:3px 5px;border-radius:4px;background:#9900ff;color:#fff;font:400 12px/1 'Share Tech Mono',monospace;letter-spacing:.06em}
+.cp-zona.sel .cp-cab b{background:var(--on);color:#06210a}
+.cp-cab span{flex:1 1 auto;min-width:0;font-weight:700;font-size:12px;display:flex;flex-direction:column;gap:1px}
+.cp-cab small{font-size:10px;font-weight:500;color:var(--tenue);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cp-cab .ico{flex:none;width:28px;height:28px;border-radius:6px;border:1px solid var(--linea);background:#2c2c33;color:var(--txt);padding:0;display:flex;align-items:center;justify-content:center;font-size:15px}
+.cp-cab .ico svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8}
+.cp-rot{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:0 8px 6px;font-size:11px;color:var(--tenue)}
+.cp-rot select{width:auto;padding:4px 6px;font-size:11px}
+.cp-rot input{width:56px;padding:4px 6px}
+.cp-lista{display:flex;flex-direction:column;gap:4px;padding:0 6px 6px;min-height:8px}
+.cp-lista.sobre{background:rgba(0,255,4,.07)}
+.cp-vacia{font-size:11px;color:var(--tenue);text-align:center;padding:8px;border:1px dashed #3d3d47;border-radius:6px;line-height:1.4}
+.cp-ad{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:6px;border:1px solid transparent;background:#17171b;cursor:pointer;min-width:0}
+.cp-ad:hover{border-color:#4a4a55}
+.cp-ad.on{border-color:var(--on);background:#0f1f10}
+.cp-ad.apagado .th,.cp-ad.apagado .nom{opacity:.55}
+.cp-ad.arrastrando{opacity:.35}
+.cp-ad .asa{font-size:12px;letter-spacing:-2px;cursor:grab}
+.cp-ad .th{width:30px;height:22px;flex:none;border-radius:3px;background:#0b0b0f center/cover no-repeat;border:1px solid #000;font:800 10px/20px Inter,sans-serif;font-style:normal;text-align:center;color:#ccc}
+.cp-ad .nom{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:600}
+.cp-ad .chip{font-size:8px;padding:2px 4px;flex:none}
+.cp-ad .clics{font-size:10px}
+.sw.mini{width:46px;height:20px;border-radius:10px}
+.sw.mini::before{font-size:8px;right:5px}
+.sw.mini::after{width:14px;height:14px;top:2px;left:2px}
+.sw.mini.on::before{left:6px}
+.sw.mini.on::after{left:28px}
+/* propiedades */
+.pp-nada{font-size:12px;color:var(--tenue);text-align:center;line-height:1.6;padding:16px 6px}
+.pp-nada b{color:var(--txt)}
+.pp-top{display:flex;align-items:center;gap:8px}
+.pp-top .pp-nombre{flex:1 1 auto;min-width:0;font-weight:700}
+.pp-info{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px}
+.pp-info .aviso{color:var(--ambar)}
+.pp-campo{display:flex;flex-direction:column;gap:5px;min-width:0}
+.pp-campo>.etq{display:block}
+.pp-grupo{border:1px solid var(--linea);border-radius:8px;background:#1f1f25;flex:none}
+.pp-grupo>summary{cursor:pointer;padding:8px 10px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--txt);list-style:none;display:flex;align-items:center;gap:8px}
+.pp-grupo>summary::-webkit-details-marker{display:none}
+.pp-grupo>summary::before{content:'▸';color:var(--tenue);transition:transform .15s}
+.pp-grupo[open]>summary::before{transform:rotate(90deg)}
+.pp-cuerpo{display:flex;flex-direction:column;gap:10px;padding:2px 10px 10px}
+.pp-bts{display:flex;flex-wrap:wrap;gap:5px}
+.pp-bts button{flex:1 1 auto;min-width:0;border:1px solid var(--linea);background:#141417;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:700;color:var(--tenue);white-space:nowrap}
+.pp-bts button.on{border-color:var(--on);color:var(--on);background:#0f1f10}
+.pp-bts.cinco button{flex:1 1 auto;padding:6px 5px}
+.pp-bts button{min-width:max-content}
+.pp-color{display:flex;align-items:center;gap:6px}
+.pp-color .bt{padding:5px 9px;font-size:11px}
+.pp-color .bt.on{background:var(--on);border-color:var(--on);color:#06210a}
+.pp-color input[type=color]{width:44px;height:30px;cursor:pointer}
+.pp-color input[type=color].apagado{opacity:.35}
+.pp-desl{display:flex;align-items:center;gap:8px}
+.pp-desl input[type=range]{flex:1 1 auto;min-width:0;accent-color:#9900ff}
+.pp-desl .val{min-width:44px;text-align:right;font:400 12px 'Share Tech Mono',monospace;color:var(--ambar)}
+.pp-desl .bt{padding:4px 8px;font-size:11px}
+.pp-desl .bt.on{background:var(--on);border-color:var(--on);color:#06210a}
+.pp-cuerpo .formatos{gap:5px}
+.pp-cuerpo .fmt{width:auto;flex:1 1 74px;max-width:96px}
+.pp-cuerpo .pos button{flex:1 1 auto}
+.pp-cuerpo .medios .mini{width:54px;height:54px}
+.pp-cuerpo .medios .add{width:54px;height:54px}
+.pp-acc{justify-content:space-between;padding-top:4px}
+.pp-acc .bt{flex:1 1 auto}
+@media (max-width:1280px){.estudio{grid-template-columns:50px minmax(0,1fr) 320px}}
+@media (max-width:980px){.estudio{grid-template-columns:48px minmax(0,1fr) 290px}}
+/* pantallas estrechas: herramientas arriba, lienzo y un panel cada vez (con pestañas) */
+@media (max-width:860px){
+  .estudio{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(200px,48%) auto minmax(0,1fr);grid-template-areas:"herr" "lienzo" "tabs" "pn"}
+  .herr{flex-direction:row;overflow-x:auto;overflow-y:hidden;border-right:0;border-bottom:1px solid #000;padding:4px 6px;background:linear-gradient(#28282e,#1f1f24)}
+  .herr hr{width:0;height:24px;border-top:0;border-left:1px solid var(--linea);margin:0 4px}
+  .pn-col{border-left:0}
+  .pn-tabs{display:flex;flex:none;border-top:1px solid #000;border-bottom:1px solid #000;background:#141417}
+  .pn-tira{display:none;grid-area:pn;flex-direction:column;align-items:stretch;overflow-y:auto;border-top:0;padding:10px 12px}
+  .estudio.ver-biblio .pn-tira{display:flex}
+  .estudio.ver-biblio .pn-col{display:none}
+  .tira-et{display:none}
+  .tira-cuerpo{flex-direction:column;align-items:stretch}
+  .tira-cuerpo .dropzona{width:auto;height:auto;padding:12px}
+  .tira-cuerpo .fila-url{flex:none}
+  .tira-cuerpo .biblio{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));overflow:visible}
+  .tira-cuerpo .biblio .mini{width:auto;height:auto;aspect-ratio:1}
+  .pn-tabs button{flex:1 1 0;min-width:0;border:0;background:transparent;padding:9px 4px;font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--tenue)}
+  .pn-tabs button.on{background:var(--on);color:#06210a}
+  .pn-col .pn{display:none;max-height:none!important;flex:1 1 auto}
+  .pn-col .pn.on{display:flex}
+  .pn>h3{display:none}
+  .lz-barra{gap:6px;padding:5px 8px}
+}
+@media (max-width:520px){.lz-barra .etq,.lz-barra .lz-pag{display:none}.herr{gap:2px;padding:4px}.herr button{width:32px;height:32px}.herr button svg{width:19px;height:19px}.herr hr{margin:0 2px}}
 </style>
 </head>
 <body>
@@ -264,7 +462,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
 <header>
   <div class="marca">
     <svg viewBox="0 0 60 48" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9900ff"/><stop offset=".55" stop-color="#00b4ff"/><stop offset="1" stop-color="#00ff04"/></linearGradient></defs><path d="M8 44 L28 8 Q30 4 32 8 L54 44 Z" fill="none" stroke="url(#g)" stroke-width="7" stroke-linejoin="round"/><path d="M26 22 L38 30 L26 38 Z" fill="#9900ff"/></svg>
-    <div>AVHUB · ADMIN <span style="font-size:10px;color:var(--tenue)">v1.3</span><small>ANUNCIOS · FIRMAS · NEWSLETTER · CATÁLOGO</small></div>
+    <div>AVHUB · ADMIN <span style="font-size:10px;color:var(--tenue)">v1.4</span><small>ANUNCIOS · FIRMAS · NEWSLETTER · CATÁLOGO</small></div>
   </div>
   <span id="modo" class="modo"></span>
   <div class="tabs" id="tabs"><button data-s="ads" class="on">ANUNCIOS</button><button data-s="firmas">FIRMAS</button><button data-s="news">NEWSLETTER</button><button data-s="catalogo">CATÁLOGO</button></div>
@@ -286,7 +484,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     <div class="ayuda">Arrastra cada miniatura<br>al anuncio donde quieras usarla.</div>
     <div class="biblio" id="biblio"></div>
   </aside>
-  <main id="zonas"></main>
+  <section id="estudio" class="estudio oculto" aria-label="Estudio de anuncios"></section>
   <main id="secFirmas" class="sec oculto"></main>
   <main id="secNews" class="sec oculto"></main>
   <main id="secCatalogo" class="sec oculto"></main>
@@ -295,7 +493,8 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
 /* ===== AVHUB ADS · motor de anuncios común (SCREENS y gestor de anuncios) =====
    Datos v2: { version:2, zonas:{ <id>:{ rotacion, segundos, anuncios:[anuncio…] } }, borradores:[anuncio…] }
    anuncio: { id, nombre, activo, formato, textoPos, texto, boton, url, medios:[url…], medioSeg, ajuste,
-              desde, hasta, dispositivo }
+              desde, hasta, dispositivo, estilo:{ fuente, tam, peso, alin, color, fondo, borde, radio, sombra,
+              btnFondo, btnColor, btnForma, velo, foco, transicion } }
    Compatible con el formato antiguo { slots:{ panel, hero, resultados } }. */
 (function (G) {
   'use strict';
@@ -312,11 +511,48 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
   };
   var TEXTOPOS = { lado: 'Al lado', debajo: 'Debajo', encima: 'Encima', ninguno: 'Sin texto' };
   var ZONAS = {
-    panel:      { nombre: 'Pie del menú',              ubicacion: 'Columna de controles, bajo los botones', ancho: 320, movil: false },
-    hero:       { nombre: 'Resultados · izquierda',    ubicacion: 'Pie de resultados (en móvil, primero)',  ancho: 600, movil: true },
-    resultados: { nombre: 'Resultados · derecha',      ubicacion: 'Pie de resultados (en móvil, segundo)',  ancho: 600, movil: true }
+    panel:      { nombre: 'Pie del menú',              ubicacion: 'Columna de controles, bajo los botones', ancho: 320, movil: false, codigo: 'AD1', fmt: 'horizontal', tp: 'lado' },
+    hero:       { nombre: 'Resultados · izquierda',    ubicacion: 'Pie de resultados (en móvil, primero)',  ancho: 600, movil: true,  codigo: 'AD2', fmt: 'hero',       tp: 'encima' },
+    resultados: { nombre: 'Resultados · derecha',      ubicacion: 'Pie de resultados (en móvil, segundo)',  ancho: 600, movil: true,  codigo: 'AD3', fmt: 'horizontal', tp: 'lado' }
   };
   var ROTACION = { fijo: 'Siempre el primero', orden: 'Rotar en orden', aleatorio: 'Uno al azar por visita', aleatoriociclo: 'Rotar al azar' };
+  /* Estilo de cada anuncio (vacío = el aspecto de siempre) */
+  var FUENTES = { inter: 'Inter,system-ui,sans-serif', mono: "'Share Tech Mono',ui-monospace,monospace", sistema: 'system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif',
+    serif: 'Georgia,"Times New Roman",serif', estrecha: '"Arial Narrow","Roboto Condensed","Helvetica Neue",Arial,sans-serif' };
+  var FOCOS = { centro: '50% 50%', arriba: '50% 0%', abajo: '50% 100%', izq: '0% 50%', der: '100% 50%' };
+  var TRANSICIONES = { fundido: 'Fundido', deslizar: 'Deslizar', zoom: 'Zoom lento', corte: 'Corte' };
+  function colorOk(v) { v = String(v || '').trim().toLowerCase(); return /^#[0-9a-f]{6}$/.test(v) ? v : ''; }
+  function entre(v, a, b) { v = +v; return isFinite(v) ? Math.max(a, Math.min(b, v)) : a; }
+  function estiloBase(e) {
+    e = e || {};
+    return {
+      fuente: FUENTES[e.fuente] ? e.fuente : '', tam: +e.tam ? Math.round(entre(e.tam, 9, 44)) : 0,
+      peso: [400, 600, 700, 800].indexOf(+e.peso) >= 0 ? +e.peso : 0, alin: /^(izq|centro|der)$/.test(e.alin) ? e.alin : '',
+      color: colorOk(e.color), fondo: colorOk(e.fondo), borde: colorOk(e.borde),
+      radio: e.radio === '' || e.radio == null ? '' : Math.round(entre(e.radio, 0, 40)), sombra: !!e.sombra,
+      btnFondo: colorOk(e.btnFondo), btnColor: colorOk(e.btnColor), btnForma: /^(pildora|redondeado|recto)$/.test(e.btnForma) ? e.btnForma : '',
+      velo: +e.velo ? Math.round(entre(e.velo, 0, 85)) : 0, foco: FOCOS[e.foco] ? e.foco : '', transicion: TRANSICIONES[e.transicion] ? e.transicion : ''
+    };
+  }
+  function aplicarEstilo(box, s) {
+    s = s || {};
+    var p = function (k, v) { box.style.setProperty(k, v); };
+    if (s.fuente) p('--avad-fuente', FUENTES[s.fuente]);
+    if (s.tam) p('--avad-tam', s.tam + 'px');
+    if (s.peso) p('--avad-peso', s.peso);
+    if (s.alin) box.classList.add('avad-al-' + s.alin);
+    if (s.color) { p('--avad-color', s.color); box.classList.add('avad-color-fijo'); }
+    if (s.fondo) p('--avad-fondo', s.fondo);
+    if (s.borde) { p('--avad-borde', s.borde); box.classList.add('avad-conborde'); }
+    if (s.radio !== '' && s.radio != null) p('--avad-radio', s.radio + 'px');
+    if (s.sombra) box.classList.add('avad-sombra');
+    if (s.btnFondo) p('--avad-btn-bg', s.btnFondo);
+    if (s.btnColor) p('--avad-btn-fg', s.btnColor);
+    if (s.btnForma) box.classList.add('avad-btn-' + s.btnForma);
+    if (s.velo) { p('--avad-velo', (s.velo / 100).toFixed(2)); box.classList.add('avad-velo'); }
+    if (s.foco) p('--avad-foco', FOCOS[s.foco]);
+    box.classList.add('avad-tr-' + (s.transicion || 'fundido'));
+  }
 
   function nuevoId() { return 'ad' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
   function lista(v) {
@@ -332,7 +568,8 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
       texto: o.texto == null ? '' : String(o.texto), boton: o.boton == null ? '' : String(o.boton),
       url: o.url || '', medios: lista(o.medios), medioSeg: Math.max(2, +o.medioSeg || 4),
       ajuste: o.ajuste === 'contain' ? 'contain' : 'cover',
-      desde: o.desde || '', hasta: o.hasta || '', dispositivo: /^(movil|escritorio)$/.test(o.dispositivo) ? o.dispositivo : 'todos'
+      desde: o.desde || '', hasta: o.hasta || '', dispositivo: /^(movil|escritorio)$/.test(o.dispositivo) ? o.dispositivo : 'todos',
+      estilo: estiloBase(o.estilo)
     };
   }
   /* Convierte cualquier respuesta (v2 o antigua) al formato v2 */
@@ -439,6 +676,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     box.style.setProperty('--maxh', f.maxh + 'px');
     if (f.maxw) box.style.setProperty('--maxw', (tp === 'lado' && conTexto ? f.maxw * 2.2 : f.maxw) + 'px');
     box.style.setProperty('--fit', a.ajuste || 'cover');
+    aplicarEstilo(box, a.estilo);
     var link = document.createElement('a');
     link.className = 'avad-link'; link.href = a.url || '#'; link.target = '_blank'; link.rel = 'sponsored noopener noreferrer';
     link.addEventListener('click', function (e) { if (opt.preview) { e.preventDefault(); return; } if (opt.onClic) opt.onClic(a.id); });
@@ -461,7 +699,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     el.appendChild(box);
     var idx = 0;
     function tono() {
-      if (!txt || tp !== 'encima' || !a.medios.length) return;
+      if (!txt || tp !== 'encima' || !a.medios.length || (a.estilo && a.estilo.color)) return;
       luminancia(a.medios[idx]).then(function (l) {
         if (!vivo) return;
         txt.classList.remove('avad-tono-claro', 'avad-tono-oscuro', 'avad-tono-filete');
@@ -469,20 +707,33 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
       });
     }
     tono();
+    var desliza = !!(a.estilo && a.estilo.transicion === 'deslizar');
     if (capas.length > 1) timers.push(setInterval(function () {
-      capas[idx].classList.remove('on'); idx = (idx + 1) % capas.length; capas[idx].classList.add('on'); tono();
+      var ant = capas[idx]; ant.classList.remove('on');
+      if (desliza) { ant.classList.add('fuera'); setTimeout(function () { ant.classList.add('sin-tr'); ant.classList.remove('fuera'); void ant.offsetWidth; ant.classList.remove('sin-tr'); }, 800); }
+      idx = (idx + 1) % capas.length; capas[idx].classList.add('on'); tono();
     }, Math.max(2, a.medioSeg || 4) * 1000));
     var ro = null;
     if (G.ResizeObserver) { ro = new ResizeObserver(function () { box.classList.toggle('avad-estrecho', box.clientWidth < 300); }); ro.observe(box); }
     return function () { vivo = false; timers.forEach(clearInterval); if (ro) ro.disconnect(); if (box.parentNode) box.parentNode.removeChild(box); };
   }
-  /* Monta una zona completa (rotación entre anuncios). Devuelve la limpieza. */
+  /* Hueco de una zona sin anuncio (solo en el editor): marca dónde irá y con qué proporción */
+  function hueco(el, zonaId) {
+    var d = ZONAS[zonaId] || { nombre: zonaId }, f = FORMATOS[d.fmt] || FORMATOS.horizontal;
+    var h = document.createElement('div'); h.className = 'avad-hueco'; h.style.setProperty('--ar', f.ar);
+    h.innerHTML = '<b>' + esc(d.codigo || '') + '</b><span>' + esc(d.nombre) + '</span><small>Arrastra aquí un anuncio</small>';
+    el.appendChild(h);
+    return function () { if (h.parentNode) h.parentNode.removeChild(h); };
+  }
+  /* Monta una zona completa (rotación entre anuncios). Devuelve la limpieza.
+     opt.ver: id de un anuncio de la zona que se muestra fijo (editor); opt.hueco: marca la zona vacía (editor) */
   function montar(el, zonaId, datos, opt) {
     opt = opt || {};
-    var z = (datos.zonas || {})[zonaId]; if (!z) return function () {};
+    var z = (datos.zonas || {})[zonaId];
     var esMovil = opt.esMovil == null ? (G.matchMedia ? G.matchMedia('(max-width: 767px)').matches : false) : opt.esMovil;
-    var ads = (z.anuncios || []).filter(function (a) { return vigente(a, new Date(), esMovil); });
-    if (!ads.length) return function () {};
+    var ads = z ? (z.anuncios || []).filter(function (a) { return vigente(a, new Date(), esMovil); }) : [];
+    if (opt.ver && z) { var fijo = (z.anuncios || []).filter(function (a) { return a.id === opt.ver; })[0]; if (fijo) ads = [fijo]; }
+    if (!ads.length) return opt.hueco ? hueco(el, zonaId) : function () {};
     var rot = z.rotacion || 'orden', i = 0, limpiar = null, t = null;
     if (rot === 'aleatorio' || rot === 'aleatoriociclo') i = Math.floor(Math.random() * ads.length);
     function mostrar() { if (limpiar) limpiar(); limpiar = pintar(el, ads[i], opt); }
@@ -496,7 +747,8 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
   }
   G.AVHUB_ADS = { FORMATOS: FORMATOS, TEXTOPOS: TEXTOPOS, ZONAS: ZONAS, ROTACION: ROTACION, normalizar: normalizar, aLegado: aLegado,
     anuncioBase: anuncioBase, nuevoId: nuevoId, vigente: vigente, estado: estado, pintar: pintar, montar: montar,
-    tipoMedio: tipoMedio, miniatura: miniatura, youtubeId: youtubeId, lista: lista };
+    tipoMedio: tipoMedio, miniatura: miniatura, youtubeId: youtubeId, lista: lista,
+    FUENTES: FUENTES, FOCOS: FOCOS, TRANSICIONES: TRANSICIONES, estiloBase: estiloBase };
 })(typeof window !== 'undefined' ? window : this);
 
 </script>
@@ -525,7 +777,9 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     if (!sinRepintar) repintar();
   }
   function repintar() {
-    $('#zonas').classList.toggle('oculto', seccion !== 'ads');
+    $('#estudio').classList.toggle('oculto', seccion !== 'ads');
+    document.documentElement.classList.toggle('estudio-fijo', seccion === 'ads');
+    document.querySelector('.app').classList.toggle('modo-estudio', seccion === 'ads');
     $('#secFirmas').classList.toggle('oculto', seccion !== 'firmas');
     $('#secNews').classList.toggle('oculto', seccion !== 'news');
     $('#secCatalogo').classList.toggle('oculto', seccion !== 'catalogo');
@@ -620,245 +874,615 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     function fin() { if (hechas.length) { led(hechas.length + ' foto' + (hechas.length > 1 ? 's subidas' : ' subida'), 'ok'); alTerminar(hechas); } }
   }
 
-  /* ---------- zonas ---------- */
-  function pintarTodo() {
-    Object.keys(limpiezas).forEach(function (k) { limpiezas[k](); }); limpiezas = {};
-    var cont = $('#zonas'); cont.innerHTML = '';
-    cont.appendChild(pintarTraulux());
-    Object.keys(A.ZONAS).forEach(function (z) { cont.appendChild(pintarZona(z, A.ZONAS[z], D.zonas[z])); });
-    cont.appendChild(pintarZona('borradores', { nombre: 'Borradores', ubicacion: 'Anuncios guardados que no se publican' }, { anuncios: D.borradores }));
-    pintarBiblio();
-    marcarSucio(sucio);
+  /* ---------- ESTUDIO DE ANUNCIOS (v1.4): página fija como un programa de diseño ----------
+     Izquierda, herramientas; en el centro, la web real (escritorio o móvil) con las zonas de anuncio marcadas;
+     a la derecha, CAPAS (zonas y anuncios), PROPIEDADES (contenido y estilo del anuncio elegido) y BIBLIOTECA.
+     Los anuncios se arrastran a las zonas del lienzo o de Capas; las fotos, a una zona (anuncio nuevo) o al anuncio. */
+  var DISPOSITIVOS = { escritorio: { w: 1440, h: 900 }, movil: { w: ANCHO_MOVIL, h: 844 } };
+  var WEBS = { publica: 'https://screens.mediaservi.com/', beta: 'https://raw.githack.com/mediaservi/SCREENS/beta/', local: '../' };
+  var ES = { sel: '', zona: '', herr: 'mover', espacio: false, zoom: 0, k: 1, zonas: [], marco: null, listo: false,
+    web: GAS ? 'publica' : 'local', cambioWeb: false, tHola: 0, tEnv: 0, tHist: 0, montado: false, panel: 'capas',
+    abiertos: { contenido: true, medios: true, formato: true, tipo: true, caja: false, prog: false } };
+  var ICO = {
+    mover: '<path d="M6 3l13 7.5-5.6 1.6L11 18z"/><path d="M13.4 12.1l4.6 6.4"/>',
+    mano: '<path d="M8 12.5V6a1.5 1.5 0 013 0v5.5M11 5a1.5 1.5 0 013 0v6.5M14 6.5a1.5 1.5 0 013 0V14a6 6 0 01-6 6h-.6a6 6 0 01-4.9-2.6L3.8 13.6a1.5 1.5 0 012.4-1.8L8 14"/>',
+    nuevo: '<rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M12 8.5v7M8.5 12h7"/>',
+    imagen: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8.5 8"/>',
+    texto: '<path d="M5 7V5h14v2M12 5v14M9 19h6"/>',
+    duplicar: '<rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2"/><path d="M15.5 8.5V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7.5a2 2 0 002 2h2.5"/>',
+    borrar: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+    zmas: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8M7.5 10.5h6M10.5 7.5v6"/>',
+    zmenos: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8M7.5 10.5h6"/>',
+    ajustar: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+    recargar: '<path d="M19.5 11A7.5 7.5 0 1017.3 16.3"/><path d="M20 4.5V11h-6.5"/>',
+    ojo: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>'
+  };
+  function svg(n) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICO[n] + '</svg>'; }
+  var HERR = [['mover', 'Mover y elegir (V)'], ['mano', 'Mano: desplazar el lienzo (H o barra espaciadora)'], null,
+    ['nuevo', 'Anuncio nuevo en la zona elegida (N)'], ['imagen', 'Añadir fotos al anuncio elegido (I)'], ['texto', 'Escribir el texto del anuncio elegido (T)'],
+    ['duplicar', 'Duplicar el anuncio elegido (Ctrl+D)'], ['borrar', 'Eliminar el anuncio elegido (Supr)'], null,
+    ['zmas', 'Acercar (+)'], ['zmenos', 'Alejar (−)'], ['ajustar', 'Ajustar a la ventana (0)']];
+  var POS_FOCO = { izq: '◧ Izq.', arriba: '⬒ Arriba', centro: '◉ Centro', abajo: '⬓ Abajo', der: '◨ Der.' };
+  function infoZona(id) {
+    if (id === 'traulux') return { codigo: 'TX', nombre: 'Minibanner TRAULUX', fijo: true };
+    if (id === 'borradores') return { codigo: '—', nombre: 'Borradores' };
+    return A.ZONAS[id] || null;
   }
-  /* Minibanner fijo del configurador oficial de TRAULUX: siempre en la posición del AD1, encima del AD1 si hay otro activo */
-  function pintarTraulux() {
-    D.traulux = D.traulux || { activo: true };
-    var s = el('section', 'zona'); s.dataset.zona = 'traulux';
-    var cab = el('div', 'zona-cab');
-    cab.appendChild(el('div', '', '<h2>TRAULUX · configurador oficial</h2><div class="ubi">Fijo en la posición del AD1 (pie del menú), siempre arriba; si hay otro AD1 activo, ese va debajo · no aparece en móvil</div>'));
-    var lb = el('label', '', '<input type="checkbox"' + (D.traulux.activo !== false ? ' checked' : '') + '> Activo');
-    lb.style.cssText = 'margin-left:auto;display:flex;align-items:center;gap:6px;font-weight:700;cursor:pointer';
-    lb.querySelector('input').onchange = function (e) { cambio(function () { D.traulux.activo = e.target.checked; }); led('Minibanner TRAULUX ' + (e.target.checked ? 'activado' : 'desactivado') + ' · pulsa GUARDAR', 'ok'); };
-    cab.appendChild(lb);
-    s.appendChild(cab);
-    var prev = el('div', '', '<a href="https://screens.mediaservi.com/configuradores/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;background:#000;color:#fff;text-decoration:none;font:800 12px/1.3 Inter,sans-serif;letter-spacing:.04em;max-width:420px"><img src="https://screens.mediaservi.com/assets/traulux-x.svg" alt="" style="width:30px;height:30px;flex:none">PRUEBA EL NUEVO CONFIGURADOR DE PANTALLAS LED DE TRAULUX</a>');
-    prev.style.cssText = 'padding:12px;' + (D.traulux.activo === false ? 'opacity:.4' : '');
-    s.appendChild(prev);
-    return s;
+  function nombreLista(id) { var z = infoZona(id); return z ? (id === 'borradores' ? 'Borradores' : z.codigo + ' · ' + z.nombre) : id; }
+  function selAd() { return ES.sel ? buscar(ES.sel) : null; }
+
+  /* --- comunicación con la web real (iframe) --- */
+  function urlLienzo() { return WEBS[ES.web] + 'index.html?led&anuncios=editor'; }
+  function enviar(m) { var f = $('#webReal'); if (!f || !f.contentWindow) return; m.tipo = 'avhub-ads'; try { f.contentWindow.postMessage(m, '*'); } catch (e) { /* sin web */ } }
+  function enviarDatos() {
+    var ver = {}, r = selAd();
+    if (r && r.lista.id !== 'borradores') ver[r.lista.id] = r.ad.id;
+    enviar({ accion: 'datos', datos: D, ver: ver });
   }
-  function pintarZona(id, def, z) {
-    var s = el('section', 'zona'); s.dataset.zona = id;
-    var cab = el('div', 'zona-cab');
-    cab.appendChild(el('div', '', '<h2>' + esc(def.nombre) + '</h2><div class="ubi">' + esc(def.ubicacion) + (def.movil === false ? ' · no aparece en móvil' : '') + '</div>'));
-    if (id !== 'borradores') {
-      var rot = el('div', 'rot');
-      rot.innerHTML = 'Varios anuncios: <select>' + Object.keys(A.ROTACION).map(function (k) { return '<option value="' + k + '"' + (z.rotacion === k ? ' selected' : '') + '>' + A.ROTACION[k] + '</option>'; }).join('') +
-        '</select> cada <input type="number" min="3" max="120" value="' + z.segundos + '"> s';
-      rot.querySelector('select').onchange = function (e) { cambio(function () { z.rotacion = e.target.value; }); };
-      rot.querySelector('input').onchange = function (e) { cambio(function () { z.segundos = Math.max(3, Math.min(120, +e.target.value || 8)); }); };
-      cab.appendChild(rot);
-    }
-    if (id !== 'borradores') {
-      var pl = el('select'); pl.style.width = 'auto';
-      pl.innerHTML = '<option value="">Plantilla…</option><option value="tx728">TRAULUX · banner 728×90</option><option value="tx320">TRAULUX · banner móvil 320×100</option>';
-      pl.onchange = function () {
-        var esMov = pl.value === 'tx320'; if (!pl.value) return;
-        cambio(function () { listaPorId(id).push(A.anuncioBase({ nombre: 'TRAULUX · configurador' + (esMov ? ' (móvil)' : ''), activo: true, formato: esMov ? 'bannermovil' : 'banner', textoPos: 'ninguno', ajuste: 'contain',
-          url: 'https://screens.mediaservi.com/configuradores/', dispositivo: esMov ? 'movil' : 'escritorio',
-          medios: ['https://screens.mediaservi.com/assets/promo/traulux-banner-' + (esMov ? '320x100' : '728x90') + '.png'] })); });
-        led('Anuncio TRAULUX creado en ' + def.nombre + ' · enlaza a la página de configuradores', 'ok');
-      };
-      cab.appendChild(pl);
-    }
-    var nuevo = el('button', 'bt', '＋ Anuncio');
-    nuevo.onclick = function () { cambio(function () { listaPorId(id).push(A.anuncioBase({ nombre: 'Anuncio nuevo', activo: id !== 'borradores', texto: '', url: '' })); }); led('Anuncio creado en ' + def.nombre); };
-    cab.appendChild(nuevo);
-    s.appendChild(cab);
-    var l = el('div', 'lista'); l.dataset.lista = id;
-    if (!z.anuncios.length) l.appendChild(el('div', 'vacia', 'Sin anuncios.<br>Pulsa «＋ Anuncio» o arrastra aquí uno de otra zona.'));
-    z.anuncios.forEach(function (a, i) { l.appendChild(pintarAnuncio(a, id, i, z.anuncios.length)); });
-    soltarAnuncios(l, id);
-    s.appendChild(l);
-    return s;
+  function enviarPronto() { clearTimeout(ES.tEnv); ES.tEnv = setTimeout(enviarDatos, 140); }
+  function cargarWeb() {
+    var f = $('#webReal'); if (!f) return;
+    ES.listo = false; ES.zonas = []; ES.marco = null; pintarMarcas(); avisoLienzo('Cargando la web real…', false);
+    f.src = urlLienzo();
+    clearInterval(ES.tHola); var n = 0;
+    ES.tHola = setInterval(function () {
+      if (ES.listo) { clearInterval(ES.tHola); return; }
+      enviar({ accion: 'hola' });
+      if (++n === 18) {
+        clearInterval(ES.tHola);
+        if (GAS && ES.web === 'publica' && !ES.cambioWeb) {
+          ES.cambioWeb = true; ES.web = 'beta'; pintarBarra(); cargarWeb();
+          led('La web pública aún no tiene el modo editor: el lienzo usa la beta', 'err');
+        } else avisoLienzo('La web no responde al editor.<br>Comprueba la conexión o pulsa ↻ para recargarla.', true);
+      }
+    }, 700);
+  }
+  window.addEventListener('message', function (e) {
+    var f = $('#webReal'), d = e.data;
+    if (!f || e.source !== f.contentWindow || !d || typeof d !== 'object' || d.tipo !== 'avhub-ads') return;
+    if (d.accion === 'listo') { if (!ES.listo) { ES.listo = true; avisoLienzo('', false); } enviarDatos(); }
+    else if (d.accion === 'zonas' && Array.isArray(d.zonas)) { ES.zonas = d.zonas; ES.marco = d.marco || null; pintarMarcas(); pintarBarra(true); }
+    else if (d.accion === 'clic' && d.zona) elegirZona(d.zona, true);
+  });
+  function avisoLienzo(html, conBoton) {
+    var a = $('#lzAviso'); if (!a) return;
+    a.classList.toggle('oculto', !html);
+    a.innerHTML = html ? '<div>' + html + '</div>' + (conBoton ? '<button class="bt" data-recargar>↻ Recargar la web</button>' : '') : '';
+    var b = $('[data-recargar]', a); if (b) b.onclick = cargarWeb;
   }
 
-  /* ---------- tarjeta de anuncio ---------- */
+  /* --- elegir --- */
+  function elegirAnuncio(id, irA) {
+    ES.sel = id || '';
+    var r = selAd(); if (r && r.lista.id !== 'borradores') ES.zona = r.lista.id;
+    if (ES.panel !== 'props' && window.matchMedia('(max-width: 860px)').matches && id) ES.panel = 'props';
+    pintarTodo();
+    if (irA && r && r.lista.id !== 'borradores') enviar({ accion: 'ir', zona: r.lista.id });
+  }
+  function elegirZona(id, desdeWeb) {
+    if (!infoZona(id)) return;
+    ES.zona = id;
+    if (id !== 'traulux') {
+      var z = D.zonas[id], r = selAd();
+      if (!(r && r.lista.id === id)) ES.sel = z && z.anuncios.length ? z.anuncios[0].id : '';
+    } else ES.sel = '';
+    if (!desdeWeb) enviar({ accion: 'ir', zona: id });
+    pintarTodo();
+    led(nombreLista(id) + (id === 'traulux' ? '' : (ES.sel ? ' · elegido «' + selAd().ad.nombre + '»' : ' · vacía: arrastra aquí un anuncio o una foto')));
+  }
+  /* historial de los controles que cambian sin parar (colores, deslizadores): una entrada por ráfaga */
+  function histRafaga() { var t = Date.now(); if (t - ES.tHist > 900) { hist.push(snap()); if (hist.length > 60) hist.shift(); } ES.tHist = t; }
+  function retoque(fn) { histRafaga(); fn(); marcarSucio(true); enviarPronto(); }
+
+  /* --- crear, duplicar, borrar --- */
+  function nuevoAnuncio(zonaId, medios) {
+    zonaId = zonaId && zonaId !== 'traulux' ? zonaId : 'borradores';
+    var def = A.ZONAS[zonaId] || {};
+    var a = A.anuncioBase({ nombre: 'Anuncio nuevo', activo: zonaId !== 'borradores', formato: def.fmt || 'horizontal', textoPos: def.tp || 'lado', texto: '', url: '', medios: medios || [] });
+    cambio(function () { listaPorId(zonaId).push(a); if (medios && medios.length) D.biblioteca = (D.biblioteca || []).concat(medios.filter(function (u) { return (D.biblioteca || []).indexOf(u) < 0; })); }, true);
+    ES.zona = zonaId === 'borradores' ? ES.zona : zonaId;
+    elegirAnuncio(a.id, true);
+    led('Anuncio creado en ' + nombreLista(zonaId) + ' · pon el enlace y el texto en Propiedades', 'ok');
+    return a;
+  }
+  function duplicar() {
+    var r = selAd(); if (!r) return led('Elige antes un anuncio', 'err');
+    var copia = A.anuncioBase(JSON.parse(JSON.stringify(r.ad))); copia.id = A.nuevoId(); copia.nombre = r.ad.nombre + ' (copia)';
+    cambio(function () { r.lista.arr.splice(r.i + 1, 0, copia); }, true);
+    elegirAnuncio(copia.id); led('Anuncio duplicado', 'ok');
+  }
+  function borrar() {
+    var r = selAd(); if (!r) return led('Elige antes un anuncio', 'err');
+    cambio(function () { r.lista.arr.splice(r.i, 1); }, true);
+    ES.sel = ''; elegirAnuncio(''); led('Anuncio eliminado · Ctrl+Z para deshacer');
+  }
+
+  /* --- esqueleto (se monta una vez) --- */
+  function montarEstudio() {
+    if (ES.montado) return; ES.montado = true;
+    var s = $('#estudio');
+    s.innerHTML = '<nav class="herr" id="herr" aria-label="Herramientas"></nav>' +
+      '<div class="lz-col"><div class="lz-barra" id="lzBarra"></div>' +
+        '<div class="lz-marco"><div class="lz-vp" id="lzVp"><div class="lz-tam" id="lzTam"><div class="lz-disp" id="lzDisp">' +
+          '<iframe id="webReal" title="Web real con las zonas de anuncio"></iframe><div class="lz-marcas" id="lzMarcas"></div></div></div></div>' +
+          '<div class="lz-borde arriba" id="lzArriba"></div><div class="lz-borde abajo" id="lzAbajo"></div><div class="lz-aviso oculto" id="lzAviso"></div></div></div>' +
+      '<section class="pn-tira" aria-label="Biblioteca"><div class="tira-et"><b>Biblioteca</b><small>Arrastra cada foto<br>a una zona o a un anuncio</small></div><div id="pnBiblio" class="tira-cuerpo"></div></section>' +
+      '<div class="pn-tabs" id="pnTabs"><button data-p="capas">CAPAS</button><button data-p="props">PROPIEDADES</button><button data-p="biblio">BIBLIOTECA</button></div>' +
+      '<div class="pn-col" id="pnCol">' +
+        '<section class="pn" data-p="capas"><h3>Capas <small>zonas y anuncios</small></h3><div id="pnCapas"></div></section>' +
+        '<section class="pn" data-p="props"><h3>Propiedades <small id="pnPropsSub"></small></h3><div id="pnProps"></div></section></div>' +
+      '<input type="file" id="ficheroAd" accept="image/*" multiple class="oculto">';
+    $$('#pnTabs button').forEach(function (b) { b.onclick = function () { ES.panel = b.dataset.p; pintarPaneles(); }; });
+    $('#ficheroAd').onchange = function (e) {
+      var r = selAd(), files = e.target.files;
+      subir(files, function (urls) {
+        if (r) cambio(function () { var x = buscar(r.ad.id); if (x) x.ad.medios = x.ad.medios.concat(urls); D.biblioteca = (D.biblioteca || []).concat(urls); });
+        else anadirABiblio(urls);
+      });
+      e.target.value = '';
+    };
+    // arrastrar: mientras dura, las zonas del lienzo reciben lo que se suelta (la web no se lo queda)
+    s.addEventListener('dragstart', function () { s.classList.add('arrastrando'); });
+    document.addEventListener('dragend', function () { s.classList.remove('arrastrando'); limpiarSobre(); });
+    document.addEventListener('drop', function () { s.classList.remove('arrastrando'); });
+    document.addEventListener('dragenter', function (e) { if (seccion === 'ads' && e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') >= 0) s.classList.add('arrastrando'); });
+    document.addEventListener('dragleave', function (e) { if (!e.relatedTarget && !arrastre) s.classList.remove('arrastrando'); });
+    document.addEventListener('dragover', function (e) { if (seccion === 'ads' && e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') >= 0) e.preventDefault(); });
+    document.addEventListener('drop', function (e) { if (seccion === 'ads' && e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) e.preventDefault(); });
+    // mano: arrastrar desplaza el lienzo; la rueda mueve la web
+    var vp = $('#lzVp'), ag = null;
+    $('#lzMarcas').addEventListener('mousedown', function (e) {
+      if (!manoActiva()) return;
+      ag = { x: e.clientX, y: e.clientY, l: vp.scrollLeft, t: vp.scrollTop }; vp.classList.add('agarrando'); e.preventDefault();
+    });
+    document.addEventListener('mousemove', function (e) { if (ag) { vp.scrollLeft = ag.l - (e.clientX - ag.x); vp.scrollTop = ag.t - (e.clientY - ag.y); } });
+    document.addEventListener('mouseup', function () { if (ag) { ag = null; vp.classList.remove('agarrando'); } });
+    $('#lzMarcas').addEventListener('wheel', function (e) {
+      if (e.ctrlKey) return;
+      if (manoActiva() || (e.target && e.target.closest && e.target.closest('.lzm-et'))) { e.preventDefault(); enviar({ accion: 'desplazar', dy: e.deltaY / ES.k }); }
+    }, { passive: false });
+    vp.addEventListener('wheel', function (e) {
+      if (!e.ctrlKey) return;
+      e.preventDefault(); zoomA((ES.zoom || ES.k) * (e.deltaY < 0 ? 1.1 : 1 / 1.1));
+    }, { passive: false });
+    if (window.ResizeObserver) new ResizeObserver(function () { if (seccion === 'ads') ajustarLienzo(); }).observe(vp);
+    cargarWeb();
+  }
+  function manoActiva() { return ES.herr === 'mano' || ES.espacio; }
+
+  /* --- herramientas --- */
+  function pintarHerr() {
+    var h = $('#herr'); if (!h) return;
+    var r = selAd();
+    h.innerHTML = HERR.map(function (x) {
+      if (!x) return '<hr>';
+      var modo = x[0] === 'mover' || x[0] === 'mano', on = modo && ES.herr === x[0];
+      var nece = /^(imagen|texto|duplicar|borrar)$/.test(x[0]) && !r;
+      return '<button data-h="' + x[0] + '" title="' + x[1] + '" aria-label="' + x[1] + '"' + (on ? ' class="on" aria-pressed="true"' : (modo ? ' aria-pressed="false"' : '')) + (nece ? ' disabled' : '') + '>' + svg(x[0]) + '</button>';
+    }).join('');
+    $$('button', h).forEach(function (b) { b.onclick = function () { herramienta(b.dataset.h); }; });
+  }
+  function herramienta(h) {
+    var r = selAd();
+    if (h === 'mover' || h === 'mano') { ES.herr = h; pintarHerr(); $('#lzVp').classList.toggle('mano', manoActiva()); return; }
+    if (h === 'nuevo') return nuevoAnuncio(ES.zona || 'borradores');
+    if (h === 'imagen') { if (!r) return led('Elige antes un anuncio', 'err'); return $('#ficheroAd').click(); }
+    if (h === 'texto') {
+      if (!r) return led('Elige antes un anuncio', 'err');
+      ES.abiertos.contenido = true; ES.panel = 'props'; pintarPaneles(); pintarProps();
+      var t = $('#pnProps [data-campo="texto"]'); if (t) { t.focus(); t.scrollIntoView({ block: 'center' }); } return;
+    }
+    if (h === 'duplicar') return duplicar();
+    if (h === 'borrar') return borrar();
+    if (h === 'zmas') return zoomA((ES.zoom || ES.k) * 1.25);
+    if (h === 'zmenos') return zoomA((ES.zoom || ES.k) / 1.25);
+    if (h === 'ajustar') { ES.zoom = 0; ajustarLienzo(); }
+  }
+  function zoomA(z) { ES.zoom = Math.max(0.15, Math.min(2, z)); ajustarLienzo(); }
+
+  /* --- lienzo: escala, barra, marcas --- */
+  function ajustarLienzo() {
+    var vp = $('#lzVp'), disp = $('#lzDisp'), tam = $('#lzTam'); if (!vp || !disp) return;
+    var dv = DISPOSITIVOS[vista] || DISPOSITIVOS.escritorio;
+    var ajuste = Math.min((vp.clientWidth - 32) / dv.w, (vp.clientHeight - 32) / dv.h, 1);
+    ES.k = ES.zoom || Math.max(0.1, ajuste);
+    disp.style.width = dv.w + 'px'; disp.style.height = dv.h + 'px';
+    disp.style.transform = 'scale(' + ES.k + ')';
+    disp.style.setProperty('--inv', (1 / ES.k).toFixed(4));
+    tam.style.width = Math.round(dv.w * ES.k) + 'px'; tam.style.height = Math.round(dv.h * ES.k) + 'px';
+    var z = $('#lzZoom'); if (z) z.textContent = Math.round(ES.k * 100) + ' %';
+    pintarMarcas();
+  }
+  function pintarBarra(siCambia) {
+    var b = $('#lzBarra'); if (!b) return;
+    var ocultas = ES.zonas.filter(function (z) { return !z.visible && A.ZONAS[z.id]; }).map(function (z) { return A.ZONAS[z.id].codigo; });
+    var clave = [ocultas.join(), ES.web, ES.zona, vista].join('|');
+    if (siCambia && clave === ES.claveBarra) return; ES.claveBarra = clave;
+    b.innerHTML = '<span class="etq">Web real</span><span class="lz-pag" title="Página de la web en el lienzo">SCREENS · una pantalla LED</span>' +
+      (GAS ? '<div class="seg" id="lzWeb"><button data-w="publica"' + (ES.web === 'publica' ? ' class="on"' : '') + ' title="screens.mediaservi.com">Pública</button><button data-w="beta"' + (ES.web === 'beta' ? ' class="on"' : '') + ' title="La beta en pruebas">Beta</button></div>' : '') +
+      '<span class="etq">Ir a</span><div class="ir">' + Object.keys(A.ZONAS).map(function (z) { return '<button class="bt' + (ES.zona === z ? ' on' : '') + '" data-ir="' + z + '" title="' + esc(A.ZONAS[z].nombre) + '">' + A.ZONAS[z].codigo + '</button>'; }).join('') + '</div>' +
+      (ocultas.length ? '<span class="nota">' + ocultas.join(', ') + ' no se ' + (ocultas.length > 1 ? 'muestran' : 'muestra') + ' en ' + (vista === 'movil' ? 'móvil' : 'esta vista') + '</span>' : '') +
+      '<span class="esp"></span><span class="zoom" id="lzZoom">' + Math.round(ES.k * 100) + ' %</span>' +
+      '<button class="bt ico" id="lzRecargar" title="Recargar la web">' + svg('recargar') + '</button>';
+    $$('[data-w]', b).forEach(function (x) { x.onclick = function () { if (ES.web !== x.dataset.w) { ES.web = x.dataset.w; ES.cambioWeb = true; pintarBarra(); cargarWeb(); } }; });
+    $$('[data-ir]', b).forEach(function (x) { x.onclick = function () { elegirZona(x.dataset.ir); }; });
+    $('#lzRecargar').onclick = cargarWeb;
+  }
+  function limpiarSobre() { $$('.sobre').forEach(function (x) { x.classList.remove('sobre'); }); if (marcadorCapas.parentNode) marcadorCapas.parentNode.removeChild(marcadorCapas); }
+  function pintarMarcas() {
+    var cont = $('#lzMarcas'); if (!cont) return;
+    cont.innerHTML = '';
+    var dv = DISPOSITIVOS[vista] || DISPOSITIVOS.escritorio, m = ES.marco || { x: 0, y: 0, w: dv.w, h: dv.h };
+    var clip = el('div', 'lz-clip'); clip.style.cssText = 'left:' + m.x + 'px;top:' + m.y + 'px;width:' + m.w + 'px;height:' + m.h + 'px';
+    cont.appendChild(clip); cont.classList.toggle('compacto', ES.k < 0.42);
+    var arriba = [], abajo = [];
+    ES.zonas.forEach(function (z) {
+      var def = infoZona(z.id); if (!def || !z.visible) return;
+      var x0 = z.x - m.x, y0 = z.y - m.y;
+      if (y0 + z.h < 6) { arriba.push(z.id); return; }
+      if (y0 > m.h - 6) { abajo.push(z.id); return; }
+      var mk = el('div', 'lzm' + (ES.zona === z.id ? ' sel' : '') + (def.fijo ? ' fija' : '')); mk.dataset.zona = z.id;
+      mk.style.cssText = 'left:' + x0 + 'px;top:' + y0 + 'px;width:' + z.w + 'px;height:' + z.h + 'px';
+      var et = el('div', 'lzm-et' + (y0 < 34 / ES.k ? ' dentro' : ''));
+      et.appendChild(el('span', 'cod', esc(def.codigo)));
+      et.appendChild(el('span', 'nom', esc(def.nombre)));
+      if (def.fijo) {
+        var sw = el('button', 'sw mini' + (D.traulux && D.traulux.activo === false ? '' : ' on')); sw.title = 'Activar o quitar el minibanner';
+        sw.onclick = function (e) { e.stopPropagation(); cambio(function () { D.traulux.activo = D.traulux.activo === false; }); };
+        et.appendChild(sw);
+      } else {
+        (D.zonas[z.id].anuncios || []).forEach(function (a) {
+          var mh = miniHTML(a.medios[0] || ''), ch = el('button', 'ch' + (a.id === ES.sel ? ' on' : '') + (A.estado(a) === 'activo' ? '' : ' apagado'));
+          ch.style.cssText = mh.estilo; ch.title = a.nombre + ' · ' + A.estado(a) + ' · arrástralo a otra zona'; ch.draggable = true;
+          if (!a.medios.length) ch.textContent = (a.nombre || '?').charAt(0).toUpperCase();
+          ch.onclick = function (e) { e.stopPropagation(); elegirAnuncio(a.id); };
+          ch.addEventListener('dragstart', function (e) { arrastre = { tipo: 'anuncio', id: a.id }; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', a.nombre); $('#estudio').classList.add('arrastrando'); });
+          ch.addEventListener('dragend', function () { arrastre = null; $('#estudio').classList.remove('arrastrando'); limpiarSobre(); });
+          et.appendChild(ch);
+        });
+        var mas = el('button', 'mas', '＋'); mas.title = 'Anuncio nuevo en esta zona';
+        mas.onclick = function (e) { e.stopPropagation(); nuevoAnuncio(z.id); };
+        et.appendChild(mas);
+      }
+      et.onclick = function () { elegirZona(z.id); };
+      mk.appendChild(et);
+      if (!def.fijo) soltarEnZona(mk, z.id);
+      clip.appendChild(mk);
+    });
+    var pills = function (box, ids, flecha) {
+      if (!box) return; box.innerHTML = '';
+      ids.forEach(function (id) { var d = infoZona(id), b = el('button', '', flecha + ' ' + esc(d.codigo) + ' · ' + esc(d.nombre)); b.onclick = function () { elegirZona(id); }; box.appendChild(b); });
+    };
+    pills($('#lzArriba'), arriba, '↑'); pills($('#lzAbajo'), abajo, '↓');
+  }
+  /* soltar en una zona (del lienzo o de Capas): anuncios se mueven; fotos y archivos crean un anuncio nuevo */
+  function aceptaSoltar(e) {
+    var t = Array.prototype.slice.call((e.dataTransfer && e.dataTransfer.types) || []);
+    return (arrastre && (arrastre.tipo === 'anuncio' || arrastre.tipo === 'biblio')) || t.indexOf('Files') >= 0 || t.indexOf('text/uri-list') >= 0;
+  }
+  function soltarEnZona(nodo, zonaId) {
+    nodo.addEventListener('dragover', function (e) { if (!aceptaSoltar(e)) return; e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = arrastre && arrastre.tipo === 'anuncio' ? 'move' : 'copy'; nodo.classList.add('sobre'); });
+    nodo.addEventListener('dragleave', function (e) { if (!nodo.contains(e.relatedTarget)) nodo.classList.remove('sobre'); });
+    nodo.addEventListener('drop', function (e) {
+      if (!aceptaSoltar(e)) return;
+      e.preventDefault(); e.stopPropagation(); nodo.classList.remove('sobre'); $('#estudio').classList.remove('arrastrando');
+      recibir(e, zonaId, null);
+    });
+  }
+  function recibir(e, zonaId, pos) {
+    var ar = arrastre; arrastre = null;
+    if (ar && ar.tipo === 'anuncio') {
+      var lista = listaPorId(zonaId); mover(ar.id, zonaId, pos == null ? lista.length : pos);
+      elegirAnuncio(ar.id); return;
+    }
+    if (e.dataTransfer.files && e.dataTransfer.files.length) { subir(e.dataTransfer.files, function (urls) { nuevoAnuncio(zonaId, urls); }); return; }
+    var u = ar && ar.tipo === 'biblio' ? ar.url : (e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain') || '').split('\n')[0].trim();
+    if (/^(https?:\/\/|data:image\/)/i.test(u)) nuevoAnuncio(zonaId, [u]);
+  }
+
+  /* --- CAPAS --- */
+  var marcadorCapas = el('div', 'marcador');
+  function pintarCapas() {
+    var c = $('#pnCapas'); if (!c) return; c.innerHTML = '';
+    D.traulux = D.traulux || { activo: true };
+    var tx = el('div', 'cp-zona fija' + (ES.zona === 'traulux' ? ' sel' : ''));
+    tx.innerHTML = '<div class="cp-cab"><b>TX</b><span>Minibanner TRAULUX<small>fijo sobre el AD1 · no sale en móvil</small></span></div>';
+    var sw = el('button', 'sw' + (D.traulux.activo === false ? '' : ' on')); sw.title = 'Activar o quitar el minibanner';
+    sw.onclick = function () { cambio(function () { D.traulux.activo = D.traulux.activo === false; }); led('Minibanner TRAULUX ' + (D.traulux.activo === false ? 'quitado' : 'activado') + ' · pulsa GUARDAR', 'ok'); };
+    $('.cp-cab', tx).appendChild(sw);
+    $('.cp-cab', tx).onclick = function (e) { if (e.target !== sw) elegirZona('traulux'); };
+    c.appendChild(tx);
+    Object.keys(A.ZONAS).concat(['borradores']).forEach(function (id) {
+      var def = infoZona(id), arr = listaPorId(id), z = D.zonas[id];
+      var s = el('div', 'cp-zona' + (ES.zona === id ? ' sel' : '')); s.dataset.lista = id;
+      var cab = el('div', 'cp-cab', '<b>' + esc(def.codigo) + '</b><span>' + esc(def.nombre) + '<small>' + (id === 'borradores' ? 'no se publican' : esc(def.ubicacion) + (def.movil === false ? ' · no sale en móvil' : '')) + '</small></span>');
+      if (id !== 'borradores') { var ver = el('button', 'ico', svg('ojo')); ver.title = 'Ver la zona en la web'; ver.onclick = function (e) { e.stopPropagation(); elegirZona(id); }; cab.appendChild(ver); }
+      var mas = el('button', 'ico', '＋'); mas.title = 'Anuncio nuevo aquí'; mas.onclick = function (e) { e.stopPropagation(); nuevoAnuncio(id); }; cab.appendChild(mas);
+      cab.onclick = function () { if (id !== 'borradores') elegirZona(id); };
+      s.appendChild(cab);
+      if (z && arr.length > 1) {
+        var rot = el('div', 'cp-rot');
+        rot.innerHTML = '<select title="Con varios anuncios">' + Object.keys(A.ROTACION).map(function (k) { return '<option value="' + k + '"' + (z.rotacion === k ? ' selected' : '') + '>' + A.ROTACION[k] + '</option>'; }).join('') +
+          '</select><label>cada <input type="number" min="3" max="120" value="' + z.segundos + '"> s</label>';
+        $('select', rot).onchange = function (e) { cambio(function () { z.rotacion = e.target.value; }); };
+        $('input', rot).onchange = function (e) { cambio(function () { z.segundos = Math.max(3, Math.min(120, +e.target.value || 8)); }); };
+        s.appendChild(rot);
+      }
+      var l = el('div', 'cp-lista'); l.dataset.lista = id;
+      if (!arr.length) l.appendChild(el('div', 'cp-vacia', id === 'borradores' ? 'Arrastra aquí lo que no quieras publicar' : 'Vacía · arrastra aquí un anuncio o una foto'));
+      arr.forEach(function (a) {
+        var est = A.estado(a), mh = miniHTML(a.medios[0] || '');
+        var f = el('div', 'cp-ad' + (a.id === ES.sel ? ' on' : '') + (est === 'activo' ? '' : ' apagado')); f.dataset.id = a.id; f.draggable = true;
+        f.innerHTML = '<span class="asa" title="Arrastrar">⋮⋮</span><i class="th" style="' + mh.estilo + '">' + (a.medios.length ? '' : esc((a.nombre || '?').charAt(0).toUpperCase())) + '</i>' +
+          '<span class="nom">' + esc(a.nombre || 'Anuncio') + '</span><span class="chip ' + est.split(' ')[0] + '">' + est + '</span>' +
+          (clics[a.id] ? '<span class="clics" title="Clics">' + clics[a.id] + ' clics</span>' : '');
+        var sw2 = el('button', 'sw mini' + (a.activo ? ' on' : '')); sw2.title = a.activo ? 'Desactivar' : 'Activar';
+        sw2.onclick = function (e) { e.stopPropagation(); cambio(function () { a.activo = !a.activo; }); };
+        f.appendChild(sw2);
+        f.onclick = function () { elegirAnuncio(a.id, true); };
+        f.addEventListener('dragstart', function (e) { arrastre = { tipo: 'anuncio', id: a.id }; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', a.nombre); setTimeout(function () { f.classList.add('arrastrando'); }, 0); });
+        f.addEventListener('dragend', function () { f.classList.remove('arrastrando'); arrastre = null; limpiarSobre(); });
+        l.appendChild(f);
+      });
+      soltarEnCapas(l, id);
+      s.appendChild(l);
+      c.appendChild(s);
+    });
+  }
+  function indiceCapas(lista, y) {
+    var filas = $$('.cp-ad', lista).filter(function (c) { return !c.classList.contains('arrastrando'); }), idx = filas.length;
+    for (var k = 0; k < filas.length; k++) { var r = filas[k].getBoundingClientRect(); if (y < r.top + r.height / 2) { idx = k; break; } }
+    return { idx: idx, antes: filas[idx] || null };
+  }
+  function soltarEnCapas(l, id) {
+    l.addEventListener('dragover', function (e) {
+      if (!aceptaSoltar(e)) return;
+      e.preventDefault(); l.classList.add('sobre');
+      if (arrastre && arrastre.tipo === 'anuncio') { var p = indiceCapas(l, e.clientY); if (p.antes) l.insertBefore(marcadorCapas, p.antes); else l.appendChild(marcadorCapas); }
+    });
+    l.addEventListener('dragleave', function (e) { if (!l.contains(e.relatedTarget)) { l.classList.remove('sobre'); if (marcadorCapas.parentNode === l) l.removeChild(marcadorCapas); } });
+    l.addEventListener('drop', function (e) {
+      if (!aceptaSoltar(e)) return;
+      e.preventDefault();
+      var pos = null;
+      if (arrastre && arrastre.tipo === 'anuncio') {
+        var filas = $$('.cp-ad', l), p = indiceCapas(l, e.clientY); pos = filas.length;
+        filas.forEach(function (c, k) { if (c === p.antes) pos = k; });
+      }
+      limpiarSobre(); recibir(e, id, pos);
+    });
+  }
+
+  /* --- PROPIEDADES --- */
+  function grupo(clave, titulo, cuerpo) {
+    var d = el('details', 'pp-grupo'); d.open = !!ES.abiertos[clave];
+    d.appendChild(el('summary', '', titulo));
+    var c = el('div', 'pp-cuerpo'); cuerpo(c); d.appendChild(c);
+    d.addEventListener('toggle', function () { ES.abiertos[clave] = d.open; });
+    return d;
+  }
+  function ppCampo(etq, nodo, ancho) { var g = el('label', 'pp-campo' + (ancho ? ' ancho' : '')); g.appendChild(el('span', 'etq', etq)); g.appendChild(nodo); return g; }
+  function texto(a, k, tipo, ph, alCambiar) {
+    var i = el(tipo === 'area' ? 'textarea' : 'input'); if (tipo !== 'area') i.type = tipo || 'text';
+    i.value = a[k] || ''; if (ph) i.placeholder = ph; i.dataset.campo = k;
+    i.onfocus = function () { hist.push(snap()); if (hist.length > 60) hist.shift(); $('#deshacer').disabled = false; };
+    i.oninput = function () { a[k] = k === 'url' ? i.value.trim() : i.value; marcarSucio(true); enviarPronto(); if (alCambiar) alCambiar(); };
+    i.onchange = function () { pintarCapas(); pintarMarcas(); };
+    return i;
+  }
+  function botones(op, valor, fn, cls) {
+    var g = el('div', 'pp-bts' + (cls ? ' ' + cls : ''));
+    Object.keys(op).forEach(function (k) {
+      var b = el('button', k === String(valor) ? 'on' : '', op[k]); b.type = 'button'; b.setAttribute('aria-pressed', k === String(valor));
+      b.onclick = function () { cambio(function () { fn(k); }); };
+      g.appendChild(b);
+    });
+    return g;
+  }
+  function color(a, k, defecto, autoTxt) {
+    var s = a.estilo, g = el('div', 'pp-color');
+    var auto = el('button', 'bt' + (s[k] ? '' : ' on'), autoTxt || 'Auto'); auto.type = 'button'; auto.setAttribute('aria-pressed', !s[k]);
+    auto.onclick = function () { cambio(function () { s[k] = ''; }); };
+    var c = el('input'); c.type = 'color'; c.value = s[k] || defecto; c.classList.toggle('apagado', !s[k]);
+    c.oninput = function () { retoque(function () { s[k] = c.value; }); auto.classList.remove('on'); c.classList.remove('apagado'); };
+    c.onchange = function () { pintarProps(); };
+    g.appendChild(auto); g.appendChild(c);
+    return g;
+  }
+  function deslizador(a, k, min, max, paso, unidad, autoTxt) {
+    var s = a.estilo, g = el('div', 'pp-desl'), auto = null;
+    var vacio = k === 'radio' ? (s[k] === '' || s[k] == null) : !s[k];
+    var r = el('input'); r.type = 'range'; r.min = min; r.max = max; r.step = paso || 1; r.value = vacio ? (k === 'radio' ? 10 : min) : s[k];
+    var v = el('span', 'val', vacio && autoTxt ? '' : (r.value + unidad));
+    r.oninput = function () { retoque(function () { s[k] = +r.value; }); v.textContent = r.value + unidad; if (auto) auto.classList.remove('on'); };
+    g.appendChild(r); g.appendChild(v);
+    if (autoTxt) { auto = el('button', 'bt' + (vacio ? ' on' : ''), autoTxt); auto.type = 'button'; auto.onclick = function () { cambio(function () { s[k] = k === 'radio' ? '' : 0; }); }; g.appendChild(auto); }
+    return g;
+  }
+  function pintarProps() {
+    var c = $('#pnProps'); if (!c) return; c.innerHTML = '';
+    var sub = $('#pnPropsSub'), r = selAd();
+    if (!r) {
+      if (sub) sub.textContent = '';
+      var z = ES.zona && ES.zona !== 'traulux' ? D.zonas[ES.zona] : null;
+      c.appendChild(el('div', 'pp-nada', (ES.zona === 'traulux' ? 'El minibanner de TRAULUX es fijo: solo se activa o se quita (interruptor en Capas o en el lienzo).'
+        : (z ? '<b>' + esc(nombreLista(ES.zona)) + '</b><br>Zona vacía. Arrastra aquí un anuncio o una foto, o pulsa ＋.' : 'Elige un anuncio en el lienzo o en Capas,<br>o crea uno con la herramienta ＋ (N).')) +
+        '<br><br><span class="ayuda">Arrastra los anuncios entre las zonas del lienzo<br>y las fotos de la Biblioteca a una zona o a un anuncio.</span>'));
+      return;
+    }
+    var a = r.ad, s = a.estilo, est = A.estado(a);
+    if (sub) sub.textContent = nombreLista(r.lista.id);
+    var top = el('div', 'pp-top');
+    var nom = texto(a, 'nombre', 'text', 'Nombre del anuncio', function () { var f = $('.cp-ad[data-id="' + a.id + '"] .nom'); if (f) f.textContent = a.nombre; });
+    nom.classList.add('pp-nombre'); top.appendChild(nom);
+    var sw = el('button', 'sw' + (a.activo ? ' on' : '')); sw.title = a.activo ? 'Desactivar' : 'Activar'; sw.onclick = function () { cambio(function () { a.activo = !a.activo; }); };
+    top.appendChild(sw);
+    c.appendChild(top);
+    var info = el('div', 'pp-info', '<span class="chip ' + est.split(' ')[0] + '">' + est + '</span>' + (clics[a.id] ? '<span class="clics">' + clics[a.id] + ' clics</span>' : '') +
+      (est === 'sin enlace' ? '<span class="aviso">Sin enlace no se publica: ponlo en Contenido</span>' : ''));
+    c.appendChild(info);
+    var zs = el('select');
+    zs.innerHTML = Object.keys(A.ZONAS).concat(['borradores']).map(function (z) { return '<option value="' + z + '"' + (z === r.lista.id ? ' selected' : '') + '>' + esc(nombreLista(z)) + '</option>'; }).join('');
+    zs.onchange = function () { mover(a.id, zs.value, listaPorId(zs.value).length); elegirAnuncio(a.id, true); };
+    c.appendChild(ppCampo('Zona', zs, true));
+
+    c.appendChild(grupo('contenido', 'Contenido', function (g) {
+      g.appendChild(ppCampo('Enlace (al pulsar el anuncio)', texto(a, 'url', 'url', 'https://…'), true));
+      g.appendChild(ppCampo('Texto (una línea por viñeta)', texto(a, 'texto', 'area', 'Texto del anuncio'), true));
+      g.appendChild(ppCampo('Botón', texto(a, 'boton', 'text', 'p. ej. VER OFERTA (vacío = sin botón)'), true));
+    }));
+    c.appendChild(grupo('medios', 'Fotos y vídeos', function (g) {
+      var ms = el('div', 'medios');
+      if (!a.medios.length) ms.appendChild(el('div', 'pista', 'Arrastra aquí fotos de la Biblioteca<br>o de tu ordenador'));
+      a.medios.forEach(function (u, k) {
+        var mh = miniHTML(u), d = el('div', 'mini'); d.style.cssText = mh.estilo; d.title = u; d.draggable = true; d.dataset.k = k;
+        d.appendChild(el('span', 'tipo', mh.tipo)); d.appendChild(el('span', 'num', String(k + 1)));
+        var x = el('button', 'x', '×'); x.title = 'Quitar del anuncio'; x.onclick = function (e) { e.stopPropagation(); cambio(function () { a.medios.splice(k, 1); }); };
+        d.appendChild(x);
+        d.addEventListener('dragstart', function (e) { arrastre = { tipo: 'medio', ad: a.id, k: k, url: u }; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', u); d.classList.add('arrastrando'); });
+        d.addEventListener('dragend', function () { d.classList.remove('arrastrando'); arrastre = null; });
+        ms.appendChild(d);
+      });
+      var add = el('button', 'add', '＋'); add.type = 'button'; add.title = 'Subir fotos'; add.onclick = function () { $('#ficheroAd').click(); };
+      ms.appendChild(add);
+      soltarMedios(ms, a);
+      g.appendChild(ms);
+      var fu = el('div', 'fila-url'); fu.innerHTML = '<input type="url" placeholder="o pega un enlace" title="Foto, vídeo .mp4 o YouTube"><button class="bt" type="button">＋</button>';
+      var addUrl = function () { var v = $('input', fu).value.trim(); if (/^https?:\/\//i.test(v)) cambio(function () { a.medios.push(v); }); else led('El enlace debe empezar por https://', 'err'); };
+      $('button', fu).onclick = addUrl; $('input', fu).onkeydown = function (e) { if (e.key === 'Enter') addUrl(); };
+      g.appendChild(fu);
+      g.appendChild(ppCampo('Ajuste', botones({ cover: 'Recortar (llena)', contain: 'Encajar (entera)' }, a.ajuste, function (k) { a.ajuste = k; })));
+      g.appendChild(ppCampo('Encuadre de la foto', botones(POS_FOCO, s.foco || 'centro', function (k) { s.foco = k === 'centro' ? '' : k; }, 'cinco')));
+      g.appendChild(ppCampo('Oscurecer la foto', deslizador(a, 'velo', 0, 85, 5, ' %', 'No')));
+      if (a.medios.length > 1) {
+        g.appendChild(ppCampo('Cambio de foto', botones(A.TRANSICIONES, s.transicion || 'fundido', function (k) { s.transicion = k === 'fundido' ? '' : k; })));
+        var seg = el('input'); seg.type = 'number'; seg.min = 2; seg.max = 60; seg.value = a.medioSeg;
+        seg.onchange = function () { cambio(function () { a.medioSeg = Math.max(2, Math.min(60, +seg.value || 4)); }); };
+        g.appendChild(ppCampo('Segundos por foto', seg));
+      }
+    }));
+    c.appendChild(grupo('formato', 'Formato y texto', function (g) {
+      var fm = el('div', 'formatos');
+      Object.keys(A.FORMATOS).forEach(function (k) {
+        var f = A.FORMATOS[k], w = f.ar >= 1 ? 40 : Math.round(30 * f.ar), h = f.ar >= 1 ? Math.max(5, Math.round(40 / f.ar)) : 30;
+        if (h > 30) { w = Math.round(w * 30 / h); h = 30; }
+        var b = el('button', 'fmt' + (a.formato === k ? ' on' : ''), '<i style="width:' + w + 'px;height:' + h + 'px"></i>' + esc(f.nombre).replace(/ (?=\d)/, '<br>'));
+        b.type = 'button'; b.title = f.nombre;
+        b.onclick = function () { cambio(function () { a.formato = k; if (f.banner && a.textoPos === 'debajo') a.textoPos = 'encima'; }); };
+        fm.appendChild(b);
+      });
+      g.appendChild(fm);
+      var ps = el('div', 'pos');
+      Object.keys(A.TEXTOPOS).forEach(function (k) {
+        var b = el('button', a.textoPos === k ? 'on' : '', iconoPos(k) + A.TEXTOPOS[k]); b.type = 'button';
+        b.onclick = function () { cambio(function () { a.textoPos = k; }); };
+        ps.appendChild(b);
+      });
+      g.appendChild(ppCampo('Posición del texto', ps, true));
+    }));
+    c.appendChild(grupo('tipo', 'Tipografía', function (g) {
+      var fu = el('select');
+      fu.innerHTML = '<option value="">Inter (la de la web)</option>' + Object.keys(A.FUENTES).filter(function (k) { return k !== 'inter'; }).map(function (k) {
+        return '<option value="' + k + '"' + (s.fuente === k ? ' selected' : '') + '>' + { mono: 'Share Tech Mono', sistema: 'Sistema', serif: 'Serif (Georgia)', estrecha: 'Estrecha' }[k] + '</option>'; }).join('');
+      fu.onchange = function () { cambio(function () { s.fuente = fu.value; }); };
+      g.appendChild(ppCampo('Fuente', fu, true));
+      g.appendChild(ppCampo('Tamaño del texto', deslizador(a, 'tam', 9, 44, 1, ' px', 'Auto'), true));
+      g.appendChild(ppCampo('Grosor', botones({ 0: 'Auto', 400: 'Normal', 600: 'Seminegra', 700: 'Negrita', 800: 'Extra' }, s.peso, function (k) { s.peso = +k; })));
+      g.appendChild(ppCampo('Alineación', botones({ '': 'Auto', izq: '⯇ Izquierda', centro: '☰ Centro', der: 'Derecha ⯈' }, s.alin, function (k) { s.alin = k; })));
+      g.appendChild(ppCampo('Color del texto', color(a, 'color', '#0f584c', 'Auto (contraste)')));
+    }));
+    c.appendChild(grupo('caja', 'Caja y botón', function (g) {
+      g.appendChild(ppCampo('Fondo de la caja', color(a, 'fondo', '#ffffff')));
+      g.appendChild(ppCampo('Borde', color(a, 'borde', '#9900ff', 'Sin borde')));
+      g.appendChild(ppCampo('Esquinas', deslizador(a, 'radio', 0, 40, 1, ' px', 'Auto'), true));
+      g.appendChild(ppCampo('Sombra', botones({ '': 'Sin sombra', si: 'Con sombra' }, s.sombra ? 'si' : '', function (k) { s.sombra = k === 'si'; })));
+      g.appendChild(ppCampo('Botón · fondo', color(a, 'btnFondo', '#9900ff', 'Violeta')));
+      g.appendChild(ppCampo('Botón · texto', color(a, 'btnColor', '#ffffff', 'Blanco')));
+      g.appendChild(ppCampo('Botón · forma', botones({ '': 'Píldora', redondeado: 'Redondeado', recto: 'Recto' }, s.btnForma === 'pildora' ? '' : s.btnForma, function (k) { s.btnForma = k; })));
+    }));
+    c.appendChild(grupo('prog', 'Programación', function (g) {
+      var dos = el('div', 'dos');
+      ['desde', 'hasta'].forEach(function (k) { var i = el('input'); i.type = 'date'; i.value = a[k] || ''; i.onchange = function () { cambio(function () { a[k] = i.value; }); }; dos.appendChild(ppCampo(k === 'desde' ? 'Desde' : 'Hasta', i)); });
+      g.appendChild(dos);
+      g.appendChild(ppCampo('Dispositivo', botones({ todos: 'Todos', escritorio: 'Solo escritorio', movil: 'Solo móvil' }, a.dispositivo, function (k) { a.dispositivo = k; })));
+    }));
+    var acc = el('div', 'acciones pp-acc');
+    var b1 = el('button', 'bt', svg('duplicar') + ' Duplicar'); b1.onclick = duplicar;
+    var b2 = el('button', 'bt', '↺ Restablecer estilo'); b2.title = 'Vuelve al aspecto de siempre'; b2.onclick = function () { cambio(function () { a.estilo = A.estiloBase({}); }); led('Estilo restablecido'); };
+    var b3 = el('button', 'bt peligro', svg('borrar') + ' Eliminar'); b3.onclick = function () {
+      if (!b3.classList.contains('armado')) { b3.classList.add('armado'); b3.lastChild.textContent = ' Pulsa otra vez'; setTimeout(function () { b3.classList.remove('armado'); b3.lastChild.textContent = ' Eliminar'; }, 2500); return; }
+      borrar();
+    };
+    acc.appendChild(b1); acc.appendChild(b2); acc.appendChild(b3);
+    c.appendChild(acc);
+  }
+
+  /* --- BIBLIOTECA del estudio --- */
+  function pintarBiblioEstudio() {
+    var c = $('#pnBiblio'); if (!c) return; c.innerHTML = '';
+    var dz = el('div', 'dropzona', '＋ Subir fotos<br><small>o arrástralas aquí</small>'); dz.title = 'Sube fotos desde tu ordenador';
+    dz.onclick = function () { var f = el('input'); f.type = 'file'; f.accept = 'image/*'; f.multiple = true; f.onchange = function () { subir(f.files, anadirABiblio); }; f.click(); };
+    ['dragover', 'dragenter'].forEach(function (ev) { dz.addEventListener(ev, function (e) { if (e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') >= 0) { e.preventDefault(); dz.classList.add('sobre'); } }); });
+    dz.addEventListener('dragleave', function () { dz.classList.remove('sobre'); });
+    dz.addEventListener('drop', function (e) { e.preventDefault(); dz.classList.remove('sobre'); if (e.dataTransfer.files.length) subir(e.dataTransfer.files, anadirABiblio); });
+    c.appendChild(dz);
+    var fu = el('div', 'fila-url'); fu.innerHTML = '<input type="url" placeholder="Enlace de foto o vídeo" title="Foto, vídeo .mp4 o YouTube"><button class="bt" type="button">＋</button>';
+    var add = function () { var v = $('input', fu).value.trim(); if (/^https?:\/\//i.test(v)) { anadirABiblio([v]); led('Añadido a la biblioteca', 'ok'); } else led('El enlace debe empezar por https://', 'err'); };
+    $('button', fu).onclick = add; $('input', fu).onkeydown = function (e) { if (e.key === 'Enter') add(); };
+    c.appendChild(fu);
+    var b = biblioteca(), g = el('div', 'biblio');
+    if (!b.length) g.appendChild(el('div', 'ayuda', 'Aún no hay fotos.<br>Súbelas o pega enlaces.'));
+    b.forEach(function (u) {
+      var mh = miniHTML(u), d = el('div', 'mini'); d.style.cssText = mh.estilo; d.title = 'Arrástrala a una zona o a un anuncio · pulsa para añadirla al anuncio elegido'; d.draggable = true;
+      d.appendChild(el('span', 'tipo', mh.tipo));
+      d.onclick = function () {
+        var r = selAd(); if (!r) return led('Elige un anuncio o arrastra la foto a una zona del lienzo', 'err');
+        if (r.ad.medios.indexOf(u) >= 0) return led('Esa foto ya está en el anuncio');
+        cambio(function () { r.ad.medios.push(u); }); led('Foto añadida a «' + r.ad.nombre + '»', 'ok');
+      };
+      d.addEventListener('dragstart', function (e) { arrastre = { tipo: 'biblio', url: u }; e.dataTransfer.effectAllowed = 'copy'; e.dataTransfer.setData('text/plain', u); d.classList.add('arrastrando'); });
+      d.addEventListener('dragend', function () { d.classList.remove('arrastrando'); arrastre = null; limpiarSobre(); });
+      g.appendChild(d);
+    });
+    c.appendChild(g);
+  }
+  function pintarPaneles() {
+    $$('#pnTabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.p === ES.panel); });
+    $$('#pnCol .pn').forEach(function (p) { p.classList.toggle('on', p.dataset.p === ES.panel); });
+    $('#estudio').classList.toggle('ver-biblio', ES.panel === 'biblio');
+  }
+  /* repintado completo del estudio (lo llama cada cambio) */
+  function pintarTodo() {
+    if (seccion !== 'ads') return;
+    montarEstudio();
+    if (ES.sel && !selAd()) ES.sel = '';
+    pintarHerr(); pintarBarra(); ajustarLienzo(); pintarCapas(); pintarProps(); pintarBiblioEstudio(); pintarPaneles();
+    $('#lzVp').classList.toggle('mano', manoActiva());
+    enviarDatos();
+    marcarSucio(sucio);
+  }
+  /* teclado del estudio (fuera de los campos de texto) */
+  document.addEventListener('keydown', function (e) {
+    if (seccion !== 'ads' || /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) || document.activeElement.isContentEditable) return;
+    var k = e.key, mod = e.ctrlKey || e.metaKey;
+    if (k === ' ' && !ES.espacio) { ES.espacio = true; $('#lzVp').classList.add('mano'); e.preventDefault(); return; }
+    if (mod && k.toLowerCase() === 'd') { e.preventDefault(); duplicar(); return; }
+    if (mod) return;
+    var mapa = { v: 'mover', h: 'mano', n: 'nuevo', i: 'imagen', t: 'texto', '+': 'zmas', '=': 'zmas', '-': 'zmenos', '0': 'ajustar' };
+    if (mapa[k.toLowerCase()]) { e.preventDefault(); herramienta(mapa[k.toLowerCase()]); return; }
+    if (k === 'Delete' || k === 'Backspace') { if (selAd()) { e.preventDefault(); borrar(); } return; }
+    if (k === 'Escape') { ES.sel = ''; ES.zona = ''; pintarTodo(); }
+  });
+  document.addEventListener('keyup', function (e) { if (e.key === ' ' && ES.espacio) { ES.espacio = false; var vp = $('#lzVp'); if (vp) vp.classList.toggle('mano', manoActiva()); } });
+
+  /* ---------- tarjeta de anuncio: iconos de la posición del texto ---------- */
   function iconoPos(p) {
     var r = { lado: '<rect x="1" y="2" width="11" height="12" rx="1.5" fill="currentColor"/><rect x="14" y="4" width="7" height="2" fill="currentColor"/><rect x="14" y="8" width="5" height="2" fill="currentColor"/>',
       debajo: '<rect x="4" y="1" width="14" height="9" rx="1.5" fill="currentColor"/><rect x="5" y="12" width="12" height="2" fill="currentColor"/>',
       encima: '<rect x="1" y="1" width="20" height="14" rx="1.5" fill="currentColor" opacity=".45"/><rect x="5" y="6" width="12" height="2.5" fill="currentColor"/>',
       ninguno: '<rect x="3" y="1" width="16" height="14" rx="1.5" fill="currentColor"/>' };
     return '<svg viewBox="0 0 22 16">' + r[p] + '</svg>';
-  }
-  function pintarAnuncio(a, listaId, i, n) {
-    var est = A.estado(a);
-    var c = el('article', 'ad' + (est === 'activo' ? '' : ' apagado')); c.dataset.id = a.id;
-    var ed = el('div', 'ed');
-    /* fila superior */
-    var top = el('div', 'ed-top');
-    var asa = el('span', 'asa', '⠿'); asa.title = 'Arrastra para mover el anuncio'; top.appendChild(asa);
-    var fl = el('span', 'flechas', '<button title="Subir">▲</button><button title="Bajar">▼</button>');
-    fl.children[0].disabled = i === 0; fl.children[1].disabled = i === n - 1;
-    fl.children[0].onclick = function () { mover(a.id, listaId, i - 1); };
-    fl.children[1].onclick = function () { mover(a.id, listaId, i + 2); };
-    top.appendChild(fl);
-    var sw = el('button', 'sw' + (a.activo ? ' on' : '')); sw.title = a.activo ? 'Activo: pulsa para desactivar' : 'Desactivado: pulsa para activar';
-    sw.onclick = function () { cambio(function () { a.activo = !a.activo; }); };
-    top.appendChild(sw);
-    var nom = el('input', 'nombre'); nom.type = 'text'; nom.value = a.nombre; nom.placeholder = 'Nombre interno';
-    nom.oninput = function () { a.nombre = nom.value; marcarSucio(true); };
-    nom.onfocus = function () { hist.push(snap()); };
-    top.appendChild(nom);
-    var chipCls = { activo: 'activo', programado: 'programado', caducado: 'caducado', desactivado: 'desactivado', 'sin enlace': 'sin' }[est];
-    top.appendChild(el('span', 'chip ' + chipCls, est));
-    top.appendChild(el('span', 'clics', '👆 ' + (clics[a.id] || 0) + ' clic' + ((clics[a.id] || 0) === 1 ? '' : 's')));
-    ed.appendChild(top);
-    asa.draggable = true;
-    asa.addEventListener('dragstart', function (e) { arrastre = { tipo: 'anuncio', id: a.id }; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', a.nombre); try { e.dataTransfer.setDragImage(c, 20, 20); } catch (x) {} setTimeout(function () { c.classList.add('arrastrando'); }, 0); });
-    asa.addEventListener('dragend', function () { c.classList.remove('arrastrando'); arrastre = null; quitarMarcador(); });
-
-    /* formato */
-    var gF = el('div', 'grupo', '<span class="etq">Formato</span>'), fmts = el('div', 'formatos');
-    Object.keys(A.FORMATOS).forEach(function (k) {
-      var f = A.FORMATOS[k], w = f.ar >= 1 ? 40 : Math.round(30 * f.ar), h = f.ar >= 1 ? Math.max(5, Math.round(40 / f.ar)) : 30;
-      if (h > 30) { w = Math.round(w * 30 / h); h = 30; }
-      var b = el('button', 'fmt' + (a.formato === k ? ' on' : ''), '<i style="width:' + w + 'px;height:' + h + 'px"></i>' + esc(f.nombre).replace(/ (?=\d)/, '<br>'));
-      b.title = f.nombre;
-      b.onclick = function () { cambio(function () { a.formato = k; if (f.banner && a.textoPos === 'debajo') a.textoPos = 'encima'; }); };
-      fmts.appendChild(b);
-    });
-    gF.appendChild(fmts); ed.appendChild(gF);
-
-    /* texto */
-    var gT = el('div', 'grupo', '<span class="etq">Texto</span>'), pos = el('div', 'pos');
-    Object.keys(A.TEXTOPOS).forEach(function (k) {
-      var b = el('button', a.textoPos === k ? 'on' : '', iconoPos(k) + A.TEXTOPOS[k]);
-      b.onclick = function () { cambio(function () { a.textoPos = k; }); };
-      pos.appendChild(b);
-    });
-    gT.appendChild(pos);
-    if (a.textoPos !== 'ninguno') {
-      var ta = el('textarea'); ta.value = a.texto; ta.placeholder = 'Una línea = una viñeta';
-      ta.onfocus = function () { hist.push(snap()); };
-      ta.oninput = function () { a.texto = ta.value; marcarSucio(true); refrescarPrevio(a.id); };
-      gT.appendChild(ta);
-      var bt = el('input'); bt.type = 'text'; bt.value = a.boton; bt.placeholder = 'Texto del botón (opcional), p. ej. «Ver oferta»';
-      bt.onfocus = function () { hist.push(snap()); };
-      bt.oninput = function () { a.boton = bt.value; marcarSucio(true); refrescarPrevio(a.id); };
-      gT.appendChild(bt);
-    }
-    ed.appendChild(gT);
-
-    /* enlace */
-    var gU = el('div', 'grupo', '<span class="etq">Enlace al pulsar</span>');
-    var url = el('input'); url.type = 'url'; url.value = a.url; url.placeholder = 'https://…';
-    url.onfocus = function () { hist.push(snap()); };
-    url.oninput = function () { a.url = url.value.trim(); marcarSucio(true); };
-    url.onchange = function () { pintarTodo(); };
-    gU.appendChild(url); ed.appendChild(gU);
-
-    /* medios */
-    var gM = el('div', 'grupo', '<span class="etq">Fotos y vídeos ' + (a.medios.length > 1 ? '· pasan cada ' + a.medioSeg + ' s' : '') + '</span>');
-    var ms = el('div', 'medios'); ms.dataset.ad = a.id;
-    a.medios.forEach(function (u, k) {
-      var mh = miniHTML(u), d = el('div', 'mini'); d.style.cssText = mh.estilo; d.title = u; d.draggable = true; d.dataset.k = k;
-      d.appendChild(el('span', 'tipo', mh.tipo)); d.appendChild(el('span', 'num', k + 1));
-      var x = el('button', 'x', '×'); x.title = 'Quitar del anuncio';
-      x.onclick = function () { cambio(function () { a.medios.splice(k, 1); }); };
-      d.appendChild(x);
-      d.addEventListener('dragstart', function (e) { arrastre = { tipo: 'medio', ad: a.id, k: k, url: u }; e.dataTransfer.effectAllowed = 'copyMove'; e.dataTransfer.setData('text/plain', u); d.classList.add('arrastrando'); e.stopPropagation(); });
-      d.addEventListener('dragend', function () { d.classList.remove('arrastrando'); arrastre = null; });
-      ms.appendChild(d);
-    });
-    if (!a.medios.length) ms.appendChild(el('div', 'pista', 'Arrastra aquí fotos de la biblioteca<br>o archivos desde tu ordenador'));
-    var add = el('button', 'add', '＋'); add.title = 'Añadir enlace de foto, vídeo o YouTube';
-    add.onclick = function () {
-      var fila = el('div', 'fila-url', '<input type="url" placeholder="Enlace de foto, vídeo o YouTube"><button class="bt">Añadir</button>');
-      ms.parentNode.insertBefore(fila, ms.nextSibling); var inp = fila.querySelector('input'); inp.focus();
-      var ok = function () { var v = inp.value.trim(); if (/^https?:\/\//i.test(v)) cambio(function () { a.medios.push(v); }); else fila.remove(); };
-      fila.querySelector('button').onclick = ok; inp.onkeydown = function (e) { if (e.key === 'Enter') ok(); if (e.key === 'Escape') fila.remove(); };
-    };
-    ms.appendChild(add);
-    soltarMedios(ms, a);
-    gM.appendChild(ms); ed.appendChild(gM);
-
-    /* más opciones */
-    var mas = el('details', 'mas'); mas.open = !!(a.desde || a.hasta || a.dispositivo !== 'todos' || a.ajuste !== 'cover');
-    mas.innerHTML = '<summary>Comportamiento</summary><div class="cont">' +
-      '<label class="grupo"><span class="etq">Ajuste de la media</span><select data-k="ajuste"><option value="cover">Recortar para llenar</option><option value="contain">Encajar entera</option></select></label>' +
-      '<label class="grupo"><span class="etq">Segundos por foto</span><input type="number" min="2" max="60" data-k="medioSeg"></label>' +
-      '<label class="grupo"><span class="etq">Dispositivo</span><select data-k="dispositivo"><option value="todos">Todos</option><option value="movil">Solo móvil</option><option value="escritorio">Solo escritorio</option></select></label>' +
-      '<label class="grupo"><span class="etq">Desde</span><input type="date" data-k="desde"></label>' +
-      '<label class="grupo"><span class="etq">Hasta</span><input type="date" data-k="hasta"></label></div>';
-    $$('[data-k]', mas).forEach(function (inp) {
-      var k = inp.dataset.k; inp.value = a[k];
-      inp.onchange = function () { cambio(function () { a[k] = k === 'medioSeg' ? Math.max(2, Math.min(60, +inp.value || 4)) : inp.value; }); };
-    });
-    ed.appendChild(mas);
-
-    /* acciones */
-    var acc = el('div', 'acciones');
-    var dup = el('button', 'bt', 'Duplicar');
-    dup.onclick = function () { cambio(function () { var copia = A.anuncioBase(JSON.parse(JSON.stringify(a))); copia.id = A.nuevoId(); copia.nombre = a.nombre + ' (copia)'; listaPorId(listaId).splice(i + 1, 0, copia); }); };
-    acc.appendChild(dup);
-    var mv = el('select'); mv.style.width = 'auto';
-    mv.innerHTML = '<option value="">Mover a…</option>' + Object.keys(A.ZONAS).concat(['borradores']).filter(function (z) { return z !== listaId; })
-      .map(function (z) { return '<option value="' + z + '">' + (z === 'borradores' ? 'Borradores' : A.ZONAS[z].nombre) + '</option>'; }).join('');
-    mv.onchange = function () { if (mv.value) mover(a.id, mv.value, listaPorId(mv.value).length); };
-    acc.appendChild(mv);
-    var del = el('button', 'bt peligro', 'Eliminar');
-    del.onclick = function () {
-      if (!del.classList.contains('armado')) { del.classList.add('armado'); del.textContent = 'Pulsa otra vez'; setTimeout(function () { del.classList.remove('armado'); del.textContent = 'Eliminar'; }, 3000); return; }
-      cambio(function () { listaPorId(listaId).splice(i, 1); }); led('Anuncio eliminado (puedes deshacer)');
-    };
-    acc.appendChild(del);
-    ed.appendChild(acc);
-    c.appendChild(ed);
-
-    /* previo */
-    var pv = el('div', 'prev'); pv.dataset.prev = a.id;
-    c.appendChild(pv);
-    setTimeout(function () { pintarPrevio(a, listaId, pv); }, 0);
-    return c;
-  }
-
-  /* ---------- previo fiel (mismo motor que la app) ---------- */
-  function anchoZona(listaId) {
-    if (vista === 'movil') return ANCHO_MOVIL;
-    return listaId === 'borradores' ? 600 : A.ZONAS[listaId].ancho;
-  }
-  function pintarPrevio(a, listaId, pv) {
-    if (limpiezas[a.id]) { limpiezas[a.id](); delete limpiezas[a.id]; }
-    pv.innerHTML = '';
-    var w = anchoZona(listaId), z = A.ZONAS[listaId];
-    var cab = el('div', 'prev-cab', '<span>Así se verá · ' + (vista === 'movil' ? 'Móvil' : 'Escritorio') + '</span><span>≈ ' + w + ' px</span>');
-    pv.appendChild(cab);
-    var area = el('div', 'prev-area'); pv.appendChild(area);
-    var nota = '';
-    if (vista === 'movil' && z && z.movil === false) nota = 'Esta zona no aparece en móvil.';
-    else if (vista === 'movil' && a.dispositivo === 'escritorio') nota = 'Configurado solo para escritorio:<br>no se muestra en móvil.';
-    else if (vista === 'escritorio' && a.dispositivo === 'movil') nota = 'Configurado solo para móvil:<br>no se muestra en escritorio.';
-    if (!a.medios.length && a.textoPos === 'ninguno') nota = 'Añade una foto o un texto<br>para ver el anuncio.';
-    if (nota) { area.appendChild(el('div', 'prev-nota', nota)); return; }
-    var esc0 = el('div', 'prev-escala'); esc0.style.width = w + 'px';
-    area.appendChild(esc0);
-    limpiezas[a.id] = A.pintar(esc0, a, { preview: true });
-    var ajustar = function () {
-      var disp = area.clientWidth - 24, f = Math.min(1, disp / w);
-      esc0.style.transform = 'scale(' + f + ')';
-      area.style.height = Math.ceil(esc0.offsetHeight * f + 24) + 'px';
-    };
-    ajustar();
-    setTimeout(ajustar, 400); setTimeout(ajustar, 1500);
-    $$('img,video', esc0).forEach(function (m) { m.addEventListener('load', ajustar); m.addEventListener('loadedmetadata', ajustar); });
-  }
-  var tPrev = {};
-  function refrescarPrevio(id) {
-    clearTimeout(tPrev[id]);
-    tPrev[id] = setTimeout(function () { var r = buscar(id), pv = $('[data-prev="' + id + '"]'); if (r && pv) pintarPrevio(r.ad, r.lista.id, pv); }, 250);
-  }
-
-  /* ---------- mover anuncios ---------- */
+  }  /* ---------- mover anuncios ---------- */
   function mover(id, destino, pos) {
     cambio(function () {
       var r = buscar(id); if (!r) return;
@@ -868,37 +1492,9 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
       pos = Math.max(0, Math.min(arr.length, pos));
       arr.splice(pos, 0, r.ad);
       if (destino === 'borradores') r.ad.activo = false;
+      else if (r.lista.id === 'borradores') r.ad.activo = true;
     });
     led('Anuncio movido a ' + (destino === 'borradores' ? 'Borradores' : A.ZONAS[destino].nombre));
-  }
-  var marcador = el('div', 'marcador');
-  function quitarMarcador() { if (marcador.parentNode) marcador.parentNode.removeChild(marcador); $$('.sobre').forEach(function (x) { x.classList.remove('sobre'); }); }
-  function indiceSoltar(lista, y) {
-    var cards = $$('.ad', lista).filter(function (c) { return !c.classList.contains('arrastrando'); }), idx = cards.length;
-    for (var k = 0; k < cards.length; k++) { var r = cards[k].getBoundingClientRect(); if (y < r.top + r.height / 2) { idx = k; break; } }
-    return { idx: idx, antes: cards[idx] || null };
-  }
-  function soltarAnuncios(lista, id) {
-    lista.addEventListener('dragover', function (e) {
-      if (!arrastre || arrastre.tipo !== 'anuncio') return;
-      e.preventDefault(); e.dataTransfer.dropEffect = 'move';
-      var p = indiceSoltar(lista, e.clientY);
-      lista.classList.add('sobre');
-      if (p.antes) lista.insertBefore(marcador, p.antes); else lista.appendChild(marcador);
-    });
-    lista.addEventListener('dragleave', function (e) { if (!lista.contains(e.relatedTarget)) { lista.classList.remove('sobre'); if (marcador.parentNode === lista) lista.removeChild(marcador); } });
-    lista.addEventListener('drop', function (e) {
-      if (!arrastre || arrastre.tipo !== 'anuncio') return;
-      e.preventDefault();
-      var r = buscar(arrastre.id); if (!r) return;
-      // índice real en la lista de datos (contando la tarjeta arrastrada si está en esta lista)
-      var cards = $$('.ad', lista), destinoIdx = 0, p = indiceSoltar(lista, e.clientY);
-      cards.forEach(function (c, k) { if (c === p.antes) destinoIdx = k; });
-      if (!p.antes) destinoIdx = cards.length;
-      quitarMarcador();
-      mover(arrastre.id, id, destinoIdx);
-      arrastre = null;
-    });
   }
   function soltarMedios(ms, a) {
     ms.addEventListener('dragover', function (e) {
@@ -2058,7 +2654,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
   var addB = function () { var v = $('#urlBiblio').value.trim(); if (/^https?:\/\//i.test(v)) { anadirABiblio([v]); $('#urlBiblio').value = ''; led('Añadido a la biblioteca', 'ok'); } else led('El enlace debe empezar por https://', 'err'); };
   $('#addBiblio').onclick = addB;
   $('#urlBiblio').onkeydown = function (e) { if (e.key === 'Enter') addB(); };
-  var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { if (seccion === 'ads') pintarTodo(); }, 200); });
+  var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { if (seccion === 'ads') ajustarLienzo(); }, 120); });
 })();
 </script>
 </body>

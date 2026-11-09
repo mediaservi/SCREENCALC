@@ -8,7 +8,7 @@ import '../comun/voz.js';
 import { interpretar } from './peticion.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v8.0';
+const VERSION = 'v8.1';
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   cantidad: 'varias', tecnologia: 'led',
@@ -464,6 +464,29 @@ window.addEventListener('message', (ev) => {
   const f = $('#sc-led'); if (ev.origin !== location.origin || !f || ev.source !== f.contentWindow || !ev.data) return;
   if (ev.data.tipo === 'screens-listo') { ledListo = true; f.classList.add('listo'); colaLed.splice(0).forEach(aIframe); }
 });
+// v8.1 · editor de anuncios de AVHUB ADMIN (?anuncios=editor): la consola pasa el modo al cálculo de una pantalla LED y reenvía
+// los mensajes entre el editor y ese cálculo; las zonas de anuncio llegan al editor en las coordenadas de la consola
+const EDITOR_ADS = /[?&]anuncios=editor\b/.test(location.search);
+const editorPermitido = (o) => o === location.origin || /^https:\/\/([a-z0-9-]+\.)*(googleusercontent\.com|google\.com|mediaservi\.com|githack\.com)$/.test(o) ||
+  /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(o);
+if (EDITOR_ADS && window.parent !== window) window.addEventListener('message', (ev) => {
+  const d = ev.data; if (!d || typeof d !== 'object' || d.tipo !== 'avhub-ads') return;
+  const f = $('#sc-led'); if (!f) return;
+  if (ev.source === window.parent) { if (editorPermitido(ev.origin)) aIframe(d); return; }
+  if (ev.source !== f.contentWindow || ev.origin !== location.origin) return;
+  if (d.accion === 'zonas' && Array.isArray(d.zonas)) { zonasLed = d; marcoLed = ''; reenviarZonas(); return; }
+  try { window.parent.postMessage(d, '*'); } catch (e) {}
+});
+// las zonas, en las coordenadas de la consola; se reenvían también si el cálculo cambia de sitio en la consola
+let zonasLed = null, marcoLed = '';
+function reenviarZonas() {
+  const f = $('#sc-led'); if (!EDITOR_ADS || !zonasLed || !f) return;
+  const r = f.getBoundingClientRect(), k = [r.left, r.top, r.width, r.height, innerWidth, innerHeight].map(Math.round).join(',');
+  if (k === marcoLed) return; marcoLed = k;
+  const m = { ...zonasLed, zonas: zonasLed.zonas.map(z => ({ ...z, x: z.x + r.left, y: z.y + r.top })), marco: { x: r.left, y: r.top, w: r.width, h: r.height }, vw: innerWidth, vh: innerHeight };
+  try { window.parent.postMessage(m, '*'); } catch (e) {}
+}
+if (EDITOR_ADS && window.parent !== window) { addEventListener('resize', reenviarZonas); setInterval(reenviarZonas, 700); }
 // lo entendido, rotulado en el idioma de la consola
 function rotulo(x) {
   switch (x.k) {
@@ -528,7 +551,7 @@ function actualizar(sinEscena) {
   // una pantalla LED: el cálculo completo de una pantalla (la app de la raíz), dentro de la misma consola
   if (led1) {
     if (!$('#sc-led')) { soltarEscena(); calculo = null; ledListo = false; colaLed = [];
-      app.innerHTML = `<div class="embebido"><p class="emb-carga">${t('cargandoLed')}</p><iframe id="sc-led" src="led.html?embed=1&lang=${idioma()}" title="SCREENS · ${t('una')} LED"></iframe></div>`;
+      app.innerHTML = `<div class="embebido"><p class="emb-carga">${t('cargandoLed')}</p><iframe id="sc-led" src="led.html?embed=1&lang=${idioma()}${EDITOR_ADS ? '&anuncios=editor' : ''}" title="SCREENS · ${t('una')} LED"></iframe></div>`;
       // se muestra cuando avisa de que está listo (o, por si acaso, 4 s después de cargar)
       const f = $('#sc-led'); f.addEventListener('load', () => setTimeout(() => f.classList.add('listo'), 4000), { once: true }); }
     return;

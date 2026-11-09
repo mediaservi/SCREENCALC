@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v8.0** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v8.1** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -89,7 +89,35 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v8.0)
+## Cambios de la versión actual (v8.1)
+
+- **Nuevo editor de anuncios en AVHUB ADMIN (v1.4)**, pensado como un programa de diseño. Es una página fija, sin desplazar la página entera.
+  - **Herramientas** a la izquierda, con atajos de teclado:
+    - mover (V) y mano (H o barra espaciadora);
+    - anuncio nuevo (N), fotos (I) y texto (T);
+    - duplicar (Ctrl+D) y eliminar (Supr);
+    - zoom (+, −, 0).
+  - **En el lienzo, la web real** de SCREENS, en escritorio o en móvil, con las zonas de anuncio marcadas: AD1 pie del menú, AD2 y AD3 en resultados y el minibanner de TRAULUX.
+    - Los anuncios se ven en directo mientras se editan.
+    - Las zonas vacías salen marcadas.
+    - Las zonas que quedan fuera de la vista se avisan en el borde, con un botón para ir a ellas.
+  - **Arrastrar y soltar:**
+    - un anuncio, de una zona a otra, en el lienzo o en Capas;
+    - una foto de la Biblioteca o del ordenador a una zona, para crear un anuncio, o a un anuncio, para añadirla.
+  - **Capas:** las zonas con sus anuncios, el orden, el encendido y apagado, la rotación y los borradores.
+  - **Propiedades** del anuncio elegido:
+    - contenido;
+    - fotos y vídeos, con su ajuste, encuadre, oscurecido y cambio de foto;
+    - formato y posición del texto;
+    - tipografía: fuente, tamaño, grosor, alineación y color;
+    - caja y botón: fondo, borde, esquinas, sombra, colores y forma del botón;
+    - programación.
+  - **Biblioteca** en una tira bajo el lienzo.
+  - En pantallas estrechas: herramientas arriba y un panel cada vez, con pestañas.
+- **La página guarda y muestra el estilo de cada anuncio** (también en el tema oscuro). Los anuncios sin estilo se ven como siempre.
+- **Modo editor** (`?anuncios=editor`): solo lo usa el editor para enseñar la web real con los anuncios que se están editando, sin abrir los enlaces.
+
+## Cambios de la versión v8.0
 
 - **Proyección para mapping y fachadas** (por ejemplo, una fachada de 12 × 19 m con los proyectores en torres al otro lado de la calle):
   - **proyector en vertical (retrato)**, para todos los proyectores salvo las ópticas ultracortas de desplazamiento fijo. En AUTO se usa cuando hace falta menos equipos: la fachada de 12 × 19 m se cubre con un solo proyector;

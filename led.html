@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                SCREENS - INDEX                               ║
-║                          Versión actual: v8.0                              ║
+║                          Versión actual: v8.1                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v8.0
+ÚLTIMA ACTUALIZACIÓN: v8.1
+- v8.1: modo editor de anuncios (?anuncios=editor): el nuevo editor de AVHUB ADMIN enseña esta página real con los anuncios que se están editando (zonas vacías marcadas, posiciones de las zonas al editor, clics anulados); cada anuncio puede llevar su estilo (fuente, tamaño, grosor, alineación, colores, borde, esquinas, sombra, botón, encuadre y oscurecido de la foto, cambio de foto) y el tema oscuro lo respeta
+ANTERIOR: v8.0
 - v8.0: en la consola, proyección para mapping y fachadas: catálogo de Epson con todas las ópticas compatibles (sin conexión), proyector en vertical, distancia fija hasta 200 m, montaje colgado o apoyado (mesa, torre) con su altura y rejilla automática de columnas × filas con blending en los dos sentidos (este cálculo de una pantalla LED solo cambia de versión)
 ANTERIOR: v7.9
 - v7.9: sin catálogo de muestra: sin conexión ni copia guardada, se avisa de que no se ha podido cargar el catálogo (los datos salen siempre en vivo); en la consola, varias pantallas con la central de otra medida (auditorio), una sola electrónica con los conversores de fibra de cada pantalla y petición que entiende la central, las laterales y el pitch
@@ -1729,7 +1731,7 @@ ANTERIOR: v4.1
     </style>
     <style>
 /* ===== AVHUB ADS · motor de anuncios común (SCREENS y gestor de anuncios) ===== */
-.avad{position:relative;margin:10px 0;border-radius:10px;overflow:hidden;font-family:Inter,system-ui,sans-serif;font-size:13px;line-height:1.35;background:#fff;border:1px dashed #cbd5e1;color:#0f172a}
+.avad{position:relative;margin:10px 0;border-radius:var(--avad-radio,10px);overflow:hidden;font-family:var(--avad-fuente,Inter,system-ui,sans-serif);font-size:13px;line-height:1.35;background:var(--avad-fondo,#fff);border:1px dashed #cbd5e1;color:#0f172a}
 .avad *{box-sizing:border-box}
 .avad-tag{position:absolute;top:3px;right:8px;z-index:4;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;pointer-events:none}
 .avad-encima .avad-tag{color:rgba(255,255,255,.85);text-shadow:0 1px 2px rgba(0,0,0,.8)}
@@ -1737,12 +1739,12 @@ ANTERIOR: v4.1
 .avad-media{position:relative;width:100%;max-width:calc(var(--maxh) * var(--ar));aspect-ratio:var(--ar);margin:0 auto;border-radius:6px;overflow:hidden;background:#0b0b0f}
 .avad-capa{position:absolute;inset:0;opacity:0;transition:opacity .6s ease}
 .avad-capa.on{opacity:1}
-.avad-capa img,.avad-capa video{width:100%;height:100%;display:block;pointer-events:none;object-fit:var(--fit,cover)}
+.avad-capa img,.avad-capa video{width:100%;height:100%;display:block;pointer-events:none;object-fit:var(--fit,cover);object-position:var(--avad-foco,50% 50%)}
 .avad-capa iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}
-.avad-txt{min-width:0;font-weight:700;color:#0f584c}
-.avad-txt ul{margin:0;padding-left:18px;list-style:disc;font-weight:600;line-height:1.45;text-align:left}
+.avad-txt{min-width:0;font-size:var(--avad-tam,13px);font-weight:var(--avad-peso,700);color:var(--avad-color,#0f584c)}
+.avad-txt ul{margin:0;padding-left:18px;list-style:disc;font-weight:var(--avad-peso,600);line-height:1.45;text-align:left}
 .avad-txt .avad-t1{display:block}
-.avad-btn{display:inline-block;margin-top:8px;padding:7px 14px;border-radius:999px;background:#9900ff;color:#fff;font-weight:800;font-size:12px;letter-spacing:.03em;text-shadow:none}
+.avad-btn{display:inline-block;margin-top:8px;padding:7px 14px;border-radius:999px;background:var(--avad-btn-bg,#9900ff);color:var(--avad-btn-fg,#fff);font-weight:800;font-size:calc(var(--avad-tam,13px) * .92);letter-spacing:.03em;text-shadow:none}
 .avad-link:hover .avad-btn{filter:brightness(1.15)}
 .avad-link:hover .avad-txt ul,.avad-link:hover .avad-t1{text-decoration:underline}
 /* posiciones del texto */
@@ -1753,12 +1755,12 @@ ANTERIOR: v4.1
 .avad-debajo .avad-txt{text-align:center}
 .avad-debajo .avad-txt ul{display:inline-block}
 .avad-ninguno .avad-link{grid-template-columns:1fr}
-.avad-encima{border-style:solid;border-color:transparent;background:#0b0b0f}
+.avad-encima{border-style:solid;border-color:transparent;background:var(--avad-fondo,#0b0b0f)}
 .avad-encima .avad-link{display:block;position:relative;padding:0}
 .avad-encima .avad-media{border-radius:0;width:100%;max-width:calc(var(--maxh) * var(--ar))}
-.avad-encima .avad-txt{position:absolute;left:16px;right:16px;top:50%;transform:translateY(-50%);z-index:3;font-size:17px;font-weight:800;max-width:72%}
-.avad-encima.avad-banner .avad-txt{font-size:14px;max-width:80%}
-.avad-sinmedia .avad-txt{position:relative!important;top:auto!important;transform:none!important;padding:22px 16px 14px;max-width:100%!important;color:#0f584c}
+.avad-encima .avad-txt{position:absolute;left:16px;right:16px;top:50%;transform:translateY(-50%);z-index:3;font-size:var(--avad-tam,17px);font-weight:var(--avad-peso,800);max-width:72%}
+.avad-encima.avad-banner .avad-txt{font-size:var(--avad-tam,14px);max-width:80%}
+.avad-sinmedia .avad-txt{position:relative!important;top:auto!important;transform:none!important;padding:22px 16px 14px;max-width:100%!important;color:var(--avad-color,#0f584c)}
 /* formatos fijos IAB: tamaño nativo como máximo, centrados */
 .avad-fijo{max-width:var(--maxw);margin-left:auto;margin-right:auto}
 .avad-fijo.avad-encima .avad-media,.avad-fijo.avad-ninguno .avad-media{max-width:100%}
@@ -1772,7 +1774,29 @@ ANTERIOR: v4.1
 .avad-estrecho.avad-lado.avad-vert .avad-media{width:100%}
 .avad-estrecho .avad-txt{text-align:center}
 .avad-estrecho .avad-txt ul{display:inline-block}
-@media print{.avad,.avad-zona{display:none!important}}
+/* estilo de cada anuncio (editor de AVHUB ADMIN) */
+.avad-al-izq .avad-txt{text-align:left!important}
+.avad-al-centro .avad-txt{text-align:center!important}
+.avad-al-der .avad-txt{text-align:right!important}
+.avad-al-centro .avad-txt ul,.avad-al-der .avad-txt ul{display:inline-block;text-align:left}
+.avad-encima.avad-al-centro .avad-txt{left:50%;right:auto;transform:translate(-50%,-50%);width:max-content;max-width:84%}
+.avad-encima.avad-al-der .avad-txt{left:auto;right:16px}
+.avad-conborde{border:2px solid var(--avad-borde)!important}
+.avad-sombra{box-shadow:0 8px 22px rgba(0,0,0,.3)}
+.avad-btn-redondeado .avad-btn{border-radius:6px}
+.avad-btn-recto .avad-btn{border-radius:0}
+.avad-velo .avad-media::after{content:'';position:absolute;inset:0;z-index:2;background:rgba(0,0,0,var(--avad-velo,.3));pointer-events:none}
+.avad-tr-corte .avad-capa{transition:none}
+.avad-tr-deslizar .avad-capa{opacity:1;transform:translateX(100%);transition:transform .7s ease}
+.avad-tr-deslizar .avad-capa.on{transform:none}
+.avad-tr-deslizar .avad-capa.fuera{transform:translateX(-100%)}
+.avad-tr-deslizar .avad-capa.sin-tr{transition:none}
+.avad-tr-zoom .avad-capa{transform:scale(1.08);transition:opacity .9s ease,transform 6s ease-out}
+.avad-tr-zoom .avad-capa.on{transform:scale(1)}
+.avad-hueco{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;aspect-ratio:var(--ar,1.78);min-height:110px;max-height:240px;margin:10px 0;border:2px dashed rgba(153,0,255,.45);border-radius:10px;background:repeating-linear-gradient(45deg,rgba(153,0,255,.05) 0 12px,rgba(153,0,255,.11) 12px 24px);color:#5b21b6;font:600 12px/1.3 Inter,system-ui,sans-serif;text-align:center;padding:8px}
+.avad-hueco b{font:800 18px/1 Inter,system-ui,sans-serif;letter-spacing:.08em}
+.avad-hueco small{font-size:11px;color:#7c3aed}
+@media print{.avad,.avad-zona,.avad-hueco{display:none!important}}
     </style>
     <script>/* Estética AVHUB: activa por defecto; ?tema=clasico vuelve a la anterior (se recuerda), ?tema=avhub la recupera */
       (function(){var d=document.documentElement,t='avhub',q=null;try{q=new URLSearchParams(location.search).get('tema');}catch(e){}if(q){t=q;try{localStorage.setItem('screens_tema',q);}catch(e){}}else{try{t=localStorage.getItem('screens_tema')||'avhub';}catch(e){}}if(t!=='clasico'){d.classList.add('av');var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#232325');}})();
@@ -2140,10 +2164,11 @@ html.av .nl-falta { box-shadow: 0 0 0 1px var(--av-ambar), 0 0 14px rgba(255,176
 html.av .nl-pie { background: #1e1e21 !important; border-top: 1px solid #000 !important; }
 
 /* Anuncios */
-html.av .avad { background: #222225 !important; border: 1px solid #333338 !important; color: var(--av-txt) !important; }
-html.av .avad-txt, html.av .avad-sinmedia .avad-txt { color: var(--av-txt) !important; }
+html.av .avad { background: var(--avad-fondo, #222225) !important; border: 1px solid #333338 !important; color: var(--av-txt) !important; }
+html.av .avad-conborde { border: 2px solid var(--avad-borde) !important; }
+html.av .avad-txt, html.av .avad-sinmedia .avad-txt { color: var(--avad-color, var(--av-txt)) !important; }
 html.av .avad-tag { color: var(--av-tenue-2) !important; }
-html.av .avad-encima { background: #0b0b0f !important; }
+html.av .avad-encima { background: var(--avad-fondo, #0b0b0f) !important; }
 html.av .ad-slot { background: #222225 !important; border-color: #333338 !important; }
 /* ---------- Estilos en línea heredados (claro → oscuro) ---------- */
 html.av [style*="background: rgb(255, 255, 255)"], html.av [style*="background-color: rgb(255, 255, 255)"],
@@ -3333,7 +3358,8 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
 /* ===== AVHUB ADS · motor de anuncios común (SCREENS y gestor de anuncios) =====
    Datos v2: { version:2, zonas:{ <id>:{ rotacion, segundos, anuncios:[anuncio…] } }, borradores:[anuncio…] }
    anuncio: { id, nombre, activo, formato, textoPos, texto, boton, url, medios:[url…], medioSeg, ajuste,
-              desde, hasta, dispositivo }
+              desde, hasta, dispositivo, estilo:{ fuente, tam, peso, alin, color, fondo, borde, radio, sombra,
+              btnFondo, btnColor, btnForma, velo, foco, transicion } }
    Compatible con el formato antiguo { slots:{ panel, hero, resultados } }. */
 (function (G) {
   'use strict';
@@ -3350,11 +3376,48 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
   };
   var TEXTOPOS = { lado: 'Al lado', debajo: 'Debajo', encima: 'Encima', ninguno: 'Sin texto' };
   var ZONAS = {
-    panel:      { nombre: 'Pie del menú',              ubicacion: 'Columna de controles, bajo los botones', ancho: 320, movil: false },
-    hero:       { nombre: 'Resultados · izquierda',    ubicacion: 'Pie de resultados (en móvil, primero)',  ancho: 600, movil: true },
-    resultados: { nombre: 'Resultados · derecha',      ubicacion: 'Pie de resultados (en móvil, segundo)',  ancho: 600, movil: true }
+    panel:      { nombre: 'Pie del menú',              ubicacion: 'Columna de controles, bajo los botones', ancho: 320, movil: false, codigo: 'AD1', fmt: 'horizontal', tp: 'lado' },
+    hero:       { nombre: 'Resultados · izquierda',    ubicacion: 'Pie de resultados (en móvil, primero)',  ancho: 600, movil: true,  codigo: 'AD2', fmt: 'hero',       tp: 'encima' },
+    resultados: { nombre: 'Resultados · derecha',      ubicacion: 'Pie de resultados (en móvil, segundo)',  ancho: 600, movil: true,  codigo: 'AD3', fmt: 'horizontal', tp: 'lado' }
   };
   var ROTACION = { fijo: 'Siempre el primero', orden: 'Rotar en orden', aleatorio: 'Uno al azar por visita', aleatoriociclo: 'Rotar al azar' };
+  /* Estilo de cada anuncio (vacío = el aspecto de siempre) */
+  var FUENTES = { inter: 'Inter,system-ui,sans-serif', mono: "'Share Tech Mono',ui-monospace,monospace", sistema: 'system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif',
+    serif: 'Georgia,"Times New Roman",serif', estrecha: '"Arial Narrow","Roboto Condensed","Helvetica Neue",Arial,sans-serif' };
+  var FOCOS = { centro: '50% 50%', arriba: '50% 0%', abajo: '50% 100%', izq: '0% 50%', der: '100% 50%' };
+  var TRANSICIONES = { fundido: 'Fundido', deslizar: 'Deslizar', zoom: 'Zoom lento', corte: 'Corte' };
+  function colorOk(v) { v = String(v || '').trim().toLowerCase(); return /^#[0-9a-f]{6}$/.test(v) ? v : ''; }
+  function entre(v, a, b) { v = +v; return isFinite(v) ? Math.max(a, Math.min(b, v)) : a; }
+  function estiloBase(e) {
+    e = e || {};
+    return {
+      fuente: FUENTES[e.fuente] ? e.fuente : '', tam: +e.tam ? Math.round(entre(e.tam, 9, 44)) : 0,
+      peso: [400, 600, 700, 800].indexOf(+e.peso) >= 0 ? +e.peso : 0, alin: /^(izq|centro|der)$/.test(e.alin) ? e.alin : '',
+      color: colorOk(e.color), fondo: colorOk(e.fondo), borde: colorOk(e.borde),
+      radio: e.radio === '' || e.radio == null ? '' : Math.round(entre(e.radio, 0, 40)), sombra: !!e.sombra,
+      btnFondo: colorOk(e.btnFondo), btnColor: colorOk(e.btnColor), btnForma: /^(pildora|redondeado|recto)$/.test(e.btnForma) ? e.btnForma : '',
+      velo: +e.velo ? Math.round(entre(e.velo, 0, 85)) : 0, foco: FOCOS[e.foco] ? e.foco : '', transicion: TRANSICIONES[e.transicion] ? e.transicion : ''
+    };
+  }
+  function aplicarEstilo(box, s) {
+    s = s || {};
+    var p = function (k, v) { box.style.setProperty(k, v); };
+    if (s.fuente) p('--avad-fuente', FUENTES[s.fuente]);
+    if (s.tam) p('--avad-tam', s.tam + 'px');
+    if (s.peso) p('--avad-peso', s.peso);
+    if (s.alin) box.classList.add('avad-al-' + s.alin);
+    if (s.color) { p('--avad-color', s.color); box.classList.add('avad-color-fijo'); }
+    if (s.fondo) p('--avad-fondo', s.fondo);
+    if (s.borde) { p('--avad-borde', s.borde); box.classList.add('avad-conborde'); }
+    if (s.radio !== '' && s.radio != null) p('--avad-radio', s.radio + 'px');
+    if (s.sombra) box.classList.add('avad-sombra');
+    if (s.btnFondo) p('--avad-btn-bg', s.btnFondo);
+    if (s.btnColor) p('--avad-btn-fg', s.btnColor);
+    if (s.btnForma) box.classList.add('avad-btn-' + s.btnForma);
+    if (s.velo) { p('--avad-velo', (s.velo / 100).toFixed(2)); box.classList.add('avad-velo'); }
+    if (s.foco) p('--avad-foco', FOCOS[s.foco]);
+    box.classList.add('avad-tr-' + (s.transicion || 'fundido'));
+  }
 
   function nuevoId() { return 'ad' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
   function lista(v) {
@@ -3370,7 +3433,8 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
       texto: o.texto == null ? '' : String(o.texto), boton: o.boton == null ? '' : String(o.boton),
       url: o.url || '', medios: lista(o.medios), medioSeg: Math.max(2, +o.medioSeg || 4),
       ajuste: o.ajuste === 'contain' ? 'contain' : 'cover',
-      desde: o.desde || '', hasta: o.hasta || '', dispositivo: /^(movil|escritorio)$/.test(o.dispositivo) ? o.dispositivo : 'todos'
+      desde: o.desde || '', hasta: o.hasta || '', dispositivo: /^(movil|escritorio)$/.test(o.dispositivo) ? o.dispositivo : 'todos',
+      estilo: estiloBase(o.estilo)
     };
   }
   /* Convierte cualquier respuesta (v2 o antigua) al formato v2 */
@@ -3477,6 +3541,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
     box.style.setProperty('--maxh', f.maxh + 'px');
     if (f.maxw) box.style.setProperty('--maxw', (tp === 'lado' && conTexto ? f.maxw * 2.2 : f.maxw) + 'px');
     box.style.setProperty('--fit', a.ajuste || 'cover');
+    aplicarEstilo(box, a.estilo);
     var link = document.createElement('a');
     link.className = 'avad-link'; link.href = a.url || '#'; link.target = '_blank'; link.rel = 'sponsored noopener noreferrer';
     link.addEventListener('click', function (e) { if (opt.preview) { e.preventDefault(); return; } if (opt.onClic) opt.onClic(a.id); });
@@ -3499,7 +3564,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
     el.appendChild(box);
     var idx = 0;
     function tono() {
-      if (!txt || tp !== 'encima' || !a.medios.length) return;
+      if (!txt || tp !== 'encima' || !a.medios.length || (a.estilo && a.estilo.color)) return;
       luminancia(a.medios[idx]).then(function (l) {
         if (!vivo) return;
         txt.classList.remove('avad-tono-claro', 'avad-tono-oscuro', 'avad-tono-filete');
@@ -3507,20 +3572,33 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
       });
     }
     tono();
+    var desliza = !!(a.estilo && a.estilo.transicion === 'deslizar');
     if (capas.length > 1) timers.push(setInterval(function () {
-      capas[idx].classList.remove('on'); idx = (idx + 1) % capas.length; capas[idx].classList.add('on'); tono();
+      var ant = capas[idx]; ant.classList.remove('on');
+      if (desliza) { ant.classList.add('fuera'); setTimeout(function () { ant.classList.add('sin-tr'); ant.classList.remove('fuera'); void ant.offsetWidth; ant.classList.remove('sin-tr'); }, 800); }
+      idx = (idx + 1) % capas.length; capas[idx].classList.add('on'); tono();
     }, Math.max(2, a.medioSeg || 4) * 1000));
     var ro = null;
     if (G.ResizeObserver) { ro = new ResizeObserver(function () { box.classList.toggle('avad-estrecho', box.clientWidth < 300); }); ro.observe(box); }
     return function () { vivo = false; timers.forEach(clearInterval); if (ro) ro.disconnect(); if (box.parentNode) box.parentNode.removeChild(box); };
   }
-  /* Monta una zona completa (rotación entre anuncios). Devuelve la limpieza. */
+  /* Hueco de una zona sin anuncio (solo en el editor): marca dónde irá y con qué proporción */
+  function hueco(el, zonaId) {
+    var d = ZONAS[zonaId] || { nombre: zonaId }, f = FORMATOS[d.fmt] || FORMATOS.horizontal;
+    var h = document.createElement('div'); h.className = 'avad-hueco'; h.style.setProperty('--ar', f.ar);
+    h.innerHTML = '<b>' + esc(d.codigo || '') + '</b><span>' + esc(d.nombre) + '</span><small>Arrastra aquí un anuncio</small>';
+    el.appendChild(h);
+    return function () { if (h.parentNode) h.parentNode.removeChild(h); };
+  }
+  /* Monta una zona completa (rotación entre anuncios). Devuelve la limpieza.
+     opt.ver: id de un anuncio de la zona que se muestra fijo (editor); opt.hueco: marca la zona vacía (editor) */
   function montar(el, zonaId, datos, opt) {
     opt = opt || {};
-    var z = (datos.zonas || {})[zonaId]; if (!z) return function () {};
+    var z = (datos.zonas || {})[zonaId];
     var esMovil = opt.esMovil == null ? (G.matchMedia ? G.matchMedia('(max-width: 767px)').matches : false) : opt.esMovil;
-    var ads = (z.anuncios || []).filter(function (a) { return vigente(a, new Date(), esMovil); });
-    if (!ads.length) return function () {};
+    var ads = z ? (z.anuncios || []).filter(function (a) { return vigente(a, new Date(), esMovil); }) : [];
+    if (opt.ver && z) { var fijo = (z.anuncios || []).filter(function (a) { return a.id === opt.ver; })[0]; if (fijo) ads = [fijo]; }
+    if (!ads.length) return opt.hueco ? hueco(el, zonaId) : function () {};
     var rot = z.rotacion || 'orden', i = 0, limpiar = null, t = null;
     if (rot === 'aleatorio' || rot === 'aleatoriociclo') i = Math.floor(Math.random() * ads.length);
     function mostrar() { if (limpiar) limpiar(); limpiar = pintar(el, ads[i], opt); }
@@ -3534,8 +3612,58 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
   }
   G.AVHUB_ADS = { FORMATOS: FORMATOS, TEXTOPOS: TEXTOPOS, ZONAS: ZONAS, ROTACION: ROTACION, normalizar: normalizar, aLegado: aLegado,
     anuncioBase: anuncioBase, nuevoId: nuevoId, vigente: vigente, estado: estado, pintar: pintar, montar: montar,
-    tipoMedio: tipoMedio, miniatura: miniatura, youtubeId: youtubeId, lista: lista };
+    tipoMedio: tipoMedio, miniatura: miniatura, youtubeId: youtubeId, lista: lista,
+    FUENTES: FUENTES, FOCOS: FOCOS, TRANSICIONES: TRANSICIONES, estiloBase: estiloBase };
 })(typeof window !== 'undefined' ? window : this);
+    </script>
+    <script>
+/* v8.1 · modo editor de anuncios (?anuncios=editor): el editor de AVHUB ADMIN enseña esta página real con los anuncios
+   que se están editando. Los recibe por mensajes, marca las zonas vacías y le devuelve dónde está cada zona. */
+(function () {
+  if (!/[?&]anuncios=editor\b/.test(location.search)) return;
+  var permitido = function (o) {
+    return o === location.origin || /^https:\/\/([a-z0-9-]+\.)*(googleusercontent\.com|google\.com|mediaservi\.com|githack\.com)$/.test(o) ||
+      /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(o);
+  };
+  var E = window.AVHUB_EDITOR = { datos: null, ver: {}, subs: [] };
+  E.avisar = function () { E.subs.slice().forEach(function (f) { try { f(); } catch (e) {} }); };
+  document.documentElement.classList.add('avad-editor');
+  var aPadre = function (m) { m.tipo = 'avhub-ads'; try { window.parent.postMessage(m, '*'); } catch (e) {} };
+  var pend = false, ultimo = '';
+  function medir() {
+    pend = false;
+    var zonas = Array.prototype.slice.call(document.querySelectorAll('[data-slot]')).map(function (el) {
+      var r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+      return { id: el.getAttribute('data-slot'), x: Math.round(r.left), y: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height),
+        visible: el.offsetParent !== null && cs.display !== 'none' && cs.visibility !== 'hidden' && r.width > 0 && r.height > 0 };
+    });
+    var m = { accion: 'zonas', zonas: zonas, vw: window.innerWidth, vh: window.innerHeight }, k = JSON.stringify(m);
+    if (k !== ultimo) { ultimo = k; aPadre(m); }
+  }
+  E.medir = function () { if (!pend) { pend = true; requestAnimationFrame(medir); } };
+  E.observar = function () {};
+  if (window.ResizeObserver) { var ro = new ResizeObserver(E.medir); E.observar = function (el) { try { if (el) ro.observe(el); } catch (e) {} }; }
+  window.addEventListener('scroll', E.medir, true);
+  window.addEventListener('resize', E.medir);
+  setInterval(E.medir, 1000);
+  // un clic en un anuncio o en una zona vacía la elige en el editor (los enlaces no se abren)
+  document.addEventListener('click', function (e) {
+    var z = e.target && e.target.closest ? e.target.closest('[data-slot]') : null; if (!z) return;
+    e.preventDefault(); e.stopPropagation(); aPadre({ accion: 'clic', zona: z.getAttribute('data-slot') });
+  }, true);
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (!d || typeof d !== 'object' || d.tipo !== 'avhub-ads' || e.source !== window.parent || !permitido(e.origin)) return;
+    if (d.accion === 'hola') { ultimo = ''; aPadre({ accion: 'listo' }); E.medir(); }
+    else if (d.accion === 'datos') { E.datos = window.AVHUB_ADS ? window.AVHUB_ADS.normalizar(d.datos || {}) : null; E.ver = d.ver || {}; E.avisar(); E.medir(); }
+    else if (d.accion === 'ir') {
+      var z = document.querySelector('[data-slot="' + String(d.zona || '').replace(/[^a-z0-9_-]/gi, '') + '"]');
+      if (z) z.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+    else if (d.accion === 'desplazar') { var se = document.scrollingElement || document.documentElement; se.scrollTop += +d.dy || 0; }
+  });
+  aPadre({ accion: 'listo' });
+})();
     </script>
     <script src="comun/electronica.js"></script>
     <script src="comun/ficha.js"></script>
@@ -3758,11 +3886,19 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
           let vivo = true, limpiar = null;
           const mq = window.matchMedia('(max-width: 767px)');
           let datos = null;
-          const pintar = () => { if (limpiar) limpiar(); limpiar = null; if (vivo && ref.current && datos) limpiar = window.AVHUB_ADS.montar(ref.current, id, datos, { esMovil: mq.matches, onClic: adClic }); };
-          cargarAnuncios().then(d => { datos = d; pintar(); });
+          // v8.1 · en el editor de anuncios (?anuncios=editor) se pintan los anuncios que se están editando
+          const ED = window.AVHUB_EDITOR;
+          const pintar = () => {
+            if (limpiar) limpiar(); limpiar = null;
+            if (!vivo || !ref.current) return;
+            if (ED) { limpiar = window.AVHUB_ADS.montar(ref.current, id, ED.datos || window.AVHUB_ADS.normalizar({}), { esMovil: mq.matches, preview: true, ver: (ED.ver || {})[id], hueco: true }); ED.medir(); return; }
+            if (datos) limpiar = window.AVHUB_ADS.montar(ref.current, id, datos, { esMovil: mq.matches, onClic: adClic });
+          };
+          if (ED) { ED.subs.push(pintar); ED.observar(ref.current); pintar(); }
+          else cargarAnuncios().then(d => { datos = d; pintar(); });
           const cambio = () => pintar();
           if (mq.addEventListener) mq.addEventListener('change', cambio); else mq.addListener(cambio);
-          return () => { vivo = false; if (limpiar) limpiar(); if (mq.removeEventListener) mq.removeEventListener('change', cambio); else mq.removeListener(cambio); };
+          return () => { vivo = false; if (ED) ED.subs = ED.subs.filter(f => f !== pintar); if (limpiar) limpiar(); if (mq.removeEventListener) mq.removeEventListener('change', cambio); else mq.removeListener(cambio); };
         }, [id]);
         return <div ref={ref} className="avad-zona no-print" data-slot={id} />;
       };
@@ -3772,7 +3908,11 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
       const TRAULUX_OFICIAL_URL = 'https://traulux.net/led/configurador';
       const AdTraulux = () => {
         const [on, setOn] = useState(false);
-        useEffect(() => { let vivo = true; cargarAnuncios().then(sl => { if (vivo) setOn(!(sl && sl.traulux && sl.traulux.activo === false)); }); return () => { vivo = false; }; }, []);
+        useEffect(() => {
+          const ED = window.AVHUB_EDITOR;
+          if (ED) { const f = () => setOn(!(ED.datos && ED.datos.traulux && ED.datos.traulux.activo === false)); ED.subs.push(f); f(); return () => { ED.subs = ED.subs.filter(x => x !== f); }; }
+          let vivo = true; cargarAnuncios().then(sl => { if (vivo) setOn(!(sl && sl.traulux && sl.traulux.activo === false)); }); return () => { vivo = false; };
+        }, []);
         if (!on) return null;
         return (
           <div className="ad-traulux no-print" data-slot="traulux">
@@ -6965,7 +7105,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENS" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v8.0</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v8.1</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -9290,7 +9430,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v8.0 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v8.1 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -9301,7 +9441,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       *Cálculo automático que puede contener errores: verifícalo con tu método habitual o con un técnico antes de presupuestar o instalar.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v8.0 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a> · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
+                      <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v8.1 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a> · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
                     </div>
                   </div>
               </main>
