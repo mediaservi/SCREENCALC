@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v5.0** (propuesta de nueva estética AVHUB)
+**Versión actual: v5.1** (propuesta de nueva estética AVHUB)
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -74,7 +74,14 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v5.0 · propuesta)
+## Cambios de la versión actual (v5.1 · propuesta)
+
+- **Petición más fiable:** «externa», «le da el sol directo», «terraza», «azotea»… se entienden como exterior; «cerca de un río», lago, embalse, piscina, puerto… como entorno húmedo (marino / tropical). «Sol directo» ya no se confunde con «conexión directa»: la electrónica y la conexión solo se marcan como «de tu petición» si se piden.
+- **Popup «Datos del proyecto» compacto:** 3 columnas en PC (sin desplazamiento a partir de 1000 × 600 px), 2 en tablet y móvil horizontal, 1 en móvil vertical; cada grupo (pantalla y sitio · electrónica · mediaserver y fuentes) queda en su columna.
+- **Modo manual con resolución mínima y sin medidas:** CALCULAR propone la pantalla más pequeña que alcanza HD / FHD / 4K con el cabinet elegido; después se amplía con + / −.
+- **Tipografía corporativa:** solo dos familias y cuatro variantes: Inter Regular, Bold y ExtraBold, y Share Tech Mono para datos técnicos y displays.
+
+## Cambios de la versión v5.0 · propuesta
 
 - **Estética AVHUB en toda la app:** un solo sistema visual en lugar de estilos sueltos. Chasis gris neutrón, verde eléctrico para lo que está activado, violeta de marca para la acción principal (PROPONER PANTALLA, CALCULAR), tipografía Inter y displays en Share Tech Mono, incluidas en la propia app (sin servicios externos).
 - **Cabecera:** botones metálicos redondos con iluminación verde al pasar el ratón.
