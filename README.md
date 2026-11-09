@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v7.8** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v8.2** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -56,7 +56,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 
 ## Datos
 
-La app obtiene el catálogo en vivo y lo guarda cifrado en el dispositivo; no se expone como tabla ni se puede exportar. No usa datos de muestra salvo como último recurso sin conexión. El catálogo de electrónica y mediaservers está en `comun/electronica.js` (constantes `ELEC_DEVICES` y `ELEC_MEDIASERVERS`), común a SCREENS y SCREENS.
+La app obtiene el catálogo en vivo y lo guarda cifrado en el dispositivo; no se expone como tabla ni se puede exportar. Nunca usa datos de muestra: sin conexión y sin copia guardada, avisa de que no se ha podido cargar el catálogo. El catálogo de electrónica y mediaservers está en `comun/electronica.js` (constantes `ELEC_DEVICES` y `ELEC_MEDIASERVERS`), común a SCREENS y SCREENS.
 
 ## Tecnología y despliegue
 
@@ -89,7 +89,100 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v7.8)
+## Cambios de la versión actual (v8.2)
+
+El módulo de proyección se ordena como el simulador de distancias de Epson y AUTO decide según el tipo de proyecto.
+
+- **Tipo de proyección:** mapping, pared o sala inmersiva. AUTO decide según el tipo.
+  - **Mapping** (fachada o edificio):
+    - los proyectores van lejos (torres, la otra acera, un balcón);
+    - AUTO elige los equipos más luminosos y ópticas que llegan a esa distancia;
+    - sin distancia, nunca una óptica corta: el proyector queda a unas 2 veces el ancho de la imagen;
+    - la luz ambiente pasa a la de exterior de noche (5 lx).
+  - **Pared** (auditorio o pared normal): uno o más proyectores en blending, con la óptica que deja el proyector a la distancia del público.
+  - **Sala inmersiva:** cubrir las paredes (y el suelo) desde dentro, como hasta ahora.
+- **Campos en orden lógico, todos juntos arriba**, y las fichas de los equipos debajo:
+  - tipo;
+  - proyector y óptica;
+  - posición (orientación, montaje y altura, distancia);
+  - solape;
+  - luz;
+  - avanzado.
+- **Candados 🔒 en la distancia y en la altura del proyector:**
+  - abiertos, la casilla enseña lo que calcula AUTO;
+  - cerrados, el valor queda fijo y AUTO lo respeta (por ejemplo, «solo puedo colgarlo a 5 m»);
+  - escribir un valor cierra el candado.
+- **Deslizador de la distancia** dentro del rango del zoom de la óptica para esa imagen.
+- **Uso del espacio** para la luz de la sala: mapping de noche, sala oscura o cine, auditorio, sala de reuniones, aula u oficina, feria o exposición (valores típicos en lx).
+- **Modo fuera de especificación** (avanzado) para imágenes algo más grandes que las garantizadas, como en el simulador de Epson y en SCREENBOX:
+  - avisa de lo que el fabricante no garantiza;
+  - calcula hasta dónde llega cada proyector: en los Epson de alta luminosidad, de 1000" a 1100";
+  - avisa si la instalación pasa del máximo garantizado y da una recomendación de uso.
+- **La petición entiende** «mapping», «fachada», «edificio» y «auditorio».
+
+## Cambios de la versión v8.1
+
+- **Nuevo editor de anuncios en AVHUB ADMIN (v1.4)**, pensado como un programa de diseño. Es una página fija, sin desplazar la página entera.
+  - **Herramientas** a la izquierda, con atajos de teclado:
+    - mover (V) y mano (H o barra espaciadora);
+    - anuncio nuevo (N), fotos (I) y texto (T);
+    - duplicar (Ctrl+D) y eliminar (Supr);
+    - zoom (+, −, 0).
+  - **En el lienzo, la web real** de SCREENS, en escritorio o en móvil, con las zonas de anuncio marcadas: AD1 pie del menú, AD2 y AD3 en resultados y el minibanner de TRAULUX.
+    - Los anuncios se ven en directo mientras se editan.
+    - Las zonas vacías salen marcadas.
+    - Las zonas que quedan fuera de la vista se avisan en el borde, con un botón para ir a ellas.
+  - **Arrastrar y soltar:**
+    - un anuncio, de una zona a otra, en el lienzo o en Capas;
+    - una foto de la Biblioteca o del ordenador a una zona, para crear un anuncio, o a un anuncio, para añadirla.
+  - **Capas:** las zonas con sus anuncios, el orden, el encendido y apagado, la rotación y los borradores.
+  - **Propiedades** del anuncio elegido:
+    - contenido;
+    - fotos y vídeos, con su ajuste, encuadre, oscurecido y cambio de foto;
+    - formato y posición del texto;
+    - tipografía: fuente, tamaño, grosor, alineación y color;
+    - caja y botón: fondo, borde, esquinas, sombra, colores y forma del botón;
+    - programación.
+  - **Biblioteca** en una tira bajo el lienzo.
+  - En pantallas estrechas: herramientas arriba y un panel cada vez, con pestañas.
+- **La página guarda y muestra el estilo de cada anuncio** (también en el tema oscuro). Los anuncios sin estilo se ven como siempre.
+- **Modo editor** (`?anuncios=editor`): solo lo usa el editor para enseñar la web real con los anuncios que se están editando, sin abrir los enlaces.
+
+## Cambios de la versión v8.0
+
+- **Proyección para mapping y fachadas** (por ejemplo, una fachada de 12 × 19 m con los proyectores en torres al otro lado de la calle):
+  - **proyector en vertical (retrato)**, para todos los proyectores salvo las ópticas ultracortas de desplazamiento fijo. En AUTO se usa cuando hace falta menos equipos: la fachada de 12 × 19 m se cubre con un solo proyector;
+  - **distancia fija hasta 200 m**: el motor elige la óptica y el zoom que dan la imagen necesaria a esa distancia y, si no llega, añade equipos;
+  - **montaje colgado** (techo o truss) **o apoyado** (sobremesa, suelo o torre), con su altura. En AUTO, sin techo, el proyector va en una base o torre a la altura más baja que permite el desplazamiento de la óptica;
+  - **rejilla automática de columnas × filas con blending en los dos sentidos**, con la que necesita menos equipos;
+  - la imagen puede sobresalir hasta un 20 % de la superficie, que se enmascara.
+- **Catálogo de Epson dentro de la app, también sin conexión:** los 13 proyectores de alta luminosidad (series PU1000, PU2000, PQ2000 y XQ2030B) con sus 17 ópticas compatibles, según la guía de ópticas de Epson (08/2026).
+  - Cada óptica lleva su relación de proyección y su desplazamiento para cada serie.
+  - Los topes de luminosidad: 12.000 lm con la ELPLW05 y 20.000 lm con algunas ópticas en el EB-XQ2030B.
+  - Se elige primero el proyector y después la óptica; en AUTO, el motor lo elige todo.
+- **Desplazamiento de la lente:** la tabla de posición avisa en rojo cuando se necesita más desplazamiento del que da la óptica, con el máximo de la óptica al lado. En vertical cuenta el desplazamiento horizontal de la óptica, que es mucho menor.
+- **Resultados, PDF y simulación 3D:**
+  - la rejilla («1×3 = 3»), la orientación, la distancia y el montaje salen en la tabla y en la línea de cabecera del PDF;
+  - la escena 3D dibuja cada imagen de la rejilla con sus solapes, los proyectores en vertical girados, y las torres;
+  - la vista encuadra también los proyectores aunque estén lejos.
+- **Petición en lenguaje natural:** entiende «mapping de una fachada de 12 x 19 con proyectores en torres a 25 m», «en vertical», «torre de 6 m», «colgados de un truss a 8 m» o «sobremesa».
+
+## Cambios de la versión v7.9
+
+- **Varias pantallas de medidas distintas** (por ejemplo, un auditorio con una pantalla central grande y dos laterales más pequeñas):
+  - en VARIAS → PANTALLAS, desde 3 pantallas, el botón CENTRAL DISTINTA da medidas propias a la central (con un número par, a las dos del medio) y a las laterales;
+  - funciona en línea y en arco, con LED y con proyección, y todas apoyan a la misma elevación;
+  - la tabla marca la central y la línea de cabecera del PDF dice «1 central de A × B m + 2 laterales de C × D m».
+- **La petición lo entiende:** «3 pantallas, una central de 6,6 x 3,712 y dos laterales de 4,2 x 2,362, P1.5 COB, con backup y fibra».
+  - Reconoce la central y las laterales (también «verticales»), en cualquier orden o sin nombrarlas («una de… y dos de…»).
+  - El pitch pedido (P1.5, «pitch 1,5») elige el modelo de ese pitch; con «COB», uno COB.
+  - En inglés entiende «3 LED screens».
+- **Una sola electrónica para varias pantallas, con fibra:** cada pantalla lleva sus propios conversores detrás (en el auditorio, 1 + 2 + 1), con todos los procesadores (COEX MX, VX Pro, H Series…). La ficha del procesador indica el reparto.
+- **Medidas de una oferta en milímetros:** los cabinets se encajan con 5 mm de tolerancia, así que «3712 mm» da 11 filas de 337,5 mm y no 10.
+- **Panel:** «Distancia del público» ya no sale cortada (en arco va en su propia fila).
+- **Sin datos de muestra:** sin conexión y sin copia guardada, el cálculo de una pantalla LED avisa de que no se ha podido cargar el catálogo, en los 6 idiomas.
+
+## Cambios de la versión v7.8
 
 - **Fotos reales de los equipos en todas partes**, en pantalla y en el PDF:
   - la electrónica, el mediaserver, el cabinet y el proyector muestran la foto real de su frontal en lugar de un dibujo; el dibujo queda solo para un equipo que aún no tenga foto;

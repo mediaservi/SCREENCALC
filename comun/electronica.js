@@ -102,6 +102,11 @@
     const lines = stats.lines, totalPix = stats.totalPix || 0;
     const mult = o.backup ? 2 : 1;
     const directo = o.conexion === 'directo';
+    // v7.9 · varias pantallas separadas (stats.porSup = líneas de cada una): con fibra, cada pantalla lleva sus propios conversores
+    // detrás (una fibra no reparte sus líneas entre pantallas alejadas); sin ese dato, se cuentan juntas como hasta ahora
+    const porSup = Array.isArray(stats.porSup) ? stats.porSup.filter(l => l > 0) : [];
+    const conversores = (ppo) => (porSup.length > 1 ? porSup.reduce((a, l) => a + Math.ceil(l / ppo), 0) : Math.ceil(lines / ppo));
+    const reparto = (ppo) => (porSup.length > 1 ? ' · ' + porSup.map(l => Math.ceil(l / ppo)).join(' + ') + ' conv. por pantalla' : '');
     let res = [];
     let hItem = null;
 
@@ -116,7 +121,7 @@
       } else {
         if (d.opt === 0) return;
         const ppo = Math.min(ELEC_CVT.porCvt, d.ppo);
-        const cvt = Math.ceil(lines / ppo), fibras = cvt * mult;
+        const cvt = conversores(ppo), fibras = cvt * mult;
         if (fibras > d.opt || (d.rj > 0 && lines > d.rj)) return;
         if (d.chasis) {
           // Chasis modular: despiece de tarjetas de salida, módulos SFP+, conversores y tarjetas de entrada
@@ -128,7 +133,7 @@
           const cIn = tIn ? Math.ceil(nIn / tIn.n) : 0;
           if (cIn > ch.slotsIn) return;
           det = {
-            puertos: fibras + ' fibra' + (fibras > 1 ? 's' : '') + (o.backup ? ' (' + cvt + ' + ' + cvt + ' backup)' : '') + ' (' + tOut * ELEC_MX_TARJ_OUT.opt + ' OPT)',
+            puertos: fibras + ' fibra' + (fibras > 1 ? 's' : '') + (o.backup ? ' (' + cvt + ' + ' + cvt + ' backup)' : '') + ' (' + tOut * ELEC_MX_TARJ_OUT.opt + ' OPT)' + reparto(ppo),
             equipos: [
               tIn ? { ref: tIn.ref, cant: cIn, desc: tIn.desc } : { ref: '+ Tarjeta entrada ' + (o.tipoEntrada || ''), cant: 0, desc: 'no disponible en este chasis: verificar con el fabricante' },
               { ref: ELEC_MX_TARJ_OUT.ref, cant: tOut, desc: ELEC_MX_TARJ_OUT.desc },
@@ -138,7 +143,7 @@
           };
         } else
         det = {
-          puertos: fibras + ' fibra' + (fibras > 1 ? 's' : '') + (o.backup ? ' (' + cvt + ' + ' + cvt + ' backup)' : '') + ' (de ' + d.opt + ' OPT)',
+          puertos: fibras + ' fibra' + (fibras > 1 ? 's' : '') + (o.backup ? ' (' + cvt + ' + ' + cvt + ' backup)' : '') + ' (de ' + d.opt + ' OPT)' + reparto(ppo),
           equipos: [{ ref: ELEC_CVT.ref, cant: cvt, desc: ELEC_CVT.desc }]
         };
       }
@@ -163,13 +168,13 @@
         equipos = [{ ref: ELEC_H_TARJ_RJ.ref, cant: tarj, desc: 'Tarjeta de salida 20×RJ45' }];
         puertos = lines + (lines === 1 ? ' línea' : ' líneas') + (o.backup ? ' + ' + lines + ' backup' : '') + ' (' + tarj * ELEC_H_TARJ_RJ.puertos + ' RJ45)';
       } else {
-        const cvt = Math.ceil(lines / ELEC_H_TARJ_FIB.ppo), fibras = cvt * mult;
+        const cvt = conversores(ELEC_H_TARJ_FIB.ppo), fibras = cvt * mult;
         tarj = Math.ceil(fibras / ELEC_H_TARJ_FIB.opt);
         equipos = [
           { ref: ELEC_H_TARJ_FIB.ref, cant: tarj, desc: 'Tarjeta de salida 16×RJ45 + 2×fibra' },
           { ref: ELEC_CVT.ref, cant: cvt, desc: ELEC_CVT.desc }
         ];
-        puertos = fibras + ' fibra' + (fibras > 1 ? 's' : '') + (o.backup ? ' (' + cvt + ' + ' + cvt + ' backup)' : '');
+        puertos = fibras + ' fibra' + (fibras > 1 ? 's' : '') + (o.backup ? ' (' + cvt + ' + ' + cvt + ' backup)' : '') + reparto(ELEC_H_TARJ_FIB.ppo);
       }
       const nIn = o.entradas || 0;
       // HDMI: una entrada (o sin datos) o entradas 4K → tarjetas de 1×HDMI 2.0 (una por entrada); varias entradas 2K → tarjetas de 4×HDMI

@@ -20,12 +20,17 @@ export function superficies(esp, grosor = 0) {
   } else {
     // Pantallas sueltas: en línea o en arco, de izquierda a derecha, frente al público
     const s = esp.sueltas, n = Math.max(1, Math.min(8, s.n | 0));
+    // v7.9 · pantalla central distinta (auditorio: una grande en el centro y las laterales más pequeñas): con un número impar,
+    // la del medio; con un número par, las dos del medio. Todas apoyan a la misma elevación
+    const esCentral = (i) => !!s.central && n >= 3 && (n % 2 ? i === (n - 1) / 2 : i === n / 2 - 1 || i === n / 2);
+    const W = (i) => (esCentral(i) ? Number(s.cAncho) || s.ancho : s.ancho), Hh = (i) => (esCentral(i) ? Number(s.cAlto) || s.alto : s.alto);
     const w = s.ancho, sep = Math.max(0, s.sep), ang = (s.disp === 'arco' ? s.angulo : 0) * Math.PI / 180;
     // se construye de la pantalla central hacia fuera para que el conjunto quede simétrico
     const pos = [];
     if (ang === 0) {
-      const total = n * w + (n - 1) * sep;
-      for (let i = 0; i < n; i++) pos.push({ x: -total / 2 + w / 2 + i * (w + sep), z: 0, rot: 0 });
+      let total = (n - 1) * sep; for (let i = 0; i < n; i++) total += W(i);
+      let x = -total / 2;
+      for (let i = 0; i < n; i++) { pos.push({ x: x + W(i) / 2, z: 0, rot: 0 }); x += W(i) + sep; }
     } else {
       // cada pantalla gira «ang» respecto a la anterior; se encadenan por los bordes con la separación indicada
       const mitad = (n - 1) / 2;
@@ -39,23 +44,24 @@ export function superficies(esp, grosor = 0) {
       // cadena desde una pantalla de referencia
       const ref = Math.floor(mitad);
       const P = new Array(n);
-      P[ref] = { x: n % 2 === 1 ? 0 : -(w + sep) / 2, z: 0, rot: -giro(ref) };
+      P[ref] = { x: n % 2 === 1 ? 0 : -(W(ref) + sep) / 2, z: 0, rot: -giro(ref) };
       for (let k = ref + 1; k < n; k++) {
         const a = P[k - 1], r1 = giro(k - 1), r2 = giro(k);
-        const bx = a.x + Math.cos(r1) * (w / 2) + Math.cos((r1 + r2) / 2) * sep, bz = a.z + Math.sin(r1) * (w / 2) + Math.sin((r1 + r2) / 2) * sep;
-        P[k] = { x: bx + Math.cos(r2) * (w / 2), z: bz + Math.sin(r2) * (w / 2), rot: -r2 };
+        const bx = a.x + Math.cos(r1) * (W(k - 1) / 2) + Math.cos((r1 + r2) / 2) * sep, bz = a.z + Math.sin(r1) * (W(k - 1) / 2) + Math.sin((r1 + r2) / 2) * sep;
+        P[k] = { x: bx + Math.cos(r2) * (W(k) / 2), z: bz + Math.sin(r2) * (W(k) / 2), rot: -r2 };
       }
       for (let k = ref - 1; k >= 0; k--) {
         const a = P[k + 1], r1 = giro(k + 1), r2 = giro(k);
-        const bx = a.x - Math.cos(r1) * (w / 2) - Math.cos((r1 + r2) / 2) * sep, bz = a.z - Math.sin(r1) * (w / 2) - Math.sin((r1 + r2) / 2) * sep;
-        P[k] = { x: bx - Math.cos(r2) * (w / 2), z: bz - Math.sin(r2) * (w / 2), rot: -r2 };
+        const bx = a.x - Math.cos(r1) * (W(k + 1) / 2) - Math.cos((r1 + r2) / 2) * sep, bz = a.z - Math.sin(r1) * (W(k + 1) / 2) - Math.sin((r1 + r2) / 2) * sep;
+        P[k] = { x: bx - Math.cos(r2) * (W(k) / 2), z: bz - Math.sin(r2) * (W(k) / 2), rot: -r2 };
       }
       void centro;
       P.forEach(p => pos.push(p));
     }
     // el conjunto se coloca delante del público (que está en z = +distancia)
     const zMax = Math.max(...pos.map(p => p.z));
-    pos.forEach((p, i) => out.push({ id: 'p' + (i + 1), num: i + 1, ancho: w, alto: s.alto, elev: s.elev, x: p.x, z: p.z - zMax, rot: p.rot, tipo: 'pantalla' }));
+    pos.forEach((p, i) => out.push({ id: 'p' + (i + 1), num: i + 1, ancho: W(i), alto: Hh(i), elev: s.elev, x: p.x, z: p.z - zMax, rot: p.rot, tipo: 'pantalla', central: esCentral(i) }));
+    void w;
   }
   return out;
 }
@@ -78,8 +84,10 @@ export function elegirModelo(lista, dist) {
 // Cálculo LED de una superficie con un modelo de cabinet
 export function calcularLed(sup, m, ajuste = 'dentro') {
   const cw = m.cabAncho / 1000, ch = m.cabAlto / 1000;
-  const f = ajuste === 'dentro' ? (v) => Math.floor(v + 1e-6) : Math.round;
-  const cols = Math.max(1, f(sup.ancho / cw)), rows = Math.max(1, f(sup.alto / ch));
+  // «dentro»: los cabinets que caben en la medida, con 5 mm de tolerancia (las medidas en mm de una oferta suelen ir
+  // redondeadas: 7 × 337,5 = 2362,5 mm se escribe «2362» y no debe quedarse en 6 filas)
+  const f = (lado, c) => (ajuste === 'dentro' ? Math.floor((lado + 0.005) / c + 1e-6) : Math.round(lado / c));
+  const cols = Math.max(1, f(sup.ancho, cw)), rows = Math.max(1, f(sup.alto, ch));
   const cab = cols * rows;
   const resW = cols * m.cabPixAncho, resH = rows * m.cabPixAlto, pix = resW * resH;
   const pixCab = m.cabPixAncho * m.cabPixAlto;

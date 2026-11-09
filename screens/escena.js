@@ -156,27 +156,31 @@ export class Escena {
     const asp = sup.ancho / altoPared, Wc = asp >= 1 ? 2048 : Math.round(2048 * asp), Hc = Math.round(Wc / asp);
     const c = document.createElement('canvas'); c.width = Wc; c.height = Hc; const x = c.getContext('2d');
     x.fillStyle = '#c4c4c9'; x.fillRect(0, 0, Wc, Hc);
-    const k = Wc / sup.ancho, yBase = sup.elev - Math.max(0, res.imgH - sup.alto) / 2, yTop = Hc - (yBase + res.imgH) * k, ih = res.imgH * k, iw = res.imgW * k;
-    // imagen conjunta con blending (zona proyectada)
-    const xi = Math.max(0, (sup.ancho / 2 - (res.n * res.imgW - (res.n - 1) * res.solape) / 2) * k);
-    const anchoTot = Math.min(Wc, (res.n * res.imgW - (res.n - 1) * res.solape) * k);
+    // v8.0 · rejilla de columnas × filas: la zona proyectada conjunta y el contorno y los solapes de cada imagen
+    const k = Wc / sup.ancho, filas = res.filas || [-Math.max(0, res.imgH - sup.alto) / 2], anchoTot = res.anchoTot || res.imgW, altoTot = res.altoTot || res.imgH;
+    const yTop = Hc - (sup.elev + filas[0] + altoTot) * k, ih = altoTot * k;
+    const xi = Math.max(0, (sup.ancho / 2 - anchoTot / 2) * k), anchoC = Math.min(Wc, anchoTot * k);
     if (cont === 'panorama') {
-      const pano = this._panorama(); x.drawImage(pano.img, 0, 0, pano.img.width, pano.img.height, xi, yTop, anchoTot, ih);
+      const pano = this._panorama(); x.drawImage(pano.img, 0, 0, pano.img.width, pano.img.height, xi, yTop, anchoC, ih);
     } else if (cont !== 'apagado') {
-      const g = x.createLinearGradient(xi, 0, xi + anchoTot, 0); g.addColorStop(0, '#2a1260'); g.addColorStop(0.5, '#0c3a5a'); g.addColorStop(1, '#14501f'); x.fillStyle = g; x.fillRect(xi, yTop, anchoTot, ih);
-      x.strokeStyle = 'rgba(255,255,255,.2)'; x.lineWidth = 2; const paso = ih / 6;
-      for (let u = xi; u <= xi + anchoTot; u += paso) { x.beginPath(); x.moveTo(u, yTop); x.lineTo(u, yTop + ih); x.stroke(); }
-      for (let v = 0; v <= 6; v++) { x.beginPath(); x.moveTo(xi, yTop + v * paso); x.lineTo(xi + anchoTot, yTop + v * paso); x.stroke(); }
-      x.fillStyle = '#fff'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = `800 ${Math.round(ih * 0.1)}px ${SANS}`; x.fillText(nombre.toUpperCase(), xi + anchoTot / 2, yTop + ih * 0.42);
-      x.font = `${Math.round(ih * 0.075)}px ${MONO}`; x.fillStyle = '#00ff04'; x.fillText(`${res.resW} × ${res.resH} px`, xi + anchoTot / 2, yTop + ih * 0.58);
+      const g = x.createLinearGradient(xi, 0, xi + anchoC, 0); g.addColorStop(0, '#2a1260'); g.addColorStop(0.5, '#0c3a5a'); g.addColorStop(1, '#14501f'); x.fillStyle = g; x.fillRect(xi, yTop, anchoC, ih);
+      x.strokeStyle = 'rgba(255,255,255,.2)'; x.lineWidth = 2; const paso = Math.min(ih, anchoC) / 6;
+      for (let u = xi; u <= xi + anchoC; u += paso) { x.beginPath(); x.moveTo(u, yTop); x.lineTo(u, yTop + ih); x.stroke(); }
+      for (let v = yTop; v <= yTop + ih + 0.5; v += paso) { x.beginPath(); x.moveTo(xi, v); x.lineTo(xi + anchoC, v); x.stroke(); }
+      const tl = Math.min(ih, anchoC);
+      x.fillStyle = '#fff'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = `800 ${Math.round(tl * 0.1)}px ${SANS}`; x.fillText(nombre.toUpperCase(), xi + anchoC / 2, yTop + ih * 0.42);
+      x.font = `${Math.round(tl * 0.075)}px ${MONO}`; x.fillStyle = '#00ff04'; x.fillText(`${res.resW} × ${res.resH} px`, xi + anchoC / 2, yTop + ih * 0.42 + tl * 0.13);
     }
-    // contorno de cada imagen y zonas de blending
-    res.centros.forEach((cx, i) => {
-      const x0 = (sup.ancho / 2 + cx - res.imgW / 2) * k;
-      x.strokeStyle = COL_PROY[i % COL_PROY.length]; x.lineWidth = Math.max(3, Wc / 500); x.setLineDash([]); x.strokeRect(x0 + 2, yTop + 2, iw - 4, ih - 4);
-      if (i > 0 && res.solape > 0) { const sx = x0, sw = res.solape * k; x.fillStyle = 'rgba(255,255,255,.10)'; x.fillRect(sx, yTop, sw, ih); x.setLineDash([14, 10]); x.strokeStyle = 'rgba(255,255,255,.65)'; x.strokeRect(sx, yTop, sw, ih); x.setLineDash([]); }
-      x.fillStyle = COL_PROY[i % COL_PROY.length]; x.font = `${Math.round(ih * 0.06)}px ${MONO}`; x.textAlign = 'left'; x.fillText('P' + (i + 1), x0 + ih * 0.04, yTop + ih * 0.08);
-    });
+    const iw = res.imgW * k, ihI = res.imgH * k; let n = 0;
+    filas.forEach((fy, r) => res.centros.forEach((cx, ci) => {
+      const x0 = (sup.ancho / 2 + cx - res.imgW / 2) * k, y0 = Hc - (sup.elev + fy + res.imgH) * k, col = COL_PROY[n % COL_PROY.length];
+      x.strokeStyle = col; x.lineWidth = Math.max(3, Wc / 500); x.setLineDash([]); x.strokeRect(x0 + 2, y0 + 2, iw - 4, ihI - 4);
+      x.fillStyle = 'rgba(255,255,255,.10)'; x.strokeStyle = 'rgba(255,255,255,.65)';
+      if (ci > 0 && res.solape > 0) { const sw = res.solape * k; x.fillRect(x0, y0, sw, ihI); x.setLineDash([14, 10]); x.strokeRect(x0, y0, sw, ihI); }
+      if (r > 0 && res.solapeY > 0) { const sh = res.solapeY * k; x.fillRect(x0, y0 + ihI - sh, iw, sh); x.setLineDash([14, 10]); x.strokeRect(x0, y0 + ihI - sh, iw, sh); }
+      x.setLineDash([]); x.fillStyle = col; x.font = `${Math.round(Math.min(ihI, iw) * 0.06)}px ${MONO}`; x.textAlign = 'left'; x.fillText('P' + (n + 1), x0 + Math.min(ihI, iw) * 0.04, y0 + Math.min(ihI, iw) * 0.08);
+      n++;
+    }));
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = this.renderer.capabilities.getMaxAnisotropy();
     return t;
   }
@@ -266,7 +270,7 @@ export class Escena {
         }
         const altoPared = sala ? H : s.elev + s.alto + 0.2;
         const tex = this._paredProy(s, p, cont, altoPared, f.nombre);
-        if (vivo) { const wU = Math.min(s.ancho, p.n * p.imgW - (p.n - 1) * p.solape), yB = Math.max(0, s.elev - Math.max(0, p.imgH - s.alto) / 2), yT = Math.min(altoPared, yB + p.imgH);
+        if (vivo) { const wU = Math.min(s.ancho, p.anchoTot), yB = Math.max(0, s.elev + p.filas[0]), yT = Math.min(altoPared, yB + p.altoTot);
           this._capaMedio(g, { x: 0, y: (yB + yT) / 2, z: 0.008, w: wU, h: yT - yB }, tramo[s.id], m); }
         const lienzo = new THREE.Mesh(new THREE.PlaneGeometry(s.ancho, altoPared), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
         lienzo.position.set(0, altoPared / 2, 0.004); g.add(lienzo);
@@ -275,8 +279,12 @@ export class Escena {
         const v3 = (q) => new THREE.Vector3(q.x, q.y, q.z);
         // posiciones finales del análisis (con los choques entre chasis ya resueltos); si no hay, la colocación base
         const hs = (m.haces && m.haces.filter(h => h.sup === s.id && !h.suelo)) || [];
-        (hs.length ? hs : colocarPared(s, p, prod, { alto: H, sala: !!sala })).forEach((h, i) => this._proyector(G, v3(h.lente), h.esquinas.map(v3), i, prod, false, m.conflictos && m.conflictos.has(s.id + ':' + i)));
-        if (m.etiquetas) this._etiquetaLocal(g, `${f.nombre.toUpperCase()} · ${p.n}× · ${p.resW}×${p.resH}`, new THREE.Vector3(0, s.elev + p.imgH + 0.3, 0.08));
+        const lista = hs.length ? hs : colocarPared(s, p, prod, { alto: H, sala: !!sala });
+        lista.forEach((h, i) => this._proyector(G, v3(h.lente), h.esquinas.map(v3), i, prod, false, m.conflictos && m.conflictos.has(s.id + ':' + i), h.vert));
+        // v8.0 · apoyados en una torre o una base alta: el pie bajo el proyector más bajo de cada columna
+        if (lista.some(h => h.apoyo)) { const pies = new Map(); lista.filter(h => h.apoyo).forEach(h => { const k = h.lente.x.toFixed(2) + ':' + h.lente.z.toFixed(2); if (!pies.has(k) || pies.get(k).lente.y > h.lente.y) pies.set(k, h); });
+          pies.forEach(h => { const altoP = h.lente.y - (h.vert ? prod.chasis[0] : prod.chasis[2]) / 2; if (altoP > 0.3) this._torre(G, h.lente, altoP); }); }
+        if (m.etiquetas) this._etiquetaLocal(g, `${f.nombre.toUpperCase()} · ${p.n}× · ${p.resW}×${p.resH}`, new THREE.Vector3(0, s.elev + p.filas[0] + p.altoTot + 0.3, 0.08));
       }
       void idx;
     });
@@ -315,7 +323,10 @@ export class Escena {
       const c = new THREE.Box3();
       m.superficies.forEach(f => { const s = f.s, w = (f.r ? f.r.ancho : s.ancho) / 2, h = s.elev + (f.r ? f.r.alto : s.alto) + 0.3;
         [[-w, 0], [w, 0]].forEach(([a]) => { c.expandByPoint(new THREE.Vector3(s.x + Math.cos(s.rot) * a, 0, s.z - Math.sin(s.rot) * a)); c.expandByPoint(new THREE.Vector3(s.x + Math.cos(s.rot) * a, h, s.z - Math.sin(s.rot) * a)); }); });
-      c.expandByPoint(new THREE.Vector3(0, 0, m.distPublico + 0.6)); this.caja = c;
+      c.expandByPoint(new THREE.Vector3(0, 0, m.distPublico + 0.6));
+      // v8.0 · también los proyectores (a 25 m al otro lado de la calle, en torre…), para que se vean en las vistas
+      (m.haces || []).forEach(h => { if (h.lente) c.expandByPoint(new THREE.Vector3(h.lente.x, h.lente.y, h.lente.z)); });
+      this.caja = c;
     }
     // sombra y encuadre de la luz direccional
     const R = Math.max(W, D) * 0.8; Object.assign(this.sol.shadow.camera, { left: -R, right: R, top: R, bottom: -R, near: 1, far: 60 }); this.sol.shadow.camera.updateProjectionMatrix();
@@ -443,7 +454,14 @@ export class Escena {
     p.pos.forEach((q, i) => { x.strokeStyle = COL_PROY[(i + 2) % COL_PROY.length]; x.lineWidth = 4; x.strokeRect((q.x + s.ancho / 2 - p.imgW / 2) * k, (q.z + s.alto / 2 - p.imgH / 2) * k, p.imgW * k, p.imgH * k); });
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
   }
-  _proyector(G, lente, esquinas, i, prod, suelo, tapa) {
+  // torre o base de los proyectores apoyados: estructura de truss desde el suelo hasta el proyector
+  _torre(G, lente, alto) {
+    const m = new THREE.MeshStandardMaterial({ color: 0x9a9aa2, roughness: 0.45, metalness: 0.7 }), lado = 0.29;
+    [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([a, b]) => { const tubo = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, alto, 8), m); tubo.position.set(lente.x + a * lado / 2, alto / 2, lente.z + b * lado / 2); tubo.castShadow = true; G.add(tubo); });
+    for (let y = 0.25; y < alto; y += 0.5) { const anillo = new THREE.Mesh(new THREE.BoxGeometry(lado, 0.02, lado), m); anillo.position.set(lente.x, y, lente.z); G.add(anillo); }
+    const placa = new THREE.Mesh(new THREE.BoxGeometry(lado + 0.12, 0.03, lado + 0.12), m); placa.position.set(lente.x, alto - 0.015, lente.z); G.add(placa);
+  }
+  _proyector(G, lente, esquinas, i, prod, suelo, tapa, vert) {
     const col = new THREE.Color(COL_PROY[i % COL_PROY.length]);
     const cuerpo = new THREE.Group();
     // en rojo, el proyector que queda dentro del haz de otra superficie (hará sombra en esa imagen)
@@ -455,6 +473,7 @@ export class Escena {
     const centro = esquinas.reduce((a, v) => a.add(v), new THREE.Vector3()).multiplyScalar(0.25);
     cuerpo.position.copy(lente);
     if (suelo) cuerpo.lookAt(lente.x, -10, lente.z + 0.02); else cuerpo.lookAt(centro.x, lente.y, centro.z);
+    if (vert) cuerpo.rotateZ(Math.PI / 2);   // v8.0 · en vertical (retrato), girado 90° sobre el eje de la óptica
     G.add(cuerpo);
     if (tapa) this._etiqueta('⚠', lente.clone().add(new THREE.Vector3(0, 0.32, 0)), 0.22, { borde: '#ff4d5e', col: '#ffd500' });
     {
