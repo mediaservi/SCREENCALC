@@ -1,12 +1,12 @@
 // SCREENS · interfaz (selector inicial, panel de rack, simulación 3D y resultados)
 import { cargarCatalogo, ordenar, enStock } from './catalogo.js';
 import { superficies, distanciaPublico, elegirModelo, calcularLed, totales, aplicarPuertas, obstaculoMundo, puertaMundo } from './led.js';
-import { PROYECTORES, calcularPared, calcularSuelo, sugerir, SOLAPE_MAX, analizarSombras, obstaculosEnHaces } from './proyeccion.js';
+import { PROYECTORES, calcularPared, calcularSuelo, SOLAPE_MAX, analizarSombras, obstaculosEnHaces } from './proyeccion.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v6.7';
+const VERSION = 'v6.8';
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   paso: 'inicio', cantidad: 'varias', tecnologia: 'led',
@@ -65,22 +65,42 @@ function calcular() {
     c.elec = electronica(c); return c;
   }
   const sups = superficies(esp, 0);
-  const paredesS = sups.filter(s => s.tipo !== 'suelo');
-  const alc = paredesS.map(s => alcance(esp, s, dist));
   const opc = { solapeMin: E.proy.solape / 100 };
-  const proyector = (E.proy.id && PROYECTORES.find(p => p.id === E.proy.id)) || sugerir(paredesS, alc, opc);
-  const prSuelo = (E.proy.idSuelo && PROYECTORES.find(p => p.id === E.proy.idSuelo)) || proyector;
-  const filas = sups.map(s => {
-    if (s.tipo === 'suelo') return { s, p: calcularSuelo(s, prSuelo, { altoSala: esp.alto, ...opc }), proyector: prSuelo, nombre: nombreSup(s) };
-    return { s, p: calcularPared(s, proyector, { alcance: alcance(esp, s, dist), ...opc }), proyector, nombre: nombreSup(s) };
-  });
+  const altoEsc = esp.tipo === 'sala' ? esp.alto : Math.max(3, ...sups.map(s => s.elev + s.alto)) + 0.8;
+  const obs = obstaculosDe(esp), haySuelo = sups.some(s => s.tipo === 'suelo');
+  // un mismo modelo para todas las paredes; el suelo puede llevar el mismo u otro
+  const montar = (pP, pS) => {
+    const filas = sups.map(s => s.tipo === 'suelo'
+      ? { s, p: calcularSuelo(s, pS, { altoSala: esp.alto, ...opc }), proyector: pS, nombre: nombreSup(s) }
+      : { s, p: calcularPared(s, pP, { alcance: alcance(esp, s, dist), ...opc }), proyector: pP, nombre: nombreSup(s) });
+    const S = analizarSombras(filas, esp, altoEsc); S.obst = obstaculosEnHaces(obs, S.haces);
+    return { filas, S, coste: costeInstalacion(filas, S) };
+  };
+  // AUTO: la instalación limpia (sin chasis que choquen ni proyectores dentro de otros haces) con menos equipos y más brillo
+  const mejorDe = (fn) => PROYECTORES.map(q => ({ q, r: fn(q) })).sort((x, y) => x.r.coste - y.r.coste)[0];
+  const fijo = E.proy.id && PROYECTORES.find(p => p.id === E.proy.id), fijoS = E.proy.idSuelo && PROYECTORES.find(p => p.id === E.proy.idSuelo);
+  let proyector, prSuelo, inst, auto = null;
+  if (fijo) { proyector = fijo; }
+  else { const m = mejorDe(q => montar(q, fijoS || q)); proyector = m.q; }
+  if (fijoS) prSuelo = fijoS;
+  else if (haySuelo) prSuelo = mejorDe(q => montar(proyector, q)).q;
+  else prSuelo = proyector;
+  inst = montar(proyector, prSuelo);
+  // con un modelo elegido a mano que no deja una instalación limpia, se propone el de AUTO
+  if (fijo && (inst.S.conflictos.length || inst.S.choques.length)) { const m = mejorDe(q => montar(q, fijoS || q)); if (m.q !== fijo && !m.r.S.conflictos.length && !m.r.S.choques.length) auto = m.q; }
+  const filas = inst.filas;
   const tot = { n: 0, lumenes: 0, nitsMin: Infinity, lienzoW: 0, lienzoH: 0 };
   filas.forEach(f => { tot.n += f.p.n; tot.lumenes += f.p.n * f.proyector.lumens; tot.nitsMin = Math.min(tot.nitsMin, f.p.nits); if (f.s.tipo !== 'suelo') { tot.lienzoW += f.p.resW; tot.lienzoH = Math.max(tot.lienzoH, f.p.resH); } });
-  const c = { esp, dist, proyector, prSuelo, filas, tot };
-  const altoEsc = esp.tipo === 'sala' ? esp.alto : Math.max(3, ...filas.map(f => f.s.elev + f.s.alto)) + 0.8;
-  c.sombras = analizarSombras(filas, esp, altoEsc);
-  c.sombras.obst = obstaculosEnHaces(obstaculosDe(esp), c.sombras.haces);
+  const c = { esp, dist, proyector, prSuelo, filas, tot, autoPropone: auto };
+  c.sombras = inst.S;
   c.elec = electronica(c); return c;
+}
+// coste de una instalación de proyección: primero que quepa, luego que no haya sombras de equipos ni choques, luego menos proyectores y más brillo
+function costeInstalacion(filas, S) {
+  let n = 0, fuera = 0, limite = 0, nits = Infinity;
+  filas.forEach(f => { n += f.p.n; if (f.p.fuera) fuera++; if (f.p.limite) limite++; nits = Math.min(nits, f.p.nits); });
+  const zona = S.zona && S.zona.ok ? S.zona.ancho * S.zona.fondo : 0;
+  return fuera * 1e7 + (S.conflictos.length + S.choques.length) * 1e5 + (S.obst ? S.obst.length : 0) * 1e4 + limite * 2000 + n * 100 - Math.min(nits, 250) - zona * 2;
 }
 // puertas (solo en sala, en paredes) y obstáculos del espacio
 const puertasDe = (esp) => (esp.tipo === 'sala' ? (esp.obst || []).filter(o => o.tipo === 'puerta') : []);
@@ -122,7 +142,7 @@ function vistaInicio() {
       ${tog(E.tecnologia === 'led', 'data-set="tecnologia" data-v="led"', `${ICO.ledG}<b>${t('led')}</b><small>${t('ledD')}</small>`)}
       ${tog(E.tecnologia === 'proy', 'data-set="tecnologia" data-v="proy"', `${ICO.proyG}<b>${t('proy')}</b><small>${t('proyD')}</small>`)}
     </div></div>
-    <div class="inicio-pie"><button type="button" class="pri" data-accion="empezar">${E.cantidad === 'una' && E.tecnologia === 'led' ? t('irSc') : t('empezar')}</button></div>
+    <div class="inicio-pie"><button type="button" class="pri" data-accion="empezar">${t('empezar')}</button></div>
   </div></section>`;
 }
 
@@ -312,7 +332,10 @@ function vistaSombras(c) {
   Object.entries(pares).forEach(([id, n]) => { const [a, b] = id.split('|'); li.push(`<li class="mal">${t('conflicto', { a, b, n: n + '×' })}</li>`); });
   if (S.conflictos.length) li.push(`<li>${t('conflictoSol')}</li>`);
   // chasis recolocados para no chocar (holgura de ventilación) y choques sin solución
-  S.movs.forEach(k => li.push(`<li>${t(k.dy ? (k.dy > 0 ? 'movArriba' : 'movAbajo') : 'movLado', { a: k.h.nombre + ' P' + (k.h.i + 1), d: fmt(Math.abs(k.dy || k.dx), 2), b: k.con ? k.con.nombre + ' P' + (k.con.i + 1) : '' })}</li>`));
+  S.movs.forEach(k => { const partes = [];
+    if (k.dz) partes.push(t('mvFondo', { d: fmt(k.dz, 2) })); if (k.dy) partes.push(t(k.dy > 0 ? 'mvAlto' : 'mvBajo', { d: fmt(Math.abs(k.dy), 2) })); if (k.dx) partes.push(t('mvLado', { d: fmt(Math.abs(k.dx), 2) }));
+    li.push(`<li>${k.h.nombre} P${k.h.i + 1} ${partes.join(t('yy'))} ${t(k.por === 'choque' ? 'porChoque' : 'porHaz', { b: k.con ? k.con.nombre + ' P' + (k.con.i + 1) : '' })}.</li>`); });
+  if (c.autoPropone) li.push(`<li class="mal">${t('mejorModelo', { a: c.proyector.nombre, b: c.autoPropone.nombre })}</li>`);
   S.choques.forEach(k => li.push(`<li class="mal">${t('choque', { a: k.h.nombre + ' P' + (k.h.i + 1), b: k.con ? k.con.nombre + ' P' + (k.con.i + 1) : '' })}</li>`));
   if (S.movs.length || S.choques.length) li.push(`<li>${t('holgura')}</li>`);
   S.cruces.forEach(k => li.push(`<li>${t('cruce', { a: k.na, b: k.nb })}</li>`));

@@ -58,7 +58,8 @@ export function calcularPared(sup, p, { alcance, solapeMin = SOLAPE_MIN, oos = f
     const solapePx = Math.round(p.resX * solapeRel);
     const resW = n * p.resX - (n - 1) * solapePx, resH = Math.round(p.resY * (1 - recorte));
     const lux = p.lumens / (imgW * imgH);
-    return { n, imgW, imgH, solape, solapeRel, solapePx, tiro, ratio: p.trMin, fuera: alcance != null && tiro > alcance, limite, recorte, centros, resW, resH, lux, nits: lux / Math.PI };
+    const tiroMax = Math.max(tiro, Math.min(p.trMax * imgW, alcance != null ? alcance : Infinity));
+    return { n, imgW, imgH, solape, solapeRel, solapePx, tiro, tiroMax, ratio: p.trMin, fuera: alcance != null && tiro > alcance, limite, recorte, centros, resW, resH, lux, nits: lux / Math.PI };
   };
   let imgH = sup.alto, imgW = imgH * p.ar, limite = false;
   if (imgW > wMax) { imgW = wMax; imgH = imgW / p.ar; limite = true; }
@@ -109,10 +110,12 @@ const aMundo = (s, x, y, z) => ({ x: s.x + x * Math.cos(s.rot) + z * Math.sin(s.
 // Proyectores de una pared: lente a la distancia de tiro, colgados del techo (los UST, justo sobre la imagen)
 export function colocarPared(s, p, prod, { alto, sala }) {
   const altoPared = sala ? alto : s.elev + s.alto + 0.2;
-  const yProy = prod.ust ? s.elev + p.imgH + 0.22 : Math.max(s.elev + p.imgH + 0.15, (sala ? alto : altoPared + 0.6) - 0.45);
-  const y0 = s.elev - Math.max(0, p.imgH - s.alto) / 2, y1 = y0 + p.imgH, zL = Math.max(0.15, p.tiro);
+  // colgado sobre la imagen (los UST, justo encima); en una sala, siempre por debajo del techo
+  const techo = sala ? alto - 0.05 - prod.chasis[2] / 2 : Infinity;
+  const yProy = Math.min(techo, prod.ust ? s.elev + p.imgH + 0.22 : Math.max(s.elev + p.imgH + 0.15, (sala ? alto : altoPared + 0.6) - 0.45));
+  const y0 = s.elev - Math.max(0, p.imgH - s.alto) / 2, y1 = y0 + p.imgH, zL = Math.max(0.15, p.tiro), zMax = Math.max(zL, p.tiroMax || zL);
   return p.centros.map(cx => ({
-    lente: aMundo(s, cx, yProy, zL), rot: s.rot, prod, ancho: p.imgW,
+    lente: aMundo(s, cx, yProy, zL), rot: s.rot, prod, ancho: p.imgW, zMax, nrm: { x: Math.sin(s.rot), z: Math.cos(s.rot) },
     esquinas: [[cx - p.imgW / 2, y1], [cx + p.imgW / 2, y1], [cx + p.imgW / 2, y0], [cx - p.imgW / 2, y0]].map(([a, b]) => aMundo(s, a, b, 0.01)),
     yProy, y0, y1, zL
   }));
@@ -144,27 +147,63 @@ function medio(h) {
 }
 const chocan = (a, b) => { const A = medio(a), B = medio(b);
   return Math.abs(a.lente.x - b.lente.x) < A.x + B.x + HOLGURA.h && Math.abs(a.lente.z - b.lente.z) < A.z + B.z + HOLGURA.h && Math.abs(a.lente.y - b.lente.y) < A.y + B.y + HOLGURA.v; };
-// Choques entre chasis: cada proyector se coloca en su sitio y, si toca a uno ya colocado, se sube o se baja (o se desplaza a lo largo
-// de su pared con el lens shift) hasta dejar la holgura de ventilación. Los cenitales del suelo van fijos junto al techo.
+// puntos del chasis (caja con su tamaño real alrededor de la lente)
+const puntosCuerpo = (h) => { const M = medio(h), L = h.lente, out = [];
+  for (const a of [-1, 0, 1]) for (const b of [-1, 0, 1]) for (const c of [-1, 1]) out.push({ x: L.x + a * M.x, y: L.y + c * M.y, z: L.z + b * M.z });
+  return out; };
+// problemas de un proyector frente a los ya colocados: chasis que se tocan, su chasis dentro del haz de otra superficie
+// o, al revés, el chasis de otra superficie dentro de su haz (sombra en una imagen)
+// caja que envuelve un haz (lente + imagen) para descartar rápido los puntos que no pueden estar dentro
+const cajaHaz = (h) => { const P = [h.lente, ...h.esquinas]; return { x0: Math.min(...P.map(p => p.x)), x1: Math.max(...P.map(p => p.x)), y0: Math.min(...P.map(p => p.y)), y1: Math.max(...P.map(p => p.y)), z0: Math.min(...P.map(p => p.z)), z1: Math.max(...P.map(p => p.z)) }; };
+const enCaja = (P, B) => P.x >= B.x0 && P.x <= B.x1 && P.y >= B.y0 && P.y <= B.y1 && P.z >= B.z0 && P.z <= B.z1;
+const enHaz = (pts, h) => { const B = cajaHaz(h); return pts.some(P => enCaja(P, B) && dentroHaz(P, h)); };
+function problemas(h, puestos, rapido) {
+  let choque = null, haz = null; const ph = puntosCuerpo(h);
+  for (const o of puestos) {
+    if (!choque && chocan(h, o)) { choque = o; if (rapido) break; }
+    if (!haz && o.sup !== h.sup && (enHaz(ph, o) || enHaz(puntosCuerpo(o), h))) { haz = o; if (rapido) break; }
+    if (choque && haz) break;
+  }
+  return { choque, haz, n: (choque ? 1 : 0) + (haz ? 1 : 0) };
+}
+// Colocación sin choques ni sombras: cada proyector se prueba en su sitio y, si toca a otro chasis o queda dentro de otro haz
+// (o mete otro chasis en el suyo), se busca la variante más cercana: alejarlo de su pared con el zoom de la óptica,
+// colgarlo más bajo o más alto (sin pasar del techo ni bajar de 2,3 m) o desplazarlo por su pared con el lens shift.
+// Los cenitales del suelo van fijos junto al techo y se colocan primero.
 export function resolverChoques(haces, alto) {
   const puestos = [], movs = [], choques = [];
   const orden = haces.slice().sort((a, b) => (b.suelo ? 1 : 0) - (a.suelo ? 1 : 0));
   orden.forEach(h => {
-    const base = { ...h.lente }, M = medio(h);
-    if (!puestos.some(o => chocan(h, o))) { puestos.push(h); return; }
+    const base = { ...h.lente }, zL0 = h.zL, M = medio(h);
+    const inicial = problemas(h, puestos);
+    if (!inicial.n) { puestos.push(h); return; }
     const paso = M.y * 2 + HOLGURA.v, techo = alto - 0.05 - M.y, suelo = 2.3 + M.y;
+    const dzs = [0], dys = [0], dxs = [0];
+    if (!h.suelo) {
+      for (let z = 0.25; zL0 + z <= (h.zMax || zL0) + 1e-6 && dzs.length < 9; z += 0.25) dzs.push(z);
+      for (let k = 1; k <= 4; k++) dys.push(-k * paso, k * paso);
+      const lado = M.x * 2 + HOLGURA.h, lim = (h.ancho || 0) * 0.25;
+      for (let k = 1; k * lado <= lim + 1e-6; k++) dxs.push(k * lado, -k * lado);
+    }
     const cand = [];
-    for (let k = 1; k <= 4; k++) { cand.push({ dy: -k * paso, dx: 0 }); cand.push({ dy: k * paso, dx: 0 }); }
-    const lado = M.x * 2 + HOLGURA.h, lim = (h.ancho || 0) * 0.25;
-    if (!h.suelo) for (const sg of [1, -1]) for (let k = 1; k * lado <= lim + 1e-6; k++) cand.push({ dy: 0, dx: sg * k * lado });
-    let ok = null;
+    dzs.forEach(dz => dys.forEach(dy => dxs.forEach(dx => { if (dz || dy || dx) cand.push({ dz, dy, dx, c: dz + Math.abs(dy) * 1.5 + Math.abs(dx) * 1.2 }); })));
+    cand.sort((a, b) => a.c - b.c);
+    const poner = (c) => { const n = h.nrm || { x: 0, z: 0 };
+      h.lente = { x: base.x + n.x * c.dz + c.dx * Math.cos(h.rot), y: base.y + c.dy, z: base.z + n.z * c.dz - c.dx * Math.sin(h.rot) }; h.zL = zL0 + c.dz; };
+    let ok = null, sinChoque = null;
     for (const c of cand) {
       const y = base.y + c.dy; if (y > techo + 1e-6 || y < suelo - 1e-6) continue;
-      h.lente = { x: base.x + c.dx * Math.cos(h.rot), y, z: base.z - c.dx * Math.sin(h.rot) };
-      if (!puestos.some(o => chocan(h, o))) { ok = c; break; }
+      poner(c); const pr = problemas(h, puestos, true);
+      if (!pr.n) { ok = c; break; }
+      if (!sinChoque && inicial.choque && !chocan(h, puestos.find(o => chocan(h, o)) || h)) sinChoque = c;
     }
-    if (ok) movs.push({ h, dy: ok.dy, dx: ok.dx, con: puestos.find(o => chocan({ ...h, lente: base }, o)) });
-    else { h.lente = base; choques.push({ h, con: puestos.find(o => chocan(h, o)) }); }
+    if (ok) movs.push({ h, ...ok, con: inicial.choque || inicial.haz, por: inicial.choque ? 'choque' : 'haz' });
+    else {
+      // sin ubicación limpia: al menos que los chasis no se toquen (la sombra queda avisada)
+      if (sinChoque && !puestos.some(o => { poner(sinChoque); return chocan(h, o); })) { poner(sinChoque); movs.push({ h, ...sinChoque, con: inicial.choque, por: 'choque' }); }
+      else { h.lente = base; h.zL = zL0; }
+      const pr = problemas(h, puestos); if (pr.choque) choques.push({ h, con: pr.choque });
+    }
     puestos.push(h);
   });
   return { movs, choques };
@@ -182,7 +221,8 @@ export function analizarSombras(filas, esp, alto) {
     if (f.s.tipo === 'suelo') return;
     let zS = 0;
     haces.filter(h => h.fila === f).forEach(h => { const yL = h.lente.y; if (h.y0 < ALTO_PERSONA) zS = Math.max(zS, yL > h.y0 ? Math.min(h.zL, h.zL * (ALTO_PERSONA - h.y0) / (yL - h.y0)) : h.zL); });
-    franjas.push({ id: f.s.id, nombre: f.nombre, s: f.s, prof: zS, tiro: f.p.tiro, ust: f.proyector.ust, ancho: f.s.ancho });
+    const tiroReal = Math.max(f.p.tiro, ...haces.filter(h => h.fila === f).map(h => h.zL));
+    franjas.push({ id: f.s.id, nombre: f.nombre, s: f.s, prof: zS, tiro: tiroReal, ust: f.proyector.ust, ancho: f.s.ancho });
   });
   // zona segura: en una sala, el rectángulo que queda libre de las franjas de sombra de cada pared
   let zona = null;
@@ -194,11 +234,9 @@ export function analizarSombras(filas, esp, alto) {
   }
   // conflictos: un proyector (su cuerpo) dentro del haz de otro → sombra en la imagen de ese otro
   const conflictos = [], cruces = [];
-  // cuerpo del proyector: unos 50 × 50 × 17 cm alrededor de la lente
-  const cuerpo = (L) => [[0, 0, 0], [0.2, 0, 0], [-0.2, 0, 0], [0, 0, 0.2], [0, 0, -0.2], [0, -0.08, 0], [0.2, -0.08, 0], [-0.2, -0.08, 0]].map(([a, d, b]) => ({ x: L.x + a, y: L.y + d, z: L.z + b }));
   haces.forEach((a, ia) => haces.forEach((b, ib) => {
     if (ia === ib || a.sup === b.sup) return;
-    if (cuerpo(a.lente).some(P => dentroHaz(P, b))) conflictos.push({ tapa: a, haz: b });
+    if (puntosCuerpo(a).some(P => dentroHaz(P, b))) conflictos.push({ tapa: a, haz: b });
   }));
   // cruces de haces entre superficies distintas (muestreo de rayos de cada haz)
   for (let ia = 0; ia < haces.length; ia++) for (let ib = ia + 1; ib < haces.length; ib++) {

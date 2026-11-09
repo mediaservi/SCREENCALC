@@ -4,18 +4,20 @@
 
 Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Al entrar se elige **una o varias superficies** y **LED o proyección**:
 
-- **Una pantalla LED → SCREENCALC** (la raíz del repositorio, descrita en este README).
-- **Varias pantallas, salas inmersivas o proyección → módulo SCREENS** (`screens/`), con simulación 3D renderizada.
+- **Una pantalla LED** → cálculo de una pantalla (la raíz del repositorio, descrito en este README).
+- **Varias pantallas, salas inmersivas o proyección** → `screens/`, con simulación 3D renderizada.
 
-## SCREENCALC
+Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo.
+
+## Una pantalla LED
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v6.7** (estética AVHUB · SCREENS como página de inicio)
+**Versión actual: v6.8** (estética AVHUB · SCREENS como página de inicio)
 
-Web principal: **https://screens.mediaservi.com** (sustituye a screencalc.mediaservi.com y screenbox.mediaservi.com, que dejan de usarse). Para abrir directamente SCREENCALC: https://screens.mediaservi.com/?led
+Web principal: **https://screens.mediaservi.com** (sustituye a screencalc.mediaservi.com y screenbox.mediaservi.com, que dejan de usarse). Para abrir directamente el cálculo de una pantalla LED: https://screens.mediaservi.com/?led
 
-Copias redundantes: https://mediaservi.github.io/SCREENCALC/ · https://screencalcx.netlify.app/
+Copia redundante: https://mediaservi.github.io/SCREENS/ (el repositorio pasa a llamarse SCREENS).
 
 ## Para qué sirve
 
@@ -36,24 +38,24 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **Enlaces e imágenes de producto:** icono de enlace (a la ficha o a la búsqueda de Charmex por modelo) y, en electrónica, pila de logo, vista frontal y trasera con visor al 80 % de la pantalla. Se leen de la hoja ELECTRONICAS (columnas `url`, `front`, `back`, `logo`) cada vez que se abre la app; las imágenes no van al PDF.
 - **Contenido de la pantalla (🖼):** el icono de imagen abre un popup centrado con FUENTES MULTIMEDIA DE PRUEBA (la primera es fija y va preseleccionada; las otras 5 son editables y se guardan en el navegador), URL propia (YouTube normal, /live/, /shorts/, listas, Vimeo, imagen o vídeo) y subida de archivo.
 - **Esquemas de cableado:** propuesta de cableado de señal y eléctrico.
-- **PDF:** un único PDF de 2 páginas desde el icono de la cabecera, en claro sobre papel blanco y con los mismos bloques que la pantalla (tarjetas con filete de color, icono y título; datos en Share Tech Mono y textos en Inter). Cabecera en una línea: logo de SCREENCALC, web y fecha, y logo de AVHUB (con enlace) al margen derecho. Página 1: título, características de la pantalla en tarjetas, observaciones, características del cabinet en fichas y simulación ajustada al hueco de la hoja. Página 2: electrónica y mediaserver elegidos para el proyecto (en una fila), esquema de conexiones con su material, propuestas de cableado de señal y eléctrico, y el aviso de cálculo por IA. Si no cabe, el esquema se reduce para mantener las 2 páginas. Los anuncios no salen en el PDF.
+- **PDF:** un único PDF de 2 páginas desde el icono de la cabecera, en claro sobre papel blanco y con los mismos bloques que la pantalla (tarjetas con filete de color, icono y título; datos en Share Tech Mono y textos en Inter). Cabecera en una línea: logo de SCREENS, web y fecha, y logo de AVHUB (con enlace) al margen derecho. Página 1: título, características de la pantalla en tarjetas, observaciones, características del cabinet en fichas y simulación ajustada al hueco de la hoja. Página 2: electrónica y mediaserver elegidos para el proyecto (en una fila), esquema de conexiones con su material, propuestas de cableado de señal y eléctrico, y el aviso de cálculo por IA. Si no cabe, el esquema se reduce para mantener las 2 páginas. Los anuncios no salen en el PDF.
 - **Información (ⓘ):** el icono de la cabecera ofrece 2 opciones: **INFORMACIÓN** (este README en una ventana al 80 % que se puede desplazar y cerrar) y **DESCARGAR APP** (uso sin conexión).
 - **Logo:** sin enlace; al pulsarlo se reinicia la app para un nuevo cálculo (igual que RESET).
-- **Ficha de equipo común:** cabinets, proyectores, electrónicas y mediaservers se muestran con la misma ficha en SCREENCALC y en SCREENS (`comun/ficha.js` y `comun/ficha.css`): foto del fabricante, marca y modelo, especificaciones clave, piezas de los equipos montados por módulos, stock y enlace a la ficha. El motor de electrónica también es común (`comun/electronica.js`).
-- **Inicio (SCREENS):** la web abre el selector de SCREENS (una o varias superficies · LED o proyección); «Una + LED» abre SCREENCALC. El botón INICIO (casa) de la cabecera vuelve al selector y el botón Atrás del navegador vuelve al cálculo. El idioma elegido es el mismo en SCREENCALC y en SCREENS.
+- **Ficha de equipo común:** cabinets, proyectores, electrónicas y mediaservers se muestran con la misma ficha en el cálculo de una pantalla y en el de varias (`comun/ficha.js` y `comun/ficha.css`): foto del fabricante, marca y modelo, especificaciones clave, piezas de los equipos montados por módulos, stock y enlace a la ficha. El motor de electrónica también es común (`comun/electronica.js`).
+- **Inicio (SCREENS):** la web abre el selector de SCREENS (una o varias superficies · LED o proyección); «Una + LED» abre el cálculo de una pantalla LED. El botón INICIO (casa) de la cabecera vuelve al selector y el botón Atrás del navegador vuelve al cálculo. El idioma elegido es el mismo en SCREENS y en SCREENS.
 - **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
 - **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios, las consultas internas y la documentación (DOCS), que ya no es pública.
 - **Anuncios (motor AVHUB ADS):** 3 zonas (pie del menú y pie de resultados, izquierda y derecha). Cada zona admite varios anuncios con rotación; cada anuncio tiene formato estándar (horizontal 16:9, vertical 9:16, cuadrado 1:1, retrato 4:5, hero a sangre 21:9, banner 728×90, banner móvil 320×100, rectángulo 300×250, rascacielos 160×600), texto al lado, debajo, encima o sin texto, botón opcional, carrusel de fotos, vídeos y YouTube, fechas de inicio y fin, solo móvil o solo escritorio, y contador de clics. Todo el anuncio abre su enlace en una pestaña nueva (o `ads.json` mientras el panel no responda). Además, el minibanner fijo del configurador oficial de TRAULUX va encima de la zona del menú y se activa desde el panel.
 - **AVHUB ADMIN (`admin/anuncios.html`):** panel interno con 4 pestañas (la cuarta, **CATÁLOGO**, prepara el catálogo maestro de modelos y el informe de incoherencias de la web para marketing): **ANUNCIOS** (gestor visual con arrastrar y soltar y previo), **FIRMAS** (firmas de correo visuales con banners estáticos, animados en GIF o en mosaico y contador de clics, listas para pegar en Gmail, Outlook o Apple Mail) y **NEWSLETTER** (editor por bloques con vista escritorio y móvil, exportación HTML y envío desde el panel).
-- **Página de configuradores (`configuradores/`):** compara SCREENCALC y el configurador oficial de TRAULUX y lleva a cada uno (es / en / ca).
+- **Página de configuradores (`configuradores/`):** compara SCREENS y el configurador oficial de TRAULUX y lleva a cada uno (es / en / ca).
 - **Gestor de anuncios (`admin/anuncios.html`, pestaña ANUNCIOS):** pantalla visual para arrastrar anuncios entre zonas, arrastrar fotos entre anuncios o desde la biblioteca, subir fotos, elegir formato y ver al lado de cada anuncio el previo real en escritorio o móvil. En el panel de administrador guarda de verdad; abierto desde el repositorio funciona en modo demo (guarda en el navegador) y `index.html?anuncios=demo` muestra esos anuncios de prueba. Como afiliado de Amazon, se obtienen ingresos por las compras adscritas que cumplen los requisitos aplicables.
 - **Adaptada a PC y móvil:** el panel lateral de entrada va en 2 columnas sin scroll en PC y se ve en grande en móvil.
 
-- **AVHUB:** el logo de AVHUB en la cabecera (entre el logo de SCREENCALC y los iconos) lleva a https://avhub.mediaservi.com/. AVHUB es la nueva app en preparación que reunirá en un solo sitio SCREENCALC, el hardware de proyectos AV, novedades y VJSHOW, con el mismo idioma en todas las secciones.
+- **AVHUB:** el logo de AVHUB en la cabecera (entre el logo de SCREENS y los iconos) lleva a https://avhub.mediaservi.com/. AVHUB es la nueva app en preparación que reunirá en un solo sitio SCREENS, el hardware de proyectos AV, novedades y VJSHOW, con el mismo idioma en todas las secciones.
 
 ## Datos
 
-La app obtiene el catálogo en vivo y lo guarda cifrado en el dispositivo; no se expone como tabla ni se puede exportar. No usa datos de muestra salvo como último recurso sin conexión. El catálogo de electrónica y mediaservers está en `comun/electronica.js` (constantes `ELEC_DEVICES` y `ELEC_MEDIASERVERS`), común a SCREENCALC y SCREENS.
+La app obtiene el catálogo en vivo y lo guarda cifrado en el dispositivo; no se expone como tabla ni se puede exportar. No usa datos de muestra salvo como último recurso sin conexión. El catálogo de electrónica y mediaservers está en `comun/electronica.js` (constantes `ELEC_DEVICES` y `ELEC_MEDIASERVERS`), común a SCREENS y SCREENS.
 
 ## Tecnología y despliegue
 
@@ -86,7 +88,20 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v6.7)
+## Cambios de la versión actual (v6.8)
+
+- **Todo es SCREENS:** desaparecen el nombre y el logo de SCREENCALC.
+  - SCREENS es la calculadora de pantallas: una pantalla o varias / sala inmersiva, LED o proyección.
+  - El logo SCREENS con el isotipo del cubo va en las dos opciones: cabecera, título, pie, PDF (en negro), textos de ayuda, configuradores y app instalable.
+  - El repositorio pasa a llamarse **SCREENS**.
+- **Icono de la pestaña:** el cubo es más grande, con trazo grueso y menos detalles, para que se lea a 16 y 32 px.
+- **Proyección · ningún chasis dentro de otro haz:**
+  - si un proyector queda dentro del haz de otra superficie, o mete otro chasis en el suyo, se busca otra ubicación que cumpla lo demás: alejarlo de su pared con el zoom de la óptica, colgarlo más bajo o más alto (sin pasar del techo ni bajar de 2,3 m) o desplazarlo por su pared con el lens shift;
+  - los proyectores ya no se cuelgan por encima del techo;
+  - **AUTO** elige el modelo que deja la instalación limpia, con menos equipos y más brillo: el mismo modelo para todas las paredes, y el suelo con el mismo u otro;
+  - con un modelo elegido a mano que no tiene ubicación limpia, se avisa y se propone el de AUTO.
+
+## Cambios de la versión v6.7
 
 - **PDF de SCREENS con márgenes blancos:** la hoja ya no sale a sangre. Antes, el esquema oscuro de la pantalla pintaba los márgenes de negro; ahora el margen es blanco y de 12 mm.
 - **Logo SCREENS en negro en el PDF** (`assets/screens-logo-negro.svg`): el verde lima sobre blanco no se leía.
