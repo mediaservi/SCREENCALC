@@ -83,6 +83,9 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - **Popups** (Información, Idioma, README, Descargar, Contenido, Datos del proyecto) con cabecera violeta y botones del mismo sistema.
 - **PDF sin cambios:** la impresión conserva su diseño claro.
 - **Móvil y tablet:** el margen inferior del panel va dentro de la zona desplazable (ya no queda una franja vacía abajo).
+- **Tablet horizontal y portátiles pequeños (1024–1279 px):** el panel va en una columna con desplazamiento y los resultados quedan siempre a la vista (antes, a 1024 px, el panel tapaba los resultados).
+- **Móvil:** el esquema de conexiones se desplaza en horizontal para leerse a tamaño real; los botones táctiles no se quedan iluminados tras pulsarlos; el idioma se elige en dos columnas en horizontal.
+- **Petición en inglés:** «2 HDMI inputs» se entiende como 2 fuentes.
 - **Comparar:** `?tema=clasico` muestra la estética anterior (se recuerda en el navegador) y `?tema=avhub` vuelve a la nueva.
 
 ## Cambios de la versión v4.15
