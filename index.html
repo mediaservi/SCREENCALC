@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v5.2                              ║
+║                          Versión actual: v5.3                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v5.2
+ÚLTIMA ACTUALIZACIÓN: v5.3
+- v5.3 (PROPUESTA): PDF con la estética AVHUB en papel blanco: cabecera en una línea (logo SCREENCALC · web y fecha · logo AVHUB grande al margen derecho), características de la pantalla en las mismas tarjetas que en pantalla (filete de color, icono y título; datos en Share Tech Mono, textos en Inter y de mayor tamaño), cabeceras de bloque en tinte violeta claro con texto violeta oscuro (legible y sin gastar tinta), características del cabinet en fichas de dato (etiqueta sobre valor, sin huecos), cotas recuadradas en azul, simulación escalada al hueco exacto de la página 1, material y cableado más legibles y pie en dos líneas (aviso · lema); magnetotérmicos rotulados una vez y por línea solo L·calibre·consumo (sin amontonarse); el aviso «Desliza…» ya no se imprime; mármol en losas de 120 × 60 cm a escala real; la franja del suelo coincide con la línea de suelo en móvil y tablet; panel manual: Resolución antes que Cosido de cable
+ANTERIOR: v5.2
 - v5.2 (PROPUESTA): simulación: pared a escala real (hormigón, madera, ladrillo claro / rojo / oscuro y mármol) con suelo gris uniforme y minibotones de muestra en la franja del suelo (sin taparse con el botón PANEL); figura en gris claro sobre fondos oscuros y altura de la figura en texto horizontal junto a sus pies; cotas de ancho y alto apoyadas por fuera de su línea y pegadas a la pantalla; la carta de ajuste muestra la resolución, la clase y el formato reales de la pantalla configurada (en varias líneas si la pantalla es estrecha); numeración de cabinets cada 2, 3… cuando las celdas son demasiado pequeñas para que los números no se pisen; control de elevación siempre bajo la línea de suelo; total de cabinets en grande en el resumen (y en móvil, junto a la resolución); Tamaño de pantalla: medidas reales en las casillas, total de cabinets entre columnas y filas; Resolución: AUTO / HD / FHD / UHD y casillas H × V para una resolución a medida, el alto o el ancho que falte se calcula por la proporción; tipografía coherente por tipo de campo (datos en Share Tech Mono); ningún texto llega al filo de su botón o caja (se autorreduce con margen de seguridad); botón SIMULAR CONTENIDO a dos líneas
 ANTERIOR: v5.1
 - v5.1: petición: «externa», «sol directo», «terraza»… se entienden como exterior; «cerca de un río», lago, piscina, puerto… como entorno húmedo (marino / tropical); «sol directo» ya no activa la conexión directa ni la electrónica (solo «conexión directa», «directo por cable», RJ45 o cable de red); popup «Datos del proyecto» compacto: 3 columnas desde 1000 px (sin desplazamiento en PC), 2 columnas desde 680 px y 1 en móvil vertical, rellenando por columnas para que cada grupo quede junto; modo manual: con una resolución mínima (HD / FHD / 4K) y sin ancho ni alto, CALCULAR da la pantalla más pequeña que la alcanza con el cabinet elegido (luego se amplía con + / −); tipografía unificada: solo Inter (400 / 700 / 800) y Share Tech Mono para datos y displays
@@ -586,6 +588,7 @@ ANTERIOR: v4.1
         /* ========== 5A-bis. PDF EN 2 PÁGINAS (v4.4) ========== */
         main.printable-area.pdf-unico > :not(.print-header):not(.pdf-pag):not(.print-footer) { display: none !important; }
         main.printable-area.pdf-unico { padding-bottom: 0 !important; }
+        main.printable-area .av-esq-hint { display: none !important; }
         main.printable-area.pdf-unico .pdf-pag {
           display: flex !important; flex-direction: column !important; gap: 6px !important;
           overflow: hidden !important; width: 100% !important; box-sizing: border-box !important;
@@ -606,7 +609,7 @@ ANTERIOR: v4.1
         main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec { flex: 1 1 auto !important; min-height: 0 !important; display: flex !important; flex-direction: column !important; padding: 0 !important; overflow: hidden !important; }
         main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec > div { flex: 1 1 auto !important; min-height: 0 !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; }
         main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec > div > div { flex: 0 0 auto !important; break-inside: auto !important; }
-        main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec > div > div:nth-child(2) { flex: 1 1 auto !important; min-height: 0 !important; display: flex !important; justify-content: center !important; align-items: center !important; padding: 4px !important; overflow: hidden !important; }
+        main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec > div > div.p-3 { flex: 1 1 auto !important; min-height: 0 !important; display: flex !important; justify-content: center !important; align-items: center !important; padding: 4px !important; overflow: hidden !important; }
         main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec svg { height: 100% !important; width: auto !important; max-width: 100% !important; max-height: 100% !important; }
         main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec .esquema-bom td, main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec .esquema-bom th { padding: 1px 5px !important; font-size: 7.5pt !important; }
         main.printable-area.pdf-unico .pdf-pag2 > .cableado-pdf .grid { gap: 8px !important; padding: 4px !important; }
@@ -642,7 +645,7 @@ ANTERIOR: v4.1
           break-after: avoid !important;
           page-break-after: avoid !important;
         }
-        main.printable-area.pdf-unico .esquema-sec > div > div:nth-child(2),
+        main.printable-area.pdf-unico .esquema-sec > div > div.p-3,
         main.printable-area.pdf-unico .esquema-sec .esquema-bom tr {
           break-inside: avoid !important;
           page-break-inside: avoid !important;
@@ -1757,8 +1760,8 @@ ANTERIOR: v4.1
     </script>
     <style id="tema-avhub">
 /*TEMA-AVHUB-INICIO*/
-/* ===== v5.0 · Estética AVHUB (rack digital): una sola piel para toda la app en pantalla.
-   Solo pantalla: el PDF (impresión) conserva su diseño. Desactivable con ?tema=clasico ===== */
+/* ===== v5.0 · Estética AVHUB (rack digital): una sola piel para toda la app.
+   En pantalla, rack oscuro; en el PDF (al final), la misma estética en claro sobre papel blanco. Desactivable con ?tema=clasico ===== */
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/inter-latin-400-normal.woff2) format('woff2'); }
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: swap; src: url(assets/fonts/inter-latin-700-normal.woff2) format('woff2'); }
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 800 900; font-display: swap; src: url(assets/fonts/inter-latin-800-normal.woff2) format('woff2'); }
@@ -2470,7 +2473,7 @@ html.av .visualizer-container[data-pared="madera"] { background: var(--luz), var
 html.av .visualizer-container[data-pared="ladrillo-claro"] { background: var(--luz), radial-gradient(ellipse 120% 100% at 50% 40%, rgba(0,0,0,0) 50%, rgba(0,0,0,.35) 100%), url(assets/sim/ladrillo-claro.jpg) left bottom / max(130px, calc(var(--ppm, 100) * 1.1px)) auto repeat, #e8dccb !important; --hum: #2b2b31; --cota: #0069a8; --cota-l: rgba(0,105,168,.9); }
 html.av .visualizer-container[data-pared="ladrillo-rojo"] { background: var(--luz), var(--vin), linear-gradient(rgba(0,0,0,.14), rgba(0,0,0,.14)), url(assets/sim/ladrillo-rojo.jpg) left bottom / max(130px, calc(var(--ppm, 100) * 1.1px)) auto repeat, #b5532c !important; --hum: #1f1f24; --cota: #7fdcff; --cota-l: rgba(170,230,255,.95); }
 html.av .visualizer-container[data-pared="ladrillo-oscuro"] { background: radial-gradient(ellipse 55% 60% at 30% 10%, rgba(255,240,220,.22), rgba(255,255,255,0) 70%), var(--vin), url(assets/sim/ladrillo-oscuro.jpg) left bottom / max(130px, calc(var(--ppm, 100) * 1.1px)) auto repeat, #161616 !important; }
-html.av .visualizer-container[data-pared="marmol"] { background: var(--luz), radial-gradient(ellipse 120% 100% at 50% 40%, rgba(0,0,0,0) 50%, rgba(0,0,0,.28) 100%), url(assets/sim/marmol.jpg) center / cover, #e9e9ec !important; --hum: #2b2b31; --cota: #0069a8; --cota-l: rgba(0,105,168,.9); }
+html.av .visualizer-container[data-pared="marmol"] { background: var(--luz), radial-gradient(ellipse 120% 100% at 50% 40%, rgba(0,0,0,0) 50%, rgba(0,0,0,.28) 100%), url(assets/sim/marmol.jpg) left 0 bottom / calc(var(--ppm, 100) * 2.4px) auto repeat, #e9e9ec !important; --hum: #2b2b31; --cota: #0069a8; --cota-l: rgba(0,105,168,.9); }
 html.av .humano-svg { color: var(--hum) !important; filter: drop-shadow(0 0 1px rgba(0,0,0,.35)) drop-shadow(8px 6px 10px rgba(0,0,0,.5)); }
 /* Cotas pegadas a la pantalla, con el espacio justo */
 html.av .cota-ancho { top: -18px !important; }
@@ -2511,7 +2514,7 @@ html.av .visualizer-container[data-pared="ladrillo-rojo"] {
 html.av .visualizer-container[data-pared="ladrillo-oscuro"] {
   background: var(--suelo-capa), var(--contacto), radial-gradient(ellipse 55% 60% at 32% 8%, rgba(255,240,220,.16), rgba(255,255,255,0) 70%), var(--vin), url(assets/sim/ladrillo-oscuro.jpg) left 0 bottom var(--suelo, 68px) / calc(var(--ppm, 100) * 1px) auto repeat, #1b1b1c !important; }
 html.av .visualizer-container[data-pared="marmol"] {
-  background: var(--suelo-capa), var(--contacto), var(--luz), radial-gradient(ellipse 120% 100% at 50% 40%, rgba(0,0,0,0) 50%, rgba(0,0,0,.26) 100%), url(assets/sim/marmol.jpg) center top / cover no-repeat, #e9e9ec !important; }
+  background: var(--suelo-capa), var(--contacto), var(--luz), radial-gradient(ellipse 120% 100% at 50% 40%, rgba(0,0,0,0) 50%, rgba(0,0,0,.26) 100%), url(assets/sim/marmol.jpg) left 0 bottom var(--suelo, 68px) / calc(var(--ppm, 100) * 2.4px) auto repeat, #e9e9ec !important; } /* losas 120×60 cm a escala real */
 html.av .av-suelo::after { display: none; }
 html.av .av-suelo { border-bottom-color: rgba(255,255,255,.16) !important; box-shadow: none; }
 
@@ -2563,6 +2566,211 @@ html.av .visualizer-container[data-pared="marmol"] .av-figv, html.av .visualizer
 html.av .av-barra-movil .av-sep { display: none !important; }
 html.av .av-barra-movil { justify-content: space-evenly !important; }
 
+}
+/* ===== v5.3 · PDF con la estética AVHUB sobre papel blanco =====
+   Mismo concepto que la pantalla (bloques identificados con filete de color, icono y título; cabeceras violeta;
+   textos en Inter y datos en Share Tech Mono; cotas recuadradas) pero en claro para no gastar tinta.
+   Solo con la estética AVHUB activa: ?tema=clasico conserva el PDF anterior. */
+@media print {
+html.av {
+  --p-tinta: #141416; --p-txt: #2a2a30; --p-tenue: #60606a; --p-tenue-2: #8a8a93; --p-linea: #d7d7dd; --p-suave: #f5f5f8;
+  --p-violeta: #9900ff; --p-violeta-2: #6a00c4; --p-violeta-txt: #7a00d6;
+  --p-mono: 'Share Tech Mono', ui-monospace, Menlo, Consolas, monospace;
+  --p-sans: 'Inter', Arial, sans-serif;
+  --p-banda: #f1e6ff; --p-banda-txt: #4a0a8c; /* en papel la banda violeta va en tinte claro con texto violeta oscuro: se lee y no gasta tinta */
+}
+html.av body *:not(svg *) { font-family: var(--p-sans) !important; }
+html.av body { color: var(--p-txt) !important; }
+
+/* ---------- Cabecera: logo SCREENCALC · web y fecha · logo AVHUB, centrados en una sola línea ---------- */
+html.av .print-header {
+  display: grid !important; grid-template-columns: 1fr auto 1fr !important; align-items: center !important;
+  padding: 0 4px 7px !important; margin: 0 0 8px !important; border-bottom: 1.5pt solid var(--p-violeta) !important; table-layout: auto !important;
+}
+html.av .print-header-left { display: flex !important; align-items: center !important; justify-content: flex-start !important; }
+html.av .print-header-logo { height: 34pt !important; margin: 0 !important; }
+html.av .print-header-url { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; width: auto !important; gap: 2px !important; }
+html.av .print-header-url a { font-family: var(--p-sans) !important; font-style: normal !important; font-size: 9pt !important; font-weight: 700 !important; letter-spacing: .08em !important; color: var(--p-tenue) !important; }
+html.av .print-header-date {
+  display: flex !important; flex-direction: row-reverse !important; align-items: center !important; justify-content: flex-start !important; gap: 10px !important;
+  font-family: var(--p-mono) !important; font-size: 9.5pt !important; color: var(--p-tenue) !important; letter-spacing: .04em !important;
+}
+html.av .print-header-avhub { display: block !important; margin: 0 !important; line-height: 0 !important; }
+html.av .print-header-avhub img { height: 34pt !important; width: auto !important; }
+
+/* ---------- Página 1: alto disponible según la nueva cabecera ---------- */
+html.av main.printable-area.pdf-unico .pdf-pag1 { height: calc(100vh - 104px) !important; gap: 7px !important; }
+html.av main.printable-area.pdf-unico .pdf-pag2 { gap: 8px !important; height: calc(100vh - 34px) !important; }
+
+/* ---------- Bandas de cabecera de bloque: violeta como en pantalla ---------- */
+html.av main.printable-area .resumen-pdf,
+html.av main.printable-area .cabinet-header-print,
+html.av main.printable-area [class*="bg-[#0f584c]"],
+html.av main.printable-area [class*="bg-[#00a792]"] {
+  background: var(--p-banda) !important; color: var(--p-banda-txt) !important; border: 0 !important; border-bottom: 1.5pt solid var(--p-violeta) !important; border-radius: 6px 6px 0 0 !important;
+  font-family: var(--p-sans) !important; font-weight: 800 !important; letter-spacing: .1em !important; text-transform: uppercase !important;
+}
+html.av main.printable-area .resumen-pdf { border-radius: 6px !important; padding: 6px 10px !important; text-transform: none !important; letter-spacing: .01em !important; }
+html.av main.printable-area .resumen-pdf h3 { font-family: var(--p-sans) !important; font-size: 8.5pt !important; font-weight: 700 !important; line-height: 1.35 !important; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; color: var(--p-tinta) !important; }
+html.av main.printable-area .resumen-pdf { border: 1px solid #dcc6ff !important; border-left: 4px solid var(--p-violeta) !important; }
+
+/* ---------- Características de la pantalla: las mismas tarjetas que en pantalla ---------- */
+html.av main.printable-area .data-table-container { column-count: auto !important; display: block !important; margin: 0 !important; background: transparent !important; border: 0 !important; overflow: visible !important; }
+html.av main.printable-area .data-table-container > .caract-header,
+html.av main.printable-area .data-table-container > .car-print-only { display: none !important; }
+html.av main.printable-area .data-table-container > .car-screen { display: block !important; padding: 0 !important; background: transparent !important; border: 0 !important; }
+html.av main.printable-area .car-grid { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 7px !important; align-items: stretch !important; }
+html.av main.printable-area .car-tarjeta {
+  position: relative !important; background: #fff !important; border: 1px solid var(--p-linea) !important; border-top: 3px solid var(--p-ac) !important;
+  border-radius: 6px !important; box-shadow: none !important; overflow: hidden !important; break-inside: avoid !important;
+}
+html.av main.printable-area .car-tarjeta[style*="#00a792"] { --p-ac: #00b80b; --p-ac-t: #008a08; }
+html.av main.printable-area .car-tarjeta[style*="#1d4ed8"] { --p-ac: #0094e0; --p-ac-t: #0070ab; }
+html.av main.printable-area .car-tarjeta[style*="#b45309"] { --p-ac: #f29b00; --p-ac-t: #a86500; }
+html.av main.printable-area .car-tarjeta[style*="#4338ca"] { --p-ac: #9900ff; --p-ac-t: #7a00d6; }
+html.av main.printable-area .car-tarjeta[style*="#73ac44"] { --p-ac: #d000ef; --p-ac-t: #a000b8; }
+html.av main.printable-area .car-tarjeta[style*="#dc2626"] { --p-ac: #e8283c; --p-ac-t: #c01428; }
+html.av main.printable-area .car-tarjeta > div:first-child {
+  color: var(--p-ac-t) !important; font-size: 7.5pt !important; font-weight: 800 !important; letter-spacing: .14em !important;
+  padding: 6px 9px 2px !important; gap: 6px !important;
+}
+html.av main.printable-area .car-tarjeta > div:first-child .ic { width: 13px !important; height: 13px !important; background: var(--p-ac-t) !important; color: var(--p-ac-t) !important; }
+html.av main.printable-area .car-tarjeta > div:last-child { padding: 3px 9px 7px !important; }
+html.av main.printable-area .car-tarjeta .text-xl, html.av main.printable-area .car-tarjeta .text-2xl {
+  font-family: var(--p-mono) !important; font-weight: 400 !important; font-size: 15pt !important; line-height: 1.1 !important; color: var(--p-tinta) !important; letter-spacing: .01em !important;
+}
+html.av main.printable-area .car-tarjeta .text-xl .text-sm, html.av main.printable-area .car-tarjeta .text-2xl .text-sm { font-family: var(--p-sans) !important; font-size: 8pt !important; font-weight: 700 !important; color: var(--p-tenue) !important; }
+html.av main.printable-area .car-tarjeta .text-\[11px\] { font-size: 7.5pt !important; color: var(--p-tenue) !important; }
+html.av main.printable-area .car-tarjeta .flex.justify-between { font-size: 7.5pt !important; padding: 1.5px 0 !important; border-bottom: 0.5pt dotted #e2e2e7 !important; gap: 8px !important; }
+html.av main.printable-area .car-tarjeta .flex.justify-between:last-child { border-bottom: 0 !important; }
+html.av main.printable-area .car-tarjeta .flex.justify-between > span:first-child { color: var(--p-tenue) !important; font-weight: 400 !important; }
+html.av main.printable-area .car-tarjeta .flex.justify-between > span:last-child { font-family: var(--p-mono) !important; font-size: 9pt !important; font-weight: 400 !important; color: var(--p-tinta) !important; text-align: right !important; }
+html.av main.printable-area .car-tarjeta .border-t { border-top: 0.5pt solid var(--p-linea) !important; }
+html.av main.printable-area .car-tarjeta .rounded-full.border { font-size: 6.5pt !important; padding: 1px 6px !important; }
+html.av main.printable-area .car-tarjeta .text-lg.font-extrabold { font-family: var(--p-mono) !important; font-weight: 400 !important; font-size: 13pt !important; }
+html.av main.printable-area .car-tarjeta .text-\[10px\] { font-size: 6.5pt !important; letter-spacing: .06em !important; }
+html.av main.printable-area .car-tarjeta svg.dv-svg { max-height: 118px !important; }
+html.av main.printable-area .car-tarjeta svg[width="84"] { width: 62px !important; height: 62px !important; flex: none !important; }
+
+/* ---------- Observaciones ---------- */
+html.av main.printable-area .obs-pdf { background: transparent !important; }
+html.av main.printable-area .obs-pdf > div { border: 1px solid var(--p-linea) !important; border-left: 3px solid var(--p-violeta) !important; border-radius: 6px !important; padding: 6px 10px !important; background: #fff !important; }
+html.av main.printable-area .obs-pdf h4 { font-size: 7.5pt !important; font-weight: 800 !important; letter-spacing: .14em !important; color: var(--p-violeta-txt) !important; border: 0 !important; margin: 0 0 2px !important; padding: 0 !important; }
+html.av main.printable-area .obs-pdf p, html.av main.printable-area .obs-pdf span { font-size: 8pt !important; line-height: 1.4 !important; color: var(--p-txt) !important; }
+
+/* ---------- Características del cabinet: foto y fichas de dato (etiqueta sobre valor, sin huecos) ---------- */
+html.av main.printable-area .cabinet-block-print { margin: 0 !important; border: 1px solid var(--p-linea) !important; border-radius: 6px !important; overflow: hidden !important; background: #fff !important; }
+html.av main.printable-area .cabinet-header-print { font-size: 8pt !important; padding: 5px 10px !important; text-align: left !important; border-radius: 0 !important; }
+html.av main.printable-area .cabinet-content-print { grid-template-columns: 104px minmax(0, 1fr) !important; gap: 10px !important; padding: 6px 10px !important; align-items: center !important; }
+html.av main.printable-area .cabinet-photo-print { max-height: 96px !important; width: 100% !important; }
+html.av main.printable-area .cabinet-specs-print { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 4px 5px !important; font-size: 8pt !important; }
+html.av main.printable-area .cabinet-specs-print > div {
+  display: flex !important; flex-direction: column !important; justify-content: flex-start !important; gap: 1px !important;
+  padding: 3px 7px !important; background: var(--p-suave) !important; border: 0 !important; border-left: 2px solid var(--p-violeta) !important; border-radius: 3px !important; min-width: 0 !important;
+}
+html.av main.printable-area .cabinet-specs-print > div:nth-child(odd) { background: var(--p-suave) !important; }
+html.av main.printable-area .cabinet-specs-print > div > span:first-child { font-size: 6.3pt !important; font-weight: 700 !important; letter-spacing: .08em !important; text-transform: uppercase !important; color: var(--p-tenue) !important; }
+html.av main.printable-area .cabinet-specs-print > div > span:last-child { font-family: var(--p-mono) !important; font-size: 9.5pt !important; color: var(--p-tinta) !important; text-align: left !important; max-width: none !important; overflow: visible !important; text-overflow: clip !important; white-space: normal !important; line-height: 1.2 !important; }
+html.av main.printable-area .cabinet-specs-print .cabinet-url-print { grid-column: 1 / -1 !important; background: transparent !important; border: 0 !important; padding: 0 !important; text-align: left !important; }
+html.av main.printable-area .cabinet-specs-print > div.cabinet-url-print > span, html.av main.printable-area .cabinet-specs-print > div.cabinet-url-print > span:first-child { font-family: var(--p-mono) !important; font-size: 7pt !important; color: var(--p-tenue) !important; text-transform: none !important; letter-spacing: 0 !important; }
+
+/* ---------- Simulación ---------- */
+html.av main.printable-area .visualizer-container { background: #fff !important; border: 1px solid var(--p-linea) !important; border-radius: 6px !important; }
+html.av main.printable-area .resolution-box-print > .bg-white { background: #fff !important; border: 1px solid var(--p-linea) !important; border-radius: 6px !important; color: var(--p-tinta) !important; }
+html.av main.printable-area .resolution-box-print > .bg-white .font-bold { font-family: var(--p-mono) !important; font-weight: 400 !important; color: var(--p-tinta) !important; }
+html.av main.printable-area .resolution-box-print .bg-black { background: #0b0b0c !important; border-radius: 4px !important; }
+html.av main.printable-area .resolution-box-print .bg-black .font-black { font-family: var(--p-mono) !important; font-weight: 400 !important; color: #00e004 !important; letter-spacing: .04em !important; }
+html.av main.printable-area .resolution-box-print .bg-black .font-bold { font-family: var(--p-sans) !important; font-weight: 700 !important; color: #fff !important; }
+html.av main.printable-area .av-resumen { background: #fff !important; border: 1px solid var(--p-linea) !important; border-left: 3px solid var(--p-violeta) !important; border-radius: 6px !important; }
+html.av main.printable-area .av-resumen span { font-family: var(--p-mono) !important; font-weight: 400 !important; color: var(--p-tinta) !important; }
+html.av main.printable-area .av-resumen svg { stroke: var(--p-violeta-txt) !important; opacity: 1 !important; }
+html.av main.printable-area .av-resumen svg[fill="#ffffff"] { fill: var(--p-violeta-txt) !important; stroke: none !important; }
+html.av main.printable-area .av-resumen .av-cabtot { display: inline-flex !important; flex-direction: column !important; align-items: stretch !important; margin-left: .5em !important; flex: none !important; min-width: 2.4em !important; }
+html.av main.printable-area .av-resumen .av-cabtot b { font-family: var(--p-mono) !important; font-weight: 400 !important; font-size: 2.3em !important; line-height: .9 !important; color: var(--p-violeta-txt) !important; text-align: center !important; }
+html.av main.printable-area .av-resumen .av-cabtot svg { display: block !important; width: 100% !important; height: .7em !important; margin-top: .25em !important; }
+html.av main.printable-area .av-resumen .av-cabtot svg text { fill: var(--p-tenue) !important; stroke: none !important; font-family: var(--p-sans) !important; font-weight: 700 !important; font-size: 14px !important; }
+html.av main.printable-area .cota .dim-line-h { border-top: 1px dashed #0094e0 !important; }
+html.av main.printable-area .cota .dim-line-v { border-left: 1px dashed #0094e0 !important; }
+html.av main.printable-area .cota .dim-line-h::before, html.av main.printable-area .cota .dim-line-h::after,
+html.av main.printable-area .cota .dim-line-v::before, html.av main.printable-area .cota .dim-line-v::after { border-color: #0094e0 !important; }
+html.av main.printable-area .cota-tick { border-color: #0094e0 !important; }
+html.av main.printable-area .cota-lbl { background: #fff !important; border: 1px solid #0094e0 !important; border-radius: 4px !important; color: var(--p-tinta) !important; font-family: var(--p-mono) !important; font-weight: 400 !important; letter-spacing: .04em !important; }
+html.av main.printable-area .cota-lbl .cota-k { font-family: var(--p-sans) !important; font-weight: 800 !important; font-size: .8em !important; letter-spacing: .14em !important; color: #0070ab !important; margin-right: .35em !important; }
+html.av main.printable-area .dim-line-dots { border-left-color: var(--p-violeta) !important; }
+html.av main.printable-area .av-figref { font-family: var(--p-mono) !important; font-weight: 400 !important; color: var(--p-tenue) !important; }
+html.av main.printable-area .av-suelo { border-color: #4a4a52 !important; }
+
+/* ---------- Página 2: electrónica y mediaserver elegidos ---------- */
+html.av main.printable-area .pdf-fila-elec > div { background: #fff !important; border: 1px solid var(--p-linea) !important; border-radius: 6px !important; overflow: hidden !important; }
+html.av main.printable-area .pdf-fila-elec [class*="bg-[#0f584c]"] { border-radius: 0 !important; padding: 5px 10px !important; min-height: 26px !important; }
+html.av main.printable-area .pdf-fila-elec [class*="bg-[#0f584c]"] span { font-size: 8pt !important; font-weight: 800 !important; letter-spacing: .14em !important; }
+html.av main.printable-area .pdf-fila-elec [class*="bg-[#0f584c]"] img { height: 14pt !important; }
+html.av main.printable-area .pdf-fila-elec [class*="bg-[#0f584c]"] img { filter: none !important; }
+html.av main.printable-area .pdf-fila-elec [class*="bg-[#0f584c]"] a { font-size: 7pt !important; color: var(--p-banda-txt) !important; text-transform: none !important; letter-spacing: .02em !important; font-weight: 700 !important; }
+html.av main.printable-area .pdf-fila-elec .elec-grid { background: #fff !important; padding: 6px !important; }
+html.av main.printable-area .pdf-fila-elec .elec-grid > .elec-bubble { background: #fff !important; border: 1px solid var(--p-linea) !important; border-top: 3px solid #00b80b !important; box-shadow: none !important; border-radius: 5px !important; padding: 6px 9px !important; margin: 0 !important; }
+html.av main.printable-area .elec-bubble .elec-title { font-size: 10pt !important; font-weight: 800 !important; color: var(--p-tinta) !important; }
+html.av main.printable-area .elec-bubble .text-\[10px\] { font-size: 7pt !important; letter-spacing: .1em !important; color: #008a08 !important; }
+html.av main.printable-area .elec-bubble .text-xs { font-size: 7.5pt !important; line-height: 1.4 !important; color: var(--p-txt) !important; }
+html.av main.printable-area .elec-bubble .text-xs.text-gray-500 { color: var(--p-tenue) !important; }
+html.av main.printable-area .elec-bubble .text-xs strong { color: var(--p-tinta) !important; font-weight: 700 !important; }
+
+/* ---------- Esquema de conexiones y material ---------- */
+html.av main.printable-area .esquema-sec > div { background: #fff !important; border: 1px solid var(--p-linea) !important; border-radius: 6px !important; overflow: hidden !important; }
+html.av main.printable-area .esquema-sec [class*="bg-[#0f584c]"] { border-radius: 0 !important; padding: 5px 10px !important; font-size: 8pt !important; letter-spacing: .14em !important; }
+html.av main.printable-area.pdf-unico .esquema-sec .av-esq-hint { display: none !important; }
+html.av main.printable-area .esquema-sec .esquema-bom { border-collapse: collapse !important; }
+html.av main.printable-area .esquema-sec .esquema-bom th { font-size: 6.5pt !important; font-weight: 800 !important; letter-spacing: .12em !important; text-transform: uppercase !important; color: var(--p-tenue) !important; border-bottom: 1.5pt solid var(--p-violeta) !important; padding: 2px 6px !important; text-align: left !important; }
+html.av main.printable-area .esquema-sec .esquema-bom td { font-size: 7.5pt !important; padding: 1.5px 6px !important; line-height: 1.2 !important; border-bottom: 0.5pt solid #e6e6ea !important; color: var(--p-txt) !important; vertical-align: middle !important; }
+html.av main.printable-area .esquema-sec .esquema-bom td:first-child { font-family: var(--p-mono) !important; font-size: 9pt !important; color: var(--p-tinta) !important; }
+html.av main.printable-area .esquema-sec .esquema-bom td:nth-child(2) { font-family: var(--p-mono) !important; font-size: 9pt !important; color: var(--p-tinta) !important; }
+html.av main.printable-area .esquema-sec .esquema-bom td:nth-child(2) *:not(svg *) { font-family: var(--p-mono) !important; font-weight: 400 !important; }
+html.av main.printable-area .esquema-sec .esquema-bom td:nth-child(2) { font-weight: 400 !important; }
+html.av main.printable-area .esquema-sec .esquema-bom a { color: var(--p-tinta) !important; text-decoration: none !important; }
+html.av main.printable-area .esquema-sec .esquema-bom tr:nth-child(even) td { background: var(--p-suave) !important; }
+html.av main.printable-area .esquema-sec .text-\[10px\] { font-size: 7pt !important; color: var(--p-tenue) !important; }
+
+/* ---------- Propuestas de cableado ---------- */
+html.av main.printable-area .cableado-pdf { background: transparent !important; }
+html.av main.printable-area .cableado-pdf > .grid { padding: 0 !important; gap: 8px !important; }
+html.av main.printable-area .cableado-pdf .border.border-gray-300.rounded { border: 1px solid var(--p-linea) !important; border-radius: 6px !important; }
+html.av main.printable-area .cableado-pdf [class*="bg-[#0f584c]"] { border-radius: 0 !important; padding: 5px 10px !important; }
+html.av main.printable-area .cableado-pdf [class*="bg-[#0f584c]"] h3 { font-size: 8pt !important; font-weight: 800 !important; letter-spacing: .12em !important; color: var(--p-banda-txt) !important; }
+html.av main.printable-area .cableado-pdf .text-xs.text-gray-700 { font-size: 7.5pt !important; line-height: 1.4 !important; color: var(--p-txt) !important; margin-bottom: 5px !important; }
+html.av main.printable-area .cableado-pdf .text-xs.text-gray-700.mb-3 > div { margin: 0 !important; }
+html.av main.printable-area .cableado-pdf .text-xs.text-gray-700 strong { color: var(--p-tinta) !important; font-weight: 700 !important; }
+html.av main.printable-area .cableado-pdf .esquema-grid { max-height: 116px !important; }
+html.av main.printable-area .cableado-pdf .flex-wrap.gap-1 { font-size: 6.5pt !important; gap: 2px 3px !important; margin-top: 4px !important; }
+html.av main.printable-area .cableado-pdf .flex-wrap.gap-1 > div { font-size: 6pt !important; padding: 1px 4px !important; border-radius: 3px !important; gap: 2px !important; }
+html.av main.printable-area .cableado-pdf .flex-wrap.gap-1 > div span { font-family: var(--p-mono) !important; }
+html.av main.printable-area .cableado-pdf .text-\[9px\] { font-size: 6.5pt !important; line-height: 1.3 !important; }
+html.av main.printable-area .cableado-pdf .magneto-fila .magneto { min-width: 30px !important; }
+html.av main.printable-area .cableado-pdf .magneto-fila .magneto b { font-family: var(--p-mono) !important; font-weight: 400 !important; font-size: 8pt !important; color: var(--p-tinta) !important; }
+html.av main.printable-area .cableado-pdf .text-orange-700 { color: #b45309 !important; font-size: 6.5pt !important; line-height: 1.3 !important; }
+html.av main.printable-area .cableado-pdf .bg-gray-200 { background: var(--p-suave) !important; border: 1px solid var(--p-linea) !important; }
+
+/* ---------- Gráficos en la paleta AVHUB de papel ---------- */
+html.av main.printable-area .esq-svg rect[fill="#0f584c"], html.av main.printable-area .esq-svg [fill="#0f584c"] { fill: #7a00d6 !important; }
+html.av main.printable-area .esq-svg [stroke="#0f584c"] { stroke: #9900ff !important; }
+html.av main.printable-area .esq-svg [fill="#ccfbf1"] { fill: #f1e4ff !important; }
+html.av main.printable-area .dv-svg polygon[fill="#73ac44"] { fill: #8fe88f !important; }
+html.av main.printable-area .dv-svg text[fill="#ffffff"] { fill: #035c06 !important; }
+html.av main.printable-area .dv-svg text[fill="#0f584c"] { fill: #008a08 !important; }
+html.av main.printable-area .dv-svg line[stroke="#0f584c"], html.av main.printable-area .dv-svg g[stroke="#0f584c"] { stroke: #008a08 !important; }
+html.av main.printable-area .dv-svg g[fill="#0f584c"], html.av main.printable-area .dv-svg path[fill="#0f584c"] { fill: #008a08 !important; }
+html.av main.printable-area .dv-svg svg g[fill="#0f584c"] { fill: #3a3a42 !important; }
+html.av main.printable-area .dv-svg rect[fill="#0f584c"] { fill: #141416 !important; }
+
+/* Rejilla de cabinets y miniaturas en el verde AVHUB (como en pantalla) */
+html.av main.printable-area .grid-line-v, html.av main.printable-area .grid-line-h { background-color: rgba(0,220,4,.75) !important; }
+html.av main.printable-area .cabinet-grid { background-image: linear-gradient(to right, rgba(0,220,4,.7) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,220,4,.7) 1px, transparent 1px) !important; }
+html.av main.printable-area .car-tarjeta svg [stroke="#ccff00"] { stroke: #00d404 !important; }
+html.av main.printable-area .car-tarjeta svg text[fill="#ccff00"] { fill: #00e004 !important; }
+html.av main.printable-area .car-tarjeta svg rect[fill="#0b1220"] { fill: #0b0b0c !important; }
+
+/* ---------- Pie ---------- */
+html.av .print-footer { padding: 3pt 6pt !important; }
+html.av .print-footer div { font-family: var(--p-sans) !important; font-size: 6.5pt !important; line-height: 1.3 !important; color: var(--p-tenue) !important; white-space: nowrap; }
 }
 /*TEMA-AVHUB-FIN*/
     </style>
@@ -4753,10 +4961,13 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
               const naturalH = inner.scrollHeight;
               const isCompleto = false;
               const targetW = 730; // ancho aprovechable en A4 con los márgenes actuales (en px CSS)
-              const targetH = isCompleto ? 860 : 540; // alto disponible en la página 1 (comparte hoja con características, observaciones y cabinet)
+              const pdfAv = document.documentElement.classList.contains('av') && document.querySelector('main.pdf-unico');
+              const targetH = pdfAv ? 300 : (isCompleto ? 860 : 540); // alto disponible en la página 1 (comparte hoja con características, observaciones y cabinet)
               const factor = Math.min(1.0, Math.max(0.3, Math.min(targetW / naturalW, targetH / naturalH)));
               document.documentElement.style.setProperty('--print-zoom', factor.toFixed(3));
               inner.style.setProperty('zoom', factor.toFixed(3), 'important');
+              // si la hoja ya está maquetada para impresión, se ajusta al hueco real (estética AVHUB)
+              if (pdfAv && window.matchMedia && window.matchMedia('print').matches) ajustarSimPdf();
             }
           };
           
@@ -4780,10 +4991,34 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             document.documentElement.style.removeProperty('--print-zoom');
           };
           
+          // Estética AVHUB: ya maquetada la hoja de impresión, la simulación se escala para ocupar exactamente
+          // el hueco que queda en la página 1 (sin recortes y sin espacio sobrante)
+          const ajustarSimPdf = () => {
+            if (!document.documentElement.classList.contains('av')) return;
+            const pag1 = document.querySelector('main.pdf-unico .pdf-pag1');
+            const vc = pag1 && pag1.querySelector(':scope > .visualizer-container');
+            const inner = vc && vc.querySelector(':scope > div');
+            if (!inner) return;
+            const w = parseFloat(inner.style.width) || inner.scrollWidth, h = parseFloat(inner.style.height) || inner.scrollHeight;
+            if (!w || !h) return;
+            const gap = parseFloat(getComputedStyle(pag1).rowGap) || 0;
+            let usado = 0, n = 0;
+            [...pag1.children].forEach(k => { if (k !== vc && getComputedStyle(k).display !== 'none') { usado += k.getBoundingClientRect().height; n++; } });
+            const altoDisp = pag1.clientHeight - usado - gap * n - 6;
+            const anchoDisp = vc.clientWidth - 12;
+            if (altoDisp < 80 || anchoDisp < 80) return;
+            const f = Math.max(0.3, Math.min(2.0, anchoDisp / w, altoDisp / h));
+            document.documentElement.style.setProperty('--print-zoom', f.toFixed(3));
+            inner.style.setProperty('zoom', f.toFixed(3), 'important');
+          };
+          const mqImpresion = window.matchMedia ? window.matchMedia('print') : null;
+          const alCambiarMedio = (e) => { if (e.matches) ajustarSimPdf(); };
+          if (mqImpresion && mqImpresion.addEventListener) mqImpresion.addEventListener('change', alCambiarMedio);
           window.addEventListener('beforeprint', handleBeforePrint);
           window.addEventListener('afterprint', handleAfterPrint);
           
           return () => {
+            if (mqImpresion && mqImpresion.removeEventListener) mqImpresion.removeEventListener('change', alCambiarMedio);
             window.removeEventListener('beforeprint', handleBeforePrint);
             window.removeEventListener('afterprint', handleAfterPrint);
           };
@@ -5299,7 +5534,8 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             const vizEl = mainEl.querySelector('.visualizer-container');
             const inner = vizEl && vizEl.querySelector(':scope > div');
             if (inner) {
-              const factor = Math.min(2.0, Math.max(0.4, Math.min(730 / inner.offsetWidth, 340 / inner.offsetHeight)));
+              const altoSim = document.documentElement.classList.contains('av') ? 300 : 340; // estética AVHUB: las tarjetas de características ocupan algo más
+              const factor = Math.min(2.0, Math.max(0.4, Math.min(730 / inner.offsetWidth, altoSim / inner.offsetHeight)));
               inner.style.setProperty('zoom', factor.toFixed(3), 'important');
               document.documentElement.style.setProperty('--print-zoom', factor.toFixed(3));
             }
@@ -6729,7 +6965,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v5.2</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v5.3</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -7203,7 +7439,6 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                         </div>
                       </div>
                     </div>
-                    {cosidoSel}
                     <div className="card-sec space-y-2 lg:space-y-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
                       <div className="sec-title"><span className="sec-ico"><Ic n="resolucion" /></span> Resolución</div>
                       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem'}}>
@@ -7259,6 +7494,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                         </button>
                       </div>
                     </div>
+                    {cosidoSel}
                     <AdTraulux />
                     <AdSlot id="panel" />
                     </div>
@@ -7289,7 +7525,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                     className="w-full bg-tech-gray border-b border-gray-300 flex items-center justify-center p-1 sm:p-4 relative visualizer-container" 
                     ref={visualizerRef} data-pared={paredSim}
                     style={{ 
-                        '--ppm': scale, '--suelo': (COTA_CERO_BASE_Y + (containerSize.w < 768 ? 26 : 18)) + 'px', flexShrink: 0, minHeight: 0, 
+                        '--ppm': scale, '--suelo': (COTA_CERO_BASE_Y + (window.innerWidth <= 1024 ? 8 : (containerSize.w < 768 ? 26 : 18))) + 'px', flexShrink: 0, minHeight: 0, /* ≤1024 px el relleno real es 8 px (estilos táctiles) */
                         paddingBottom: containerSize.w < 768 ? '26px' : '18px',
                         paddingTop: containerSize.w < 768 ? '5px' : '16px'
                     }}
@@ -9018,21 +9254,21 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                                 )}
                               </div>
                               
-                              {/* Líneas a magnetotérmicos */}
-                              <div className="mt-3 flex justify-around items-end">
-                                {distribucionElectrica.lineas.map((linea) => (
-                                  <div key={linea.numero} className="flex flex-col items-center">
-                                    <div 
-                                      className="w-1 h-8 mb-1"
-                                      style={{ backgroundColor: linea.color }}
-                                    ></div>
-                                    <div className="text-[9px] text-gray-600 text-center">
-                                      <div className="font-bold">Magnetotérmico</div>
-                                      <div className="font-bold text-gray-900">{linea.magnetotermico}A</div>
-                                      <div className="text-gray-500">({linea.amps.toFixed(1)}A real)</div>
+                              {/* Líneas a magnetotérmicos: rótulo común una vez y, por línea, solo número, calibre y consumo real (sin amontonarse) */}
+                              <div className="mt-3 magneto-fila">
+                                <div className="text-[10px] font-bold text-gray-600 text-center uppercase tracking-wide mb-1">Magnetotérmico por línea · consumo real</div>
+                                <div className="flex flex-wrap justify-around items-end" style={{ gap: '6px 8px' }}>
+                                  {distribucionElectrica.lineas.map((linea) => (
+                                    <div key={linea.numero} className="magneto flex flex-col items-center" style={{ minWidth: '34px' }}>
+                                      <div className="w-1 h-6 mb-1" style={{ backgroundColor: linea.color }}></div>
+                                      <div className="text-[9px] text-gray-600 text-center leading-tight">
+                                        <div className="font-bold" style={{ color: linea.color }}>L{linea.numero}</div>
+                                        <b className="block text-gray-900">{linea.magnetotermico} A</b>
+                                        <div className="text-gray-500">{linea.amps.toFixed(1)} A</div>
+                                      </div>
                                     </div>
-                                  </div>
-                                ))}
+                                  ))}
+                                </div>
                               </div>
                               
                               {/* Diferencial */}
@@ -9080,14 +9316,17 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v5.2 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v5.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v5.2 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
+                    </div>
+                    <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
+                      <a href="https://screencalc.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENCALC</a> v5.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a>
                     </div>
                   </div>
               </main>

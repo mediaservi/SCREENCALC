@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v5.2** (propuesta de nueva estética AVHUB)
+**Versión actual: v5.3** (propuesta de nueva estética AVHUB)
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -74,7 +74,18 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v5.2 · propuesta)
+## Cambios de la versión actual (v5.3 · propuesta)
+
+- **PDF con la estética AVHUB sobre papel blanco:** cabecera en una sola línea (logo SCREENCALC, web y fecha, logo AVHUB grande al margen derecho); las características de la pantalla salen en las mismas tarjetas que en pantalla (filete de color, icono y título) con los datos en Share Tech Mono y los textos en Inter, más grandes; cabeceras de bloque en tinte violeta claro con texto violeta oscuro, legibles y sin gastar tinta.
+- **Cabinet en fichas de dato:** cada característica con su etiqueta encima del valor, sin huecos entre ambos.
+- **Simulación a medida de la hoja:** se escala para ocupar exactamente el hueco que queda en la página 1, sin recortes; cotas recuadradas en azul como en pantalla.
+- **Página 2:** electrónica y mediaserver elegidos, esquema, material y cableado con la misma tipografía y bloques; el aviso «Desliza…» ya no se imprime; pie en dos líneas (aviso y lema).
+- **Magnetotérmicos sin amontonarse:** el rótulo va una vez y cada línea muestra solo su número, calibre y consumo real (en pantalla y en el PDF).
+- **Simulación en pantalla:** mármol en losas de 120 × 60 cm a escala real; en móvil y tablet la franja del suelo coincide con la línea de suelo.
+- **Panel manual:** Resolución va antes que Cosido de cable, en el orden lógico de los pasos.
+- El PDF clásico se mantiene con `?tema=clasico`.
+
+## Cambios de la versión v5.2 · propuesta
 
 - **Simulación más real:** la pared lleva textura a escala real (hormigón, madera, ladrillo claro, rojo u oscuro y mármol); el suelo es siempre el gris oscuro uniforme y la pared empieza a ras de suelo. La pared se elige en «Simular contenido» o con los minibotones de muestra de la franja del suelo.
 - **Figura y cotas:** la figura es gris claro sobre paredes oscuras; su altura aparece como texto horizontal junto a sus pies; las cotas de ancho y alto se apoyan por fuera de su línea y quedan pegadas a la pantalla; el control de elevación queda siempre bajo la línea de suelo.
