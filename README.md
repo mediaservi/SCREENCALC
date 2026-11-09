@@ -106,9 +106,10 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - **Escena 3D sin fugas:** al cambiar de modo se libera la simulación anterior, sin bucles ni contextos WebGL colgando.
 - **Página de configuradores:** las dos cartas tienen el mismo tamaño, con los puntos agrupados en dos columnas. El botón siempre está a la vista en pantallas de escritorio, y junto a cada logo hay una minicaptura de la pantalla inicial de su herramienta.
 - **PDF de SCREENS:** nada se sale de la hoja por la derecha (las tablas anchas parten líneas).
-- **AVHUB ADMIN v1.1 · FIRMAS:**
+- **AVHUB ADMIN v1.2 · FIRMAS:**
   - nueva plantilla **Charmex oficial**, la de cada firma nueva: nombre, cargo en verde, logo de Charmex, email, móvil y teléfono, dirección y web, y los iconos de LinkedIn, WhatsApp, Teams y AVHUB (que lleva a la página de configuradores);
   - el icono de WhatsApp es el original;
+  - nuevo tema de iconos **Colores originales** (el de la firma de Charmex): LinkedIn y WhatsApp con sus logos originales y AVHUB a color;
   - icono de móvil nuevo: smartphone con auricular;
   - todas las imágenes van enlazadas como PNG en screens.mediaservi.com, nunca adjuntas.
 - **Textos con variables repetidas:** la ayuda de la posición del proyector ya muestra los lx de la sala en los dos sitios donde aparecen.

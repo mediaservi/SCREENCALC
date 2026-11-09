@@ -264,7 +264,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
 <header>
   <div class="marca">
     <svg viewBox="0 0 60 48" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9900ff"/><stop offset=".55" stop-color="#00b4ff"/><stop offset="1" stop-color="#00ff04"/></linearGradient></defs><path d="M8 44 L28 8 Q30 4 32 8 L54 44 Z" fill="none" stroke="url(#g)" stroke-width="7" stroke-linejoin="round"/><path d="M26 22 L38 30 L26 38 Z" fill="#9900ff"/></svg>
-    <div>AVHUB · ADMIN <span style="font-size:10px;color:var(--tenue)">v1.1</span><small>ANUNCIOS · FIRMAS · NEWSLETTER · CATÁLOGO</small></div>
+    <div>AVHUB · ADMIN <span style="font-size:10px;color:var(--tenue)">v1.2</span><small>ANUNCIOS · FIRMAS · NEWSLETTER · CATÁLOGO</small></div>
   </div>
   <span id="modo" class="modo"></span>
   <div class="tabs" id="tabs"><button data-s="ads" class="on">ANUNCIOS</button><button data-s="firmas">FIRMAS</button><button data-s="news">NEWSLETTER</button><button data-s="catalogo">CATÁLOGO</button></div>
@@ -1002,7 +1002,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
   var LOGO_CHARMEX = 'https://screens.mediaservi.com/assets/firmas/charmex-logo.png';
   var FUENTES = ['Arial', 'Helvetica', 'Verdana', 'Tahoma', 'Trebuchet MS', 'Georgia'];
   var ACENTOS = ['#9900ff', '#00a792', '#0f584c', '#00b4ff', '#e100ff', '#ff3b5c', '#ffb000', '#2A2A2A'];
-  var TEMAS_ICONO = { linea: 'Línea negra', lineablanca: 'Línea blanca', oscuro: 'Círculo gris oscuro', marca: 'Círculo violeta', verde: 'Círculo verde', gris: 'Círculo gris claro' };
+  var TEMAS_ICONO = { original: 'Colores originales', linea: 'Línea negra', lineablanca: 'Línea blanca', oscuro: 'Círculo gris oscuro', marca: 'Círculo violeta', verde: 'Círculo verde', gris: 'Círculo gris claro' };
   var CORREO_BAJA = 'tronik.dts@gmail.com';
   var F = { lista: [], banners: [] }, N = { lista: [], destinatarios: '' };
   var seccion = 'ads', firmaSel = null, newsSel = null, bloqueSel = null;
@@ -1030,7 +1030,7 @@ details.mas .cont{display:grid;grid-template-columns:repeat(auto-fit,minmax(150p
     return firmaBase(Object.assign({ nombre: 'Charmex · Josep Tarroja', plantilla: 'charmex',
       datos: { nombre: 'Josep Tarroja', cargo: 'Consultor AV', empresa: 'Charmex', telefono: '(+34) 933 036 620', movil: '677.439.966',
         email: 'jtarroja@charmex.net', web: 'www.charmex.net', direccion: 'Barcelona - C/ Maresme 103-105 · 08019', logo: LOGO_CHARMEX },
-      estilo: { acento: '#539d26', fuente: 'Arial', tam: 14, iconos: 'gris', iconoAvhub: 'redondo' },
+      estilo: { acento: '#539d26', fuente: 'Arial', tam: 14, iconos: 'original', iconoAvhub: 'redondo' },
       // en los correos del trabajo el icono de AVHUB lleva a la página para elegir entre SCREENS y TRAULUX
       redes: { linkedin: 'https://www.linkedin.com/in/joseptarroja', whatsapp: '+34 677 43 99 66', teams: 'jtarroja@charmex.net', avhub: CONFIGURADORES },
       bannerId: tx ? tx.id : '', bannerPos: 'final' }, o || {}));
