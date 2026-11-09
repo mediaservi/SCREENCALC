@@ -25,6 +25,7 @@
 .fi-desc { min-width: 0; color: #a9a9b2; }
 .fi-aviso, .fi-nota { margin: 0; font-size: 11px; line-height: 1.35; }
 .fi-aviso { color: #ffc94d; } .fi-nota { color: #a9a9b2; }
+.fi-enlaces { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 14px; }
 .fi-enlace { align-self: flex-end; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--fi-ac); text-decoration: none; }
 .fi-enlace:hover { text-decoration: underline; }
 @media (max-width: 420px) { .fi-piezas li { grid-template-columns: 2.4em minmax(0, 1fr); } .fi-desc { grid-column: 2; } }

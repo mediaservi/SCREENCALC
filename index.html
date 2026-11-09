@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v6.8                              ║
+║                          Versión actual: v6.9                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v6.8
+ÚLTIMA ACTUALIZACIÓN: v6.9
+- v6.9: proyección como el calculador oficial de Epson: luz de la sala en lx (140 por defecto) y ganancia de pantalla (1,0); iluminancia, luminancia y contraste real con su nivel ANSI/AVIXA; distancia óptica–pared fija o AUTO con el rango del zoom; posición del proyector (suelo–óptica, suelo y techo a la imagen, lens shift, diagonal); alto del techo en pantallas sueltas; en la ficha del proyector, manual y especificaciones de Epson (setupnavi) y enlace al calculador oficial para verificar
+ANTERIOR: v6.8
 - v6.8: todo es SCREENS (desaparecen el nombre y el logo de SCREENCALC: cabecera, título, pie, PDF en negro, textos, configuradores; el repositorio pasa a llamarse SCREENS); icono de pestaña más grande y nítido; proyección sin chasis dentro de otros haces (zoom, altura y lens shift; nunca por encima del techo) y AUTO con el modelo que deja la instalación limpia (mismo modelo en paredes, suelo con el mismo u otro)
 ANTERIOR: v6.7
 - v6.7: PDF de SCREENS con márgenes blancos (antes el esquema oscuro de la pantalla pintaba los márgenes de la hoja en negro, como a sangre) y logo SCREENS en negro para que se lea sobre el blanco
@@ -6824,7 +6826,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENS" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v6.8</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v6.9</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -9145,7 +9147,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v6.8 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v6.9 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -9155,7 +9157,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v6.8 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a>
+                      <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v6.9 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a>
                     </div>
                   </div>
               </main>

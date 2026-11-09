@@ -49,17 +49,19 @@ const anchoMax = (p, oos) => { const d = (oos ? p.maxDiagPulgOOS : p.maxDiagPulg
 // alcance = distancia disponible delante de la pared para colocar el proyector (m)
 // En pantallas sueltas, si cubrir el alto obliga a un solape excesivo, se usa un proyector menos llenando el ancho
 // y la imagen sobresale en vertical (recorte, hasta el 20 %), que es lo habitual al enmascarar una pantalla.
-export function calcularPared(sup, p, { alcance, solapeMin = SOLAPE_MIN, oos = false } = {}) {
+// dist: distancia óptica–pared fijada por el usuario (0 = la mínima del zoom); se ajusta al rango del zoom de la óptica
+export function calcularPared(sup, p, { alcance, solapeMin = SOLAPE_MIN, oos = false, dist = 0 } = {}) {
   const W = sup.ancho, wMax = anchoMax(p, oos);
   const armar = (n, imgW, imgH, limite, recorte) => {
     const solape = n > 1 ? (n * imgW - W) / (n - 1) : 0, solapeRel = n > 1 ? solape / imgW : 0;
-    const tiro = p.trMin * imgW;
+    const tMin = p.trMin * imgW, tMaxZ = p.trMax * imgW, fueraZoom = dist > 0 && (dist < tMin - 1e-6 || dist > tMaxZ + 1e-6);
+    const tiro = dist > 0 ? Math.min(tMaxZ, Math.max(tMin, dist)) : tMin;
     const centros = n === 1 ? [0] : Array.from({ length: n }, (_, i) => -W / 2 + imgW / 2 + i * (imgW - solape));
     const solapePx = Math.round(p.resX * solapeRel);
     const resW = n * p.resX - (n - 1) * solapePx, resH = Math.round(p.resY * (1 - recorte));
     const lux = p.lumens / (imgW * imgH);
-    const tiroMax = Math.max(tiro, Math.min(p.trMax * imgW, alcance != null ? alcance : Infinity));
-    return { n, imgW, imgH, solape, solapeRel, solapePx, tiro, tiroMax, ratio: p.trMin, fuera: alcance != null && tiro > alcance, limite, recorte, centros, resW, resH, lux, nits: lux / Math.PI };
+    const tiroMax = dist > 0 ? tiro : Math.max(tiro, Math.min(tMaxZ, alcance != null ? alcance : Infinity));
+    return { n, imgW, imgH, solape, solapeRel, solapePx, tiro, tiroMax, tMin, tMaxZ, fueraZoom, ratio: tiro / imgW, fuera: alcance != null && tiro > alcance, limite, recorte, centros, resW, resH, lux, nits: lux / Math.PI };
   };
   let imgH = sup.alto, imgW = imgH * p.ar, limite = false;
   if (imgW > wMax) { imgW = wMax; imgH = imgW / p.ar; limite = true; }
@@ -108,10 +110,10 @@ export const ALTO_PERSONA = 1.85;   // persona de 1,75 m con margen (cabeza y pe
 // pasa un punto local de la superficie (x a lo ancho, y alto, z hacia la sala) a coordenadas de la escena
 const aMundo = (s, x, y, z) => ({ x: s.x + x * Math.cos(s.rot) + z * Math.sin(s.rot), y, z: s.z - x * Math.sin(s.rot) + z * Math.cos(s.rot) });
 // Proyectores de una pared: lente a la distancia de tiro, colgados del techo (los UST, justo sobre la imagen)
-export function colocarPared(s, p, prod, { alto, sala }) {
+export function colocarPared(s, p, prod, { alto, sala, techo: techoS }) {
   const altoPared = sala ? alto : s.elev + s.alto + 0.2;
   // colgado sobre la imagen (los UST, justo encima); en una sala, siempre por debajo del techo
-  const techo = sala ? alto - 0.05 - prod.chasis[2] / 2 : Infinity;
+  const techo = sala ? alto - 0.05 - prod.chasis[2] / 2 : (techoS > 0 ? techoS - 0.05 - prod.chasis[2] / 2 : Infinity);
   const yProy = Math.min(techo, prod.ust ? s.elev + p.imgH + 0.22 : Math.max(s.elev + p.imgH + 0.15, (sala ? alto : altoPared + 0.6) - 0.45));
   const y0 = s.elev - Math.max(0, p.imgH - s.alto) / 2, y1 = y0 + p.imgH, zL = Math.max(0.15, p.tiro), zMax = Math.max(zL, p.tiroMax || zL);
   return p.centros.map(cx => ({
@@ -212,7 +214,7 @@ export function analizarSombras(filas, esp, alto) {
   const sala = esp.tipo === 'sala', haces = [], franjas = [], avisos = [];
   filas.forEach(f => {
     if (f.s.tipo === 'suelo') { colocarSuelo(f.p, alto).forEach((h, i) => haces.push({ ...h, prodS: f.proyector, sup: f.s.id, nombre: f.nombre, i })); return; }
-    colocarPared(f.s, f.p, f.proyector, { alto, sala }).forEach((h, i) => haces.push({ ...h, sup: f.s.id, nombre: f.nombre, i, fila: f }));
+    colocarPared(f.s, f.p, f.proyector, { alto, sala, techo: esp.tipo === 'sala' ? 0 : (esp.sueltas && esp.sueltas.techo) || 0 }).forEach((h, i) => haces.push({ ...h, sup: f.s.id, nombre: f.nombre, i, fila: f }));
   });
   const colocacion = resolverChoques(haces, alto);
   // franja de sombra de cada pared con la altura final de sus lentes:

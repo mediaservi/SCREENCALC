@@ -13,7 +13,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo.
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v6.8** (estética AVHUB · SCREENS como página de inicio)
+**Versión actual: v6.9** (estética AVHUB · SCREENS como página de inicio)
 
 Web principal: **https://screens.mediaservi.com** (sustituye a screencalc.mediaservi.com y screenbox.mediaservi.com, que dejan de usarse). Para abrir directamente el cálculo de una pantalla LED: https://screens.mediaservi.com/?led
 
@@ -88,7 +88,17 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v6.8)
+## Cambios de la versión actual (v6.9)
+
+- **Proyección al nivel del calculador oficial de Epson**, que se usa como referencia y doble verificación:
+  - **luz de la sala** en lx (140 por defecto) y **ganancia de pantalla** (1,0 por defecto);
+  - **brillo:** iluminancia (lúmenes / superficie), luminancia (iluminancia × ganancia / π) y **contraste real** ((iluminancia + luz de la sala) / luz de la sala), con el nivel ANSI/AVIXA que alcanza: 7:1 visión pasiva, 15:1 decisiones básicas, 50:1 analíticas, 80:1 vídeo;
+  - **distancia óptica–pared:** AUTO (la mínima del zoom) o fijada a mano, siempre dentro del rango del zoom de la óptica, que se indica;
+  - **posición del proyector** por superficie: distancia óptica–pared, rango de zoom, altura suelo–óptica, suelo y techo a la imagen (o cuánto desborda), lens shift vertical, diagonal y medidas de la imagen;
+  - **alto del techo** en pantallas sueltas, para colgar el proyector;
+  - en la ficha de cada proyector Epson: **manual y especificaciones** en setupnavi, en el idioma de la app, y enlace al **calculador oficial de Epson** para verificar.
+
+## Cambios de la versión v6.8
 
 - **Todo es SCREENS:** desaparecen el nombre y el logo de SCREENCALC.
   - SCREENS es la calculadora de pantallas: una pantalla o varias / sala inmersiva, LED o proyección.

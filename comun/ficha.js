@@ -30,8 +30,9 @@
     if (d.piezas && d.piezas.length) h += `<ul class="fi-piezas">${d.piezas.map(p => `<li><b>${p.cant ? esc(p.cant) + '×' : ''}</b><span class="fi-ref">${esc(p.ref)}</span><span class="fi-desc">${esc(p.desc || '')}</span></li>`).join('')}</ul>`;
     (d.avisos || []).forEach(a => { h += `<p class="fi-aviso">${esc(a)}</p>`; });
     (d.notas || []).forEach(a => { h += `<p class="fi-nota">${esc(a)}</p>`; });
-    const en = okUrl(d.enlace);
-    if (en) h += `<a class="fi-enlace" href="${esc(en)}" target="_blank" rel="noopener noreferrer">${esc(d.enlaceTxt || 'Ficha del fabricante')} ↗</a>`;
+    const en = okUrl(d.enlace), lista = (d.enlaces || []).filter(x => okUrl(x[0]));
+    if (en) lista.unshift([en, d.enlaceTxt || 'Ficha del fabricante']);
+    if (lista.length) h += `<div class="fi-enlaces">${lista.map(([u, tx]) => `<a class="fi-enlace" href="${esc(okUrl(u))}" target="_blank" rel="noopener noreferrer">${esc(tx)} ↗</a>`).join('')}</div>`;
     return h + '</article>';
   }
   globalThis.SC_FICHA = { fichaHTML };
