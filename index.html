@@ -2,15 +2,13 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v6.2                              ║
+║                          Versión actual: v6.3                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v6.2
-- v6.2 (BETA): nuevo módulo SCREENS (subpágina screens/, se abre con el icono de la cabecera que llevaba a SCREENBOX): selector inicial de una o varias superficies y LED o proyección; sala inmersiva de hasta 4 paredes y suelo, o varias pantallas en línea o en arco; LED con el catálogo en vivo (mismo cabinet en todas las superficies, pitch automático por la distancia del público, ajuste dentro de la pared o al tamaño más cercano) y resultados por superficie y totales (cabinets, lienzo de contenido, peso, consumo, líneas Ethernet y salidas 4K); proyección con el motor de SCREENBOX revisado (blending con solape mínimo elegible, tiro con zoom, resolución resultante, brillo estimado en nits, suelo con rejilla cenital); simulación 3D renderizada con three.js (vistas exterior seccionada, dentro y planta; carta de ajuste, panorámica o apagado; luz de las pantallas sobre la sala; haces de los proyectores; figura de 1,75 m); estética AVHUB; es / en / ca
-ANTERIOR: v6.1.2
-- v6.1.2: tarjetas H Series con las referencias comerciales de Charmex: salida H-OUTC-20XRJ45 (directo) y H-OUTC-16RJ45-2OPT (rack con fibra: 2 fibras por tarjeta), entradas H-INPC-4XHDMI, H-INPC-2XHDMI2.0 (4K), H-INPC-1XDP1.2 y H-INPC-4X3GSDI; las búsquedas de cada pieza en Charmex ya las encuentran
-ANTERIOR: v6.1.1
-- v6.1.1: electrónica H Series (equipo modular): en el material sale como titular sin cantidad y debajo sus piezas, cada una con su cantidad y alineadas; chasis con su referencia comercial (H2-MAINFRAME, H5-MAINFRAME…); tarjeta base de previo H-OUT2RJ45-1HDMI-MVR (recomendada) y, si no se indican entradas (o es una sola) o son 4K, tarjetas de entrada H-INPC-1XHDMI2.0; el chasis se elige por posiciones de salida y de entrada/previo según las fichas de NovaStar; en la burbuja de electrónica las piezas se ven en columnas (cantidad · referencia · descripción)
+ÚLTIMA ACTUALIZACIÓN: v6.3
+- v6.3: fusión de SCREENCALC y SCREENBOX en SCREENS: nuevo módulo SCREENS (subpágina screens/, se abre con el icono de la cabecera que llevaba a SCREENBOX): selector inicial de una o varias superficies y LED o proyección; sala inmersiva de hasta 4 paredes y suelo, o varias pantallas en línea o en arco; LED con el catálogo en vivo (mismo cabinet en todas las superficies, pitch automático por la distancia del público, ajuste dentro de la pared o al tamaño más cercano) y resultados por superficie y totales (cabinets, lienzo de contenido, peso, consumo, líneas Ethernet y salidas 4K); proyección con el motor de SCREENBOX revisado (blending con solape mínimo elegible, tiro con zoom, resolución resultante, brillo estimado en nits, suelo con rejilla cenital); simulación 3D renderizada con three.js (vistas exterior seccionada, dentro y planta; carta de ajuste, panorámica o apagado; luz de las pantallas sobre la sala; haces de los proyectores; figura de 1,75 m); estética AVHUB; es / en / ca
+ANTERIOR: v6.2
+- v6.2: electrónica H Series (equipo modular): en el material sale como titular sin cantidad y debajo sus piezas, cada una con su cantidad y alineadas; chasis con su referencia comercial (H2-MAINFRAME, H5-MAINFRAME…); tarjeta base de previo H-OUT2RJ45-1HDMI-MVR (recomendada) y, si no se indican entradas (o es una sola) o son 4K, tarjetas de entrada H-INPC-1XHDMI2.0; el chasis se elige por posiciones de salida y de entrada/previo según las fichas de NovaStar; en la burbuja de electrónica las piezas se ven en columnas (cantidad · referencia · descripción); tarjetas H Series con las referencias comerciales de Charmex: salida H-OUTC-20XRJ45 (directo) y H-OUTC-16RJ45-2OPT (rack con fibra: 2 fibras por tarjeta), entradas H-INPC-4XHDMI, H-INPC-2XHDMI2.0 (4K), H-INPC-1XDP1.2 y H-INPC-4X3GSDI; las búsquedas de cada pieza en Charmex ya las encuentran
 ANTERIOR: v6.1
 - v6.1: versión pública con la estética AVHUB (aprobadas las propuestas v5.0–v5.3), que sustituye a la estética clara anterior en pantalla y en el PDF: rack digital oscuro con verde eléctrico para lo activado y violeta de marca, tipografía Inter + Share Tech Mono, simulación realista con paredes a escala real, cotas técnicas y carta de ajuste con la resolución real, panel de tamaño y resolución renovado, textos siempre con margen de seguridad y PDF en claro con los mismos bloques que la pantalla. La estética anterior queda solo como reserva con ?tema=clasico
 ANTERIOR: v5.3
@@ -7004,7 +7002,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v6.2</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v6.3</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -9362,7 +9360,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v6.2 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v6.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -9372,7 +9370,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      <a href="https://screencalc.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENCALC</a> v6.2 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a>
+                      <a href="https://screencalc.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENCALC</a> v6.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a>
                     </div>
                   </div>
               </main>

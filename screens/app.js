@@ -4,7 +4,7 @@ import { superficies, distanciaPublico, elegirModelo, calcularLed, totales } fro
 import { PROYECTORES, calcularPared, calcularSuelo, sugerir, SOLAPE_MAX } from './proyeccion.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v6.2';
+const VERSION = 'v6.3';
 const DEF = () => ({
   paso: 'inicio', cantidad: 'varias', tecnologia: 'led',
   esp: { tipo: 'sala', ancho: 8, fondo: 6, alto: 3.5, elev: 0, altoCubierto: 0,
@@ -289,7 +289,7 @@ function pintarCabecera() {
   $('#btn-idioma').textContent = idioma().toUpperCase();
   $('#btn-idioma').title = t('idioma');
   $('#btn-inicio').title = t('inicio'); $('#btn-sc').title = t('volverSc');
-  $('#pie').innerHTML = `<a href="../">SCREENCALC</a> ${VERSION} · SCREENS ${t('beta')} ${new Date().getFullYear()} ${t('pie')} <i class="ic ic-footer" aria-hidden="true"></i> by <a href="https://mediaservi.com" target="_blank" rel="noopener">mediaservi.com</a>`;
+  $('#pie').innerHTML = `<a href="../">SCREENCALC</a> ${VERSION} · SCREENS ${new Date().getFullYear()} ${t('pie')} <i class="ic ic-footer" aria-hidden="true"></i> by <a href="https://mediaservi.com" target="_blank" rel="noopener">mediaservi.com</a>`;
 }
 fijarIdioma(idiomaInicial());
 pintarCabecera();

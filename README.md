@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v6.2** (estética AVHUB · beta con el módulo SCREENS)
+**Versión actual: v6.3** (estética AVHUB · con el módulo SCREENS)
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -32,7 +32,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **PDF:** un único PDF de 2 páginas desde el icono de la cabecera, en claro sobre papel blanco y con los mismos bloques que la pantalla (tarjetas con filete de color, icono y título; datos en Share Tech Mono y textos en Inter). Cabecera en una línea: logo de SCREENCALC, web y fecha, y logo de AVHUB (con enlace) al margen derecho. Página 1: título, características de la pantalla en tarjetas, observaciones, características del cabinet en fichas y simulación ajustada al hueco de la hoja. Página 2: electrónica y mediaserver elegidos para el proyecto (en una fila), esquema de conexiones con su material, propuestas de cableado de señal y eléctrico, y el aviso de cálculo por IA. Si no cabe, el esquema se reduce para mantener las 2 páginas. Los anuncios no salen en el PDF.
 - **Información (ⓘ):** el icono de la cabecera ofrece 2 opciones: **INFORMACIÓN** (este README en una ventana al 80 % que se puede desplazar y cerrar) y **DESCARGAR APP** (uso sin conexión).
 - **Logo:** sin enlace; al pulsarlo se reinicia la app para un nuevo cálculo (igual que RESET).
-- **SCREENS (beta):** el isotipo de la cabecera abre `screens/`, el módulo que une SCREENCALC (LED) y SCREENBOX (proyección) para una o varias pantallas y salas inmersivas de hasta 4 paredes y suelo, con simulación 3D renderizada.
+- **SCREENS:** el isotipo de la cabecera abre `screens/`, el módulo que une SCREENCALC (LED) y SCREENBOX (proyección) para una o varias pantallas y salas inmersivas de hasta 4 paredes y suelo, con simulación 3D renderizada.
 - **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
 - **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios, las consultas internas y la documentación (DOCS), que ya no es pública.
 - **Anuncios (motor AVHUB ADS):** 3 zonas (pie del menú y pie de resultados, izquierda y derecha). Cada zona admite varios anuncios con rotación; cada anuncio tiene formato estándar (horizontal 16:9, vertical 9:16, cuadrado 1:1, retrato 4:5, hero a sangre 21:9, banner 728×90, banner móvil 320×100, rectángulo 300×250, rascacielos 160×600), texto al lado, debajo, encima o sin texto, botón opcional, carrusel de fotos, vídeos y YouTube, fechas de inicio y fin, solo móvil o solo escritorio, y contador de clics. Todo el anuncio abre su enlace en una pestaña nueva (o `ads.json` mientras el panel no responda). Además, el minibanner fijo del configurador oficial de TRAULUX va encima de la zona del menú y se activa desde el panel.
@@ -78,9 +78,9 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v6.2 · beta)
+## Cambios de la versión actual (v6.3)
 
-- **Nuevo módulo SCREENS** (`screens/`, desde el icono de la cabecera que llevaba a SCREENBOX). Primer paso de la fusión de SCREENCALC y SCREENBOX en una sola interfaz.
+- **Fusión de SCREENCALC y SCREENBOX: nuevo módulo SCREENS** (`screens/`, desde el icono de la cabecera que llevaba a SCREENBOX). Primer paso de la fusión de SCREENCALC y SCREENBOX en una sola interfaz.
   - **Selector inicial:** una o varias superficies, y LED o proyección. Con «una pantalla LED» se abre SCREENCALC.
   - **Espacio:** sala inmersiva de hasta 4 paredes y suelo (ancho, fondo, alto, alto de imagen y elevación), o varias pantallas en línea o en arco (número, medidas, separación, ángulo y distancia del público).
   - **LED:**
@@ -97,15 +97,7 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
   - Estética AVHUB y textos en español, inglés y catalán.
 - **Pendiente:** el catálogo de proyectores es el heredado de SCREENBOX. Hay que pasarlo a la hoja o al panel para que salga en vivo, como el de LED.
 
-## Cambios de la versión v6.1.2
-
-- **Referencias comerciales de Charmex en las tarjetas H Series:**
-  - salida H-OUTC-20XRJ45 en conexión directa;
-  - salida H-OUTC-16RJ45-2OPT en rack con fibra (2 fibras por tarjeta y 8 puertos por fibra);
-  - entradas H-INPC-4XHDMI, H-INPC-2XHDMI2.0 (para 4K), H-INPC-1XDP1.2 y H-INPC-4X3GSDI.
-- El enlace de búsqueda de cada pieza ya la encuentra en Charmex.
-
-## Cambios de la versión v6.1.1
+## Cambios de la versión v6.2
 
 - **Electrónica H Series (equipo modular):** en el listado de material el equipo sale como titular sin cantidad y, debajo, sus piezas, cada una con su cantidad y alineadas. La burbuja de electrónica las muestra en columnas (cantidad · referencia · descripción).
 - **Piezas:**
@@ -113,6 +105,11 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
   - se añade siempre la tarjeta base de previo H-OUT2RJ45-1HDMI-MVR (recomendada);
   - si no se indican entradas (o es una sola) o son 4K, la entrada es la tarjeta H-INPC-1XHDMI2.0.
 - **Chasis:** se elige según las posiciones de salida y de entrada / previo de las fichas de NovaStar (H2: 2 salidas y 4 entradas; H5: 3 y 10; H9: 5 y 15; H20: 20 y 40; H15: 10 salidas y 30 entradas, pendiente de confirmar en su ficha).
+- **Referencias comerciales de Charmex en las tarjetas H Series:**
+  - salida H-OUTC-20XRJ45 en conexión directa;
+  - salida H-OUTC-16RJ45-2OPT en rack con fibra (2 fibras por tarjeta y 8 puertos por fibra);
+  - entradas H-INPC-4XHDMI, H-INPC-2XHDMI2.0 (para 4K), H-INPC-1XDP1.2 y H-INPC-4X3GSDI.
+- El enlace de búsqueda de cada pieza ya la encuentra en Charmex.
 
 ## Cambios de la versión v6.1
 
