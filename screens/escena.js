@@ -7,6 +7,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
 import { HUMAN_PATH } from './figura.js';
+import { colocarPared } from './proyeccion.js';
 
 const MONO = "'Share Tech Mono', ui-monospace, Menlo, monospace";
 const SANS = "'Inter', Arial, sans-serif";
@@ -243,7 +244,7 @@ export class Escena {
           pl.rotation.x = -Math.PI / 2; pl.position.y = 0.006; G.add(pl);
           p.pos.forEach((q, i) => this._proyector(G, new THREE.Vector3(q.x, H - 0.15, q.z), [
             new THREE.Vector3(q.x - p.imgW / 2, 0.01, q.z - p.imgH / 2), new THREE.Vector3(q.x + p.imgW / 2, 0.01, q.z - p.imgH / 2),
-            new THREE.Vector3(q.x + p.imgW / 2, 0.01, q.z + p.imgH / 2), new THREE.Vector3(q.x - p.imgW / 2, 0.01, q.z + p.imgH / 2)], i + 10, prod, true));
+            new THREE.Vector3(q.x + p.imgW / 2, 0.01, q.z + p.imgH / 2), new THREE.Vector3(q.x - p.imgW / 2, 0.01, q.z + p.imgH / 2)], i + 10, prod, true, m.conflictos && m.conflictos.has(s.id + ':' + i)));
           return;
         }
         const altoPared = sala ? H : s.elev + s.alto + 0.2;
@@ -251,20 +252,16 @@ export class Escena {
         const lienzo = new THREE.Mesh(new THREE.PlaneGeometry(s.ancho, altoPared), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
         lienzo.position.set(0, altoPared / 2, 0.004); g.add(lienzo);
         if (!sala) { const marco = new THREE.Mesh(new THREE.BoxGeometry(s.ancho + 0.08, altoPared + 0.04, 0.04), mMetal()); marco.position.set(0, altoPared / 2, -0.02); g.add(marco); }
-        // proyectores de la pared: delante de ella a la distancia de tiro; los UST, justo sobre la imagen
-        const yProy = prod.ust ? s.elev + p.imgH + 0.22 : Math.max(s.elev + p.imgH + 0.15, (sala ? H : altoPared + 0.6) - 0.45);
-        p.centros.forEach((cx, i) => {
-          const local = (v) => v.applyMatrix4(g.matrixWorld);
-          g.updateMatrixWorld(true);
-          const lente = local(new THREE.Vector3(cx, yProy, Math.max(0.15, p.tiro)));
-          const y0 = s.elev - Math.max(0, p.imgH - s.alto) / 2, y1 = y0 + p.imgH;
-          const esq = [[cx - p.imgW / 2, y1], [cx + p.imgW / 2, y1], [cx + p.imgW / 2, y0], [cx - p.imgW / 2, y0]].map(([a, b]) => local(new THREE.Vector3(a, b, 0.01)));
-          this._proyector(G, lente, esq, i, prod, false);
-        });
+        // proyectores de la pared: delante de ella a la distancia de tiro; los UST, justo sobre la imagen (misma colocación que el análisis de sombras)
+        const v3 = (q) => new THREE.Vector3(q.x, q.y, q.z);
+        // posiciones finales del análisis (con los choques entre chasis ya resueltos); si no hay, la colocación base
+        const hs = (m.haces && m.haces.filter(h => h.sup === s.id && !h.suelo)) || [];
+        (hs.length ? hs : colocarPared(s, p, prod, { alto: H, sala: !!sala })).forEach((h, i) => this._proyector(G, v3(h.lente), h.esquinas.map(v3), i, prod, false, m.conflictos && m.conflictos.has(s.id + ':' + i)));
         if (m.etiquetas) this._etiquetaLocal(g, `${f.nombre.toUpperCase()} · ${p.n}× · ${p.resW}×${p.resH}`, new THREE.Vector3(0, s.elev + p.imgH + 0.3, 0.08));
       }
       void idx;
     });
+    if (m.sombras) this._zonaSegura(m.sombras, !!sala);
     // figura humana: en el centro de la sala, o delante de las pantallas a la distancia del público
     const fig = new THREE.Mesh(this.figuraGeo, new THREE.MeshStandardMaterial({ color: 0x8a8a93, roughness: 0.6, metalness: 0.05 }));
     fig.castShadow = true;
@@ -284,6 +281,50 @@ export class Escena {
     this.ctrl.target.set(0, Math.min(H, altoMax) * 0.45, sala ? 0 : -1);
     this.vista(this.vistaActual, true);
   }
+  // Safety zone: cinta discontinua amarilla y negra en el suelo y, en rayado rojo tenue, las franjas donde el público hace sombra
+  _zonaSegura(S, sala) {
+    const G = this.grupo;
+    if (!this._texCinta) {
+      const c = document.createElement('canvas'); c.width = 64; c.height = 32; const x = c.getContext('2d');
+      x.fillStyle = '#ffd500'; x.fillRect(0, 0, 64, 32); x.fillStyle = '#111';
+      for (let k = -2; k < 4; k++) { x.beginPath(); x.moveTo(k * 32, 32); x.lineTo(k * 32 + 16, 32); x.lineTo(k * 32 + 48, 0); x.lineTo(k * 32 + 32, 0); x.closePath(); x.fill(); }
+      const t = new THREE.CanvasTexture(c); t.wrapS = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; this._texCinta = t;
+      const r = document.createElement('canvas'); r.width = r.height = 64; const y = r.getContext('2d');
+      y.fillStyle = 'rgba(255,40,60,.16)'; y.fillRect(0, 0, 64, 64); y.strokeStyle = 'rgba(255,60,70,.55)'; y.lineWidth = 6;
+      for (let k = -1; k < 3; k++) { y.beginPath(); y.moveTo(k * 32, 64); y.lineTo(k * 32 + 64, 0); y.stroke(); }
+      const tr = new THREE.CanvasTexture(r); tr.wrapS = tr.wrapT = THREE.RepeatWrapping; tr.colorSpace = THREE.SRGBColorSpace; this._texRayas = tr;
+    }
+    const mCinta = new THREE.MeshBasicMaterial({ map: this._texCinta, toneMapped: false, polygonOffset: true, polygonOffsetFactor: -2 });
+    // tramo discontinuo de cinta entre dos puntos del suelo
+    const cinta = (a, b) => {
+      const dx = b.x - a.x, dz = b.z - a.z, L = Math.hypot(dx, dz); if (L < 0.05) return;
+      const ang = Math.atan2(-dz, dx), tramo = 0.6, hueco = 0.22;
+      for (let d = 0; d < L - 0.02; d += tramo + hueco) {
+        const l = Math.min(tramo, L - d), geo = new THREE.PlaneGeometry(l, 0.1), uv = geo.attributes.uv;
+        for (let k = 0; k < uv.count; k++) uv.setX(k, uv.getX(k) * l / 0.2);
+        const me = new THREE.Mesh(geo, mCinta); me.rotation.set(-Math.PI / 2, 0, ang);
+        me.position.set(a.x + dx / L * (d + l / 2), 0.014, a.z + dz / L * (d + l / 2)); G.add(me);
+      }
+    };
+    // franjas de sombra delante de cada superficie (en el sistema de la superficie)
+    S.franjas.forEach(f => {
+      if (f.prof < 0.05) return;
+      const s = f.s, geo = new THREE.PlaneGeometry(f.ancho, f.prof), uv = geo.attributes.uv;
+      for (let k = 0; k < uv.count; k++) { uv.setX(k, uv.getX(k) * f.ancho / 0.5); uv.setY(k, uv.getY(k) * f.prof / 0.5); }
+      const me = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: this._texRayas, transparent: true, depthWrite: false, toneMapped: false }));
+      const g = new THREE.Group(); g.position.set(s.x, 0, s.z); g.rotation.y = s.rot; me.rotation.x = -Math.PI / 2; me.position.set(0, 0.01, f.prof / 2); g.add(me); G.add(g);
+      if (!sala) { // pantallas sueltas: la línea va a la distancia segura delante de cada pantalla
+        g.updateMatrixWorld(true);
+        const a = new THREE.Vector3(-f.ancho / 2, 0, f.prof).applyMatrix4(g.matrixWorld), b = new THREE.Vector3(f.ancho / 2, 0, f.prof).applyMatrix4(g.matrixWorld);
+        cinta(a, b);
+      }
+    });
+    if (sala && S.zona && S.zona.ok && S.franjas.some(f => f.prof > 0.05)) {
+      const z = S.zona, P = [[z.x0, z.z0], [z.x1, z.z0], [z.x1, z.z1], [z.x0, z.z1]].map(([x, y]) => ({ x, z: y }));
+      for (let k = 0; k < 4; k++) cinta(P[k], P[(k + 1) % 4]);
+      this._etiqueta('SAFETY ZONE', new THREE.Vector3((z.x0 + z.x1) / 2, 0.06, z.z1 - 0.35), 0.24, { borde: '#ffd500', col: '#ffd500' });
+    }
+  }
   _etiquetaLocal(g, txt, pos) { g.updateMatrixWorld(true); this._etiqueta(txt, pos.applyMatrix4(g.matrixWorld), 0.32, { borde: '#9900ff' }); }
   _texSuelo() {
     const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d');
@@ -302,10 +343,11 @@ export class Escena {
     p.pos.forEach((q, i) => { x.strokeStyle = COL_PROY[(i + 2) % COL_PROY.length]; x.lineWidth = 4; x.strokeRect((q.x + s.ancho / 2 - p.imgW / 2) * k, (q.z + s.alto / 2 - p.imgH / 2) * k, p.imgW * k, p.imgH * k); });
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
   }
-  _proyector(G, lente, esquinas, i, prod, suelo) {
+  _proyector(G, lente, esquinas, i, prod, suelo, tapa) {
     const col = new THREE.Color(COL_PROY[i % COL_PROY.length]);
     const cuerpo = new THREE.Group();
-    const caja = new THREE.Mesh(new THREE.BoxGeometry(prod.ust ? 0.46 : 0.5, 0.17, prod.ust ? 0.36 : 0.48), new THREE.MeshStandardMaterial({ color: 0xe9e9ec, roughness: 0.45, metalness: 0.1 }));
+    // en rojo, el proyector que queda dentro del haz de otra superficie (hará sombra en esa imagen)
+    const caja = new THREE.Mesh(new THREE.BoxGeometry(prod.ust ? 0.46 : 0.5, 0.17, prod.ust ? 0.36 : 0.48), new THREE.MeshStandardMaterial(tapa ? { color: 0xff3344, roughness: 0.4, metalness: 0.1, emissive: 0x550008 } : { color: 0xe9e9ec, roughness: 0.45, metalness: 0.1 }));
     caja.castShadow = true; cuerpo.add(caja);
     const lenteM = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.065, 0.08, 24), new THREE.MeshStandardMaterial({ color: 0x111114, roughness: 0.3, metalness: 0.6 }));
     lenteM.rotation.x = Math.PI / 2; lenteM.position.set(0, 0, 0.27); cuerpo.add(lenteM);
@@ -314,6 +356,7 @@ export class Escena {
     cuerpo.position.copy(lente);
     if (suelo) cuerpo.lookAt(lente.x, -10, lente.z + 0.02); else cuerpo.lookAt(centro.x, lente.y, centro.z);
     G.add(cuerpo);
+    if (tapa) this._etiqueta('⚠', lente.clone().add(new THREE.Vector3(0, 0.32, 0)), 0.22, { borde: '#ff4d5e', col: '#ffd500' });
     {
       // haz de luz en volumen (pirámide) con aristas
       const pos = []; for (let k = 0; k < 4; k++) { const a = esquinas[k], b = esquinas[(k + 1) % 4]; pos.push(lente.x, lente.y, lente.z, a.x, a.y, a.z, b.x, b.y, b.z); }

@@ -1,10 +1,13 @@
 // SCREENS · interfaz (selector inicial, panel de rack, simulación 3D y resultados)
 import { cargarCatalogo, ordenar, enStock } from './catalogo.js';
 import { superficies, distanciaPublico, elegirModelo, calcularLed, totales } from './led.js';
-import { PROYECTORES, calcularPared, calcularSuelo, sugerir, SOLAPE_MAX } from './proyeccion.js';
+import { PROYECTORES, calcularPared, calcularSuelo, sugerir, SOLAPE_MAX, analizarSombras } from './proyeccion.js';
+import '../comun/electronica.js';
+import '../comun/ficha.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v6.4';
+const VERSION = 'v6.5';
+const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   paso: 'inicio', cantidad: 'varias', tecnologia: 'led',
   esp: { tipo: 'sala', ancho: 8, fondo: 6, alto: 3.5, elev: 0, altoCubierto: 0,
@@ -12,10 +15,11 @@ const DEF = () => ({
     sueltas: { n: 3, disp: 'arco', ancho: 4, alto: 2.25, elev: 0.6, sep: 0.1, angulo: 25, dist: 5 } },
   led: { clase: 'INSTALL', tipo: 'INDOOR', crm: '', ajuste: 'dentro' },
   proy: { id: '', idSuelo: '', solape: 15 },
-  vista: { contenido: 'carta', etiquetas: true, camara: 'exterior' }
+  elec: { backup: false, escalador: 'con', conexion: 'directo', sel: '', marca: 'todos', dante: false, selMedia: '' },
+  vista: { contenido: 'carta', etiquetas: true, camara: 'exterior', zona: true }
 });
 let E = DEF();
-try { const g = JSON.parse(localStorage.getItem('screens_estado') || 'null'); if (g && g.esp) E = Object.assign(DEF(), g); } catch (e) {}
+try { const g = JSON.parse(localStorage.getItem('screens_estado') || 'null'); if (g && g.esp) { const d = DEF(); E = Object.assign(d, g, { elec: Object.assign(d.elec, g.elec || {}), vista: Object.assign(d.vista, g.vista || {}) }); } } catch (e) {}
 // el paso lo marca la dirección (#inicio / #trabajo): SCREENS es la página de inicio y el botón Atrás del navegador vuelve al selector
 const pasoDeHash = () => (location.hash === '#trabajo' ? 'trabajo' : 'inicio');
 E.paso = pasoDeHash();
@@ -29,6 +33,7 @@ const ICO = {
   espacio: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>',
   led: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="12" rx="1"/><path d="M9 5v12M15 5v12M3 11h18M8 21h8"/></svg>',
   proy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="2" y="8" width="13" height="8" rx="1.5"/><circle cx="11" cy="12" r="2.2"/><path d="M15 10l7-4v12l-7-4"/></svg>',
+  elec: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="2" y="8" width="20" height="8" rx="1"/><path d="M5 11h2v2H5zM9 11h2v2H9zM13 11h2v2h-2z"/><path d="M18 12h1.5"/></svg>',
   sup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>',
   una: '<svg viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="4" width="32" height="19" rx="1"/><path d="M18 28h12M24 23v5"/></svg>',
   varias: '<svg viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8l10 3v15L4 23z"/><path d="M14 11h20v15H14z"/><path d="M34 11l10-3v15l-10 3"/></svg>',
@@ -53,7 +58,8 @@ function calcular() {
     const grosor = (modelo.thick || 80) / 1000;
     const sups = superficies(esp, grosor);
     const filas = sups.map(s => ({ s, r: calcularLed(s, modelo, E.led.ajuste), nombre: nombreSup(s), grosor }));
-    return { esp, dist, modelo, lista, filas, tot: totales(filas) };
+    const c = { esp, dist, modelo, lista, filas, tot: totales(filas) };
+    c.elec = electronica(c); return c;
   }
   const sups = superficies(esp, 0);
   const paredesS = sups.filter(s => s.tipo !== 'suelo');
@@ -67,7 +73,25 @@ function calcular() {
   });
   const tot = { n: 0, lumenes: 0, nitsMin: Infinity, lienzoW: 0, lienzoH: 0 };
   filas.forEach(f => { tot.n += f.p.n; tot.lumenes += f.p.n * f.proyector.lumens; tot.nitsMin = Math.min(tot.nitsMin, f.p.nits); if (f.s.tipo !== 'suelo') { tot.lienzoW += f.p.resW; tot.lienzoH = Math.max(tot.lienzoH, f.p.resH); } });
-  return { esp, dist, proyector, prSuelo, filas, tot };
+  const c = { esp, dist, proyector, prSuelo, filas, tot };
+  const altoEsc = esp.tipo === 'sala' ? esp.alto : Math.max(3, ...filas.map(f => f.s.elev + f.s.alto)) + 0.8;
+  c.sombras = analizarSombras(filas, esp, altoEsc);
+  c.elec = electronica(c); return c;
+}
+// Electrónica de control (LED) y mediaserver (LED y proyección) con el motor común de SCREENCALC
+function electronica(c) {
+  const e = E.elec, out = { procesadores: [], proc: null, medias: [], media: null, need: 0 };
+  if (E.tecnologia === 'led' && c.tot) {
+    let L = 1; c.filas.forEach(f => { if (f.r) { f.lin = [L, L + f.r.lineas - 1]; L += f.r.lineas; } });
+    out.procesadores = ELEC.calcularElectronicas({ lines: c.tot.lineas, totalPix: c.tot.pix }, { backup: e.backup, escalador: e.escalador, conexion: e.conexion, entradas: 0 }, []);
+    out.proc = out.procesadores.find(x => x.key === e.sel) || out.procesadores[0] || null;
+    out.need = Math.max(1, c.tot.salidas4k);
+  } else if (c.tot) out.need = Math.max(1, c.tot.n);
+  if (e.marca !== 'ninguno' && out.need) {
+    out.medias = ELEC.calcularMediaservers({ totalPix: out.need * ELEC.ELEC_PX_4K }, { marca: e.marca, dante: e.dante });
+    out.media = out.medias.find(x => x.id === e.selMedia) || out.medias[0] || null;
+  }
+  return out;
 }
 // distancia disponible delante de cada pared para el proyector (la pared opuesta, con 0,3 m de margen)
 function alcance(esp, s, dist) {
@@ -93,6 +117,43 @@ function vistaInicio() {
     </div></div>
     <div class="inicio-pie"><button type="button" class="pri" data-accion="empezar">${E.cantidad === 'una' && E.tecnologia === 'led' ? t('irSc') : t('empezar')}</button></div>
   </div></section>`;
+}
+
+// ---------- fichas de equipo (componente común comun/ficha.js) ----------
+// los textos del motor común de electrónica están en castellano: aquí se pasan a inglés o catalán
+const MOTOR = {
+  en: [[/Chasis \(mainframe\)/g, 'Chassis (mainframe)'], [/Tarjeta de salida/g, 'Output card'], [/Tarjeta salida/g, 'Output card'], [/Tarjeta de entrada/g, 'Input card'], [/Tarjeta entrada/g, 'Input card'], [/Tarjeta base/g, 'Base card'],
+    [/de previo \/ monitorización \(recomendada\)/g, 'preview / monitoring (recommended)'], [/\(mínima del equipo\)/g, '(minimum for the unit)'], [/Conv\. fibra→10 RJ45 multimodo \(incluye sus módulos SFP\+\)/g, 'Fibre→10 RJ45 multimode converter (SFP+ modules included)'],
+    [/Conv\. fibra→10 RJ45 \(pantalla\)/g, 'Fibre→10 RJ45 converter (screen)'], [/Módulo SFP\+ 10G multimodo \(puertos de la tarjeta de salida\)/g, '10G SFP+ multimode module (output card ports)'], [/serie MX/g, 'MX series'], [/multimodo/g, 'multimode'],
+    [/no disponible en este chasis: verificar con el fabricante/g, 'not available for this chassis: check with the manufacturer'], [/líneas?/g, m => m === 'línea' ? 'line' : 'lines'], [/fibras?/g, m => m === 'fibra' ? 'fibre' : 'fibres'], [/\(de /g, '(of '], [/proyecto/g, 'project'],
+    [/salidas?/g, m => m === 'salida' ? 'output' : 'outputs'], [/entradas?/g, m => m === 'entrada' ? 'input' : 'inputs'], [/capas?/g, m => m === 'capa' ? 'layer' : 'layers'], [/hasta/g, 'up to'], [/ o /g, ' or '], [/ y /g, ' and '], [/Como /g, 'Like '],
+    [/sincronismo, cascada y backup entre equipos/g, 'sync, cascade and backup between units'], [/backup de equipo/g, 'unit backup'], [/ranura/g, 'slot'], [/con escalador/g, 'with scaler']],
+  ca: [[/Chasis \(mainframe\)/g, 'Xassís (mainframe)'], [/Tarjeta de salida/g, 'Targeta de sortida'], [/Tarjeta salida/g, 'Targeta sortida'], [/Tarjeta de entrada/g, "Targeta d'entrada"], [/Tarjeta entrada/g, 'Targeta entrada'], [/Tarjeta base/g, 'Targeta base'],
+    [/de previo \/ monitorización \(recomendada\)/g, 'de previ / monitoratge (recomanada)'], [/\(mínima del equipo\)/g, "(mínima de l'equip)"], [/Conv\. fibra→10 RJ45 multimodo \(incluye sus módulos SFP\+\)/g, 'Conv. fibra→10 RJ45 multimode (inclou els mòduls SFP+)'],
+    [/Conv\. fibra→10 RJ45 \(pantalla\)/g, 'Conv. fibra→10 RJ45 (pantalla)'], [/Módulo SFP\+ 10G multimodo \(puertos de la tarjeta de salida\)/g, 'Mòdul SFP+ 10G multimode (ports de la targeta de sortida)'], [/multimodo/g, 'multimode'],
+    [/no disponible en este chasis: verificar con el fabricante/g, 'no disponible en aquest xassís: verificar amb el fabricant'], [/líneas?/g, m => m === 'línea' ? 'línia' : 'línies'], [/proyecto/g, 'projecte'],
+    [/salidas?/g, m => m === 'salida' ? 'sortida' : 'sortides'], [/entradas?/g, m => m === 'entrada' ? 'entrada' : 'entrades'], [/capas?/g, m => m === 'capa' ? 'capa' : 'capes'], [/hasta/g, 'fins a'], [/ y /g, ' i '], [/Como /g, 'Com '],
+    [/sincronismo, cascada y backup entre equipos/g, 'sincronisme, cascada i backup entre equips'], [/backup de equipo/g, "backup d'equip"], [/ranura/g, 'ranura'], [/con escalador/g, 'amb escalador']]
+};
+const trMotor = (txt) => { let r = String(txt || ''); (MOTOR[idioma()] || []).forEach(([a, b]) => { r = r.replace(a, b); }); return r; };
+function fichaCab(m) {
+  return fichaHTML({ cat: t('fCab'), icono: 'led', marca: m.family || '', modelo: m.crm, foto: m.urlFoto, acento: '#b566ff', stock: enStock(m),
+    specs: [[t('kPitch'), m.pitch + ' mm'], [t('kCab'), `${m.cabAncho}×${m.cabAlto}${m.thick ? '×' + m.thick : ''} mm`], [t('kPx'), `${m.cabPixAncho}×${m.cabPixAlto}`], [t('kNits'), m.nits ? m.nits + ' nits' : ''], [t('kHz'), m.hz ? m.hz + ' Hz' : ''],
+      [t('kKg'), m.cabKg ? fmt(m.cabKg, 1) + ' kg' : ''], [t('kW'), m.wMax ? fmt(m.wMax, 0) + ' W' : ''], [t('kCard'), m.card || ''], [t('kTech'), m.tech || '']],
+    enlace: m.crm ? 'https://traulux.net/buscar/?q=' + encodeURIComponent(m.crm) : '', enlaceTxt: t('fichaFab') });
+}
+function fichaProy(q, cat) {
+  return fichaHTML({ cat, icono: 'proy', marca: q.marca, modelo: q.nombre, foto: q.imagen, acento: '#00b4ff',
+    specs: [[t('kTR'), (q.trMin === q.trMax ? q.trMin : q.trMin + '–' + q.trMax) + ':1'], [t('kLm'), fmtPx(q.lumens) + ' lm'], [t('kFmt'), q.arTxt], [t('kRes'), q.resX + '×' + q.resY], [t('kDiag'), q.maxDiagPulg + '"'], [t('k4k'), q.k4 ? 'Enhancement' : '—']] });
+}
+function fichaProc(x) {
+  return fichaHTML({ cat: t('procesador'), icono: 'elec', marca: x.marca, modelo: x.modelo, foto: x.front, acento: '#00ff04', stock: x.enStock ? true : null,
+    specs: [[t('puertos'), trMotor(x.puertos)], [t('capacidad'), trMotor(x.capacidad)], [t('kEsc'), x.escalador ? t('si') : t('no')]],
+    piezas: (x.equipos || []).map(q => ({ cant: q.cant, ref: q.ref, desc: trMotor(q.desc) })), enlace: x.url, enlaceTxt: t('fichaFab') });
+}
+function fichaMedia(m, need, led) {
+  return fichaHTML({ cat: t('mediaserver'), icono: 'media', marca: m.marca, modelo: m.modelo, foto: m.front, acento: '#ffb000',
+    specs: [[t('salidas4kK'), m.out4k], [t('necesita'), need], [t('dante'), m.dante ? t('si') : t('no')]], notas: [trMotor(m.resumen), led ? t('mediaNotaLed') : t('mediaNotaProy')], enlace: m.url, enlaceTxt: t('fichaFab') });
 }
 
 function modEspacio() {
@@ -121,6 +182,7 @@ function modLed(c) {
   if (estadoCat === 'cargando' && !catalogo.length) h += `<p class="ayuda">${t('cargando')}</p>`;
   else if (!catalogo.length) h += `<p class="aviso">${t('sinCat')}</p>`;
   h += campo(t('modelo'), `<select class="sel" data-sel="led.crm"><option value="">${t('auto')}${c.modelo && !l.crm ? ' · [' + c.modelo.pitch + 'p] ' + c.modelo.crm : ''}</option>${opts}</select>`);
+  if (c.modelo) h += fichaCab(c.modelo);
   h += `<p class="ayuda">${t('autoAyudaLed', { d: fmt(c.dist, 1) })}</p>`;
   h += `<div class="etq">${t('ajuste')}</div><div class="fila c2">${tog(l.ajuste === 'dentro', 'data-set="led.ajuste" data-v="dentro"', t('dentro'))}${tog(l.ajuste === 'cercano', 'data-set="led.ajuste" data-v="cercano"', t('cercano'))}</div><p class="ayuda">${t('ajusteAyuda')}</p>`;
   return h + '</section>';
@@ -130,10 +192,26 @@ function modProy(c) {
   const opt = (idSel) => PROYECTORES.map(q => `<option value="${q.id}"${q.id === idSel ? ' selected' : ''}>${q.nombre} · ${fmtPx(q.lumens)} lm</option>`).join('');
   let h = `<section class="mod"><div class="mod-tit">${ICO.proy}${t('proyMod')}<button type="button" class="sec-btn reset" data-accion="reset-proy">${t('restablecer')}</button></div>`;
   h += campo(t('proyector'), `<select class="sel" data-sel="proy.id"><option value="">${t('auto')}${!p.id && sel ? ' · ' + sel.nombre : ''}</option>${opt(p.id)}</select>`);
-  if (sel) h += `<p class="ayuda mono">${sel.marca} ${sel.nombre} · ${fmtPx(sel.lumens)} lm · ${sel.resX}×${sel.resY} · ${sel.arTxt} · TR ${sel.trMin === sel.trMax ? sel.trMin : sel.trMin + '–' + sel.trMax}:1</p>`;
-  if (haySuelo) h += campo(t('proySuelo'), `<select class="sel" data-sel="proy.idSuelo"><option value="">= ${t('proyector')}</option>${opt(p.idSuelo)}</select>`);
+  if (sel) h += fichaProy(sel, t('fProy'));
+  if (haySuelo) { h += campo(t('proySuelo'), `<select class="sel" data-sel="proy.idSuelo"><option value="">= ${t('proyector')}</option>${opt(p.idSuelo)}</select>`); if (c.prSuelo && c.prSuelo !== sel) h += fichaProy(c.prSuelo, t('fProySuelo')); }
   h += `<div class="etq">${t('solape')}</div><div class="fila c3">${[15, 20, 25].map(v => tog(p.solape === v, `data-set="proy.solape" data-v="${v}" data-num-v="1"`, v + ' %')).join('')}</div>`;
   h += `<p class="ayuda">${t('autoAyudaProy')}</p><p class="aviso">${t('datosProy')}</p>`;
+  return h + '</section>';
+}
+function modElec(c) {
+  const e = E.elec, led = E.tecnologia === 'led', x = c.elec || {};
+  let h = `<section class="mod"><div class="mod-tit">${ICO.elec}${led ? t('elecMod') : t('mediaserver')}<button type="button" class="sec-btn reset" data-accion="reset-elec">${t('restablecer')}</button></div>`;
+  if (led) {
+    h += `<div class="fila c2">${tog(!e.backup, 'data-set="elec.backup" data-v="0" data-bool="1"', t('sinBackup'))}${tog(e.backup, 'data-set="elec.backup" data-v="1" data-bool="1"', t('conBackup'))}</div>`;
+    h += `<div class="fila c2">${tog(e.escalador === 'con', 'data-set="elec.escalador" data-v="con"', t('escCon'))}${tog(e.escalador === 'sin', 'data-set="elec.escalador" data-v="sin"', t('escSin'))}</div>`;
+    h += `<div class="fila c2">${tog(e.conexion === 'directo', 'data-set="elec.conexion" data-v="directo"', t('rj45'))}${tog(e.conexion === 'fibra', 'data-set="elec.conexion" data-v="fibra"', t('fibra'))}</div>`;
+    if (c.tot) h += (x.procesadores || []).length ? campo(t('procesador'), `<select class="sel" data-sel="elec.sel">${x.procesadores.map(q => `<option value="${q.key}"${x.proc && q.key === x.proc.key ? ' selected' : ''}>${q.marca} ${q.modelo}</option>`).join('')}</select>`) : `<p class="aviso">${t('sinProc')}</p>`;
+  }
+  h += `<div class="etq">${t('mediaserver')}</div><div class="fila c2">${['todos', 'novastar'].map(k => tog(e.marca === k, `data-set="elec.marca" data-v="${k}"`, k === 'todos' ? t('mTodos') : 'NOVASTAR')).join('')}</div><div class="fila c2">${['pixelhue', 'ninguno'].map(k => tog(e.marca === k, `data-set="elec.marca" data-v="${k}"`, k === 'ninguno' ? t('mNinguno') : 'PIXELHUE')).join('')}</div>`;
+  if (e.marca !== 'ninguno') {
+    h += `<div class="fila c1">${tog(e.dante, 'data-accion="elec-dante"', t('dante'))}</div>`;
+    h += (x.medias || []).length ? campo(t('mediaserver'), `<select class="sel" data-sel="elec.selMedia">${x.medias.map(m => `<option value="${m.id}"${x.media && m.id === x.media.id ? ' selected' : ''}>${m.marca} ${m.modelo} · ${m.out4k}× 4K</option>`).join('')}</select>`) : `<p class="aviso">${t('sinMedia')}</p>`;
+  }
   return h + '</section>';
 }
 function modSuperficies(c) {
@@ -164,7 +242,7 @@ function vistaResultados(c) {
       ${tarjeta(t('salidas'), fmtPx(T.salidas4k), '', 'mediaserver', '#ffb000')}
     </div>`;
     h += `<div class="tabla-caja"><table class="tabla"><thead><tr><th>${t('supCol')}</th><th>${t('medida')}</th><th>${t('cabCol')}</th><th>${t('resol')}</th><th>${t('pesoCol')}</th><th>${t('potCol')}</th><th>${t('linCol')}</th></tr></thead><tbody>
-      ${c.filas.map(f => `<tr><td>${f.nombre}</td><td>${fmt(f.r.ancho)} × ${fmt(f.r.alto)} m</td><td>${f.r.cols}×${f.r.rows} = ${f.r.cab}</td><td>${f.r.resW}×${f.r.resH}</td><td>${fmt(f.r.peso, 0)} kg</td><td>${fmt(f.r.kw, 2)} kW</td><td>${f.r.lineas}</td></tr>`).join('')}
+      ${c.filas.map(f => `<tr><td>${f.nombre}</td><td>${fmt(f.r.ancho)} × ${fmt(f.r.alto)} m</td><td>${f.r.cols}×${f.r.rows} = ${f.r.cab}</td><td>${f.r.resW}×${f.r.resH}</td><td>${fmt(f.r.peso, 0)} kg</td><td>${fmt(f.r.kw, 2)} kW</td><td>${f.r.lineas}${f.lin ? ` <span class="tenue">L${f.lin[0]}${f.lin[1] > f.lin[0] ? '–' + f.lin[1] : ''}</span>` : ''}</td></tr>`).join('')}
     </tbody></table></div>`;
   } else if (c.tot) {
     const T = c.tot, p = c.proyector;
@@ -180,8 +258,41 @@ function vistaResultados(c) {
     h += `<div class="tabla-caja"><table class="tabla"><thead><tr><th>${t('supCol')}</th><th>${t('medida')}</th><th>${t('proyCol')}</th><th>${t('resol')}</th><th>${t('solCol')}</th><th>${t('tiroCol')}</th><th>${t('brCol')}</th></tr></thead><tbody>
       ${c.filas.map(f => { const q = f.p; return `<tr><td>${f.nombre}</td><td>${fmt(f.s.ancho)} × ${fmt(f.s.alto)} m</td><td>${q.cols ? q.cols + '×' + q.rows + ' = ' : ''}${q.n}</td><td>${q.resW}×${q.resH}</td><td>${fmt(q.solapeRel * 100, 0)} %</td><td>${fmt(q.tiro, 2)} m${q.fuera ? ' ⚠' : ''}</td><td>${fmt(q.nits, 0)} nits</td></tr>`; }).join('')}
     </tbody></table></div>`;
+    h += vistaSombras(c);
   }
+  h += vistaElec(c);
   return h;
+}
+
+// electrónica y mediaserver elegidos, con el mismo componente de ficha
+function vistaElec(c) {
+  const x = c.elec; if (!x) return '';
+  const led = E.tecnologia === 'led', fichas = [];
+  if (led && x.proc) fichas.push(fichaProc(x.proc));
+  if (x.media) fichas.push(fichaMedia(x.media, x.need, led));
+  if (!fichas.length) return '';
+  return `<section class="res-sec"><div class="res-tit">${ICO.elec}${t('elecTit')}</div><div class="fichas">${fichas.join('')}</div></section>`;
+}
+// sombras del público, safety zone y cruces de haces (proyección)
+function vistaSombras(c) {
+  const S = c.sombras; if (!S) return '';
+  const li = [], sala = c.esp.tipo === 'sala';
+  if (sala && S.zona) li.push(S.zona.ok ? `<li class="ok">${t('segZona', { a: fmt(S.zona.ancho, 1), f: fmt(S.zona.fondo, 1) })}</li>` : `<li class="mal">${t('segNo')}</li>`);
+  // superficies con la misma franja, en una sola línea
+  const grupos = []; S.franjas.filter(f => f.prof > 0.05).forEach(f => { const k = fmt(f.prof, 2) + '|' + fmt(f.tiro, 2), g = grupos.find(x => x.k === k); if (g) g.n.push(f.nombre); else grupos.push({ k, n: [f.nombre], d: fmt(f.prof, 2), t: fmt(f.tiro, 2) }); });
+  grupos.forEach(g => li.push(`<li>${t(sala ? 'segFranja' : 'segPant', { n: g.n.join(' · '), d: g.d, t: g.t })}</li>`));
+  if (!sala) S.franjas.filter(f => f.prof > c.dist).forEach(f => li.push(`<li class="mal">${t('segPublico', { d: fmt(c.dist, 1), n: f.nombre })}</li>`));
+  if (c.filas.some(f => f.s.tipo === 'suelo')) li.push(`<li>${t('segSuelo')}</li>`);
+  const pares = {}; S.conflictos.forEach(k => { const id = k.tapa.nombre + '|' + k.haz.nombre; pares[id] = (pares[id] || 0) + 1; });
+  Object.entries(pares).forEach(([id, n]) => { const [a, b] = id.split('|'); li.push(`<li class="mal">${t('conflicto', { a, b, n: n + '×' })}</li>`); });
+  if (S.conflictos.length) li.push(`<li>${t('conflictoSol')}</li>`);
+  // chasis recolocados para no chocar (holgura de ventilación) y choques sin solución
+  S.movs.forEach(k => li.push(`<li>${t(k.dy ? (k.dy > 0 ? 'movArriba' : 'movAbajo') : 'movLado', { a: k.h.nombre + ' P' + (k.h.i + 1), d: fmt(Math.abs(k.dy || k.dx), 2), b: k.con ? k.con.nombre + ' P' + (k.con.i + 1) : '' })}</li>`));
+  S.choques.forEach(k => li.push(`<li class="mal">${t('choque', { a: k.h.nombre + ' P' + (k.h.i + 1), b: k.con ? k.con.nombre + ' P' + (k.con.i + 1) : '' })}</li>`));
+  if (S.movs.length || S.choques.length) li.push(`<li>${t('holgura')}</li>`);
+  S.cruces.forEach(k => li.push(`<li>${t('cruce', { a: k.na, b: k.nb })}</li>`));
+  if (!S.conflictos.length && !S.cruces.length && !S.choques.length) li.push(`<li class="ok">${t('sinProblemas')}</li>`);
+  return `<section class="res-sec"><div class="res-tit"><span class="cinta-ico" aria-hidden="true"></span>${t('segTit')}</div><ul class="avisos">${li.join('')}</ul></section>`;
 }
 
 function vistaTrabajo() {
@@ -194,7 +305,7 @@ function vistaTrabajo() {
 function barraEscena() {
   const v = E.vista;
   $('#esc-vistas').innerHTML = ['exterior', 'interior', 'planta'].map(k => tog(v.camara === k, `data-cam="${k}"`, t(k))).join('');
-  $('#esc-cont').innerHTML = ['carta', 'panorama', 'apagado'].map(k => tog(v.contenido === k, `data-set="vista.contenido" data-v="${k}"`, t(k))).join('') + tog(v.etiquetas, 'data-accion="etiquetas"', t('etiquetas'));
+  $('#esc-cont').innerHTML = ['carta', 'panorama', 'apagado'].map(k => tog(v.contenido === k, `data-set="vista.contenido" data-v="${k}"`, t(k))).join('') + tog(v.etiquetas, 'data-accion="etiquetas"', t('etiquetas')) + (E.tecnologia === 'proy' ? tog(v.zona, 'data-accion="zona"', t('zonaBtn')) : '');
 }
 
 // ---------- ciclo ----------
@@ -206,7 +317,7 @@ function actualizar(sinEscena) {
   if (!$('#panel')) { app.innerHTML = vistaTrabajo(); crearEscena(); }
   calculo = calcular();
   const pan = $('#panel'), sc = pan.scrollTop;
-  pan.innerHTML = modEspacio() + (E.tecnologia === 'led' ? modLed(calculo) : modProy(calculo)) + modSuperficies(calculo);
+  pan.innerHTML = modEspacio() + (E.tecnologia === 'led' ? modLed(calculo) : modProy(calculo)) + modElec(calculo) + modSuperficies(calculo);
   pan.scrollTop = sc;
   $('#res').innerHTML = vistaResultados(calculo);
   barraEscena();
@@ -218,6 +329,8 @@ function construirEscena() {
   const xs = c.filas.map(f => Math.abs(f.s.x) + f.s.ancho / 2), zs = c.filas.map(f => Math.abs(f.s.z));
   escena.construir({
     sala, tecnologia: E.tecnologia, contenido: E.vista.contenido, etiquetas: E.vista.etiquetas,
+    sombras: E.tecnologia === 'proy' && E.vista.zona ? c.sombras : null, haces: c.sombras ? c.sombras.haces : null,
+    conflictos: new Set(E.tecnologia === 'proy' && c.sombras ? c.sombras.conflictos.map(k => k.tapa.sup + ':' + k.tapa.i).concat(c.sombras.choques.map(k => k.h.sup + ':' + k.h.i)) : []),
     superficies: c.filas, distPublico: c.dist, extX: Math.max(4, ...xs) * 2, extZ: Math.max(2, ...zs, c.dist),
     altoMax: Math.max(2, ...c.filas.map(f => f.s.elev + f.s.alto))
   });
@@ -239,7 +352,9 @@ async function crearEscena() {
 function fijar(ruta, valor) { const p = ruta.split('.'); let o = E; for (let i = 0; i < p.length - 1; i++) o = o[p[i]]; o[p[p.length - 1]] = valor; }
 document.addEventListener('click', (ev) => {
   const b = ev.target.closest('button'); if (!b || b.disabled) return;
-  if (b.dataset.set) { fijar(b.dataset.set, b.dataset.numV ? Number(b.dataset.v) : b.dataset.v);
+  if (b.dataset.set) { fijar(b.dataset.set, b.dataset.bool ? b.dataset.v === '1' : b.dataset.numV ? Number(b.dataset.v) : b.dataset.v);
+    if (/^elec\.(backup|escalador|conexion)$/.test(b.dataset.set)) E.elec.sel = '';
+    if (b.dataset.set === 'elec.marca') E.elec.selMedia = '';
     if (b.dataset.set === 'led.clase' || b.dataset.set === 'led.tipo') E.led.crm = '';
     if (b.dataset.set === 'tecnologia' || b.dataset.set === 'cantidad') { const pe = $('.inicio-pie .pri'); if (E.paso === 'inicio') { actualizar(); return; } void pe; }
     actualizar(b.dataset.set === 'esp.sueltas.disp' ? false : false); return; }
@@ -253,6 +368,9 @@ document.addEventListener('click', (ev) => {
   if (a === 'inicio') { if (location.hash !== '#inicio') location.hash = 'inicio'; else { E.paso = 'inicio'; actualizar(); } return; }
   if (a === 'idioma') { fijarIdioma(IDIOMAS[(IDIOMAS.indexOf(idioma()) + 1) % IDIOMAS.length]); pintarCabecera(); const p = E.paso; if (p === 'trabajo') { $('#app').innerHTML = ''; } actualizar(); return; }
   if (a === 'etiquetas') { E.vista.etiquetas = !E.vista.etiquetas; actualizar(); return; }
+  if (a === 'zona') { E.vista.zona = !E.vista.zona; actualizar(); return; }
+  if (a === 'elec-dante') { E.elec.dante = !E.elec.dante; E.elec.selMedia = ''; actualizar(); return; }
+  if (a === 'reset-elec') { E.elec = DEF().elec; actualizar(); return; }
   if (a === 'reset-esp') { E.esp = DEF().esp; actualizar(); return; }
   if (a === 'reset-led') { E.led = DEF().led; actualizar(); return; }
   if (a === 'reset-proy') { E.proy = DEF().proy; actualizar(); return; }

@@ -11,9 +11,9 @@ Web app de mediaservi.com para calcular pantallas LED y de proyección, desde un
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v6.4** (estética AVHUB · SCREENS como página de inicio)
+**Versión actual: v6.5** (estética AVHUB · SCREENS como página de inicio)
 
-Web principal: **https://screens.mediaservi.com** (la antigua https://screencalc.mediaservi.com redirige aquí). Para abrir directamente SCREENCALC: https://screens.mediaservi.com/?led
+Web principal: **https://screens.mediaservi.com** (sustituye a screencalc.mediaservi.com y screenbox.mediaservi.com, que dejan de usarse). Para abrir directamente SCREENCALC: https://screens.mediaservi.com/?led
 
 Copias redundantes: https://mediaservi.github.io/SCREENCALC/ · https://screencalcx.netlify.app/
 
@@ -39,6 +39,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **PDF:** un único PDF de 2 páginas desde el icono de la cabecera, en claro sobre papel blanco y con los mismos bloques que la pantalla (tarjetas con filete de color, icono y título; datos en Share Tech Mono y textos en Inter). Cabecera en una línea: logo de SCREENCALC, web y fecha, y logo de AVHUB (con enlace) al margen derecho. Página 1: título, características de la pantalla en tarjetas, observaciones, características del cabinet en fichas y simulación ajustada al hueco de la hoja. Página 2: electrónica y mediaserver elegidos para el proyecto (en una fila), esquema de conexiones con su material, propuestas de cableado de señal y eléctrico, y el aviso de cálculo por IA. Si no cabe, el esquema se reduce para mantener las 2 páginas. Los anuncios no salen en el PDF.
 - **Información (ⓘ):** el icono de la cabecera ofrece 2 opciones: **INFORMACIÓN** (este README en una ventana al 80 % que se puede desplazar y cerrar) y **DESCARGAR APP** (uso sin conexión).
 - **Logo:** sin enlace; al pulsarlo se reinicia la app para un nuevo cálculo (igual que RESET).
+- **Ficha de equipo común:** cabinets, proyectores, electrónicas y mediaservers se muestran con la misma ficha en SCREENCALC y en SCREENS (`comun/ficha.js` y `comun/ficha.css`): foto del fabricante, marca y modelo, especificaciones clave, piezas de los equipos montados por módulos, stock y enlace a la ficha. El motor de electrónica también es común (`comun/electronica.js`).
 - **Inicio (SCREENS):** la web abre el selector de SCREENS (una o varias superficies · LED o proyección); «Una + LED» abre SCREENCALC. El botón INICIO (casa) de la cabecera vuelve al selector y el botón Atrás del navegador vuelve al cálculo. El idioma elegido es el mismo en SCREENCALC y en SCREENS.
 - **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
 - **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios, las consultas internas y la documentación (DOCS), que ya no es pública.
@@ -52,7 +53,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 
 ## Datos
 
-La app obtiene el catálogo en vivo y lo guarda cifrado en el dispositivo; no se expone como tabla ni se puede exportar. No usa datos de muestra salvo como último recurso sin conexión. El catálogo de electrónica y mediaservers está en el propio `index.html` (constantes `ELEC_DEVICES` y `ELEC_MEDIASERVERS`).
+La app obtiene el catálogo en vivo y lo guarda cifrado en el dispositivo; no se expone como tabla ni se puede exportar. No usa datos de muestra salvo como último recurso sin conexión. El catálogo de electrónica y mediaservers está en `comun/electronica.js` (constantes `ELEC_DEVICES` y `ELEC_MEDIASERVERS`), común a SCREENCALC y SCREENS.
 
 ## Tecnología y despliegue
 
@@ -85,9 +86,35 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v6.4)
+## Cambios de la versión actual (v6.5)
 
-- **SCREENS es la página de inicio.** La web principal pasa a **screens.mediaservi.com**, y la antigua screencalc.mediaservi.com redirige allí.
+- **Ficha de equipo común** para todas las pantallas de cálculo (`comun/ficha.js` y `comun/ficha.css`):
+  - foto del fabricante, marca y modelo, especificaciones en rejilla, piezas de los equipos montados por módulos, stock y enlace a la ficha;
+  - en SCREENCALC sustituye al resumen del cabinet;
+  - en SCREENS se usa para el cabinet, el proyector, la electrónica y el mediaserver;
+  - si no hay foto, sale un dibujo del tipo de equipo.
+- **Motor de electrónica común** (`comun/electronica.js`): el mismo cálculo en SCREENCALC y en SCREENS. Las líneas salen en plural («24 líneas»).
+- **SCREENS · electrónica de control LED** para todas las superficies a la vez:
+  - con o sin backup, con o sin escalador, RJ45 directo o rack con fibra;
+  - propuestas del catálogo, con H Series montada por piezas;
+  - reparto de las líneas por superficie (L1–Ln) en la tabla.
+- **SCREENS · mediaserver** (LED y proyección): filtro por marca y Dante, salidas 4K necesarias (en proyección, una por proyector).
+- **SCREENS · proyección: sombras del público y safety zone**:
+  - franja de sombra de cada pared o pantalla (donde una persona de pie corta el haz), rayada en rojo en el suelo;
+  - zona segura marcada con una cinta discontinua amarilla y negra y su medida;
+  - proyectores que quedan dentro del haz de otra superficie, en rojo y con aviso;
+  - cruces de haces entre superficies;
+  - en el suelo proyectado, aviso de que el público siempre hace sombra.
+- **SCREENS · chasis de proyector que no se tocan:**
+  - medidas reales de cada modelo (fichas de Epson);
+  - holgura de ventilación de 40 cm en horizontal y 20 cm en vertical;
+  - si dos chasis chocan, uno se cuelga más alto o más bajo, o se desplaza a lo largo de su pared, y se indica cuánto;
+  - aviso de la recomendación de Epson de 150 cm lado a lado sin mampara.
+- **SCREENS · paredes con solape excesivo:** como en las pantallas sueltas, se usa un proyector menos con un pequeño recorte vertical (por ejemplo, 1 proyector con un 7 % de recorte en vez de 2 con un 93 % de solape).
+
+## Cambios de la versión v6.4
+
+- **SCREENS es la página de inicio.** La web principal pasa a **screens.mediaservi.com**; screencalc.mediaservi.com y screenbox.mediaservi.com dejan de usarse.
   - Al entrar se elige una o varias superficies y LED o proyección. «Una + LED» abre SCREENCALC; el resto, el módulo SCREENS.
   - Enlace directo a SCREENCALC: `?led`.
 - **Cabecera de SCREENCALC:** el botón que llevaba a SCREENS pasa a ser **INICIO** (casa) y vuelve al selector.
