@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v8.1** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v8.2** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -89,7 +89,38 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v8.1)
+## Cambios de la versión actual (v8.2)
+
+El módulo de proyección se ordena como el simulador de distancias de Epson y AUTO decide según el tipo de proyecto.
+
+- **Tipo de proyección:** mapping, pared o sala inmersiva. AUTO decide según el tipo.
+  - **Mapping** (fachada o edificio):
+    - los proyectores van lejos (torres, la otra acera, un balcón);
+    - AUTO elige los equipos más luminosos y ópticas que llegan a esa distancia;
+    - sin distancia, nunca una óptica corta: el proyector queda a unas 2 veces el ancho de la imagen;
+    - la luz ambiente pasa a la de exterior de noche (5 lx).
+  - **Pared** (auditorio o pared normal): uno o más proyectores en blending, con la óptica que deja el proyector a la distancia del público.
+  - **Sala inmersiva:** cubrir las paredes (y el suelo) desde dentro, como hasta ahora.
+- **Campos en orden lógico, todos juntos arriba**, y las fichas de los equipos debajo:
+  - tipo;
+  - proyector y óptica;
+  - posición (orientación, montaje y altura, distancia);
+  - solape;
+  - luz;
+  - avanzado.
+- **Candados 🔒 en la distancia y en la altura del proyector:**
+  - abiertos, la casilla enseña lo que calcula AUTO;
+  - cerrados, el valor queda fijo y AUTO lo respeta (por ejemplo, «solo puedo colgarlo a 5 m»);
+  - escribir un valor cierra el candado.
+- **Deslizador de la distancia** dentro del rango del zoom de la óptica para esa imagen.
+- **Uso del espacio** para la luz de la sala: mapping de noche, sala oscura o cine, auditorio, sala de reuniones, aula u oficina, feria o exposición (valores típicos en lx).
+- **Modo fuera de especificación** (avanzado) para imágenes algo más grandes que las garantizadas, como en el simulador de Epson y en SCREENBOX:
+  - avisa de lo que el fabricante no garantiza;
+  - calcula hasta dónde llega cada proyector: en los Epson de alta luminosidad, de 1000" a 1100";
+  - avisa si la instalación pasa del máximo garantizado y da una recomendación de uso.
+- **La petición entiende** «mapping», «fachada», «edificio» y «auditorio».
+
+## Cambios de la versión v8.1
 
 - **Nuevo editor de anuncios en AVHUB ADMIN (v1.4)**, pensado como un programa de diseño. Es una página fija, sin desplazar la página entera.
   - **Herramientas** a la izquierda, con atajos de teclado:

@@ -8,19 +8,19 @@ EPSON,EB-805F,fija,0.27 - 0.37:1,5000,16:9,Full HD (1920 x 1080),NO,130,250,http
 EPSON,EB-L695SE,fija,0.50 - 0.70:1,6000,16:10,WUXGA (1920 x 1200),4K Enhancement,500,600,https://charmex.net/images/epson-media-st_3156_16_20250513123910.png
 EPSON,EB-L795SE,fija,0.79 - 1.36:1,6000,16:10,WUXGA (1920 x 1200),4K Enhancement,400,500,https://charmex.net/images/epson-media-st_3156_15_20250513123855.png
 EPSON,EB-L695SU,fija,0.79 - 1.36:1,6200,16:10,WUXGA (1920 x 1200),NO,400,500,https://charmex.net/images/epson-media-st_3156_14_20250513123843.png
-EPSON,EB-PU1006W,PU1000,,6000,16:10,WUXGA (1920 x 1200),4K Enhancement,1000,1000,
-EPSON,EB-PU1007B,PU1000,,7000,16:10,WUXGA (1920 x 1200),4K Enhancement,1000,1000,
-EPSON,EB-PU1008B,PU1000,,8500,16:10,WUXGA (1920 x 1200),4K Enhancement,1000,1000,https://charmex.net/images/epson-lente-int_2475_26_20210705103031.png
-EPSON,EB-PU2010B,PU2000,,10000,16:10,WUXGA (1920 x 1200),4K Enhancement,1000,1000,
-EPSON,EB-PU2213B,PU2000,,13000,16:10,WUXGA (1920 x 1200),4K Enhancement,1000,1000,
-EPSON,EB-PU2216B,PU2000,,16000,16:10,WUXGA (1920 x 1200),4K Enhancement,1000,1000,https://charmex.net/images/epson-lente-int_2475_35_20220930121548.png
-EPSON,EB-PU2220B,PU2000,,20000,16:10,WUXGA (1920 x 1200),4K Enhancement,1000,1000,https://charmex.net/images/epson-lente-int_2475_31_20220930124147.png
-EPSON,EB-PQ2008B,PQ2000,,8000,16:9,4K (3840 x 2160),4K,1000,1000,
-EPSON,EB-PQ2010B,PQ2000,,10000,16:9,4K (3840 x 2160),4K,1000,1000,
-EPSON,EB-PQ2213B,PQ2000,,13000,16:9,4K (3840 x 2160),4K,1000,1000,
-EPSON,EB-PQ2216B,PQ2000,,16000,16:9,4K (3840 x 2160),4K,1000,1000,
-EPSON,EB-PQ2220B,PQ2000,,20000,16:9,4K (3840 x 2160),4K,1000,1000,
-EPSON,EB-XQ2030B,XQ2030,,30000,16:9,4K (3840 x 2160),4K,1000,1000,`;
+EPSON,EB-PU1006W,PU1000,,6000,16:10,WUXGA (1920 x 1200),4K Enhancement,1000,1100,
+EPSON,EB-PU1007B,PU1000,,7000,16:10,WUXGA (1920 x 1200),4K Enhancement,1000,1100,
+EPSON,EB-PU1008B,PU1000,,8500,16:10,WUXGA (1920 x 1200),4K Enhancement,1000,1100,https://charmex.net/images/epson-lente-int_2475_26_20210705103031.png
+EPSON,EB-PU2010B,PU2000,,10000,16:10,WUXGA (1920 x 1200),4K Enhancement,1000,1100,
+EPSON,EB-PU2213B,PU2000,,13000,16:10,WUXGA (1920 x 1200),4K Enhancement,1000,1100,
+EPSON,EB-PU2216B,PU2000,,16000,16:10,WUXGA (1920 x 1200),4K Enhancement,1000,1100,https://charmex.net/images/epson-lente-int_2475_35_20220930121548.png
+EPSON,EB-PU2220B,PU2000,,20000,16:10,WUXGA (1920 x 1200),4K Enhancement,1000,1100,https://charmex.net/images/epson-lente-int_2475_31_20220930124147.png
+EPSON,EB-PQ2008B,PQ2000,,8000,16:9,4K (3840 x 2160),4K,1000,1100,
+EPSON,EB-PQ2010B,PQ2000,,10000,16:9,4K (3840 x 2160),4K,1000,1100,
+EPSON,EB-PQ2213B,PQ2000,,13000,16:9,4K (3840 x 2160),4K,1000,1100,
+EPSON,EB-PQ2216B,PQ2000,,16000,16:9,4K (3840 x 2160),4K,1000,1100,
+EPSON,EB-PQ2220B,PQ2000,,20000,16:9,4K (3840 x 2160),4K,1000,1100,
+EPSON,EB-XQ2030B,XQ2030,,30000,16:9,4K (3840 x 2160),4K,1000,1100,`;
 // Ópticas de Epson por serie de cuerpo: [relación de proyección mínima, máxima, desplazamiento vertical %, horizontal %, solo hacia arriba]
 // (guía maestra de Epson 08/2026). max20kXQ: con el EB-XQ2030B la luminosidad queda en 20.000 lm; max12k: tope de 12.000 lm.
 export const OPTICAS = [
@@ -90,7 +90,9 @@ const anchoMax = (p, oos) => { const d = (oos ? p.maxDiagPulgOOS : p.maxDiagPulg
 //   ópticas ultracortas de desplazamiento fijo (y los de óptica fija ultracorta) no se montan en vertical.
 // - Una sola columna o fila puede sobresalir de la superficie hasta un 20 % (se enmascara); varias se solapan del solape
 //   mínimo al máximo de blending.
-export function calcularPared(sup, p, { alcance, solapeMin = SOLAPE_MIN, oos = false, dist = 0, orient = 'auto' } = {}) {
+// v8.2 · sin distancia fijada: trObjetivo, la relación de proyección preferida (mapping: el proyector lejos, unas 2 veces el ancho);
+// tiroObjetivo, la distancia preferida en metros (pared: el proyector a la altura del público). Si el zoom no llega, el extremo más cercano
+export function calcularPared(sup, p, { alcance, solapeMin = SOLAPE_MIN, oos = false, dist = 0, orient = 'auto', trObjetivo = 0, tiroObjetivo = 0 } = {}) {
   const W = sup.ancho, H = sup.alto, nwMax = anchoMax(p, oos), sMin = Math.max(0, solapeMin);
   const puedeV = !(p.ust && (p.shiftSube || !p.optica));
   const ors = orient === 'vertical' ? (puedeV ? ['v'] : ['h']) : orient === 'horizontal' ? ['h'] : (puedeV ? ['h', 'v'] : ['h']);
@@ -106,7 +108,7 @@ export function calcularPared(sup, p, { alcance, solapeMin = SOLAPE_MIN, oos = f
         const nwLejos = dist / p.trMin, nwCerca = dist / p.trMax;   // a esa distancia, el zoom da imágenes entre nwCerca y nwLejos
         if (nw > nwLejos * 1.0001) { noCubre = true; nw = nwLejos; } else if (nw < nwCerca) nw = nwCerca;
         tiro = dist;
-      } else tiro = p.trMin * nw;
+      } else tiro = (tiroObjetivo > 0 ? Math.min(Math.max(tiroObjetivo / nw, p.trMin), p.trMax) : trObjetivo > 0 ? Math.min(Math.max(trObjetivo, p.trMin), p.trMax) : p.trMin) * nw;
       const limite = nw > nwMax * 1.0001;
       const ih = o === 'v' ? nw : nw / a, iw = ih * a;
       const ox = cols > 1 ? (cols * iw - W) / (cols - 1) : 0, oy = rows > 1 ? (rows * ih - H) / (rows - 1) : 0;
@@ -191,7 +193,10 @@ export function colocarPared(s, p, prod, { alto, sala, techo: techoS, montaje = 
   for (let r = 0; r < p.rows; r++) {
     const y0 = s.elev + p.filas[r], y1 = y0 + p.imgH, yC = (y0 + y1) / 2;
     let yProy, apoyo = false;
-    if (montaje === 'apoyado') { yProy = (altura > 0 ? altura : 0.8) + altoCh / 2 + r * paso; apoyo = true; }
+    if (montaje === 'apoyado') {
+      const yC0 = s.elev + p.filas[0] + p.imgH / 2, base = altura > 0 ? altura : (lim ? Math.max(0.8, yC0 - lim * p.imgH - altoCh / 2) : 0.8);
+      yProy = base + altoCh / 2 + r * paso; apoyo = true;
+    }
     else if (montaje === 'colgado') yProy = (altura > 0 ? altura - 0.05 - altoCh / 2 : (hayTecho ? techo : yTop + 0.15 + altoCh / 2)) - (p.rows - 1 - r) * paso;
     else if (prod.ust) yProy = Math.min(techo, y1 + 0.22);                         // UST: justo sobre su imagen
     else if (hayTecho) { yProy = yHung - (p.rows - 1 - r) * paso; if (lim) yProy = Math.min(techo, Math.max(yC - lim * p.imgH, Math.min(yC + lim * p.imgH, yProy))); }

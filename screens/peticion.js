@@ -65,6 +65,9 @@ export function interpretar(texto) {
   const g = t.match(/(?:ganancia|gain|guany)\s*(?:de\s*)?(\d+(?:\.\d+)?)/); if (g) { c.proy.ganancia = n(g[1]); vistos.push({ k: 'ganancia', v: c.proy.ganancia }); }
   const te = t.match(/techo\s*(?:de|a)?\s*(\d+(?:\.\d+)?)|(\d+(?:\.\d+)?)\s*(?:m|metros)?\s*de techo|ceiling\s*(?:of\s*)?(\d+(?:\.\d+)?)|sostre\s*(?:de\s*|a\s*)?(\d+(?:\.\d+)?)/);
   if (te) { const v = n(te[1] || te[2] || te[3] || te[4]); c.sueltas.techo = v; if (c.esp.tipo === 'sala' && c.esp.alto == null) c.esp.alto = v; vistos.push({ k: 'techo', v }); }
+  // v8.2 · tipo de proyección: mapping (fachada o edificio, «mapping») o pared (auditorio, pared); la sala inmersiva sale de «sala»
+  if (/mapping|fachada|facade|facana|\bedificio\b|\bedifici\b|building/.test(t)) { c.proy.tipo = 'mapping'; vistos.push({ k: 'tipo', v: 'mapping' }); }
+  else if (/auditorio|auditorium|auditori\b/.test(t)) { c.proy.tipo = 'pared'; vistos.push({ k: 'tipo', v: 'pared' }); }
   // v8.0 · proyección: orientación, distancia a la superficie y montaje («proyectores en torres a 25 m», «en vertical»,
   // «torre de 6 m», «colgados de un truss a 8 m», «sobremesa»)
   if (/(?:proyector|projector|proyectar|projectar)[^.]{0,40}\b(?:en )?vertical|\ben vertical\b|portrait|modo retrato|in portrait/.test(t)) { c.proy.orient = 'vertical'; vistos.push({ k: 'vertical' }); }
