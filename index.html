@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v5.3                              ║
+║                          Versión actual: v6.1                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v5.3
+ÚLTIMA ACTUALIZACIÓN: v6.1
+- v6.1: versión pública con la estética AVHUB (aprobadas las propuestas v5.0–v5.3), que sustituye a la estética clara anterior en pantalla y en el PDF: rack digital oscuro con verde eléctrico para lo activado y violeta de marca, tipografía Inter + Share Tech Mono, simulación realista con paredes a escala real, cotas técnicas y carta de ajuste con la resolución real, panel de tamaño y resolución renovado, textos siempre con margen de seguridad y PDF en claro con los mismos bloques que la pantalla. La estética anterior queda solo como reserva con ?tema=clasico
+ANTERIOR: v5.3
 - v5.3 (PROPUESTA): PDF con la estética AVHUB en papel blanco: cabecera en una línea (logo SCREENCALC · web y fecha · logo AVHUB grande al margen derecho), características de la pantalla en las mismas tarjetas que en pantalla (filete de color, icono y título; datos en Share Tech Mono, textos en Inter y de mayor tamaño), cabeceras de bloque en tinte violeta claro con texto violeta oscuro (legible y sin gastar tinta), características del cabinet en fichas de dato (etiqueta sobre valor, sin huecos), cotas recuadradas en azul, simulación escalada al hueco exacto de la página 1, material y cableado más legibles y pie en dos líneas (aviso · lema); magnetotérmicos rotulados una vez y por línea solo L·calibre·consumo (sin amontonarse); el aviso «Desliza…» ya no se imprime; mármol en losas de 120 × 60 cm a escala real; la franja del suelo coincide con la línea de suelo en móvil y tablet; panel manual: Resolución antes que Cosido de cable
 ANTERIOR: v5.2
 - v5.2 (PROPUESTA): simulación: pared a escala real (hormigón, madera, ladrillo claro / rojo / oscuro y mármol) con suelo gris uniforme y minibotones de muestra en la franja del suelo (sin taparse con el botón PANEL); figura en gris claro sobre fondos oscuros y altura de la figura en texto horizontal junto a sus pies; cotas de ancho y alto apoyadas por fuera de su línea y pegadas a la pantalla; la carta de ajuste muestra la resolución, la clase y el formato reales de la pantalla configurada (en varias líneas si la pantalla es estrecha); numeración de cabinets cada 2, 3… cuando las celdas son demasiado pequeñas para que los números no se pisen; control de elevación siempre bajo la línea de suelo; total de cabinets en grande en el resumen (y en móvil, junto a la resolución); Tamaño de pantalla: medidas reales en las casillas, total de cabinets entre columnas y filas; Resolución: AUTO / HD / FHD / UHD y casillas H × V para una resolución a medida, el alto o el ancho que falte se calcula por la proporción; tipografía coherente por tipo de campo (datos en Share Tech Mono); ningún texto llega al filo de su botón o caja (se autorreduce con margen de seguridad); botón SIMULAR CONTENIDO a dos líneas
@@ -6965,7 +6967,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v5.3</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v6.1</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -9316,7 +9318,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v5.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v6.1 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -9326,7 +9328,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      <a href="https://screencalc.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENCALC</a> v5.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a>
+                      <a href="https://screencalc.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENCALC</a> v6.1 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a>
                     </div>
                   </div>
               </main>

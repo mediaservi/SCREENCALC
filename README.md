@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v5.3** (propuesta de nueva estética AVHUB)
+**Versión actual: v6.1** (estética AVHUB)
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -29,7 +29,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **Enlaces e imágenes de producto:** icono de enlace (a la ficha o a la búsqueda de Charmex por modelo) y, en electrónica, pila de logo, vista frontal y trasera con visor al 80 % de la pantalla. Se leen de la hoja ELECTRONICAS (columnas `url`, `front`, `back`, `logo`) cada vez que se abre la app; las imágenes no van al PDF.
 - **Contenido de la pantalla (🖼):** el icono de imagen abre un popup centrado con FUENTES MULTIMEDIA DE PRUEBA (la primera es fija y va preseleccionada; las otras 5 son editables y se guardan en el navegador), URL propia (YouTube normal, /live/, /shorts/, listas, Vimeo, imagen o vídeo) y subida de archivo.
 - **Esquemas de cableado:** propuesta de cableado de señal y eléctrico.
-- **PDF:** un único PDF de 2 páginas desde el icono de la cabecera. Página 1: características de la pantalla, observaciones, características del cabinet y simulación. Página 2: electrónica y mediaserver elegidos para el proyecto (en una fila), esquema de conexiones con su material, propuestas de cableado de señal y eléctrico, y el aviso de cálculo por IA. Si no cabe, el esquema se reduce para mantener las 2 páginas. El logo de AVHUB (con enlace) va arriba a la derecha de la página 1, encima de la fecha. Los anuncios no salen en el PDF.
+- **PDF:** un único PDF de 2 páginas desde el icono de la cabecera, en claro sobre papel blanco y con los mismos bloques que la pantalla (tarjetas con filete de color, icono y título; datos en Share Tech Mono y textos en Inter). Cabecera en una línea: logo de SCREENCALC, web y fecha, y logo de AVHUB (con enlace) al margen derecho. Página 1: título, características de la pantalla en tarjetas, observaciones, características del cabinet en fichas y simulación ajustada al hueco de la hoja. Página 2: electrónica y mediaserver elegidos para el proyecto (en una fila), esquema de conexiones con su material, propuestas de cableado de señal y eléctrico, y el aviso de cálculo por IA. Si no cabe, el esquema se reduce para mantener las 2 páginas. Los anuncios no salen en el PDF.
 - **Información (ⓘ):** el icono de la cabecera ofrece 2 opciones: **INFORMACIÓN** (este README en una ventana al 80 % que se puede desplazar y cerrar) y **DESCARGAR APP** (uso sin conexión).
 - **Logo:** sin enlace; al pulsarlo se reinicia la app para un nuevo cálculo (igual que RESET).
 - **SCREENBOX:** el isotipo de la cabecera abre la sub-app SCREENBOX (https://screenboxsim.netlify.app/) para pantallas de una o varias paredes con proyectores y salas inmersivas.
@@ -56,25 +56,39 @@ Archivo único `index.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No
 - `main`: versión oficial y pública, aprobada.
 - `beta`: última entrega para pruebas; `beta-anterior`: la entrega previa. Solo pasan a `main` cuando se aprueban.
 
-## Paleta corporativa
+## Estética y paleta corporativa (AVHUB)
 
-La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, grises y los colores que no son verde):
-
-![Paleta corporativa](assets/paleta.svg)
+Desde la v6.1 la app usa la estética AVHUB: rack digital oscuro en pantalla y la misma composición en claro en el PDF.
 
 | Nombre | Código | Uso |
 |---|---|---|
-| VERDE CLARO | `#73ac44` | acentos secundarios y estado «óptimo» |
-| VERDE MEDIO | `#00a792` | botones y elementos activos |
-| VERDE OSCURO | `#0f584c` | cabeceras de sección y fondos principales |
-| VERDE FLUO | `#ccff00` | resaltes y parpadeos de campos por rellenar |
+| VERDE ELÉCTRICO | `#00ff04` | lo activado, displays y rejilla de cabinets |
+| VIOLETA NEÓN | `#9900ff` | marca, acción principal (PROPONER PANTALLA, CALCULAR) y cabeceras de bloque |
+| GRIS NEUTRÓN | `#1a1a1c` · `#262629` | chasis y módulos del rack |
+| Acentos | `#00b4ff` azul · `#ffb000` ámbar · `#e100ff` magenta · `#9dff00` lima · `#ff4d5e` rojo | filete de cada bloque de resultados |
+
+Tipografía corporativa, incluida en la app (sin servicios externos): **Inter** (Regular, Bold y ExtraBold) para textos y botones, y **Share Tech Mono** para datos, medidas y displays. Ningún texto toca el filo de su botón o caja: si no cabe, se reduce con un margen de seguridad.
+
+En el PDF las cabeceras de bloque van en violeta claro con texto violeta oscuro, para que se lean bien impresas y no gasten tinta.
+
+La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`) queda solo como reserva con `?tema=clasico`.
 
 ## Avisos
 
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v5.3 · propuesta)
+## Cambios de la versión actual (v6.1)
+
+- **Nueva versión pública con la estética AVHUB**, que sustituye a la estética clara anterior en pantalla y en el PDF. Reúne las propuestas v5.0 a v5.3, revisadas y aprobadas:
+  - un solo sistema visual de rack digital, con tipografía Inter y Share Tech Mono;
+  - simulación realista con paredes a escala real, cotas técnicas y carta de ajuste con la resolución real;
+  - panel de tamaño y resolución renovado, con Resolución antes que Cosido de cable;
+  - popup «Datos del proyecto» en 3 columnas;
+  - PDF en claro con los mismos bloques que la pantalla.
+- La estética anterior se puede seguir abriendo con `?tema=clasico`.
+
+## Cambios de la versión v5.3 · propuesta
 
 - **PDF con la estética AVHUB sobre papel blanco:** cabecera en una sola línea (logo SCREENCALC, web y fecha, logo AVHUB grande al margen derecho); las características de la pantalla salen en las mismas tarjetas que en pantalla (filete de color, icono y título) con los datos en Share Tech Mono y los textos en Inter, más grandes; cabeceras de bloque en tinte violeta claro con texto violeta oscuro, legibles y sin gastar tinta.
 - **Cabinet en fichas de dato:** cada característica con su etiqueta encima del valor, sin huecos entre ambos.
