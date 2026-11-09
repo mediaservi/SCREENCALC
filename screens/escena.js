@@ -31,6 +31,18 @@ export class Escena {
     this.ctrl = new OrbitControls(this.cam, lienzo);
     this.ctrl.maxPolarAngle = Math.PI * 0.495; this.ctrl.minDistance = 0.3; this.ctrl.maxDistance = 120;
     this.ctrl.addEventListener('change', () => this.render());
+    // v8.4 · navegación: flechas del teclado para desplazarse (con Mayús, girar), + y − para acercar, Inicio o 0 para volver a la vista;
+    // con el ratón, botón derecho o Mayús + arrastrar desplaza la cámara (con dos dedos en pantallas táctiles)
+    lienzo.tabIndex = 0; this.ctrl.keyPanSpeed = 30; this.ctrl.listenToKeyEvents(lienzo);
+    lienzo.addEventListener('pointerdown', () => { try { lienzo.focus({ preventScroll: true }); } catch (e) {} });
+    lienzo.addEventListener('keydown', (e) => {
+      const k = e.key;
+      if (k === '+' || k === '=' || k === '-' || k === '_') {
+        e.preventDefault(); const tg = this.ctrl.target, v = this.cam.position.clone().sub(tg).multiplyScalar(k === '-' || k === '_' ? 1.18 : 0.85), d = v.length();
+        if (d > this.ctrl.minDistance && d < this.ctrl.maxDistance) { this.cam.position.copy(tg).add(v); this.ctrl.update(); this.render(); }
+      } else if (k === 'Home' || k === '0') { e.preventDefault(); this.vista(this.vistaActual); }
+      else if (k.indexOf('Arrow') === 0) e.preventDefault();   // la página no se mueve mientras se navega por la escena
+    });
     esc.add(new THREE.HemisphereLight(0xc9cbe0, 0x141416, 0.35));
     const sol = this.sol = new THREE.DirectionalLight(0xffffff, 0.55);
     sol.position.set(6, 14, 8); sol.castShadow = true; sol.shadow.mapSize.set(2048, 2048); sol.shadow.bias = -0.0004; sol.shadow.radius = 4;

@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v8.2** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v8.4** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -89,7 +89,52 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v8.2)
+## Cambios de la versión actual (v8.4)
+
+- **Datos principales de proyección en el orden de los simuladores de Epson y de Vivitek.** En el módulo Espacio van, por este orden:
+  - el **tipo de proyección** (mapping, pared o sala inmersiva), que sustituye a «sala / pantallas»;
+  - la superficie (ancho, alto y elevación);
+  - la **posición del proyector**, que se puede fijar antes de nada: primero la distancia a la fachada o a la pared, con su candado y el rango del zoom, y después el montaje y la altura, también con su candado;
+  - el público;
+  - el techo (no se pide en mapping).
+  - El módulo Proyección queda para el equipo: proyector, óptica, orientación, solape, luz y avanzado.
+  - En «varias», mapping y pared son varias superficies sueltas; la sala inmersiva, la sala.
+- **Casillas numéricas:** al teclear despacio (sobre todo en el móvil), las cifras ya no se desordenan («35» salía «53»). Era lo que impedía escribir la distancia a la fachada.
+- **Petición:** en un mapping, «a 40 m» o «a 40 m de distancia» es la distancia de los proyectores, salvo que hable del público.
+- **Escena 3D:**
+  - flechas del teclado para desplazarse (con Mayús, girar);
+  - + y − para acercar;
+  - Inicio o 0 para volver a la vista;
+  - botón derecho, Mayús + arrastrar o dos dedos para desplazar;
+  - EXTERIOR, DENTRO y PLANTA siempre vuelven a la vista inicial.
+- **Fuera de especificación:** el botón activo se resalta en ámbar.
+- **Aviso de fase beta:** en varias pantallas, salas inmersivas y proyección, el campo de la petición muestra en letras de LCD ámbar «ESTA SECCIÓN ESTÁ EN PRUEBAS EN FASE BETA» (también en inglés y catalán). Una pantalla LED no lo lleva porque ya está probada. Se quitará cuando esas secciones estén terminadas.
+
+## Cambios de la versión v8.3
+
+- **Vistas técnicas de proyección**, como las del simulador de distancias de Epson, en los resultados de mapping, pared, varias pantallas y sala inmersiva.
+  - **Lateral:**
+    - la pared con la imagen;
+    - el proyector a su distancia y altura (con la torre o la base si va apoyado);
+    - el haz, el techo, el público y las cotas.
+  - **Frontal:**
+    - cada imagen de la rejilla con sus solapes;
+    - la superficie y los proyectores;
+    - el rango del desplazamiento de la óptica (girado si el proyector va en vertical).
+  - **Cenital:**
+    - los proyectores de cada columna con sus haces;
+    - la distancia y el ancho.
+  - **Rango posible** (en azul): dónde puede ir la lente con el zoom y el desplazamiento de la óptica.
+  - **Fuera de la superficie** (en rosa): la imagen que sobresale y se enmascara.
+  - **Arrastrar el proyector:**
+    - en la lateral, cambia la distancia y la altura;
+    - en la frontal, la altura;
+    - en la cenital, la distancia.
+    - Al soltar, los valores quedan fijos con su candado.
+  - **Desplazamiento vertical de la óptica** con deslizador y botón de centrar. El horizontal se indica con su rango.
+  - **Distribución:** las tres vistas juntas, o una sola en grande. Con varias superficies, se elige cuál se ve.
+
+## Cambios de la versión v8.2
 
 El módulo de proyección se ordena como el simulador de distancias de Epson y AUTO decide según el tipo de proyecto.
 

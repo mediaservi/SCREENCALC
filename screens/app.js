@@ -6,9 +6,10 @@ import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
 import { interpretar } from './peticion.js';
+import { vistasTecnicas, activarVistas } from './vistas.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v8.2';
+const VERSION = 'v8.4';
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   cantidad: 'varias', tecnologia: 'led',
@@ -19,7 +20,7 @@ const DEF = () => ({
   led: { clase: 'INSTALL', tipo: 'INDOOR', crm: '', ajuste: 'dentro' },
   proy: { tipo: 'pared', cuerpo: '', optica: '', idSuelo: '', solape: 15, lux: 140, ganancia: 1, dist: 0, orient: 'auto', montaje: 'auto', altura: 0, oos: false },
   elec: { backup: false, escalador: 'con', conexion: 'directo', sel: '', marca: 'todos', dante: false, selMedia: '' },
-  vista: { contenido: 'carta', etiquetas: true, camara: 'exterior', zona: true, modo: 'continuo' }
+  vista: { contenido: 'carta', etiquetas: true, camara: 'exterior', zona: true, modo: 'continuo', tec: 'todas', vtSup: 0 }
 });
 let E = DEF();
 try { const g = JSON.parse(localStorage.getItem('screens_estado') || 'null'); if (g && g.esp) { const d = DEF(); E = Object.assign(d, g, { elec: Object.assign(d.elec, g.elec || {}), vista: Object.assign(d.vista, g.vista || {}), proy: Object.assign(d.proy, g.proy || {}), esp: Object.assign(d.esp, g.esp, { sueltas: Object.assign(d.esp.sueltas, (g.esp || {}).sueltas || {}) }) }); } } catch (e) {}
@@ -231,7 +232,9 @@ function fichaMedia(m, need, led) {
 function modEspacio() {
   const e = E.esp, s = e.sueltas, sala = e.tipo === 'sala' && E.cantidad === 'varias';
   let h = `<section class="mod"><div class="mod-tit">${ICO.espacio}${t('espacio')}<button type="button" class="sec-btn reset" data-accion="reset-esp">${t('restablecer')}</button></div>`;
-  if (E.cantidad === 'varias') h += `<div class="fila c2">${tog(e.tipo === 'sala', 'data-set="esp.tipo" data-v="sala"', t('sala'))}${tog(e.tipo === 'sueltas', 'data-set="esp.tipo" data-v="sueltas"', t('pantallas'))}</div>`;
+  const proy = E.tecnologia === 'proy';
+  if (proy) h += bloqueTipo();   // v8.4 · en proyección, el tipo (mapping, pared o sala inmersiva) va primero y sustituye a SALA / PANTALLAS
+  else if (E.cantidad === 'varias') h += `<div class="fila c2">${tog(e.tipo === 'sala', 'data-set="esp.tipo" data-v="sala"', t('sala'))}${tog(e.tipo === 'sueltas', 'data-set="esp.tipo" data-v="sueltas"', t('pantallas'))}</div>`;
   if (sala) {
     h += `<div class="fila c3">${campo(t('ancho'), numIn('esp.ancho', e.ancho, 'm', 0.1, 1, 60))}${campo(t('fondo'), numIn('esp.fondo', e.fondo, 'm', 0.1, 1, 60))}${campo(t('alto'), numIn('esp.alto', e.alto, 'm', 0.1, 1.5, 20))}</div>`;
     const tp = (k) => tog(e.paredes[k], `data-pared="${k}"`, t(k), E.tecnologia === 'led' && k === 'suelo' ? `disabled title="${t('sueloLed')}"` : '');
@@ -239,6 +242,7 @@ function modEspacio() {
     if (E.tecnologia === 'led') h += `<p class="ayuda">${t('sueloLed')}</p>`;
     h += `<div class="fila c2">${campo(t('altoPant'), numIn('esp.altoCubierto', e.altoCubierto, 'm', 0.1, 0, 20))}${campo(t('elev'), numIn('esp.elev', e.elev, 'm', 0.1, 0, 10))}</div><p class="ayuda">${t('altoAyuda')}</p>`;
     if (ajuste.esp) h += `<p class="aviso">${ajuste.esp}</p>`;
+    if (proy) h += bloquePos(calculo);
   } else {
     if (E.cantidad === 'varias') h += `<div class="fila c2">${campo(t('num'), numIn('esp.sueltas.n', s.n, 'u', 1, 2, 8))}<div class="campo"><label>${t('disp')}</label><div class="fila c2">${tog(s.disp === 'linea', 'data-set="esp.sueltas.disp" data-v="linea"', t('linea'))}${tog(s.disp === 'arco', 'data-set="esp.sueltas.disp" data-v="arco"', t('arco'))}</div></div></div>`;
     // v7.9 · auditorio: pantalla central de otra medida que las laterales (desde 3 pantallas)
@@ -251,14 +255,18 @@ function modEspacio() {
     if (cen && s.central) {
       h += `<div class="fila c2">${campo(t('anchoCentral'), numIn('esp.sueltas.cAncho', s.cAncho, 'm', 0.1, 0.3, 40))}${campo(t('altoCentral'), numIn('esp.sueltas.cAlto', s.cAlto, 'm', 0.1, 0.3, 20))}</div>`;
       h += `<div class="fila c2">${campo(t('anchoLat'), numIn('esp.sueltas.ancho', s.ancho, 'm', 0.1, 0.3, 40))}${campo(t('altoLat'), numIn('esp.sueltas.alto', s.alto, 'm', 0.1, 0.3, 20))}</div><p class="ayuda">${t('centralAyuda')}</p>`;
-      h += s.disp === 'arco' ? `<div class="fila c2">${sepF}${angF}</div><div class="fila c2">${elevF}${distF}</div>` : `<div class="fila c2">${sepF}${elevF}</div><div class="fila c1">${distF}</div>`;
+      h += s.disp === 'arco' ? `<div class="fila c2">${sepF}${angF}</div>` + (proy ? `<div class="fila c1">${elevF}</div>` : `<div class="fila c2">${elevF}${distF}</div>`) : `<div class="fila c2">${sepF}${elevF}</div>` + (proy ? '' : `<div class="fila c1">${distF}</div>`);
     } else {
       h += `<div class="fila c3">${campo(t('ancho'), numIn('esp.sueltas.ancho', s.ancho, 'm', 0.1, 0.3, 40))}${campo(t('alto'), numIn('esp.sueltas.alto', s.alto, 'm', 0.1, 0.3, 20))}${elevF}</div>`;
-      if (E.cantidad !== 'varias') h += `<div class="fila c1">${distF}</div>`;
-      else if (s.disp === 'arco') h += `<div class="fila c2">${sepF}${angF}</div><div class="fila c1">${distF}</div>`;
-      else h += `<div class="fila c2">${sepF}${distF}</div>`;
+      if (E.cantidad !== 'varias') { if (!proy) h += `<div class="fila c1">${distF}</div>`; }
+      else if (s.disp === 'arco') h += `<div class="fila c2">${sepF}${angF}</div>` + (proy ? '' : `<div class="fila c1">${distF}</div>`);
+      else h += proy ? `<div class="fila c1">${sepF}</div>` : `<div class="fila c2">${sepF}${distF}</div>`;
     }
-    if (E.tecnologia === 'proy') h += `<div class="fila c1">${campo(t('techoAlto'), numIn('esp.sueltas.techo', s.techo, 'm', 0.1, 0, 30))}</div><p class="ayuda">${t('techoAyuda')}</p>`;
+    // v8.4 · proyección: tras la superficie, la posición del proyector; después el público y el techo (en mapping no hay techo)
+    if (proy) {
+      h += bloquePos(calculo) + `<div class="fila c1">${distF}</div>`;
+      if (tipoProy() !== 'mapping') h += `<div class="fila c1">${campo(t('techoAlto'), numIn('esp.sueltas.techo', s.techo, 'm', 0.1, 0, 30))}</div><p class="ayuda">${t('techoAyuda')}</p>`;
+    }
   }
   h += bloqueObst(sala);
   return h + '</section>';
@@ -296,31 +304,15 @@ function modLed(c) {
 function modProy(c) {
   const p = E.proy, sel = c.proyector, haySuelo = c.filas.some(f => f.s.tipo === 'suelo'), paredes = c.filas.filter(f => f.s.tipo !== 'suelo');
   const opt = (idSel) => PROYECTORES.map(q => `<option value="${q.id}"${q.id === idSel ? ' selected' : ''}>${q.nombre} · ${fmtPx(q.lumens)} lm</option>`).join('');
-  const tp = tipoProy(), pared = paredes[0], pos = pared && pared.pos, r2 = (v) => Math.round(v * 100) / 100;
   let h = `<section class="mod"><div class="mod-tit">${ICO.proy}${t('proyMod')}<button type="button" class="sec-btn reset" data-accion="reset-proy">${t('restablecer')}</button></div>`;
-  // v8.2 · 1) tipo de proyección: AUTO decide según el tipo
-  h += `<div class="campo"><label>${t('tipoProy')}</label><div class="fila c3">${['mapping', 'pared', 'sala'].map(v => tog(tp === v, `data-accion="tipo-proy" data-v="${v}"`, t('tp_' + v))).join('')}</div></div><p class="ayuda">${t('tpAyuda_' + tp)}</p>`;
   // 2) proyector (cuerpo) y después su óptica, solo entre las compatibles (guía de ópticas de Epson)
   h += campo(t('proyector'), `<select class="sel" data-sel="proy.cuerpo"><option value="">${t('auto')}${!p.cuerpo && sel ? ' · ' + sel.nombre : ''}</option>${CUERPOS.map(q => `<option value="${q.modelo}"${q.modelo === p.cuerpo ? ' selected' : ''}>${q.modelo} · ${fmtPx(q.lumens)} lm</option>`).join('')}</select>`);
   const lentes = p.cuerpo ? PROYECTORES.filter(q => q.modelo === p.cuerpo && q.optica) : [];
   if (lentes.length) h += campo(t('optica'), `<select class="sel" data-sel="proy.optica"><option value="">${t('auto')}${!p.optica && sel && sel.optica ? ' · ' + sel.optica : ''}</option>${lentes.map(q => `<option value="${q.optica}"${q.optica === p.optica ? ' selected' : ''}>${q.optica} · ${trTxt(q)}${q.ust ? ' · UST' : ''}</option>`).join('')}</select>`);
   if (haySuelo) h += campo(t('proySuelo'), `<select class="sel" data-sel="proy.idSuelo"><option value="">= ${t('proyector')}</option>${opt(p.idSuelo)}</select>`);
-  // 3) posición del proyector: orientación, montaje y altura (🔒), distancia (🔒) con el rango del zoom
-  h += `<div class="etq">${t('posProy')}</div><div class="campo"><label>${t('orientacion')}</label><div class="fila c3">${['auto', 'horizontal', 'vertical'].map(v => tog((p.orient || 'auto') === v, `data-set="proy.orient" data-v="${v}"`, t('or_' + v))).join('')}</div></div>`;
+  // 3) orientación del proyector (la posición va arriba, en el espacio, como dato principal)
+  h += `<div class="campo"><label>${t('orientacion')}</label><div class="fila c3">${['auto', 'horizontal', 'vertical'].map(v => tog((p.orient || 'auto') === v, `data-set="proy.orient" data-v="${v}"`, t('or_' + v))).join('')}</div></div>`;
   if (paredes.some(f => f.p.vert)) h += `<p class="ayuda">${t('enVertical')}</p>`;
-  h += `<div class="campo"><label>${t('montaje')}</label><div class="fila c3">${['auto', 'colgado', 'apoyado'].map(v => tog((p.montaje || 'auto') === v, `data-set="proy.montaje" data-v="${v}"`, t('mo_' + v))).join('')}</div></div>`;
-  const altFija = Number(p.altura) > 0, apoyo = p.montaje === 'auto' ? !!(pos && pos.apoyo) : p.montaje === 'apoyado';
-  const altVal = altFija ? p.altura : (pos ? r2(pos.altura) : 0);
-  h += campoLock(t(apoyo ? 'alturaApoyo' : 'alturaColgado'), 'alt', altFija, numIn('proy.altura', altVal, 'm', 0.1, 0, 200), pos || altFija);
-  h += `<p class="ayuda">${t(altFija ? 'alturaFijaAyuda' : apoyo ? 'alturaApoyoAyuda' : 'alturaColgadoAyuda')}</p>`;
-  const distFija = Number(p.dist) > 0, distVal = distFija ? Number(p.dist) : (pos ? r2(pos.dist) : 0);
-  h += campoLock(t(tp === 'mapping' ? 'distFachada' : 'distOptica'), 'dist', distFija, numIn('proy.dist', distVal, 'm', 0.1, 0, 200), pos || distFija);
-  if (pared) {
-    const a = pared.p.tMin, b = pared.p.tMaxZ;
-    if (b - a > 0.02) h += `<div class="rango"><input type="range" data-rango="proy.dist" min="${r2(a)}" max="${r2(b)}" step="0.01" value="${r2(Math.min(b, Math.max(a, distVal)))}" aria-label="${t('rangoZoom')}"><div class="rango-et"><span>${fmt(a, 2)} m</span><span>${t('rangoZoom')}</span><span>${fmt(b, 2)} m</span></div></div>`;
-    h += `<p class="ayuda">${distFija ? t('distFija', { d: fmt(p.dist, 1), w: fmt(pared.p.imgW, 2), h: fmt(pared.p.imgH, 2) }) : b - a > 0.02 ? t('distAyuda', { a: fmt(a, 2), b: fmt(b, 2) }) : t('distOpticaFija', { a: fmt(a, 2) })}${paredes.length > 1 ? ' ' + t('distVarias') : ''}</p>`;
-  }
-  if (c.filas.some(f => f.p.fueraZoom)) h += `<p class="aviso">${t(c.filas.some(f => f.p.noCubre) ? 'noCubre' : 'fueraZoom')}</p>`;
   // 4) blending
   h += `<div class="etq">${t('solape')}</div><div class="fila c3">${[15, 20, 25].map(v => tog(p.solape === v, `data-set="proy.solape" data-v="${v}" data-num-v="1"`, v + ' %')).join('')}</div>`;
   // 5) luz de la sala según el uso, y ganancia de la pantalla
@@ -328,7 +320,8 @@ function modProy(c) {
   h += campo(t('luzUso'), `<select class="sel" data-uso="1"><option value=""${uso ? '' : ' selected'}>${t('uso_personal')}</option>${USOS_LUZ.map(u => `<option value="${u[1]}"${u[0] === uso ? ' selected' : ''}>${t('uso_' + u[0])} · ${u[1]} lx</option>`).join('')}</select>`);
   h += `<div class="fila c2">${campo(t('luzSala'), numIn('proy.lux', p.lux, 'lx', 10, 0, 5000))}${campo(t('ganancia'), numIn('proy.ganancia', p.ganancia, '×', 0.1, 0.1, 5))}</div>`;
   // 6) avanzado: modo fuera de especificación (imágenes más grandes que las garantizadas), con aviso, cálculo y recomendación
-  h += `<div class="etq">${t('avanzado')}</div><div class="fila c1">${tog(!!p.oos, 'data-accion="proy-oos"', '⚠ ' + t('oos'), 'title="' + t('oosTit') + '"')}</div>`;
+  // v8.4 · fuera de especificación: el botón activo se resalta en ámbar (no es un ajuste normal)
+  h += `<div class="etq">${t('avanzado')}</div><div class="fila c1"><button type="button" class="tog ambar${p.oos ? ' on' : ''}" aria-pressed="${!!p.oos}" data-accion="proy-oos" title="${t('oosTit')}">⚠ ${t('oos')}</button></div>`;
   if (sel) {
     const med = (d) => { const w = d * 0.0254 * sel.ar / Math.sqrt(1 + sel.ar * sel.ar); return fmt(w, 1) + ' × ' + fmt(w / sel.ar, 1); };
     const usada = Math.max(0, ...paredes.map(f => Math.hypot(f.p.imgW, f.p.imgH) / 0.0254));
@@ -344,6 +337,42 @@ function modProy(c) {
   if (haySuelo && c.prSuelo && c.prSuelo !== sel) h += fichaProy(c.prSuelo, t('fProySuelo'));
   h += `<p class="ayuda">${t('autoAyudaProy')}</p><p class="ayuda">${t('datosProy')}</p>`;
   return h + '</section>';
+}
+// v8.4 · datos principales de proyección, en el orden del simulador de Epson y del de Vivitek: el tipo arriba del todo y, tras la
+// superficie, la posición del proyector (primero la distancia y después el montaje con su altura), cada una con su candado
+function bloqueTipo() {
+  const tp = tipoProy();
+  let h = `<div class="campo"><label>${t('tipoProy')}</label><div class="fila c3">${['mapping', 'pared', 'sala'].map(v => tog(tp === v, `data-accion="tipo-proy" data-v="${v}"`, t('tp_' + v))).join('')}</div></div><p class="ayuda">${t('tpAyuda_' + tp)}</p>`;
+  return h;
+}
+function bloquePos(c) {
+  if (!c || !c.filas) return '';
+  const p = E.proy, tp = tipoProy(), paredes = c.filas.filter(f => f.s.tipo !== 'suelo'), pared = paredes[0], pos = pared && pared.pos, r2 = (v) => Math.round(v * 100) / 100;
+  let h = `<div class="etq">${t('posProy')}</div>`;
+  const distFija = Number(p.dist) > 0, distVal = distFija ? Number(p.dist) : (pos ? r2(pos.dist) : 0);
+  h += campoLock(t(tp === 'mapping' ? 'distFachada' : 'distOptica'), 'dist', distFija, numIn('proy.dist', distVal, 'm', 0.1, 0, 200), pos || distFija);
+  if (pared) {
+    const a = pared.p.tMin, b = pared.p.tMaxZ;
+    if (b - a > 0.02) h += `<div class="rango"><input type="range" data-rango="proy.dist" min="${r2(a)}" max="${r2(b)}" step="0.01" value="${r2(Math.min(b, Math.max(a, distVal)))}" aria-label="${t('rangoZoom')}"><div class="rango-et"><span>${fmt(a, 2)} m</span><span>${t('rangoZoom')}</span><span>${fmt(b, 2)} m</span></div></div>`;
+    h += `<p class="ayuda">${distFija ? t('distFija', { d: fmt(p.dist, 1), w: fmt(pared.p.imgW, 2), h: fmt(pared.p.imgH, 2) }) : b - a > 0.02 ? t('distAyuda', { a: fmt(a, 2), b: fmt(b, 2) }) : t('distOpticaFija', { a: fmt(a, 2) })}${paredes.length > 1 ? ' ' + t('distVarias') : ''}</p>`;
+  }
+  if (c.filas.some(f => f.p.fueraZoom)) h += `<p class="aviso">${t(c.filas.some(f => f.p.noCubre) ? 'noCubre' : 'fueraZoom')}</p>`;
+  h += `<div class="campo"><label>${t('montaje')}</label><div class="fila c3">${['auto', 'colgado', 'apoyado'].map(v => tog((p.montaje || 'auto') === v, `data-set="proy.montaje" data-v="${v}"`, t('mo_' + v))).join('')}</div></div>`;
+  const altFija = Number(p.altura) > 0, apoyo = p.montaje === 'auto' ? !!(pos && pos.apoyo) : p.montaje === 'apoyado';
+  const altVal = altFija ? p.altura : (pos ? r2(pos.altura) : 0);
+  h += campoLock(t(apoyo ? 'alturaApoyo' : 'alturaColgado'), 'alt', altFija, numIn('proy.altura', altVal, 'm', 0.1, 0, 200), pos || altFija);
+  h += `<p class="ayuda">${t(altFija ? 'alturaFijaAyuda' : apoyo ? 'alturaApoyoAyuda' : 'alturaColgadoAyuda')}</p>`;
+  return h;
+}
+// v8.3 · el proyector arrastrado en las vistas técnicas (o el desplazamiento de la óptica) fija la distancia y la altura, con su candado
+function fijarDesdeVistas(o, d) {
+  if (o.dist != null) E.proy.dist = Math.round(o.dist * 100) / 100;
+  if (o.yL != null) {
+    const m = E.proy.montaje === 'auto' ? (d.apoyo ? 'apoyado' : 'colgado') : E.proy.montaje;
+    const alt = m === 'apoyado' ? o.yL - d.altoCh / 2 : o.yL + (d.q.rows - 1) * d.paso + d.altoCh / 2 + 0.05;
+    E.proy.montaje = m; E.proy.altura = Math.max(0.01, Math.round(alt * 100) / 100);
+  }
+  actualizar();
 }
 // v8.2 · casilla con candado: sin candado, enseña lo que calcula AUTO; con candado, el valor queda fijo y AUTO lo respeta
 const CANDADO = (on) => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/>${on ? '<path d="M8 11V7.5a4 4 0 018 0V11"/>' : '<path d="M8 11V7.5a4 4 0 017.6-1.7"/>'}</svg>`;
@@ -411,6 +440,7 @@ function vistaResultados(c) {
     h += `<div class="tabla-caja"><table class="tabla"><thead><tr><th>${t('supCol')}</th><th>${t('medida')}</th><th>${t('proyCol')}</th><th>${t('resol')}</th><th>${t('solCol')}</th><th>${t('tiroCol')}</th><th>${t('brCol')}</th></tr></thead><tbody>
       ${c.filas.map(f => { const q = f.p; return `<tr><td>${f.nombre}</td><td>${fmt(f.s.ancho)} × ${fmt(f.s.alto)} m</td><td>${q.cols ? q.cols + '×' + q.rows + ' = ' : ''}${q.n}${q.vert ? ' · ' + t('vert') : ''}</td><td>${q.resW}×${q.resH}</td><td>${fmt(q.solapeRel * 100, 0)} %</td><td>${fmt(q.tiro, 2)} m${q.fuera ? ' ⚠' : ''}</td><td>${fmt(q.nits, 0)} nits</td></tr>`; }).join('')}
     </tbody></table></div>`;
+    h += vistasTecnicas(c, E.vista.tec || 'todas', Number(E.vista.vtSup) || 0);   // v8.3 · vistas técnicas (lateral, frontal y cenital)
     h += vistaPosicion(c);
     h += vistaSombras(c);
   }
@@ -498,14 +528,19 @@ function pintarConsola() {
   }
   c.querySelectorAll('[data-set]').forEach(b => { const on = E[b.dataset.set] === b.dataset.v; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
   const m = c.querySelector('[data-accion="nl-mic"]'); m.classList.toggle('activo', !!escuchando); m.setAttribute('aria-pressed', !!escuchando);
+  // v8.4 · secciones en pruebas: todo lo que no es una pantalla LED (varias pantallas, salas inmersivas, proyección) lleva el aviso
+  // de beta en la caja de la petición, en ámbar tipo LCD. Para quitarlo cuando estén probadas: EN_PRUEBAS = () => false
+  const i = $('#nl-texto'), beta = EN_PRUEBAS(); if (i && i.classList.contains('beta') !== beta) { i.classList.toggle('beta', beta); ajustarPh(); }
 }
+const EN_PRUEBAS = () => !unaLed();
 // el texto guía más largo que quepa entero en la caja (nunca cortado)
 let ctxPh = null;
 function ajustarPh() {
   const i = $('#nl-texto'); if (!i || !i.clientWidth) return;
   const cs = getComputedStyle(i), libre = i.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 2;
-  ctxPh = ctxPh || document.createElement('canvas').getContext('2d'); ctxPh.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
-  const ph = ['nlPh1', 'nlPh2', 'nlPh3', 'nlPh4'].map(k => t(k)).find(x => ctxPh.measureText(x).width <= libre) || '';
+  const beta = i.classList.contains('beta'), fs = parseFloat(cs.fontSize) || 14;
+  ctxPh = ctxPh || document.createElement('canvas').getContext('2d'); ctxPh.font = beta ? `400 ${cs.fontSize} 'Share Tech Mono', monospace` : `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+  const ph = (beta ? ['betaPh1', 'betaPh2', 'betaPh3'] : ['nlPh1', 'nlPh2', 'nlPh3', 'nlPh4']).map(k => t(k)).find(x => ctxPh.measureText(x).width + (beta ? x.length * fs * 0.05 : 0) <= libre) || '';
   if (i.placeholder !== ph) i.placeholder = ph;
 }
 let tEstado = 0;
@@ -620,6 +655,7 @@ function actualizar(sinEscena) {
   pan.innerHTML = modEspacio() + (E.tecnologia === 'led' ? modLed(calculo) : modProy(calculo)) + modElec(calculo) + modSuperficies(calculo);
   pan.scrollTop = sc;
   $('#res').innerHTML = vistaResultados(calculo);
+  activarVistas($('#res'), calculo, fijarDesdeVistas);
   barraEscena();
   if (!sinEscena) { clearTimeout(tEsc); tEsc = setTimeout(construirEscena, 60); }
 }
@@ -727,7 +763,7 @@ document.addEventListener('click', (ev) => {
   // v8.2 · tipo de proyección: la sala inmersiva es «varias + sala»; mapping y pared, una o varias superficies sueltas
   if (a === 'tipo-proy') { const v = b.dataset.v;
     if (v === 'sala') { E.cantidad = 'varias'; E.esp.tipo = 'sala'; }
-    else { E.proy.tipo = v; if (E.cantidad === 'varias' && E.esp.tipo === 'sala') E.cantidad = 'una'; }
+    else { E.proy.tipo = v; E.esp.tipo = 'sueltas'; }
     luzSegunTipo(); actualizar(); return; }
   // candados: al cerrarlo se fija el valor que estaba calculando AUTO; al abrirlo vuelve a AUTO
   if (a === 'lock-dist' || a === 'lock-alt') {
@@ -737,6 +773,7 @@ document.addEventListener('click', (ev) => {
     else if (pw) { if (E.proy.montaje === 'auto') E.proy.montaje = pw.pos.apoyo ? 'apoyado' : 'colgado'; E.proy.altura = Math.max(0.01, r2(pw.pos.altura)); }
     actualizar(); return; }
   if (a === 'proy-oos') { E.proy.oos = !E.proy.oos; actualizar(); return; }
+  if (a === 'vt-modo') { E.vista.tec = b.dataset.v; actualizar(true); return; }   // v8.3 · distribución de las vistas técnicas
 });
 let tNum = 0, tRep = 0, nRep = 0, pasoPendiente = false;
 // ▲▼: un toque = un paso; mantener pulsado repite (x5 y x10 al rato). Se recalcula al soltar (no a mitad de la pulsación).
@@ -768,7 +805,9 @@ document.addEventListener('input', (ev) => {
   if (isNaN(v)) return;
   const min = parseFloat(i.min), max = parseFloat(i.max);
   fijar(i.dataset.num, Math.min(isNaN(max) ? v : max, Math.max(isNaN(min) ? v : min, i.step === '1' ? Math.round(v) : v))); coherencia(i.dataset.num);
-  clearTimeout(tNum); tNum = setTimeout(() => { const foco = i.dataset.num, pos = i.selectionStart; actualizar(); const n = document.querySelector(`[data-num="${foco}"]`); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} } }, 350);
+  // v8.4 · al recalcular se rehace el panel: la casilla recupera el foco con el cursor al final (las casillas numéricas no tienen
+  // posición de cursor y el navegador lo dejaba al principio: al teclear despacio, «35» salía «53»)
+  clearTimeout(tNum); tNum = setTimeout(() => { const foco = i.dataset.num; actualizar(); const n = document.querySelector(`[data-num="${foco}"]`); if (n) { n.focus(); const v = n.value; n.value = ''; n.value = v; } }, 600);
 });
 document.addEventListener('change', (ev) => {
   const s = ev.target;
@@ -782,6 +821,7 @@ document.addEventListener('change', (ev) => {
   if (s.dataset.sel) { fijar(s.dataset.sel, s.value); if (s.dataset.sel === 'proy.cuerpo') E.proy.optica = ''; actualizar(); }   // otro proyector: su óptica vuelve a AUTO
   if (s.dataset.rango) { fijar(s.dataset.rango, Math.round(Number(s.value) * 100) / 100); actualizar(); }   // v8.2 · deslizador del zoom: fija la distancia
   if (s.dataset.uso && s.value) { E.proy.lux = Number(s.value); actualizar(); }
+  if (s.dataset.vtSel) { E.vista.vtSup = Number(s.value) || 0; actualizar(true); }   // v8.3 · superficie de las vistas técnicas
 });
 
 // PDF: hoja A4 en claro con cabecera, captura 3D, resultados, equipos, electrónica y avisos (se imprime con el navegador)

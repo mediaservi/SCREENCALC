@@ -175,6 +175,7 @@ select.sel { width: 100%; background: var(--hundido); color: var(--verde); borde
 .esc-barra .tog { min-height: 28px; padding: 4px 9px; font-size: 10.5px; background: rgba(30,30,33,.85); backdrop-filter: blur(6px); }
 .esc-barra .tog.on { background: rgba(10,26,10,.85); }
 .esc-info { position: absolute; left: 10px; bottom: 10px; font: 400 11.5px var(--mono); color: var(--tenue); background: rgba(10,10,12,.7); border: 1px solid #000; padding: 5px 9px; border-radius: 6px; pointer-events: none; }
+.esc-info { max-width: calc(100% - 20px); line-height: 1.4; }
 .esc-aviso { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; color: var(--tenue); font-size: 13px; line-height: 1.5; }
 .res { background: var(--chasis); border-top: 1px solid #000; padding: 10px; display: grid; gap: 10px; overflow-y: auto; max-height: 44vh; }
 .res-tot { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
@@ -293,3 +294,43 @@ select.sel { width: 100%; background: var(--hundido); color: var(--verde); borde
   .im-pie { font-size: 7pt; color: #555; text-align: center; border-top: 1px solid #d6d6de; padding-top: 4px; white-space: nowrap; }
   .im-pie .ic { background-color: #9900ff; }
 }
+
+/* v8.3 · vistas técnicas de proyección (lateral, frontal y cenital) con cotas, rango posible y proyector arrastrable */
+.vt-cab { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.vt-modos { display: flex; gap: 4px; flex-wrap: wrap; }
+.vt-modos .tog { min-height: 28px; padding: 4px 10px; font-size: 10.5px; }
+.vt-sup { width: auto; max-width: 220px; padding: 5px 8px; font-size: 12px; }
+.vt-rejilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 10px; }
+.vt-rejilla.una { grid-template-columns: minmax(0, 1fr); }
+.vt-fig { margin: 0; display: flex; flex-direction: column; gap: 5px; min-width: 0; background: #1d1d20; border: 1px solid #0b0b0c; border-radius: 10px; padding: 8px; }
+.vt-fig figcaption { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: var(--t-lab); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tenue); }
+.vt-ley { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; letter-spacing: .02em; text-transform: none; font-size: 11px; }
+.vt-ley i { width: 12px; height: 9px; border-radius: 2px; display: inline-block; }
+.vt-ley i.r { background: rgba(0,180,255,.3); border: 1px dashed #00b4ff; }
+.vt-ley i.f { background: rgba(255,0,170,.45); }
+.vt-lienzo { touch-action: none; }
+.vt-svg { display: block; width: 100%; height: auto; border-radius: 6px; }
+.vt-svg .vt-fondo { fill: #151518; }
+.vt-svg text { font: 400 12.5px var(--mono); fill: #d6d6dc; }
+.vt-svg .vt-uni { fill: #8d8d96; font-size: 10px; }
+.vt-svg .vt-cota line { stroke: #8d8d96; stroke-width: 1; }
+.vt-proy { cursor: grab; outline: none; }
+.vt.arrastrando .vt-proy { cursor: grabbing; }
+.vt-proy:hover rect[fill="#2b2b31"], .vt-proy:focus-visible rect[fill="#2b2b31"] { stroke: #00ff04; }
+.vt-shift { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--tenue); }
+.vt-shift label { font-size: var(--t-lab); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.vt-shift input[type="range"] { flex: 1 1 160px; min-width: 120px; accent-color: #00ff04; }
+.vt-shift b { font: 400 13px var(--mono); color: var(--txt); white-space: nowrap; } .vt-shift b.mal { color: #ff4d5e; }
+.vt-shift small { color: var(--tenue); }
+.vt-h { font-size: 11.5px; white-space: nowrap; }
+@media print { .vt-modos, .vt-sup, .vt-shift { display: none !important; } }
+
+/* v8.4 · fuera de especificación: activo en ámbar */
+.tog.ambar.on { background: linear-gradient(180deg, rgba(255,176,0,.2), rgba(255,176,0,.07)), #1d1606; color: #ffb000; border-color: #ffb000; box-shadow: 0 0 10px rgba(255,176,0,.35), 0 2px 0 #000; text-shadow: 0 0 6px rgba(255,176,0,.5); }
+/* v8.4 · la escena 3D recibe el teclado (flechas, + y −) al pulsarla */
+#escena canvas:focus { outline: none; }
+#escena canvas:focus-visible { outline: 2px solid var(--verde); outline-offset: -2px; }
+
+/* v8.4 · secciones en pruebas (todo menos una pantalla LED): aviso de beta en la caja de la petición, en ámbar tipo LCD */
+.con-nl input[type="text"].beta { border-color: rgba(255,176,0,.45); }
+.con-nl input[type="text"].beta::placeholder { color: #ffb000; font-family: 'Share Tech Mono', ui-monospace, monospace; letter-spacing: .05em; text-shadow: 0 0 6px rgba(255,176,0,.55); opacity: 1; }
