@@ -8,16 +8,46 @@
 (function () {
   'use strict';
   const IDIOMA = { es: 'es-ES', en: 'en-GB', ca: 'ca-ES' }, WHISPER = { es: 'spanish', en: 'english', ca: 'catalan' };
+  // v7.5 · dictado continuo: las pausas a media frase ya no lo cortan. Si el navegador cierra la escucha
+  // (fin de frase, silencio o límite de tiempo), se vuelve a abrir sola y lo dictado se va sumando; se para al
+  // pulsar otra vez el micrófono o tras SILENCIO ms sin oír nada. En Android cada resultado repite lo ya dicho:
+  // lo repetido se descarta.
+  const SILENCIO = 10000;
+  const unir = (...p) => p.map(s => String(s || '').trim()).filter(Boolean).join(' ');
+  const norma = (s) => String(s || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
   function dictar(lang, alTexto, alEstado) {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) { alEstado('sinMic'); return null; }
-    const r = new SR(); r.lang = IDIOMA[lang] || 'es-ES'; r.interimResults = true; r.continuous = false;
-    let final = '';
-    r.onresult = (e) => { let parcial = ''; for (let i = e.resultIndex; i < e.results.length; i++) { const t = e.results[i][0].transcript; if (e.results[i].isFinal) final += t; else parcial += t; } alTexto((final + ' ' + parcial).trim(), !parcial); };
-    r.onerror = (e) => alEstado(e && e.error === 'not-allowed' ? 'micDenegado' : 'micError');
-    r.onend = () => alEstado('micFin');
-    try { r.start(); alEstado('escuchando'); } catch (e) { alEstado('micError'); return null; }
-    return r;
+    let activo = true, r = null, previo = '', vacias = 0, reloj = 0;
+    // tras SILENCIO ms sin oír nada, el micrófono se apaga solo
+    const vigilar = () => { clearTimeout(reloj); reloj = setTimeout(() => { activo = false; try { r.stop(); } catch (e) {} }, SILENCIO); };
+    const abrir = () => {
+      const s = new SR(); r = s; s.lang = IDIOMA[lang] || 'es-ES'; s.interimResults = true; s.continuous = true; s.maxAlternatives = 1;
+      let sesion = [], pend = '', oido = false;
+      s.onresult = (e) => {
+        vigilar(); oido = true; vacias = 0;
+        const fin = []; let parcial = '';
+        for (let i = 0; i < e.results.length; i++) {
+          const t = String(e.results[i][0].transcript || '').trim(); if (!t) continue;
+          if (!e.results[i].isFinal) { parcial = unir(parcial, t); continue; }
+          const k = fin.length - 1;
+          if (k >= 0 && norma(t).startsWith(norma(fin[k]))) fin[k] = t; else if (k < 0 || !norma(fin[k]).startsWith(norma(t))) fin.push(t);
+        }
+        sesion = fin;
+        const f = unir(...fin); if (parcial && f && norma(parcial).startsWith(norma(f))) parcial = parcial.split(/\s+/).slice(f.split(/\s+/).length).join(' ');
+        pend = parcial; alTexto(unir(previo, f, parcial), !parcial);
+      };
+      s.onerror = (e) => { const x = e && e.error; if (x === 'not-allowed' || x === 'service-not-allowed') { activo = false; alEstado('micDenegado'); } else if (x === 'audio-capture' || x === 'network') { activo = false; alEstado('micError'); } };
+      s.onend = () => {
+        previo = unir(previo, ...sesion, pend); sesion = []; pend = '';   // lo que quedó a medio reconocer no se pierde
+        if (!oido) vacias++;
+        if (activo && vacias < 6) { try { abrir(); return; } catch (e) {} }
+        clearTimeout(reloj); activo = false; alTexto(previo, true); alEstado('micFin');
+      };
+      s.start();
+    };
+    try { abrir(); vigilar(); alEstado('escuchando'); } catch (e) { alEstado('micError'); return null; }
+    return { stop() { activo = false; clearTimeout(reloj); try { r.stop(); } catch (e) { alEstado('micFin'); } } };
   }
   async function transcribir(file, lang, alEstado) {
     alEstado('leyendo');

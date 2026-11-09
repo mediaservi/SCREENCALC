@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v7.4** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v7.5** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -25,7 +25,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 
 ## Funciones
 
-- **Petición en lenguaje natural:** se escribe, se dicta o se sube un audio en la barra de la consola y la app propone una pantalla. Abre un solo popup «Datos del proyecto» con todos los datos en botones: lo que viene en el texto sale marcado con ✓, lo que falta lleva un valor por defecto que se cambia con un toque, y un único botón CALCULAR. Solo es obligatoria la medida (en metros), salvo si se pide una resolución. Entiende números dictados en palabras. Se interpreta con reglas locales, sin servicios externos de IA.
+- **Petición en lenguaje natural:** se escribe, se dicta o se sube un audio en la barra de la consola y la app propone una pantalla. Abre un solo popup «Datos del proyecto» con todos los datos en botones: lo que viene en el texto sale marcado con ✓, lo que falta lleva un valor por defecto que se cambia con un toque, y un único botón CALCULAR. Solo es obligatoria la medida (en metros), salvo si se pide una resolución. Entiende números dictados en palabras. El dictado no se corta con las pausas: sigue escuchando hasta que se pulsa otra vez el micrófono (o tras 10 s sin oír nada). Se interpreta con reglas locales, sin servicios externos de IA.
 - **Preguntas de proyecto llave en mano:** uso (interior, exterior, escaparate), instalación o alquiler, distancia del público, ¿cerca del mar o mucha humedad? (variante tropicalizada con contactos de oro), electrónica sí/no (con o sin backup, con o sin escalador, conexión RJ45 o rack con fibra), mediaserver (marca, Dante), número, tipo y resolución de las fuentes de vídeo y distancia de las fuentes.
 - **Panel de entrada manual:** INSTALL / RENTAL, INDOOR / OUTDOOR / ESCAPARATE, pitch y nits (valores de la tabla con flechas ▲▼), COLUMNAS y FILAS, ancho y alto con selector de unidad m / cm / mm (por defecto cm; el PDF sigue la unidad elegida), resolución mínima (HD / FHD / UHD 4K) y altura sobre el suelo. Muestra en vivo medidas, cabinets y resolución.
 - **Modo resumen:** si la petición se hizo en texto, el panel solo muestra lo elegido. Con "Editar a mano" se vuelve al panel completo. En móvil, el botón flotante ⚙ PANEL vuelve al panel desde los resultados.
@@ -89,7 +89,15 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v7.4)
+## Cambios de la versión actual (v7.5)
+
+- **Dictado sin cortes**, en la consola y en el cálculo de una pantalla LED: las pausas a media frase ya no lo cortan.
+  - Si el navegador cierra la escucha al acabar una frase o tras un silencio corto, se vuelve a abrir sola y lo dictado se va sumando.
+  - Se para al pulsar otra vez el micrófono, o sola tras 10 s sin oír nada.
+  - En Android ya no se repiten palabras.
+  - El aviso de la consola recuerda que hay que pulsar el micrófono para terminar.
+
+## Cambios de la versión v7.4
 
 - **PDF de la consola rediseñado** (una pantalla de proyección, varias pantallas y salas inmersivas):
   - **cabecera en una fila** con las tres piezas del mismo alto: logo de SCREENS a la izquierda, avhub.mediaservi.com al centro con la fecha debajo (centrada y espaciada) y logo de AVHUB a la derecha, alineados con el ancho útil de la hoja;
