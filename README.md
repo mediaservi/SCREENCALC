@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v7.9** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v8.0** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -89,7 +89,26 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v7.9)
+## Cambios de la versión actual (v8.0)
+
+- **Proyección para mapping y fachadas** (por ejemplo, una fachada de 12 × 19 m con los proyectores en torres al otro lado de la calle):
+  - **proyector en vertical (retrato)**, para todos los proyectores salvo las ópticas ultracortas de desplazamiento fijo. En AUTO se usa cuando hace falta menos equipos: la fachada de 12 × 19 m se cubre con un solo proyector;
+  - **distancia fija hasta 200 m**: el motor elige la óptica y el zoom que dan la imagen necesaria a esa distancia y, si no llega, añade equipos;
+  - **montaje colgado** (techo o truss) **o apoyado** (sobremesa, suelo o torre), con su altura. En AUTO, sin techo, el proyector va en una base o torre a la altura más baja que permite el desplazamiento de la óptica;
+  - **rejilla automática de columnas × filas con blending en los dos sentidos**, con la que necesita menos equipos;
+  - la imagen puede sobresalir hasta un 20 % de la superficie, que se enmascara.
+- **Catálogo de Epson dentro de la app, también sin conexión:** los 13 proyectores de alta luminosidad (series PU1000, PU2000, PQ2000 y XQ2030B) con sus 17 ópticas compatibles, según la guía de ópticas de Epson (08/2026).
+  - Cada óptica lleva su relación de proyección y su desplazamiento para cada serie.
+  - Los topes de luminosidad: 12.000 lm con la ELPLW05 y 20.000 lm con algunas ópticas en el EB-XQ2030B.
+  - Se elige primero el proyector y después la óptica; en AUTO, el motor lo elige todo.
+- **Desplazamiento de la lente:** la tabla de posición avisa en rojo cuando se necesita más desplazamiento del que da la óptica, con el máximo de la óptica al lado. En vertical cuenta el desplazamiento horizontal de la óptica, que es mucho menor.
+- **Resultados, PDF y simulación 3D:**
+  - la rejilla («1×3 = 3»), la orientación, la distancia y el montaje salen en la tabla y en la línea de cabecera del PDF;
+  - la escena 3D dibuja cada imagen de la rejilla con sus solapes, los proyectores en vertical girados, y las torres;
+  - la vista encuadra también los proyectores aunque estén lejos.
+- **Petición en lenguaje natural:** entiende «mapping de una fachada de 12 x 19 con proyectores en torres a 25 m», «en vertical», «torre de 6 m», «colgados de un truss a 8 m» o «sobremesa».
+
+## Cambios de la versión v7.9
 
 - **Varias pantallas de medidas distintas** (por ejemplo, un auditorio con una pantalla central grande y dos laterales más pequeñas):
   - en VARIAS → PANTALLAS, desde 3 pantallas, el botón CENTRAL DISTINTA da medidas propias a la central (con un número par, a las dos del medio) y a las laterales;

@@ -1,14 +1,14 @@
 // SCREENS · interfaz (consola fija con petición en lenguaje natural, panel de rack, simulación 3D y resultados)
 import { cargarCatalogo, ordenar, enStock } from './catalogo.js';
 import { superficies, distanciaPublico, elegirModelo, calcularLed, totales, aplicarPuertas, obstaculoMundo, puertaMundo } from './led.js';
-import { PROYECTORES, calcularPared, calcularSuelo, SOLAPE_MAX, analizarSombras, obstaculosEnHaces } from './proyeccion.js';
+import { PROYECTORES, CUERPOS, calcularPared, calcularSuelo, SOLAPE_MAX, analizarSombras, obstaculosEnHaces } from './proyeccion.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
 import { interpretar } from './peticion.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v7.9';
+const VERSION = 'v8.0';
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   cantidad: 'varias', tecnologia: 'led',
@@ -17,7 +17,7 @@ const DEF = () => ({
     sueltas: { n: 3, disp: 'arco', ancho: 4, alto: 2.25, elev: 0.6, sep: 0.1, angulo: 25, dist: 5, techo: 3, central: false, cAncho: 6, cAlto: 3.4 },
     obst: [] },
   led: { clase: 'INSTALL', tipo: 'INDOOR', crm: '', ajuste: 'dentro' },
-  proy: { id: '', idSuelo: '', solape: 15, lux: 140, ganancia: 1, dist: 0 },
+  proy: { cuerpo: '', optica: '', idSuelo: '', solape: 15, lux: 140, ganancia: 1, dist: 0, orient: 'auto', montaje: 'auto', altura: 0 },
   elec: { backup: false, escalador: 'con', conexion: 'directo', sel: '', marca: 'todos', dante: false, selMedia: '' },
   vista: { contenido: 'carta', etiquetas: true, camara: 'exterior', zona: true, modo: 'continuo' }
 });
@@ -64,29 +64,41 @@ function calcular() {
   }
   const sups = superficies(esp, 0);
   const opc = { solapeMin: E.proy.solape / 100 };
-  const optPared = { ...opc, dist: Number(E.proy.dist) || 0 };
+  // v8.0 · distancia fija (torres al otro lado de la calle, truss…), orientación (horizontal / vertical) y montaje con su altura
+  const fijaDist = Math.max(0, Number(E.proy.dist) || 0);
+  const optPared = { ...opc, dist: fijaDist, orient: E.proy.orient || 'auto' };
+  const coloc = { montaje: E.proy.montaje || 'auto', altura: Math.max(0, Number(E.proy.altura) || 0) };
   const altoEsc = esp.tipo === 'sala' ? esp.alto : Math.max(3, ...sups.map(s => s.elev + s.alto)) + 0.8;
   const obs = obstaculosDe(esp), haySuelo = sups.some(s => s.tipo === 'suelo');
   // un mismo modelo para todas las paredes; el suelo puede llevar el mismo u otro
   const montar = (pP, pS) => {
     const filas = sups.map(s => s.tipo === 'suelo'
       ? { s, p: calcularSuelo(s, pS, { altoSala: esp.alto, ...opc }), proyector: pS, nombre: nombreSup(s) }
-      : { s, p: calcularPared(s, pP, { alcance: alcance(esp, s, dist), ...optPared }), proyector: pP, nombre: nombreSup(s) });
-    const S = analizarSombras(filas, esp, altoEsc); S.obst = obstaculosEnHaces(obs, S.haces);
+      : { s, p: calcularPared(s, pP, { alcance: fijaDist > 0 && esp.tipo !== 'sala' ? null : alcance(esp, s, dist), ...optPared }), proyector: pP, nombre: nombreSup(s) });
+    const S = analizarSombras(filas, esp, altoEsc, coloc); S.obst = obstaculosEnHaces(obs, S.haces);
     return { filas, S, coste: costeInstalacion(filas, S) };
   };
-  // AUTO: la instalación limpia (sin chasis que choquen ni proyectores dentro de otros haces) con menos equipos y más brillo
-  const mejorDe = (fn) => PROYECTORES.map(q => ({ q, r: fn(q) })).sort((x, y) => x.r.coste - y.r.coste)[0];
-  const fijo = E.proy.id && PROYECTORES.find(p => p.id === E.proy.id), fijoS = E.proy.idSuelo && PROYECTORES.find(p => p.id === E.proy.idSuelo);
+  // AUTO: la instalación limpia (sin chasis que choquen ni proyectores dentro de otros haces) con menos equipos y más brillo.
+  // Con el catálogo completo (cuerpos × ópticas), primero se puntúa cada combinación con el cálculo rápido de las paredes
+  // y solo las mejores pasan por la colocación completa con sombras y choques
+  const rapido = (q) => { let k = 0; sups.forEach(s => { if (s.tipo === 'suelo') return; const r = calcularPared(s, q, { alcance: fijaDist > 0 && esp.tipo !== 'sala' ? null : alcance(esp, s, dist), ...optPared });
+    k += (r.fuera ? 1e7 : 0) + (r.noCubre ? 4e6 : 0) + (r.limite ? 2e6 : 0) + r.n * 1000 + (r.recorte + r.recorteX) * 300 - Math.min(r.nits, 250) * 0.5; }); return k; };
+  const supS = sups.find(s => s.tipo === 'suelo');
+  const rapidoS = (q) => { const r = calcularSuelo(supS, q, { altoSala: esp.alto, ...opc }); return r.n * 1000 - Math.min(r.nits, 250) * 0.5; };
+  const mejores = (lista, k = 10, fc = rapido) => lista.length <= k ? lista : lista.map(q => ({ q, c: fc(q) })).sort((a, b) => a.c - b.c).slice(0, k).map(x => x.q);
+  const mejorDe = (lista, fn) => lista.map(q => ({ q, r: fn(q) })).sort((x, y) => x.r.coste - y.r.coste)[0];
+  const cand = PROYECTORES.filter(q => (!E.proy.cuerpo || q.modelo === E.proy.cuerpo) && (!E.proy.optica || q.optica === E.proy.optica));
+  const lista = cand.length ? cand : PROYECTORES;
+  const fijo = lista.length === 1 ? lista[0] : null, fijoS = E.proy.idSuelo && PROYECTORES.find(p => p.id === E.proy.idSuelo);
   let proyector, prSuelo, inst, auto = null;
   if (fijo) { proyector = fijo; }
-  else { const m = mejorDe(q => montar(q, fijoS || q)); proyector = m.q; }
+  else { const m = mejorDe(mejores(lista), q => montar(q, fijoS || q)); proyector = m.q; }
   if (fijoS) prSuelo = fijoS;
-  else if (haySuelo) prSuelo = mejorDe(q => montar(proyector, q)).q;
+  else if (haySuelo) prSuelo = mejorDe(mejores(PROYECTORES, 8, rapidoS), q => montar(proyector, q)).q;
   else prSuelo = proyector;
   inst = montar(proyector, prSuelo);
   // con un modelo elegido a mano que no deja una instalación limpia, se propone el de AUTO
-  if (fijo && (inst.S.conflictos.length || inst.S.choques.length)) { const m = mejorDe(q => montar(q, fijoS || q)); if (m.q !== fijo && !m.r.S.conflictos.length && !m.r.S.choques.length) auto = m.q; }
+  if (fijo && (inst.S.conflictos.length || inst.S.choques.length)) { const m = mejorDe(mejores(PROYECTORES), q => montar(q, fijoS || q)); if (m.q !== fijo && !m.r.S.conflictos.length && !m.r.S.choques.length) auto = m.q; }
   const filas = inst.filas;
   const tot = { n: 0, lumenes: 0, nitsMin: Infinity, lienzoW: 0, lienzoH: 0 };
   filas.forEach(f => { tot.n += f.p.n; tot.lumenes += f.p.n * f.proyector.lumens; tot.nitsMin = Math.min(tot.nitsMin, f.p.nits); if (f.s.tipo !== 'suelo') { tot.lienzoW += f.p.resW; tot.lienzoH = Math.max(tot.lienzoH, f.p.resH); } });
@@ -98,9 +110,11 @@ function calcular() {
   // posición final de cada proyector (tras resolver choques): distancia óptica–pared, alturas y lens shift
   filas.forEach(f => { if (f.s.tipo === 'suelo') return;
     const hs = inst.S.haces.filter(h => h.fila === f); if (!hs.length) return;
-    const h = hs[0], q = f.p, yC = (h.y0 + h.y1) / 2;
-    f.pos = { dist: Math.max(...hs.map(x => x.zL)), yLente: h.lente.y, y0: h.y0, y1: h.y1, techo: esp.tipo === 'sala' ? esp.alto : (esp.sueltas.techo || 0),
-      shiftV: (h.lente.y - yC) / q.imgH * 100, diag: Math.hypot(q.imgW, q.imgH) / 0.0254 }; });
+    const q = f.p, sh = (x) => (x.lente.y - (x.y0 + x.y1) / 2) / q.imgH * 100;
+    // con varias filas: el desplazamiento mayor, la lente más baja y la imagen conjunta
+    const h = hs.reduce((a, x) => (Math.abs(sh(x)) > Math.abs(sh(a)) ? x : a), hs[0]);
+    f.pos = { dist: Math.max(...hs.map(x => x.zL)), yLente: Math.min(...hs.map(x => x.lente.y)), y0: Math.min(...hs.map(x => x.y0)), y1: Math.max(...hs.map(x => x.y1)), techo: esp.tipo === 'sala' ? esp.alto : (esp.sueltas.techo || 0),
+      shiftV: sh(h), diag: Math.hypot(q.imgW, q.imgH) / 0.0254 }; });
   const c = { esp, dist, proyector, prSuelo, filas, tot, autoPropone: auto, lx, gan };
   c.sombras = inst.S;
   c.elec = electronica(c); return c;
@@ -172,10 +186,13 @@ function fichaCab(m) {
 const epsonManual = (q) => `https://support.epson.net/setupnavi/?MKN=${encodeURIComponent(q.modelo)}&PINF=support&LG2=${({ es: 'ES', en: 'EN', ca: 'CA' })[idioma()] || 'ES'}&OSC=MI`;
 const EPSON_CALC = 'https://support.epson-europe.com/TDS/#/page/advanceMode';
 const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbwkc12y4LODbFe-kQidnR2MbbA6cbW1WbhU3UiqmDmshx-ncAdGYrFRy8PNjm9Wg6Mx3w/exec';
+// relación de proyección de una combinación cuerpo + óptica («0,35:1» o «1,57–2,56:1»)
+const trTxt = (q) => (q.trMin === q.trMax ? fmt(q.trMin, 2) : fmt(q.trMin, 2) + '–' + fmt(q.trMax, 2)) + ':1';
 function fichaProy(q, cat) {
   return fichaHTML({ cat, icono: 'proy', marca: q.marca, modelo: q.nombre, claveFoto: q.modelo, foto: q.imagen, fotoTrasera: q.trasera, acento: '#00b4ff',
     enlaces: q.marca === 'EPSON' ? [[epsonManual(q), t('epsonManual')], [EPSON_CALC, t('epsonCalc')]] : [],
-    specs: [[t('kTR'), (q.trMin === q.trMax ? q.trMin : q.trMin + '–' + q.trMax) + ':1'], [t('kLm'), fmtPx(q.lumens) + ' lm'], [t('kFmt'), q.arTxt], [t('kRes'), q.resX + '×' + q.resY], [t('kDiag'), q.maxDiagPulg + '"'], [t('k4k'), q.k4 ? 'Enhancement' : '—']] });
+    specs: [[t('kTR'), trTxt(q)], [t('kLm'), fmtPx(q.lumens) + ' lm'], [t('kFmt'), q.arTxt], [t('kRes'), q.resX + '×' + q.resY], [t('kDiag'), q.maxDiagPulg + '"'], [t('k4k'), q.k4nativo ? '4K' : q.k4 ? 'Enhancement' : '—'],
+      [t('kShift'), q.shiftV ? `${q.shiftSube ? '+' : '±'}${q.shiftV} % / ±${q.shiftH} %` : '']] });
 }
 function fichaProc(x) {
   return fichaHTML({ cat: t('procesador'), icono: 'elec', marca: x.marca, modelo: x.modelo, foto: x.front, fotoTrasera: x.back, acento: '#00ff04', stock: x.enStock ? true : null,
@@ -253,19 +270,27 @@ function modLed(c) {
   return h + '</section>';
 }
 function modProy(c) {
-  const p = E.proy, sel = c.proyector, haySuelo = c.filas.some(f => f.s.tipo === 'suelo');
+  const p = E.proy, sel = c.proyector, haySuelo = c.filas.some(f => f.s.tipo === 'suelo'), paredes = c.filas.filter(f => f.s.tipo !== 'suelo');
   const opt = (idSel) => PROYECTORES.map(q => `<option value="${q.id}"${q.id === idSel ? ' selected' : ''}>${q.nombre} · ${fmtPx(q.lumens)} lm</option>`).join('');
   let h = `<section class="mod"><div class="mod-tit">${ICO.proy}${t('proyMod')}<button type="button" class="sec-btn reset" data-accion="reset-proy">${t('restablecer')}</button></div>`;
-  h += campo(t('proyector'), `<select class="sel" data-sel="proy.id"><option value="">${t('auto')}${!p.id && sel ? ' · ' + sel.nombre : ''}</option>${opt(p.id)}</select>`);
+  // v8.0 · primero el proyector (cuerpo) y después su óptica, solo entre las compatibles (guía de ópticas de Epson)
+  h += campo(t('proyector'), `<select class="sel" data-sel="proy.cuerpo"><option value="">${t('auto')}${!p.cuerpo && sel ? ' · ' + sel.nombre : ''}</option>${CUERPOS.map(q => `<option value="${q.modelo}"${q.modelo === p.cuerpo ? ' selected' : ''}>${q.modelo} · ${fmtPx(q.lumens)} lm</option>`).join('')}</select>`);
+  const lentes = p.cuerpo ? PROYECTORES.filter(q => q.modelo === p.cuerpo && q.optica) : [];
+  if (lentes.length) h += campo(t('optica'), `<select class="sel" data-sel="proy.optica"><option value="">${t('auto')}${!p.optica && sel && sel.optica ? ' · ' + sel.optica : ''}</option>${lentes.map(q => `<option value="${q.optica}"${q.optica === p.optica ? ' selected' : ''}>${q.optica} · ${trTxt(q)}${q.ust ? ' · UST' : ''}</option>`).join('')}</select>`);
   if (sel) h += fichaProy(sel, t('fProy'));
   if (haySuelo) { h += campo(t('proySuelo'), `<select class="sel" data-sel="proy.idSuelo"><option value="">= ${t('proyector')}</option>${opt(p.idSuelo)}</select>`); if (c.prSuelo && c.prSuelo !== sel) h += fichaProy(c.prSuelo, t('fProySuelo')); }
-  h += `<div class="fila c2">${campo(t('luzSala'), numIn('proy.lux', p.lux, 'lx', 10, 0, 5000))}${campo(t('ganancia'), numIn('proy.ganancia', p.ganancia, '×', 0.1, 0.1, 5))}</div>`;
-  const pared = c.filas.find(f => f.s.tipo !== 'suelo');
-  h += campo(t('distOptica'), numIn('proy.dist', p.dist, 'm', 0.05, 0, 60));
-  if (pared) h += `<p class="ayuda">${t('distAyuda', { a: fmt(pared.p.tMin, 2), b: fmt(pared.p.tMaxZ, 2) })}${c.filas.filter(f => f.s.tipo !== 'suelo').length > 1 ? ' ' + t('distVarias') : ''}</p>`;
-  if (c.filas.some(f => f.p.fueraZoom)) h += `<p class="aviso">${t('fueraZoom')}</p>`;
+  // posición del proyector: orientación, distancia a la superficie y montaje con su altura
+  h += `<div class="etq">${t('posProy')}</div><div class="campo"><label>${t('orientacion')}</label><div class="fila c3">${['auto', 'horizontal', 'vertical'].map(v => tog((p.orient || 'auto') === v, `data-set="proy.orient" data-v="${v}"`, t('or_' + v))).join('')}</div></div>`;
+  if (paredes.some(f => f.p.vert)) h += `<p class="ayuda">${t('enVertical')}</p>`;
+  h += campo(t('distOptica'), numIn('proy.dist', p.dist, 'm', 0.1, 0, 200));
+  const pared = paredes[0];
+  if (pared) h += `<p class="ayuda">${Number(p.dist) > 0 ? t('distFija', { d: fmt(p.dist, 1), w: fmt(pared.p.imgW, 2), h: fmt(pared.p.imgH, 2) }) : t('distAyuda', { a: fmt(pared.p.tMin, 2), b: fmt(pared.p.tMaxZ, 2) })}${paredes.length > 1 ? ' ' + t('distVarias') : ''}</p>`;
+  if (c.filas.some(f => f.p.fueraZoom)) h += `<p class="aviso">${t(c.filas.some(f => f.p.noCubre) ? 'noCubre' : 'fueraZoom')}</p>`;
+  h += `<div class="campo"><label>${t('montaje')}</label><div class="fila c3">${['auto', 'colgado', 'apoyado'].map(v => tog((p.montaje || 'auto') === v, `data-set="proy.montaje" data-v="${v}"`, t('mo_' + v))).join('')}</div></div>`;
+  if (p.montaje === 'colgado' || p.montaje === 'apoyado') h += campo(t(p.montaje === 'apoyado' ? 'alturaApoyo' : 'alturaColgado'), numIn('proy.altura', p.altura, 'm', 0.1, 0, 60)) + `<p class="ayuda">${t(p.montaje === 'apoyado' ? 'alturaApoyoAyuda' : 'alturaColgadoAyuda')}</p>`;
   h += `<div class="etq">${t('solape')}</div><div class="fila c3">${[15, 20, 25].map(v => tog(p.solape === v, `data-set="proy.solape" data-v="${v}" data-num-v="1"`, v + ' %')).join('')}</div>`;
-  h += `<p class="ayuda">${t('autoAyudaProy')}</p><p class="aviso">${t('datosProy')}</p>`;
+  h += `<div class="fila c2">${campo(t('luzSala'), numIn('proy.lux', p.lux, 'lx', 10, 0, 5000))}${campo(t('ganancia'), numIn('proy.ganancia', p.ganancia, '×', 0.1, 0.1, 5))}</div>`;
+  h += `<p class="ayuda">${t('autoAyudaProy')}</p><p class="ayuda">${t('datosProy')}</p>`;
   return h + '</section>';
 }
 function modElec(c) {
@@ -320,7 +345,7 @@ function vistaResultados(c) {
     const T = c.tot, p = c.proyector;
     const tiros = c.filas.filter(f => f.pos).map(f => f.pos.dist);
     h += `<div class="res-tot">
-      ${tarjeta(t('proyectores'), fmtPx(T.n), '', p.nombre, '#b566ff')}
+      ${tarjeta(t('proyectores'), fmtPx(T.n), '', p.nombre + (c.filas.some(f => f.p.vert) ? ' · ' + t('vert') : ''), '#b566ff')}
       ${tarjeta(t('lienzo'), `${fmtPx(T.lienzoW)}×${fmtPx(T.lienzoH)}`, 'px', t('lienzoAyuda'), '#00b4ff')}
       ${tarjeta(t('brillo'), fmt(T.nitsMin === Infinity ? 0 : T.nitsMin, 0), 'nits', t('brilloAyudaG', { g: fmt(c.gan, 1) }), '#ffb000')}
       ${tarjeta(t('contraste'), fmt(T.contrasteMin, 1), ':1', nivelContraste(T.contrasteMin) + ' · ' + fmt(c.lx, 0) + ' lx', '#e100ff')}
@@ -328,7 +353,7 @@ function vistaResultados(c) {
       ${tarjeta(t('lumenes'), fmtPx(T.lumenes), 'lm', `${fmtPx(T.n)} × ${fmtPx(p.lumens)} lm`, '#ff4d5e')}
     </div>`;
     h += `<div class="tabla-caja"><table class="tabla"><thead><tr><th>${t('supCol')}</th><th>${t('medida')}</th><th>${t('proyCol')}</th><th>${t('resol')}</th><th>${t('solCol')}</th><th>${t('tiroCol')}</th><th>${t('brCol')}</th></tr></thead><tbody>
-      ${c.filas.map(f => { const q = f.p; return `<tr><td>${f.nombre}</td><td>${fmt(f.s.ancho)} × ${fmt(f.s.alto)} m</td><td>${q.cols ? q.cols + '×' + q.rows + ' = ' : ''}${q.n}</td><td>${q.resW}×${q.resH}</td><td>${fmt(q.solapeRel * 100, 0)} %</td><td>${fmt(q.tiro, 2)} m${q.fuera ? ' ⚠' : ''}</td><td>${fmt(q.nits, 0)} nits</td></tr>`; }).join('')}
+      ${c.filas.map(f => { const q = f.p; return `<tr><td>${f.nombre}</td><td>${fmt(f.s.ancho)} × ${fmt(f.s.alto)} m</td><td>${q.cols ? q.cols + '×' + q.rows + ' = ' : ''}${q.n}${q.vert ? ' · ' + t('vert') : ''}</td><td>${q.resW}×${q.resH}</td><td>${fmt(q.solapeRel * 100, 0)} %</td><td>${fmt(q.tiro, 2)} m${q.fuera ? ' ⚠' : ''}</td><td>${fmt(q.nits, 0)} nits</td></tr>`; }).join('')}
     </tbody></table></div>`;
     h += vistaPosicion(c);
     h += vistaSombras(c);
@@ -343,9 +368,12 @@ function nivelContraste(v) { return v >= 80 ? t('cVideo') : v >= 50 ? t('cAnalit
 function vistaPosicion(c) {
   const fs = c.filas.filter(f => f.pos); if (!fs.length) return '';
   const ok = (v) => (v >= 15 ? 'ok' : v >= 7 ? '' : 'mal');
+  // v8.0 · desplazamiento de la lente frente al de la óptica (en vertical, el de la sala es el horizontal de la óptica)
+  const lim = (f) => { const q = f.proyector; return !q || q.ust || !q.shiftV ? 0 : f.p.vert ? q.shiftH : q.shiftV; };
+  const pasa = (f) => lim(f) && Math.abs(f.pos.shiftV) > lim(f) + 0.5;
   return `<section class="res-sec"><div class="res-tit">${ICO.proy}${t('posTit')}</div><div class="tabla-caja"><table class="tabla"><thead><tr><th>${t('supCol')}</th><th>${t('distOpticaK')}</th><th>${t('zoomCol')}</th><th>${t('alturaOptica')}</th><th>${t('baseImagen')}</th><th>${t('techoImagen')}</th><th>${t('shiftV')}</th><th>${t('diagCol')}</th><th>${t('ilumCol')}</th><th>${t('brCol')}</th><th>${t('contraste')}</th></tr></thead><tbody>
-    ${fs.map(f => { const q = f.p, o = f.pos; return `<tr><td>${f.nombre}</td><td><b>${fmt(o.dist, 2)} m</b></td><td>${fmt(q.tMin, 2)}–${fmt(q.tMaxZ, 2)} m</td><td>${fmt(o.yLente, 2)} m</td><td>${o.y0 >= 0 ? fmt(o.y0, 2) + ' m' : t('desborda', { d: fmt(-o.y0, 2) })}</td><td>${!o.techo ? '—' : o.techo - o.y1 >= 0 ? fmt(o.techo - o.y1, 2) + ' m' : t('desborda', { d: fmt(o.y1 - o.techo, 2) })}</td><td>${fmt(o.shiftV, 0)} %</td><td>${fmt(o.diag, 0)}″ · ${fmt(q.imgW, 2)} × ${fmt(q.imgH, 2)} m</td><td>${fmtPx(Math.round(q.lux))} lx</td><td>${fmt(q.nits, 0)} nits</td><td class="${ok(q.contraste)}">${fmt(q.contraste, 1)}:1</td></tr>`; }).join('')}
-  </tbody></table></div><p class="ayuda">${t('posAyuda', { lx: fmt(c.lx, 0), g: fmt(c.gan, 1) })}</p></section>`;
+    ${fs.map(f => { const q = f.p, o = f.pos; return `<tr><td>${f.nombre}</td><td><b>${fmt(o.dist, 2)} m</b></td><td>${fmt(q.tMin, 2)}–${fmt(q.tMaxZ, 2)} m</td><td>${fmt(o.yLente, 2)} m</td><td>${o.y0 >= 0 ? fmt(o.y0, 2) + ' m' : t('desborda', { d: fmt(-o.y0, 2) })}</td><td>${!o.techo ? '—' : o.techo - o.y1 >= 0 ? fmt(o.techo - o.y1, 2) + ' m' : t('desborda', { d: fmt(o.y1 - o.techo, 2) })}</td><td class="${pasa(f) ? 'mal' : ''}">${fmt(o.shiftV, 0)} %${lim(f) ? ` <small>(±${lim(f)} %)</small>` : ''}</td><td>${fmt(o.diag, 0)}″ · ${fmt(q.imgW, 2)} × ${fmt(q.imgH, 2)} m</td><td>${fmtPx(Math.round(q.lux))} lx</td><td>${fmt(q.nits, 0)} nits</td><td class="${ok(q.contraste)}">${fmt(q.contraste, 1)}:1</td></tr>`; }).join('')}
+  </tbody></table></div>${fs.some(pasa) ? `<p class="aviso">${t('shiftFuera', { s: fs.filter(pasa).map(f => f.nombre).join(' · ') })}</p>` : ''}<p class="ayuda">${t('posAyuda', { lx: fmt(c.lx, 0), g: fmt(c.gan, 1) })}</p></section>`;
 }
 // electrónica y mediaserver elegidos, con el mismo componente de ficha
 function vistaElec(c) {
@@ -444,6 +472,8 @@ function rotulo(x) {
     case 'alto': return t('alto') + ' ' + fmt(x.v) + ' m'; case 'paredes': return t('paredesN', { n: x.n }); case 'suelo': return t('suelo');
     case 'arco': return t('arco'); case 'linea': return t('linea'); case 'publico': return t('dist') + ' ' + fmt(x.v, 1) + ' m';
     case 'lux': return fmt(x.v, 0) + ' lx'; case 'ganancia': return t('ganancia') + ' ' + fmt(x.v, 1); case 'techo': return t('techoAlto') + ' ' + fmt(x.v) + ' m';
+    case 'vertical': return t('or_vertical'); case 'horizontal': return t('or_horizontal');
+    case 'distProy': return t('distOpticaK') + ' ' + fmt(x.v, 1) + ' m'; case 'montaje': return t('mo_' + x.v) + (x.h ? ' ' + fmt(x.h, 1) + ' m' : '');
     case 'fibra': return t('fibra'); case 'central': return t('central') + ' ' + x.v.map(v => fmt(v)).join(' × ') + ' m';
     case 'laterales': return t('laterales') + ' ' + x.v.map(v => fmt(v)).join(' × ') + ' m'; case 'pitch': return 'P' + fmt(x.v, 2) + (x.ok ? ' · ' + x.ok : ''); default: return x.v;
   }
@@ -458,6 +488,8 @@ function calcularPeticion() {
   // una pantalla LED: la petición la resuelve su propio cálculo, con el popup de datos del proyecto
   if (unaLed()) { actualizar(); aIframe({ tipo: 'screens-peticion', texto: txt }); estadoNl(t('nlLed')); return; }
   Object.assign(E.esp, c.esp); Object.assign(E.esp.sueltas, c.sueltas); if (c.paredes) Object.assign(E.esp.paredes, c.paredes);
+  // v8.0 · una petición de proyección parte de la posición AUTO, salvo lo que diga (distancia, orientación, montaje)
+  if (r.tecnologia === 'proy') Object.assign(E.proy, { dist: 0, orient: 'auto', montaje: 'auto', altura: 0 });
   Object.assign(E.led, c.led); Object.assign(E.proy, c.proy); Object.assign(E.elec, c.elec);
   if (c.led.tipo || c.led.clase) E.led.crm = '';
   if (c.elec.backup || c.elec.conexion) E.elec.sel = '';
@@ -515,12 +547,14 @@ function construirEscena() {
   if (!escena || !calculo) return;
   const c = calculo, sala = c.esp.tipo === 'sala' ? { ancho: c.esp.ancho, fondo: c.esp.fondo, alto: c.esp.alto } : null;
   const xs = c.filas.map(f => Math.abs(f.s.x) + f.s.ancho / 2), zs = c.filas.map(f => Math.abs(f.s.z));
+  // v8.0 · la escena abarca también los proyectores (a 25 m al otro lado de la calle, en torre…)
+  (c.sombras && c.sombras.haces || []).forEach(h => { xs.push(Math.abs(h.lente.x) + 1); zs.push(Math.abs(h.lente.z) + 1); });
   escena.construir({
     sala, tecnologia: E.tecnologia, contenido: E.vista.contenido, etiquetas: E.vista.etiquetas, medio: medio ? { ...medio, modo: E.vista.modo } : null,
     sombras: E.tecnologia === 'proy' && E.vista.zona ? c.sombras : null, haces: c.sombras ? c.sombras.haces : null,
     puertas: puertasDe(c.esp).map(p => puertaMundo(p, c.esp)), obstaculos: obstaculosDe(c.esp), obstTapa: new Set(c.sombras && c.sombras.obst ? c.sombras.obst.map(x => x.k) : []),
     conflictos: new Set(E.tecnologia === 'proy' && c.sombras ? c.sombras.conflictos.map(k => k.tapa.sup + ':' + k.tapa.i).concat(c.sombras.choques.map(k => k.h.sup + ':' + k.h.i)) : []),
-    superficies: c.filas, distPublico: c.dist, extX: Math.max(4, ...xs) * 2, extZ: Math.max(2, ...zs, c.dist),
+    superficies: c.filas, distPublico: c.dist, extX: Math.max(4, ...xs) * 2, extZ: Math.max(2, ...zs, c.dist), montaje: E.proy.montaje || 'auto',
     altoMax: Math.max(2, ...c.filas.map(f => f.s.elev + f.s.alto))
   });
 }
@@ -649,7 +683,7 @@ document.addEventListener('change', (ev) => {
       .catch(err => estadoNl(t(err && err.message === 'formato' ? 'est_formato' : 'est_modelo')));
     s.value = ''; return;
   }
-  if (s.dataset.sel) { fijar(s.dataset.sel, s.value); actualizar(); }
+  if (s.dataset.sel) { fijar(s.dataset.sel, s.value); if (s.dataset.sel === 'proy.cuerpo') E.proy.optica = ''; actualizar(); }   // otro proyector: su óptica vuelve a AUTO
 });
 
 // PDF: hoja A4 en claro con cabecera, captura 3D, resultados, equipos, electrónica y avisos (se imprime con el navegador)
@@ -688,7 +722,11 @@ function tituloPdf(c) {
   const p = [led ? t('led') : t('proy')];
   if (sala) p.push(...c.filas.map(f => f.nombre)); else if (n > 1) p.push(t(esp.sueltas.disp));
   if (led && c.modelo) p.push(`${fmtPx(T.cab)} × ${c.modelo.crm} (${c.modelo.pitch} mm)`);
-  if (!led) { const g = new Map(); c.filas.forEach(f => g.set(f.proyector, (g.get(f.proyector) || 0) + f.p.n)); p.push([...g].map(([q, k]) => `${fmtPx(k)} × ${q.marca ? q.marca + ' ' : ''}${q.nombre}`).join(' + ')); }
+  if (!led) { const g = new Map(); c.filas.forEach(f => g.set(f.proyector, (g.get(f.proyector) || 0) + f.p.n)); p.push([...g].map(([q, k]) => `${fmtPx(k)} × ${q.marca ? q.marca + ' ' : ''}${q.nombre}`).join(' + '));
+    // v8.0 · en vertical, a una distancia fija y con el montaje elegido
+    if (c.filas.some(f => f.p.vert)) p.push(t('vert'));
+    if (Number(E.proy.dist) > 0) p.push(`${t('aDist', { d: fmt(E.proy.dist, 1) })}`);
+    if (E.proy.montaje === 'colgado' || E.proy.montaje === 'apoyado') p.push(t('mo_' + E.proy.montaje).toLowerCase() + (Number(E.proy.altura) > 0 ? ' ' + fmt(E.proy.altura, 1) + ' m' : '')); }
   if (T.lienzoW) p.push(`${fmtPx(T.lienzoW)}×${fmtPx(T.lienzoH)} px`);
   if (led && T.kw) p.push(`${fmt(T.kw, 1)} kW`);
   if (!led && isFinite(T.nitsMin)) p.push(`${fmt(T.nitsMin, 0)} nits`);

@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                SCREENS - INDEX                               ║
-║                          Versión actual: v7.9                              ║
+║                          Versión actual: v8.0                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v7.9
+ÚLTIMA ACTUALIZACIÓN: v8.0
+- v8.0: en la consola, proyección para mapping y fachadas: catálogo de Epson con todas las ópticas compatibles (sin conexión), proyector en vertical, distancia fija hasta 200 m, montaje colgado o apoyado (mesa, torre) con su altura y rejilla automática de columnas × filas con blending en los dos sentidos (este cálculo de una pantalla LED solo cambia de versión)
+ANTERIOR: v7.9
 - v7.9: sin catálogo de muestra: sin conexión ni copia guardada, se avisa de que no se ha podido cargar el catálogo (los datos salen siempre en vivo); en la consola, varias pantallas con la central de otra medida (auditorio), una sola electrónica con los conversores de fibra de cada pantalla y petición que entiende la central, las laterales y el pitch
 ANTERIOR: v7.8
 - v7.8: fotos reales de los equipos en pantalla y en el PDF: la electrónica y el mediaserver muestran la foto de su frontal a la izquierda, con el nombre y las primeras líneas a su lado (la buscan el propio motor y la sincronización de cada noche), y la ficha del cabinet, la de su web con su galería; al pulsar una foto se abre el visor con la trasera, otras vistas y el frontal en grande, con paginación (flechas, puntos, teclado y deslizar) y botón de cerrar; en el PDF el resumen (cabinets, pitch, ancho y alto), la resolución y las cotas ya no se salen ni tocan los bordes (tampoco al imprimir desde el móvil ni en euskera) y los textos de la simulación ya no se encogen de más
@@ -6963,7 +6965,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENS" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v7.9</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v8.0</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -9288,7 +9290,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v7.9 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v8.0 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -9299,7 +9301,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       *Cálculo automático que puede contener errores: verifícalo con tu método habitual o con un técnico antes de presupuestar o instalar.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v7.9 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a> · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
+                      <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v8.0 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a> · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
                     </div>
                   </div>
               </main>

@@ -17,6 +17,8 @@ export function interpretar(texto) {
   else if (nPant && n(nPant[1]) > 1) { cantidad = 'varias'; c.esp.tipo = 'sueltas'; c.sueltas.n = Math.min(8, n(nPant[1])); vistos.push({ k: 'pant', n: c.sueltas.n }); }
   else if (/\buna (sola )?pantalla|\bun(a)? solo|\b1 pantalla|\ba screen\b|\bone screen\b|una pantalla/.test(t)) { cantidad = 'una'; vistos.push({ k: 'una' }); }
   if (!cantidad && /\bpantalla\b|\bscreen\b|\bpantallla\b/.test(t)) { cantidad = 'una'; vistos.push({ k: 'una' }); }
+  // una fachada (mapping) es una sola superficie
+  if (!cantidad && /fachada|facade|facana|\bedificio\b|\bedifici\b|building/.test(t)) { cantidad = 'una'; vistos.push({ k: 'una' }); }
   // medidas: A × B (× C)
   const m = t.match(/(\d+(?:\.\d+)?)\s*(?:m|mts|metros|metres)?\s*(?:x|×|\*|por|per|by)\s*(\d+(?:\.\d+)?)\s*(?:m|mts|metros|metres)?(?:\s*(?:x|×|\*|por|per|by)\s*(\d+(?:\.\d+)?))?/);
   if (m) {
@@ -63,6 +65,18 @@ export function interpretar(texto) {
   const g = t.match(/(?:ganancia|gain|guany)\s*(?:de\s*)?(\d+(?:\.\d+)?)/); if (g) { c.proy.ganancia = n(g[1]); vistos.push({ k: 'ganancia', v: c.proy.ganancia }); }
   const te = t.match(/techo\s*(?:de|a)?\s*(\d+(?:\.\d+)?)|(\d+(?:\.\d+)?)\s*(?:m|metros)?\s*de techo|ceiling\s*(?:of\s*)?(\d+(?:\.\d+)?)|sostre\s*(?:de\s*|a\s*)?(\d+(?:\.\d+)?)/);
   if (te) { const v = n(te[1] || te[2] || te[3] || te[4]); c.sueltas.techo = v; if (c.esp.tipo === 'sala' && c.esp.alto == null) c.esp.alto = v; vistos.push({ k: 'techo', v }); }
+  // v8.0 · proyección: orientación, distancia a la superficie y montaje («proyectores en torres a 25 m», «en vertical»,
+  // «torre de 6 m», «colgados de un truss a 8 m», «sobremesa»)
+  if (/(?:proyector|projector|proyectar|projectar)[^.]{0,40}\b(?:en )?vertical|\ben vertical\b|portrait|modo retrato|in portrait/.test(t)) { c.proy.orient = 'vertical'; vistos.push({ k: 'vertical' }); }
+  else if (/(?:proyector|projector)[^.]{0,40}\ben horizontal|\bin landscape\b/.test(t)) { c.proy.orient = 'horizontal'; vistos.push({ k: 'horizontal' }); }
+  const dP = t.match(/(?:proyector(?:es)?|projector(?:s)?|projectors|torres?|towers?)[^.\d]{0,40}?(?:\ba|\bat|desde|from)\s*(\d+(?:\.\d+)?)\s*(?:m|metros|metres)\b/) || t.match(/(?:\ba|\bat)\s*(\d+(?:\.\d+)?)\s*(?:m|metros|metres)\s*(?:de|from|of)\s*(?:la |el |the )?(?:fachada|pared|pantalla|superficie|edificio|facade|wall|screen|facana|paret|edifici)/);
+  if (dP) { c.proy.dist = n(dP[1]); vistos.push({ k: 'distProy', v: c.proy.dist }); }
+  const torre = t.match(/(?:torre|tower|torres|towers)\s*(?:de|of)?\s*(\d+(?:\.\d+)?)\s*(?:m|metros|metres)?/);
+  const colg = t.match(/(?:colgad[oa]s?|truss|penjats?|hung|hanging)[^.\d]{0,25}?(?:a|at|de)?\s*(\d+(?:\.\d+)?)\s*(?:m|metros|metres)\b/);
+  if (torre) { c.proy.montaje = 'apoyado'; c.proy.altura = n(torre[1]); vistos.push({ k: 'montaje', v: 'apoyado', h: c.proy.altura }); }
+  else if (/sobremesa|sobre (?:una )?mesa|en el suelo|on a table|on the floor|sobretaula|a terra/.test(t) && /proyect|project/.test(t)) { c.proy.montaje = 'apoyado'; c.proy.altura = /suelo|floor|terra/.test(t) ? 0.3 : 0.8; vistos.push({ k: 'montaje', v: 'apoyado', h: c.proy.altura }); }
+  else if (colg) { c.proy.montaje = 'colgado'; c.proy.altura = n(colg[1]); vistos.push({ k: 'montaje', v: 'colgado', h: c.proy.altura }); }
+  else if (/colgad[oa]s? del techo|del techo|hung from the ceiling|penjats? del sostre/.test(t) && /proyect|project/.test(t)) { c.proy.montaje = 'colgado'; vistos.push({ k: 'montaje', v: 'colgado' }); }
   // LED: interior / exterior, instalación / alquiler; electrónica
   if (/exterior|outdoor|intemperie/.test(t)) { c.led.tipo = 'OUTDOOR'; vistos.push({ k: 'txt', v: 'OUTDOOR' }); } else if (/interior|indoor/.test(t)) c.led.tipo = 'INDOOR';
   if (/alquiler|rental|lloguer|eventos|gira/.test(t)) { c.led.clase = 'RENTAL'; vistos.push({ k: 'txt', v: 'RENTAL' }); }
