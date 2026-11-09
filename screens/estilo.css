@@ -121,9 +121,21 @@ body.con-led { height: 100%; }
 .campo { display: grid; gap: 4px; min-width: 0; }
 .campo label, .etq { font-size: var(--t-lab); font-weight: 700; color: var(--tenue); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: clip; }
 .num { display: flex; align-items: stretch; min-width: 0; background: var(--hundido); border: 1px solid var(--borde); border-radius: 7px; overflow: hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,.45); }
-.num input { flex: 1; min-width: 0; width: 100%; background: transparent; border: 0; color: var(--txt); font: 400 var(--t-val) var(--mono); padding: 7px 4px 7px 9px; outline: none; }
+.num input { flex: 1; min-width: 0; width: 100%; background: transparent; border: 0; color: var(--txt); font: 400 var(--t-val) var(--mono); padding: 7px 3px 7px 8px; outline: none; }
+.fila.c3 .num input { font-size: 14px; padding-left: 6px; }
 .num input:focus { box-shadow: inset 0 0 0 1px var(--verde-borde); }
-.num span { display: flex; align-items: center; padding: 0 8px; font: 700 10.5px var(--sans); color: var(--tenue); letter-spacing: .06em; border-left: 1px solid #000; background: #1b1b1e; }
+.num span { display: flex; align-items: center; padding: 0 5px; font: 700 10.5px var(--sans); color: var(--tenue); letter-spacing: .06em; border-left: 1px solid #000; background: #1b1b1e; }
+/* v7.1 · ▲▼ en cada casilla numérica (las flechas del navegador se ocultan para no duplicarlas) */
+.num input::-webkit-outer-spin-button, .num input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.num input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+.num .flechas { flex: none; display: flex; flex-direction: column; border-left: 1px solid #000; }
+.num .flecha { flex: 1; width: 20px; min-height: 0; padding: 0; border: 0; border-radius: 0; background: var(--metal); color: var(--verde); display: flex; align-items: center; justify-content: center; cursor: pointer;
+  touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.num .flecha + .flecha { border-top: 1px solid #000; }
+.num .flecha svg { width: 9px; height: 6px; filter: drop-shadow(0 0 3px rgba(0,255,4,.45)); }
+@media (hover: hover) { .num .flecha:hover { background: var(--metal-hi); } }
+.num .flecha:active { background: #141a14; }
+@media (pointer: coarse) { .num { min-height: 40px; } .num .flecha { width: 26px; } .num .flecha svg { width: 11px; height: 7px; } }
 select.sel { width: 100%; background: var(--hundido); color: var(--verde); border: 1px solid var(--verde-borde); border-radius: 7px; padding: 8px 8px; font: 400 13px var(--mono);
   box-shadow: inset 0 2px 6px rgba(0,0,0,.5); outline: none; }
 .ayuda { margin: 0; font-size: 11.5px; line-height: 1.45; color: var(--tenue); }

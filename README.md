@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v7.0** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v7.1** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (sustituye a screencalc.mediaservi.com y screenbox.mediaservi.com, que dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -88,7 +88,22 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v7.0)
+## Cambios de la versión actual (v7.1)
+
+- **Casillas numéricas con flechas ▲▼** en la consola de SCREENS, como en el cálculo de una pantalla LED. Se aplican a todas:
+  - medidas de la sala y de las pantallas;
+  - separación, ángulo y distancia del público;
+  - alto del techo, puertas y obstáculos;
+  - luz de la sala, ganancia y distancia óptica–pared.
+- **Cómo funcionan:**
+  - cada valor se sigue escribiendo directamente en su casilla;
+  - un toque en una flecha sube o baja un paso;
+  - si se mantiene pulsada, repite y acelera, y el cálculo se rehace al soltar;
+  - con la distancia óptica en AUTO, ▲ parte de la distancia que AUTO estaba usando.
+- **Siempre a mano:** la petición en lenguaje natural (texto, voz o audio) sigue en la barra de la consola.
+- **AVHUB ADMIN · FIRMAS:** Teams lleva su logo oficial en el tema «Colores originales».
+
+## Cambios de la versión v7.0
 
 - **Consola fija de SCREENS:** se entra directamente al cuadro de mandos, sin página de selector ni redirecciones: la consola es la propia página de inicio (`index.html`) y el cálculo de una pantalla LED pasa a `led.html`.
   - **Barra de la consola**, debajo de la cabecera y siempre a la vista:

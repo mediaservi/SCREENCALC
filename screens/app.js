@@ -8,7 +8,7 @@ import '../comun/voz.js';
 import { interpretar } from './peticion.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v7.0';
+const VERSION = 'v7.1';
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   cantidad: 'varias', tecnologia: 'led',
@@ -138,7 +138,10 @@ function alcance(esp, s, dist) {
 
 // ---------- plantilla ----------
 const tog = (on, attrs, txt, extra = '') => `<button type="button" class="tog${on ? ' on' : ''}" aria-pressed="${on}" ${attrs} ${extra}>${txt}</button>`;
-const numIn = (k, val, uni, paso = 0.1, min = 0, max = 60) => `<div class="num"><input type="number" inputmode="decimal" data-num="${k}" value="${val}" step="${paso}" min="${min}" max="${max}"><span>${uni}</span></div>`;
+// casilla numérica: se escribe directamente o se cambia con ▲▼ (como en el cálculo de una pantalla); mantener pulsado repite y acelera
+const FLECHA = (d) => `<svg viewBox="0 0 10 6" aria-hidden="true"><path d="${d > 0 ? 'M5 .5 9.5 5.5H.5z' : 'M.5 .5h9L5 5.5z'}" fill="currentColor"/></svg>`;
+const numIn = (k, val, uni, paso = 0.1, min = 0, max = 60) => `<div class="num"><input type="number" inputmode="decimal" data-num="${k}" value="${val}" step="${paso}" min="${min}" max="${max}"><span>${uni}</span><div class="flechas">` +
+  `<button type="button" class="flecha" data-flecha="1" data-k="${k}" tabindex="-1" aria-label="${t('subirV')}">${FLECHA(1)}</button><button type="button" class="flecha" data-flecha="-1" data-k="${k}" tabindex="-1" aria-label="${t('bajarV')}">${FLECHA(-1)}</button></div></div>`;
 const campo = (lab, html) => `<div class="campo"><label>${lab}</label>${html}</div>`;
 
 // ---------- fichas de equipo (componente común comun/ficha.js) ----------
@@ -555,10 +558,30 @@ document.addEventListener('click', (ev) => {
   if (a === 'reset-led') { E.led = DEF().led; actualizar(); return; }
   if (a === 'reset-proy') { E.proy = DEF().proy; actualizar(); return; }
 });
-let tNum = 0;
+let tNum = 0, tRep = 0, nRep = 0, pasoPendiente = false;
+// ▲▼: un toque = un paso; mantener pulsado repite (x5 y x10 al rato). Se recalcula al soltar (no a mitad de la pulsación).
+function pasoNum(k, dir) {
+  const i = document.querySelector(`input[data-num="${k}"]`); if (!i) return;
+  const paso = parseFloat(i.step) || 1, min = parseFloat(i.min), max = parseFloat(i.max), dec = (String(i.step).split('.')[1] || '').length;
+  let v = parseFloat(String(i.value).replace(',', '.')) || 0; const mult = nRep > 24 ? 10 : nRep > 10 ? 5 : 1;
+  // distancia óptica en AUTO (0): ▲ fija la que AUTO estaba usando y sigue desde ahí
+  if (k === 'proy.dist' && !v && dir > 0 && calculo) { const pw = calculo.filas.find(f => f.s.tipo !== 'suelo'); if (pw && pw.p.tMin) v = Math.round(pw.p.tMin / paso) * paso - paso; }
+  let nv = Math.round((v + dir * paso * mult) / paso) * paso;
+  if (!isNaN(min)) nv = Math.max(min, nv); if (!isNaN(max)) nv = Math.min(max, nv);
+  nv = Number(nv.toFixed(dec)); i.value = nv; ajustarCasilla(i); fijar(k, nv); pasoPendiente = true; clearTimeout(tNum);
+}
+function pararRep() { clearTimeout(tRep); tRep = 0; nRep = 0; if (pasoPendiente) { pasoPendiente = false; clearTimeout(tNum); tNum = setTimeout(() => actualizar(), 30); } }
+document.addEventListener('pointerdown', (ev) => {
+  const b = ev.target.closest('.flecha'); if (!b || ev.button > 0) return;
+  ev.preventDefault(); pararRep();
+  const k = b.dataset.k, dir = Number(b.dataset.flecha); pasoNum(k, dir);
+  const repetir = (espera) => { tRep = setTimeout(() => { nRep++; pasoNum(k, dir); repetir(70); }, espera); };
+  repetir(420);
+});
+['pointerup', 'pointercancel', 'blur'].forEach(e => window.addEventListener(e, pararRep));
 document.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && ev.target.id === 'nl-texto') { ev.preventDefault(); calcularPeticion(); } });
 document.addEventListener('input', (ev) => {
-  const i = ev.target; if (i.id === 'nl-texto') { nlTexto = i.value; return; } if (!i.dataset.num) return;
+  const i = ev.target; if (i.id === 'nl-texto') { nlTexto = i.value; return; } if (!i.dataset.num) return; ajustarCasilla(i);
   const v = parseFloat(String(i.value).replace(',', '.'));
   if (isNaN(v)) return;
   const min = parseFloat(i.min), max = parseFloat(i.max);
@@ -616,7 +639,10 @@ function ajustarTextos() {
     const cabe = () => el.scrollWidth <= el.clientWidth + 0.5 && (!margen || anchoTexto(el) <= el.clientWidth - margen);
     while (!cabe() && fs > 8 && k++ < 24) { fs -= 0.5; el.style.setProperty('font-size', fs + 'px'); }
   });
+  document.querySelectorAll('input[data-num]').forEach(i => { if (i.offsetWidth) ajustarCasilla(i); });
 }
+// casillas numéricas: si el valor no cabe entero, se reduce la letra (nunca se corta)
+function ajustarCasilla(i) { i.style.removeProperty('font-size'); let fs = parseFloat(getComputedStyle(i).fontSize), k = 0; while (i.scrollWidth > i.clientWidth + 0.5 && fs > 10 && k++ < 14) { fs -= 0.5; i.style.setProperty('font-size', fs + 'px'); } }
 function anchoTexto(el) { const r = document.createRange(); r.selectNodeContents(el); const rs = [...r.getClientRects()]; if (!rs.length) return 0; return Math.max(...rs.map(q => q.right)) - Math.min(...rs.map(q => q.left)); }
 const obsTextos = new MutationObserver(() => requestAnimationFrame(ajustarTextos));
 ['app', 'consola'].forEach(id => obsTextos.observe(document.getElementById(id), { childList: true, subtree: true }));
