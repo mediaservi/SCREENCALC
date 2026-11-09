@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                SCREENS - INDEX                               ║
-║                          Versión actual: v7.5                              ║
+║                          Versión actual: v7.6                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v7.5
+ÚLTIMA ACTUALIZACIÓN: v7.6
+- v7.6: dictado sin cortes con cualquier número de pausas (en la v7.5 se cortaba en la segunda): en Android cada frase abre una escucha nueva y los fallos pasajeros (micrófono ocupado, red) se reintentan; se para al pulsar otra vez el micrófono o tras 10 s sin oír nada
+ANTERIOR: v7.5
 - v7.5: dictado sin cortes en la consola y en este cálculo: las pausas a media frase ya no lo cortan (si el navegador cierra la escucha, se vuelve a abrir sola y lo dictado se va sumando); se para al pulsar otra vez el micrófono o tras 10 s sin oír nada; en Android ya no se repiten palabras
 ANTERIOR: v7.4
 - v7.4: PDF de la consola de SCREENS rediseñado: cabecera en una fila de alto común (logo SCREENS a la izquierda, avhub.mediaservi.com con la fecha debajo al centro, logo AVHUB a la derecha), línea de cabecera suave con el tipo de proyecto y sus datos, y en todas las hojas el aviso y el eslogan abajo al centro con el número de hoja (1/2) abajo a la derecha; este cálculo solo cambia de versión
@@ -5721,25 +5723,39 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
 
 
         // Dictado por voz con el reconocimiento de voz del navegador (Chrome, Edge, Safari)
-        // v7.5 · continuo: las pausas a media frase ya no lo cortan. Si el navegador cierra la escucha, se vuelve a abrir
-        // sola y lo dictado se va sumando; se para al pulsar otra vez el micrófono o tras 10 s sin oír nada.
-        // En Android cada resultado repite lo ya dicho: lo repetido se descarta.
+        // v7.6 · continuo: las pausas a media frase no lo cortan, por muchas que haya. Cada vez que el navegador cierra la
+        // escucha se vuelve a abrir sola y lo dictado se va sumando; un fallo pasajero (micrófono aún ocupado, red) se
+        // reintenta. Se para al pulsar otra vez el micrófono o tras 10 s sin oír nada. En Android cada frase es una
+        // escucha nueva (su modo continuo no aguanta bien las pausas) y lo repetido entre resultados se descarta.
         const alternarMic = () => {
-          if (recRef.current) { const c0 = recRef.current; c0.activo = false; clearTimeout(silencioRef.current); try { c0.sr.stop(); } catch (e) {} return; }
+          if (recRef.current) { recRef.current.parar(); return; }
           const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
           if (!SR) { setNlEstado('Este navegador no admite dictado por voz. Prueba con Chrome, Edge o Safari, o sube un audio.'); return; }
-          const base = nlText.trim();
+          const base = nlText.trim(), android = /Android/i.test(navigator.userAgent || '');
           const unir = (...p) => p.map(s => String(s || '').trim()).filter(Boolean).join(' ');
           const norma = (s) => String(s || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
           const m = { 'not-allowed': 'Permiso de micrófono denegado: actívalo en el navegador para dictar.', 'service-not-allowed': 'Permiso de micrófono denegado: actívalo en el navegador para dictar.', 'no-speech': 'No se ha oído nada. Inténtalo de nuevo.', 'audio-capture': 'No se encuentra ningún micrófono.', 'network': 'El dictado necesita conexión a internet.' };
-          const ctl = { activo: true, sr: null }; let previo = '', vacias = 0, fallo = '';
-          const vigilar = () => { clearTimeout(silencioRef.current); silencioRef.current = setTimeout(() => { ctl.activo = false; try { ctl.sr.stop(); } catch (er) {} }, 10000); };
+          let activo = true, cerrado = false, sr = null, previo = '', actual = '', fallos = 0, fallo = '', ultimo = '';
+          const ctl = {};
+          const terminar = () => {
+            if (cerrado) return; cerrado = true; activo = false; clearTimeout(silencioRef.current);
+            previo = unir(previo, actual); actual = '';
+            if (recRef.current === ctl) { recRef.current = null; setEscuchando(false); }
+            setNlText(unir(base, previo));
+            if (previo) { setHaloProponer(true); setNlEstado('✔ Dictado terminado. Pulsa PROPONER PANTALLA.'); }
+            else if (!fallo) { const x = ultimo && ultimo !== 'no-speech' ? ultimo : 'no-speech'; setNlEstado(m[x] || 'Error de dictado: ' + x); }
+          };
+          ctl.parar = () => { activo = false; clearTimeout(silencioRef.current); try { if (sr) sr.stop(); } catch (e) {} setTimeout(terminar, 1500); };
+          // tras 10 s sin oír nada, el micrófono se apaga solo
+          const vigilar = () => { clearTimeout(silencioRef.current); silencioRef.current = setTimeout(ctl.parar, 10000); };
+          const reabrir = () => { if (!activo) { terminar(); return; } try { abrir(); } catch (e) { if (++fallos < 8) setTimeout(reabrir, 300); else terminar(); } };
           const abrir = () => {
-            const rec = new SR(); ctl.sr = rec;
-            rec.lang = (window.SC_I18N && window.SC_I18N.srLang()) || 'es-ES'; rec.interimResults = true; rec.continuous = true;
-            let sesion = [], pend = '', oido = false;
+            const rec = new SR(); sr = rec;
+            rec.lang = (window.SC_I18N && window.SC_I18N.srLang()) || 'es-ES'; rec.interimResults = true; rec.continuous = !android;
+            let oido = false;
             rec.onresult = (e) => {
-              vigilar(); oido = true; vacias = 0;
+              if (sr !== rec) return;
+              vigilar(); oido = true; fallos = 0;
               const fin = []; let parcial = '';
               for (let i = 0; i < e.results.length; i++) {
                 const t = String(e.results[i][0].transcript || '').trim(); if (!t) continue;
@@ -5747,22 +5763,20 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                 const k = fin.length - 1;
                 if (k >= 0 && norma(t).startsWith(norma(fin[k]))) fin[k] = t; else if (k < 0 || !norma(fin[k]).startsWith(norma(t))) fin.push(t);
               }
-              sesion = fin;
               const f = unir(...fin); if (parcial && f && norma(parcial).startsWith(norma(f))) parcial = parcial.split(/\s+/).slice(f.split(/\s+/).length).join(' ');
-              pend = parcial; setNlText(unir(base, previo, f, parcial));
+              actual = unir(f, parcial); setNlText(unir(base, previo, actual));
             };
             rec.onerror = (e) => {
-              if (e.error === 'no-speech' || e.error === 'aborted') return;   // pausas: la escucha se vuelve a abrir sola
-              if (['not-allowed', 'service-not-allowed', 'audio-capture', 'network'].includes(e.error)) ctl.activo = false;
-              fallo = m[e.error] || 'Error de dictado: ' + e.error; setNlEstado(fallo);
+              const x = e && e.error;   // solo el permiso o el idioma paran; lo demás (silencio, red, micrófono ocupado) se reintenta
+              if (x === 'not-allowed' || x === 'service-not-allowed' || x === 'language-not-supported') { activo = false; fallo = x; setNlEstado(m[x] || 'Error de dictado: ' + x); }
+              else if (x && x !== 'aborted') ultimo = x;
             };
             rec.onend = () => {
-              previo = unir(previo, ...sesion, pend); sesion = []; pend = '';
-              if (!oido) vacias++;
-              if (ctl.activo && vacias < 6) { try { abrir(); return; } catch (er) {} }
-              clearTimeout(silencioRef.current); recRef.current = null; setEscuchando(false); setNlText(unir(base, previo));
-              if (previo) { setHaloProponer(true); setNlEstado('✔ Dictado terminado. Pulsa PROPONER PANTALLA.'); }
-              else if (!fallo) setNlEstado(m['no-speech']);
+              if (sr !== rec) return;
+              previo = unir(previo, actual); actual = '';   // lo que quedó a medio reconocer no se pierde
+              if (!oido) fallos++;
+              if (activo && fallos < 8) { setTimeout(reabrir, android ? 150 : 0); return; }
+              terminar();
             };
             rec.start();
           };
@@ -6887,7 +6901,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENS" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v7.5</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v7.6</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -9208,7 +9222,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v7.5 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v7.6 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -9218,7 +9232,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v7.5 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a>
+                      <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v7.6 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a>
                     </div>
                   </div>
               </main>

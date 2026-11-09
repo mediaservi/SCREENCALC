@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v7.5** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v7.6** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -89,7 +89,14 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v7.5)
+## Cambios de la versión actual (v7.6)
+
+- **Dictado sin cortes con cualquier número de pausas** (en la v7.5 aguantaba la primera pausa y se cortaba en la segunda), en la consola y en el cálculo de una pantalla LED:
+  - en Android cada frase abre una escucha nueva, porque su modo continuo no aguanta bien las pausas;
+  - los fallos pasajeros (micrófono aún ocupado, red) se reintentan en vez de parar el dictado;
+  - se sigue parando al pulsar otra vez el micrófono, o solo tras 10 s sin oír nada.
+
+## Cambios de la versión v7.5
 
 - **Dictado sin cortes**, en la consola y en el cálculo de una pantalla LED: las pausas a media frase ya no lo cortan.
   - Si el navegador cierra la escucha al acabar una frase o tras un silencio corto, se vuelve a abrir sola y lo dictado se va sumando.

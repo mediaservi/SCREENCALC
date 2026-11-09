@@ -8,24 +8,37 @@
 (function () {
   'use strict';
   const IDIOMA = { es: 'es-ES', en: 'en-GB', ca: 'ca-ES' }, WHISPER = { es: 'spanish', en: 'english', ca: 'catalan' };
-  // v7.5 · dictado continuo: las pausas a media frase ya no lo cortan. Si el navegador cierra la escucha
-  // (fin de frase, silencio o límite de tiempo), se vuelve a abrir sola y lo dictado se va sumando; se para al
-  // pulsar otra vez el micrófono o tras SILENCIO ms sin oír nada. En Android cada resultado repite lo ya dicho:
-  // lo repetido se descarta.
-  const SILENCIO = 10000;
+  // v7.6 · dictado continuo: las pausas a media frase no lo cortan, por muchas que haya. Cada vez que el navegador
+  // cierra la escucha (fin de frase, silencio o límite de tiempo) se vuelve a abrir sola y lo dictado se va sumando;
+  // un fallo pasajero (micrófono aún ocupado, red) se reintenta. Se para al pulsar otra vez el micrófono o tras
+  // SILENCIO ms sin oír nada. En Android cada frase es una escucha nueva (su modo continuo no aguanta bien las
+  // pausas) y lo repetido entre resultados se descarta.
+  const SILENCIO = 10000, ANDROID = /Android/i.test(navigator.userAgent || '');
   const unir = (...p) => p.map(s => String(s || '').trim()).filter(Boolean).join(' ');
   const norma = (s) => String(s || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
   function dictar(lang, alTexto, alEstado) {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) { alEstado('sinMic'); return null; }
-    let activo = true, r = null, previo = '', vacias = 0, reloj = 0;
+    let activo = true, cerrado = false, r = null, previo = '', actual = '', fallos = 0, reloj = 0, ultimo = '';
+    const terminar = () => {
+      if (cerrado) return; cerrado = true; activo = false; clearTimeout(reloj);
+      previo = unir(previo, actual); actual = '';
+      if (!previo && ultimo && ultimo !== 'no-speech') alEstado('micError');   // sin micrófono o sin red tras varios intentos
+      alTexto(previo, true); alEstado('micFin');
+    };
+    const parar = () => { activo = false; clearTimeout(reloj); try { if (r) r.stop(); } catch (e) {} setTimeout(terminar, 1500); };
     // tras SILENCIO ms sin oír nada, el micrófono se apaga solo
-    const vigilar = () => { clearTimeout(reloj); reloj = setTimeout(() => { activo = false; try { r.stop(); } catch (e) {} }, SILENCIO); };
+    const vigilar = () => { clearTimeout(reloj); reloj = setTimeout(parar, SILENCIO); };
+    const reabrir = () => {
+      if (!activo) { terminar(); return; }
+      try { abrir(); } catch (e) { if (++fallos < 8) setTimeout(reabrir, 300); else terminar(); }
+    };
     const abrir = () => {
-      const s = new SR(); r = s; s.lang = IDIOMA[lang] || 'es-ES'; s.interimResults = true; s.continuous = true; s.maxAlternatives = 1;
-      let sesion = [], pend = '', oido = false;
+      const s = new SR(); r = s; s.lang = IDIOMA[lang] || 'es-ES'; s.interimResults = true; s.continuous = !ANDROID; s.maxAlternatives = 1;
+      let oido = false;
       s.onresult = (e) => {
-        vigilar(); oido = true; vacias = 0;
+        if (r !== s) return;
+        vigilar(); oido = true; fallos = 0;
         const fin = []; let parcial = '';
         for (let i = 0; i < e.results.length; i++) {
           const t = String(e.results[i][0].transcript || '').trim(); if (!t) continue;
@@ -33,21 +46,26 @@
           const k = fin.length - 1;
           if (k >= 0 && norma(t).startsWith(norma(fin[k]))) fin[k] = t; else if (k < 0 || !norma(fin[k]).startsWith(norma(t))) fin.push(t);
         }
-        sesion = fin;
         const f = unir(...fin); if (parcial && f && norma(parcial).startsWith(norma(f))) parcial = parcial.split(/\s+/).slice(f.split(/\s+/).length).join(' ');
-        pend = parcial; alTexto(unir(previo, f, parcial), !parcial);
+        actual = unir(f, parcial); alTexto(unir(previo, actual), !parcial);
       };
-      s.onerror = (e) => { const x = e && e.error; if (x === 'not-allowed' || x === 'service-not-allowed') { activo = false; alEstado('micDenegado'); } else if (x === 'audio-capture' || x === 'network') { activo = false; alEstado('micError'); } };
+      s.onerror = (e) => {
+        const x = e && e.error;   // solo el permiso o el idioma paran; lo demás (silencio, red, micrófono ocupado) se reintenta
+        if (x === 'not-allowed' || x === 'service-not-allowed') { activo = false; alEstado('micDenegado'); }
+        else if (x === 'language-not-supported') { activo = false; alEstado('micError'); }
+        else if (x && x !== 'aborted') ultimo = x;
+      };
       s.onend = () => {
-        previo = unir(previo, ...sesion, pend); sesion = []; pend = '';   // lo que quedó a medio reconocer no se pierde
-        if (!oido) vacias++;
-        if (activo && vacias < 6) { try { abrir(); return; } catch (e) {} }
-        clearTimeout(reloj); activo = false; alTexto(previo, true); alEstado('micFin');
+        if (r !== s) return;
+        previo = unir(previo, actual); actual = '';   // lo que quedó a medio reconocer no se pierde
+        if (!oido) fallos++;
+        if (activo && fallos < 8) { setTimeout(reabrir, ANDROID ? 150 : 0); return; }
+        terminar();
       };
       s.start();
     };
     try { abrir(); vigilar(); alEstado('escuchando'); } catch (e) { alEstado('micError'); return null; }
-    return { stop() { activo = false; clearTimeout(reloj); try { r.stop(); } catch (e) { alEstado('micFin'); } } };
+    return { stop: parar };
   }
   async function transcribir(file, lang, alEstado) {
     alEstado('leyendo');

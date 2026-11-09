@@ -8,7 +8,7 @@ import '../comun/voz.js';
 import { interpretar } from './peticion.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v7.5';
+const VERSION = 'v7.6';
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   cantidad: 'varias', tecnologia: 'led',
@@ -571,8 +571,10 @@ document.addEventListener('click', (ev) => {
   if (a === 'nl-mic') {
     if (escuchando) { try { escuchando.stop(); } catch (e) {} escuchando = null; pintarConsola(); return; }
     const i0 = $('#nl-texto'), base = (i0 ? i0.value : nlTexto).trim();   // lo dictado se añade a lo que ya estaba escrito
-    escuchando = globalThis.SC_VOZ.dictar(idioma(), (txt) => { nlTexto = (base ? base + ' ' : '') + txt; const i = $('#nl-texto'); if (i) i.value = nlTexto; },
-      (e) => { if (e === 'micFin') { escuchando = null; pintarConsola(); if (nlTexto.trim()) estadoNl(t('est_listo')); } else estadoNl(t('est_' + e), e === 'escuchando'); });
+    // los últimos avisos de un dictado ya parado no pisan a uno nuevo que se haya empezado justo después
+    let yo = null; const vivo = () => escuchando === yo || escuchando === null;
+    yo = escuchando = globalThis.SC_VOZ.dictar(idioma(), (txt) => { if (!vivo()) return; nlTexto = (base ? base + ' ' : '') + txt; const i = $('#nl-texto'); if (i) i.value = nlTexto; },
+      (e) => { if (!vivo()) return; if (e === 'micFin') { escuchando = null; pintarConsola(); if (nlTexto.trim()) estadoNl(t('est_listo')); } else estadoNl(t('est_' + e), e === 'escuchando'); });
     pintarConsola(); return;
   }
   if (a === 'elec-dante') { E.elec.dante = !E.elec.dante; E.elec.selMedia = ''; actualizar(); return; }
