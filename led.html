@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                SCREENS - INDEX                               ║
-║                          Versión actual: v7.7                              ║
+║                          Versión actual: v7.8                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v7.7
+ÚLTIMA ACTUALIZACIÓN: v7.8
+- v7.8: fotos reales de los equipos en pantalla y en el PDF: la electrónica y el mediaserver muestran la foto de su frontal a la izquierda, con el nombre y las primeras líneas a su lado (la buscan el propio motor y la sincronización de cada noche), y la ficha del cabinet, la de su web con su galería; al pulsar una foto se abre el visor con la trasera, otras vistas y el frontal en grande, con paginación (flechas, puntos, teclado y deslizar) y botón de cerrar; en el PDF el resumen (cabinets, pitch, ancho y alto), la resolución y las cotas ya no se salen ni tocan los bordes (tampoco al imprimir desde el móvil ni en euskera) y los textos de la simulación ya no se encogen de más
+ANTERIOR: v7.7
 - v7.7: el PDF sigue la misma línea de diseño que el de la consola: cabecera en una fila (logo SCREENS · avhub.mediaservi.com con la fecha · logo AVHUB), línea de cabecera en violeta suave, aviso y eslogan abajo al centro y número de hoja abajo a la derecha en todas las hojas, márgenes de 12 mm; simulación, displays, esquema y cableados con menos densidad de tinta; el navegador ya no añade su fecha, título ni dirección
 ANTERIOR: v7.6
 - v7.6: dictado sin cortes con cualquier número de pausas (en la v7.5 se cortaba en la segunda): en Android cada frase abre una escucha nueva y los fallos pasajeros (micrófono ocupado, red) se reintentan; se para al pulsar otra vez el micrófono o tras 10 s sin oír nada
@@ -652,6 +654,16 @@ ANTERIOR: v4.1
         main.printable-area.pdf-unico .pdf-fila-elec .elec-grid { display: block !important; padding: 4px !important; }
         main.printable-area.pdf-unico .pdf-fila-elec .elec-bubble:not(.elec-sel) { display: none !important; }
         main.printable-area.pdf-unico .pdf-fila-elec .elec-bubble { padding: 4px 6px !important; font-size: 8pt !important; }
+        /* v7.8 · foto real del frontal del equipo elegido también en el PDF */
+        main.printable-area .elec-bubble .elec-foto { display: block !important; float: left !important; width: 64px !important; height: 48px !important; margin: 0 8px 3px 0 !important; box-shadow: none !important; }
+        /* v7.8 · resumen (cabinets, pitch, ancho y alto), resolución y cotas: la caja nunca es más estrecha que su texto y deja margen
+           a los lados; las cotas, a 12 px en una línea (con la hoja estrecha o al imprimir desde un móvil no crecen ni se salen) */
+        main.printable-area .av-resumen { min-width: max-content !important; padding: 5px 10px !important; }
+        main.printable-area .av-resumen span { white-space: nowrap !important; }
+        main.printable-area .resolution-box-print > .bg-white { min-width: max-content !important; }
+        main.printable-area .cota-lbl { font-size: 12px !important; white-space: nowrap !important; }
+        main.printable-area .cota-ancho .cota-lbl { padding: 2px 6px !important; }
+        main.printable-area .cota-alto .cota-lbl { padding: 6px 3px !important; }
         main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec { flex: 1 1 auto !important; min-height: 0 !important; display: flex !important; flex-direction: column !important; padding: 0 !important; overflow: hidden !important; }
         main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec > div { flex: 1 1 auto !important; min-height: 0 !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; }
         main.printable-area.pdf-unico .pdf-pag2 > .esquema-sec > div > div { flex: 0 0 auto !important; break-inside: auto !important; }
@@ -1775,13 +1787,15 @@ ANTERIOR: v4.1
           var visible=(cs.backgroundColor&&cs.backgroundColor!=='rgba(0, 0, 0, 0)'&&cs.backgroundColor!=='transparent')||cs.backgroundImage!=='none'
             ||parseFloat(cs.borderLeftWidth)>0||parseFloat(cs.borderTopWidth)>0||(cs.boxShadow&&cs.boxShadow!=='none');
           var M=visible?MARGEN:0;
-          var izq=b.left+parseFloat(cs.borderLeftWidth)+Math.max(M,parseFloat(cs.paddingLeft));
-          var der=b.right-parseFloat(cs.borderRightWidth)-Math.max(M,parseFloat(cs.paddingRight));
+          /* v7.8 · con la simulación escalada (zoom del PDF) las medidas en pantalla van a escala: el relleno y el margen también */
+          var k=el.offsetWidth?b.width/el.offsetWidth:1, kv=el.offsetHeight?b.height/el.offsetHeight:1;
+          var izq=b.left+k*(parseFloat(cs.borderLeftWidth)+Math.max(M,parseFloat(cs.paddingLeft)));
+          var der=b.right-k*(parseFloat(cs.borderRightWidth)+Math.max(M,parseFloat(cs.paddingRight)));
           var r=document.createRange(); r.selectNodeContents(el); var rs=r.getClientRects(), L=1e9, R=-1e9, n=0;
           for(var i=0;i<rs.length;i++){ if(rs[i].width<0.5) continue; n++; if(rs[i].left<L) L=rs[i].left; if(rs[i].right>R) R=rs[i].right; }
           if(!n) return true;
           var vert=cs.writingMode&&cs.writingMode.indexOf('vertical')===0;
-          if(vert){ var arr=b.top+parseFloat(cs.borderTopWidth)+Math.max(M,parseFloat(cs.paddingTop)), abj=b.bottom-parseFloat(cs.borderBottomWidth)-Math.max(M,parseFloat(cs.paddingBottom)), T=1e9,B=-1e9;
+          if(vert){ var arr=b.top+kv*(parseFloat(cs.borderTopWidth)+Math.max(M,parseFloat(cs.paddingTop))), abj=b.bottom-kv*(parseFloat(cs.borderBottomWidth)+Math.max(M,parseFloat(cs.paddingBottom))), T=1e9,B=-1e9;
             for(var j=0;j<rs.length;j++){ if(rs[j].height<0.5) continue; if(rs[j].top<T) T=rs[j].top; if(rs[j].bottom>B) B=rs[j].bottom; }
             return T>=arr-0.5 && B<=abj+0.5; }
           return L>=izq-0.5 && R<=der+0.5 && el.scrollWidth<=el.clientWidth+1;
@@ -1797,9 +1811,15 @@ ANTERIOR: v4.1
           while(!cabe(el) && fs>8 && k<30){ fs-=0.5; k++; el.style.setProperty('font-size',fs+'px','important'); }
           if(esBoton && !cabe(el)) el.style.setProperty('white-space','normal','important');
         }
-        var pend=false;
-        function todo(){ pend=false; var l=document.querySelectorAll(BOT), i; for(i=0;i<l.length;i++) ajustar(l[i],true); l=document.querySelectorAll(CAJ); for(i=0;i<l.length;i++) ajustar(l[i],false); }
+        var pend=false, imprimiendo=false;
+        function todo(forzar){ pend=false; if(imprimiendo&&!forzar) return; var l=document.querySelectorAll(BOT), i; for(i=0;i<l.length;i++) ajustar(l[i],true); l=document.querySelectorAll(CAJ); for(i=0;i<l.length;i++) ajustar(l[i],false); }
         function pedir(){ if(!pend){ pend=true; requestAnimationFrame(function(){ setTimeout(todo,0); }); } }
+        /* v7.8 · el PDF tiene otra maquetación: lo reducido para la pantalla vuelve a su tamaño y se vuelve a ajustar con la de la hoja
+           (lo llama el ajuste de la simulación al pasar a impresión); al terminar, se ajusta otra vez para la pantalla */
+        function soltar(){ var l=document.querySelectorAll('[data-fit]'), i; for(i=0;i<l.length;i++){ var el=l[i]; el.style.fontSize=el.dataset.fitOrig||''; el.style.whiteSpace=el.dataset.fitWs||''; delete el.dataset.fit; delete el.dataset.fitKey; } }
+        window.addEventListener('beforeprint',function(){ imprimiendo=true; soltar(); });
+        window.addEventListener('afterprint',function(){ imprimiendo=false; soltar(); pedir(); });
+        window.SC_AJUSTAR_TEXTOS_PDF=function(){ imprimiendo=true; soltar(); todo(true); };
         function arrancar(){ if(!document.body) return setTimeout(arrancar,50);
           new MutationObserver(function(){ pedir(); }).observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class']});
           window.addEventListener('resize',pedir); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(pedir); pedir(); }
@@ -2055,6 +2075,10 @@ html.av .elec-bubble {
 html.av .elec-bubble:hover { border-color: #55555c !important; }
 html.av .elec-bubble.elec-sel { border-color: var(--av-verde) !important; background: linear-gradient(180deg, rgba(0,255,4,.10), rgba(0,255,4,.03)), #202420 !important; box-shadow: 0 0 0 1px rgba(0,255,4,.35), 0 0 16px rgba(0,255,4,.22) !important; }
 html.av .elec-bubble .elec-title { color: #fff !important; }
+/* v7.8 · foto del equipo a la izquierda con el nombre y las primeras líneas a su lado; si la burbuja es estrecha
+   (móvil, 2 columnas), la foto va arriba y el texto debajo a todo el ancho, sin partir el nombre */
+.elec-bubble { container: elecb / inline-size; }
+@container elecb (max-width: 229px) { .elec-bubble .elec-foto { float: none !important; display: block !important; margin: 0 0 8px !important; } }
 
 /* Pie */
 html.av .footer-pantalla { color: var(--av-tenue-2) !important; }
@@ -3936,36 +3960,27 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
       };
 
       // Burbuja de equipo (electrónica o mediaserver) con icono de enlace opcional
-      const ElecImg = ({ src, alt, onOpen, style }) => {
-        const [bad, setBad] = useState(false);
-        useEffect(() => { setBad(false); }, [src]);
-        if (!src || bad) return null;
-        return <img src={src} alt={alt} loading="lazy" referrerPolicy="no-referrer" onError={() => setBad(true)} onClick={(e) => { e.stopPropagation(); if (onOpen) onOpen(); }}
-          style={{ width: '100%', flex: 1, minHeight: 0, objectFit: 'contain', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '3px', cursor: onOpen ? 'zoom-in' : 'default', ...style }} />;
-      };
-
+      // v7.8 · foto del frontal escalada (en pantalla y en el PDF); al pulsarla, el visor común con la trasera y el frontal en grande
       const ElecBubble = ({ titulo, sub, lineas, equipos, url, badge, front, back, logo, sel, onSel }) => {
-        const [visor, setVisor] = useState(null);
-        const hay = !!(front || back || logo);
+        // las fotos del equipo: las suyas y, si faltan, las que ha encontrado el motor (frontal, trasera y otras vistas)
+        const fe = window.SC_FICHA && window.SC_FICHA.fotosEquipo ? window.SC_FICHA.fotosEquipo(titulo, front, back) : { frontal: front || '', trasera: back || '', vistas: [] };
+        const foto = fe.frontal || fe.trasera || fe.vistas[0] || '';
+        const [mala, setMala] = useState(false);
+        useEffect(() => { setMala(false); }, [foto]);
+        const miniatura = !mala && foto;
+        const abrirVisor = (e) => { e.stopPropagation(); if (window.SC_VISOR) window.SC_VISOR.abrir(window.SC_VISOR.fotosDe(fe.frontal, fe.trasera, fe.vistas), titulo); };
         return (
         <div className={'elec-bubble bg-white p-3 border-2 min-w-0 overflow-hidden' + (sel ? ' elec-sel' : '')} onClick={onSel} title={onSel ? (sel ? 'Quitar del proyecto' : 'Elegir para el proyecto y el esquema') : undefined}
-          style={{ ...(hay ? { display: 'flex', gap: '8px' } : {}), cursor: onSel ? 'pointer' : 'default', borderColor: sel ? '#00a792' : '#d1d5db', background: sel ? '#f0fdfa' : '#fff', boxShadow: sel ? '0 0 0 2px #00a792, 0 3px 10px rgba(0,150,136,.25)' : 'none' }}>
-          {hay && (
-            <div className="no-print" style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '56px', flexShrink: 0 }}>
-              <div style={{ height: '52px', display: 'flex' }}><ElecImg src={logo} alt="Logo" /></div>
-              <div style={{ height: '52px', display: 'flex' }}><ElecImg src={front} alt={titulo + ' frontal'} onOpen={() => setVisor(front)} /></div>
-              <div style={{ height: '52px', display: 'flex' }}><ElecImg src={back} alt={titulo + ' trasera'} onOpen={() => setVisor(back)} /></div>
-            </div>
+          style={{ cursor: onSel ? 'pointer' : 'default', borderColor: sel ? '#00a792' : '#d1d5db', background: sel ? '#f0fdfa' : '#fff', boxShadow: sel ? '0 0 0 2px #00a792, 0 3px 10px rgba(0,150,136,.25)' : 'none' }}>
+          {miniatura && (
+            <button type="button" className="elec-foto fi-zoom" onClick={abrirVisor} title={titulo} aria-label={titulo}
+              style={{ position: 'relative', float: 'left', width: '72px', height: '54px', margin: '0 10px 6px 0', minHeight: 0, padding: 0, background: '#fff', border: '1px solid #e5e7eb', borderRadius: '5px', overflow: 'hidden', cursor: 'zoom-in' }}>
+              <img src={foto} alt={titulo} loading="lazy" referrerPolicy="no-referrer" onError={() => setMala(true)} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '3px', boxSizing: 'border-box' }} />
+            </button>
           )}
-          {visor && (
-            <div className="no-print" onClick={(e) => { e.stopPropagation(); setVisor(null); }} style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(0,0,0,.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div onClick={e => e.stopPropagation()} style={{ width: '80vw', height: '80vh', background: '#fff', borderRadius: '6px', position: 'relative', display: 'flex', padding: '8px' }}>
-                <button onClick={() => setVisor(null)} style={{ position: 'absolute', top: '6px', right: '10px', fontSize: '22px', fontWeight: 700, minHeight: 0, padding: 0, lineHeight: 1 }}>×</button>
-                <img src={visor} alt={titulo} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-              </div>
-            </div>
-          )}
-          <div style={{ flex: 1, minWidth: 0 }}>
+          {/* la foto flota a la izquierda: el nombre y las primeras líneas van a su lado y el resto sigue debajo a todo el ancho;
+              si la burbuja es tan estrecha que el nombre no cabe al lado (móvil, 2 columnas), el texto empieza debajo de la foto */}
+          <div style={{ minWidth: 0 }}>
           <div className="flex items-start justify-between gap-2 mb-1">
             <div className="elec-title font-bold text-gray-900" style={{ fontSize: '0.9rem', lineHeight: 1.2, wordBreak: 'break-word' }}>{titulo}</div>
             {url && (
@@ -4920,7 +4935,8 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             inner.style.setProperty('zoom', f.toFixed(3), 'important');
           };
           const mqImpresion = window.matchMedia ? window.matchMedia('print') : null;
-          const alCambiarMedio = (e) => { if (e.matches) ajustarSimPdf(); };
+          // v7.8 · con la hoja ya maquetada, los textos se ajustan a sus cajas del PDF (nunca tocan el borde)
+          const alCambiarMedio = (e) => { if (e.matches) { ajustarSimPdf(); if (window.SC_AJUSTAR_TEXTOS_PDF) window.SC_AJUSTAR_TEXTOS_PDF(); } };
           if (mqImpresion && mqImpresion.addEventListener) mqImpresion.addEventListener('change', alCambiarMedio);
           window.addEventListener('beforeprint', handleBeforePrint);
           window.addEventListener('afterprint', handleAfterPrint);
@@ -5049,6 +5065,8 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
               const r = await fetch(ADMIN_URL + '?accion=catalogo', { cache: 'no-store' });
               if (!r.ok) return null;
               const j = await r.json();
+              // v7.8 · fotos de los equipos que busca el motor cada noche (frontal, trasera y otras vistas)
+              if (j && j.e && window.SC_FICHA && window.SC_FICHA.recibirFotos) window.SC_FICHA.recibirFotos(j.e);
               if (!j || !j.d) return null;
               const b = atob(j.d), u = new Uint8Array(b.length);
               for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
@@ -6955,7 +6973,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENS" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v7.7</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v7.8</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -7221,7 +7239,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                         {(() => {
                           const L = FICHA_TXT[lang] || FICHA_TXT.es, m = selectedModel;
                           const stockOk = ((m.disp || m.stock) === 'STOCK' || (m.disp || m.stock) === 'SI');
-                          const html = window.SC_FICHA ? window.SC_FICHA.fichaHTML({ cat: L.cat, icono: 'led', marca: m.family || '', modelo: m.crm, foto: urlFoto, acento: '#b566ff', stock: stockOk, stockTxt: L.stock,
+                          const html = window.SC_FICHA ? window.SC_FICHA.fichaHTML({ cat: L.cat, icono: 'led', marca: m.family || '', modelo: m.crm, foto: urlFoto, fotoTrasera: m.urlFotoTrasera || m.urlTrasera || m.urlFoto2, vistas: m.fotos, acento: '#b566ff', stock: stockOk, stockTxt: L.stock,
                             specs: [[L.pitch, pitch + ' mm'], [L.cab, m.cabAncho + '×' + m.cabAlto + (m.thick ? '×' + m.thick : '') + ' mm'], [L.px, m.cabPixAncho + '×' + m.cabPixAlto], [L.nits, m.nits ? m.nits + ' nits' : ''], [L.hz, m.hz ? m.hz + ' Hz' : ''],
                               [L.kg, m.cabKg ? m.cabKg + ' kg' : ''], [L.w, m.wMax ? m.wMax + ' W' : ''], [L.card, m.card || ''], [L.tech, m.tech || '']],
                             enlace: m.crm ? 'https://traulux.net/buscar/?q=' + encodeURIComponent(m.crm) : '', enlaceTxt: L.ficha }) : '';
@@ -9277,7 +9295,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v7.7 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v7.8 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -9288,7 +9306,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       *Cálculo automático que puede contener errores: verifícalo con tu método habitual o con un técnico antes de presupuestar o instalar.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v7.7 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a> · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
+                      <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v7.8 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a> · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
                     </div>
                   </div>
               </main>
