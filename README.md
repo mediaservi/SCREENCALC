@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v6.1.1** (estética AVHUB)
+**Versión actual: v6.1.2** (estética AVHUB)
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -78,7 +78,15 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v6.1.1)
+## Cambios de la versión actual (v6.1.2)
+
+- **Referencias comerciales de Charmex en las tarjetas H Series:**
+  - salida H-OUTC-20XRJ45 en conexión directa;
+  - salida H-OUTC-16RJ45-2OPT en rack con fibra (2 fibras por tarjeta y 8 puertos por fibra);
+  - entradas H-INPC-4XHDMI, H-INPC-2XHDMI2.0 (para 4K), H-INPC-1XDP1.2 y H-INPC-4X3GSDI.
+- El enlace de búsqueda de cada pieza ya la encuentra en Charmex.
+
+## Cambios de la versión v6.1.1
 
 - **Electrónica H Series (equipo modular):** en el listado de material el equipo sale como titular sin cantidad y, debajo, sus piezas, cada una con su cantidad y alineadas. La burbuja de electrónica las muestra en columnas (cantidad · referencia · descripción).
 - **Piezas:**

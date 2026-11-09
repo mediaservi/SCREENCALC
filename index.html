@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v6.1.1                            ║
+║                          Versión actual: v6.1.2                            ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v6.1.1
+ÚLTIMA ACTUALIZACIÓN: v6.1.2
+- v6.1.2: tarjetas H Series con las referencias comerciales de Charmex: salida H-OUTC-20XRJ45 (directo) y H-OUTC-16RJ45-2OPT (rack con fibra: 2 fibras por tarjeta), entradas H-INPC-4XHDMI, H-INPC-2XHDMI2.0 (4K), H-INPC-1XDP1.2 y H-INPC-4X3GSDI; las búsquedas de cada pieza en Charmex ya las encuentran
+ANTERIOR: v6.1.1
 - v6.1.1: electrónica H Series (equipo modular): en el material sale como titular sin cantidad y debajo sus piezas, cada una con su cantidad y alineadas; chasis con su referencia comercial (H2-MAINFRAME, H5-MAINFRAME…); tarjeta base de previo H-OUT2RJ45-1HDMI-MVR (recomendada) y, si no se indican entradas (o es una sola) o son 4K, tarjetas de entrada H-INPC-1XHDMI2.0; el chasis se elige por posiciones de salida y de entrada/previo según las fichas de NovaStar; en la burbuja de electrónica las piezas se ven en columnas (cantidad · referencia · descripción)
 ANTERIOR: v6.1
 - v6.1: versión pública con la estética AVHUB (aprobadas las propuestas v5.0–v5.3), que sustituye a la estética clara anterior en pantalla y en el PDF: rack digital oscuro con verde eléctrico para lo activado y violeta de marca, tipografía Inter + Share Tech Mono, simulación realista con paredes a escala real, cotas técnicas y carta de ajuste con la resolución real, panel de tamaño y resolución renovado, textos siempre con margen de seguridad y PDF en claro con los mismos bloques que la pantalla. La estética anterior queda solo como reserva con ?tema=clasico
@@ -3560,13 +3562,15 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
       // Tarjeta de entrada mínima (si no se indicó tipo ni número de entradas) y tarjeta base de previo y salidas, recomendada en todos los proyectos
       const ELEC_H_IN_BASE = { ref: 'H-INPC-1XHDMI2.0', desc: 'Tarjeta de entrada 1×HDMI 2.0 (mínima del equipo)' };
       const ELEC_H_PREVIO = { ref: 'H-OUT2RJ45-1HDMI-MVR', desc: 'Tarjeta base 2×RJ45 + 1×HDMI de previo / monitorización (recomendada)' };
-      const ELEC_H_TARJ_RJ = { ref: 'H_20xRJ45', puertos: 20 };
-      const ELEC_H_TARJ_FIB = { ref: 'H_4xFiber', opt: 4, ppo: 8 };
-      // Tarjetas de entrada H Series (n = entradas por tarjeta). Referencias orientativas: confirmar con el fabricante.
+      // Referencias comerciales de Charmex (H-OUTC… salidas, H-INPC… entradas)
+      const ELEC_H_TARJ_RJ = { ref: 'H-OUTC-20XRJ45', puertos: 20 };
+      const ELEC_H_TARJ_FIB = { ref: 'H-OUTC-16RJ45-2OPT', opt: 2, ppo: 8 }; // 16 RJ45 + 2 fibras (8 puertos por fibra)
+      // Tarjetas de entrada H Series (n = entradas por tarjeta)
       const ELEC_H_TARJ_IN = {
-        HDMI: { ref: 'H_4xHDMI', n: 4, desc: 'Tarjeta entrada 4×HDMI' },
-        DP:   { ref: 'H_2xDP',   n: 2, desc: 'Tarjeta entrada 2×DP' },
-        SDI:  { ref: 'H_4xSDI',  n: 4, desc: 'Tarjeta entrada 4×SDI' }
+        HDMI: { ref: 'H-INPC-4XHDMI',    n: 4, desc: 'Tarjeta entrada 4×HDMI' },
+        HDMI4K: { ref: 'H-INPC-2XHDMI2.0', n: 2, desc: 'Tarjeta entrada 2×HDMI 2.0 (4K)' },
+        DP:   { ref: 'H-INPC-1XDP1.2',   n: 1, desc: 'Tarjeta entrada 1×DP 1.2' },
+        SDI:  { ref: 'H-INPC-4X3GSDI',   n: 4, desc: 'Tarjeta entrada 4×3G-SDI' }
       };
 
       // Mediaservers. out4k = salidas 4K simultáneas. dante = audio Dante declarado por el fabricante.
@@ -3842,30 +3846,32 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
           let tarj, equipos, puertos;
           if (directo) {
             tarj = Math.ceil(lines * mult / ELEC_H_TARJ_RJ.puertos);
-            equipos = [{ ref: ELEC_H_TARJ_RJ.ref, cant: tarj, desc: 'Tarjeta salida 20 RJ45' }];
+            equipos = [{ ref: ELEC_H_TARJ_RJ.ref, cant: tarj, desc: 'Tarjeta de salida 20×RJ45' }];
             puertos = lines + ' línea' + (o.backup ? ' + ' + lines + ' backup' : '') + ' (' + tarj * ELEC_H_TARJ_RJ.puertos + ' RJ45)';
           } else {
             const cvt = Math.ceil(lines / ELEC_H_TARJ_FIB.ppo), fibras = cvt * mult;
             tarj = Math.ceil(fibras / ELEC_H_TARJ_FIB.opt);
             equipos = [
-              { ref: ELEC_H_TARJ_FIB.ref, cant: tarj, desc: 'Tarjeta salida 4 fibras' },
+              { ref: ELEC_H_TARJ_FIB.ref, cant: tarj, desc: 'Tarjeta de salida 16×RJ45 + 2×fibra' },
               { ref: ELEC_CVT.ref, cant: cvt, desc: ELEC_CVT.desc }
             ];
             puertos = fibras + ' fibra' + (fibras > 1 ? 's' : '') + (o.backup ? ' (' + cvt + ' + ' + cvt + ' backup)' : '');
           }
           const nIn = o.entradas || 0;
           // HDMI: una entrada (o sin datos) o entradas 4K → tarjetas de 1×HDMI 2.0 (una por entrada); varias entradas 2K → tarjetas de 4×HDMI
+          // entradas: una (o sin datos) → 1×HDMI 2.0; HDMI 4K → 2×HDMI 2.0; varias HDMI 2K → 4×HDMI; DP → 1×DP; SDI → 4×3G-SDI
           const hdmi = !o.tipoEntrada || o.tipoEntrada === 'HDMI';
-          const usaBase = hdmi && (nIn <= 1 || o.resEntrada === '4K');
-          const tIn = usaBase ? { ref: ELEC_H_IN_BASE.ref, n: 1, desc: 'Tarjeta de entrada 1×HDMI 2.0' } : (ELEC_H_TARJ_IN[o.tipoEntrada] || ELEC_H_TARJ_IN.HDMI);
-          const tarjIn = usaBase ? Math.max(1, nIn) : Math.ceil(nIn * (o.resEntrada === '4K' ? 2 : 1) / tIn.n);
+          const usaBase = hdmi && nIn <= 1;
+          const tIn = usaBase ? { ref: ELEC_H_IN_BASE.ref, n: 1, desc: 'Tarjeta de entrada 1×HDMI 2.0' }
+            : (hdmi && o.resEntrada === '4K') ? ELEC_H_TARJ_IN.HDMI4K : (ELEC_H_TARJ_IN[o.tipoEntrada] || ELEC_H_TARJ_IN.HDMI);
+          const tarjIn = usaBase ? 1 : Math.ceil(nIn / tIn.n);
           // las tarjetas de entrada y la de previo ocupan las posiciones de entrada; las de salida, las suyas
           const ch = ELEC_H_CHASIS.find(c => c.maxTarj >= tarj && c.maxIn >= tarjIn + 1);
           if (ch) {
             equipos.unshift({ ref: ch.ref, cant: 1, desc: 'Chasis (mainframe)' });
             equipos.push({ ref: ELEC_H_PREVIO.ref, cant: 1, desc: ELEC_H_PREVIO.desc });
-            if (usaBase && nIn <= 1) equipos.push({ ref: ELEC_H_IN_BASE.ref, cant: 1, desc: ELEC_H_IN_BASE.desc });
-            else equipos.push({ ref: tIn.ref, cant: tarjIn, desc: tIn.desc + (!usaBase && o.resEntrada === '4K' ? ' (4K cuenta doble)' : '') });
+            if (usaBase) equipos.push({ ref: ELEC_H_IN_BASE.ref, cant: 1, desc: ELEC_H_IN_BASE.desc });
+            else equipos.push({ ref: tIn.ref, cant: tarjIn, desc: tIn.desc });
             const capPx = directo ? tarj * ELEC_H_TARJ_RJ.puertos * ELEC_PX_PUERTO : tarj * ELEC_H_TARJ_FIB.opt * ELEC_H_TARJ_FIB.ppo * ELEC_PX_PUERTO;
             if (totalPix <= capPx) {
               hItem = ({
@@ -6996,7 +7002,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v6.1.1</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v6.1.2</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -9354,7 +9360,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v6.1.1 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v6.1.2 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -9364,7 +9370,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      <a href="https://screencalc.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENCALC</a> v6.1.1 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a>
+                      <a href="https://screencalc.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENCALC</a> v6.1.2 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a>
                     </div>
                   </div>
               </main>
