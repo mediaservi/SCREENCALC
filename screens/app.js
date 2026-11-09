@@ -8,13 +8,13 @@ import '../comun/voz.js';
 import { interpretar } from './peticion.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v7.8';
+const VERSION = 'v7.9';
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   cantidad: 'varias', tecnologia: 'led',
   esp: { tipo: 'sala', ancho: 8, fondo: 6, alto: 3.5, elev: 0, altoCubierto: 0,
     paredes: { frontal: true, izquierda: true, derecha: true, trasera: false, suelo: false },
-    sueltas: { n: 3, disp: 'arco', ancho: 4, alto: 2.25, elev: 0.6, sep: 0.1, angulo: 25, dist: 5, techo: 3 },
+    sueltas: { n: 3, disp: 'arco', ancho: 4, alto: 2.25, elev: 0.6, sep: 0.1, angulo: 25, dist: 5, techo: 3, central: false, cAncho: 6, cAlto: 3.4 },
     obst: [] },
   led: { clase: 'INSTALL', tipo: 'INDOOR', crm: '', ajuste: 'dentro' },
   proy: { id: '', idSuelo: '', solape: 15, lux: 140, ganancia: 1, dist: 0 },
@@ -45,7 +45,7 @@ const ICO = {
 function listaLed() {
   return ordenar(catalogo.filter(m => m.class === E.led.clase && m.tipo === E.led.tipo));
 }
-function nombreSup(s) { return s.tipo === 'pantalla' ? `${t('pantalla')} ${s.num}` : t(s.id); }
+function nombreSup(s) { return s.tipo === 'pantalla' ? `${t('pantalla')} ${s.num}${s.central ? ' · ' + t('central') : ''}` : t(s.id); }
 function calcular() {
   const esp = JSON.parse(JSON.stringify(E.esp));
   if (E.cantidad === 'una') { esp.tipo = 'sueltas'; esp.sueltas.n = 1; esp.sueltas.disp = 'linea'; }
@@ -120,7 +120,8 @@ function electronica(c) {
   const e = E.elec, out = { procesadores: [], proc: null, medias: [], media: null, need: 0 };
   if (E.tecnologia === 'led' && c.tot) {
     let L = 1; c.filas.forEach(f => { if (f.r) { f.lin = [L, L + f.r.lineas - 1]; L += f.r.lineas; } });
-    out.procesadores = ELEC.calcularElectronicas({ lines: c.tot.lineas, totalPix: c.tot.pix }, { backup: e.backup, escalador: e.escalador, conexion: e.conexion, entradas: 0 }, []);
+    const porSup = c.esp.tipo === 'sueltas' ? c.filas.map(f => (f.r ? f.r.lineas : 0)) : null;   // v7.9 · pantallas separadas: conversores por pantalla
+    out.procesadores = ELEC.calcularElectronicas({ lines: c.tot.lineas, totalPix: c.tot.pix, porSup }, { backup: e.backup, escalador: e.escalador, conexion: e.conexion, entradas: 0 }, []);
     out.proc = out.procesadores.find(x => x.key === e.sel) || out.procesadores[0] || null;
     out.need = Math.max(1, c.tot.salidas4k);
   } else if (c.tot) out.need = Math.max(1, c.tot.n);
@@ -147,13 +148,13 @@ const campo = (lab, html) => `<div class="campo"><label>${lab}</label>${html}</d
 // ---------- fichas de equipo (componente común comun/ficha.js) ----------
 // los textos del motor común de electrónica están en castellano: aquí se pasan a inglés o catalán
 const MOTOR = {
-  en: [[/Chasis \(mainframe\)/g, 'Chassis (mainframe)'], [/Tarjeta de salida/g, 'Output card'], [/Tarjeta salida/g, 'Output card'], [/Tarjeta de entrada/g, 'Input card'], [/Tarjeta entrada/g, 'Input card'], [/Tarjeta base/g, 'Base card'],
+  en: [[/conv\. por pantalla/g, 'conv. per screen'], [/Chasis \(mainframe\)/g, 'Chassis (mainframe)'], [/Tarjeta de salida/g, 'Output card'], [/Tarjeta salida/g, 'Output card'], [/Tarjeta de entrada/g, 'Input card'], [/Tarjeta entrada/g, 'Input card'], [/Tarjeta base/g, 'Base card'],
     [/de previo \/ monitorización \(recomendada\)/g, 'preview / monitoring (recommended)'], [/\(mínima del equipo\)/g, '(minimum for the unit)'], [/Conv\. fibra→10 RJ45 multimodo \(incluye sus módulos SFP\+\)/g, 'Fibre→10 RJ45 multimode converter (SFP+ modules included)'],
     [/Conv\. fibra→10 RJ45 \(pantalla\)/g, 'Fibre→10 RJ45 converter (screen)'], [/Módulo SFP\+ 10G multimodo \(puertos de la tarjeta de salida\)/g, '10G SFP+ multimode module (output card ports)'], [/serie MX/g, 'MX series'], [/multimodo/g, 'multimode'],
     [/no disponible en este chasis: verificar con el fabricante/g, 'not available for this chassis: check with the manufacturer'], [/líneas?/g, m => m === 'línea' ? 'line' : 'lines'], [/fibras?/g, m => m === 'fibra' ? 'fibre' : 'fibres'], [/\(de /g, '(of '], [/proyecto/g, 'project'],
     [/salidas?/g, m => m === 'salida' ? 'output' : 'outputs'], [/entradas?/g, m => m === 'entrada' ? 'input' : 'inputs'], [/capas?/g, m => m === 'capa' ? 'layer' : 'layers'], [/hasta/g, 'up to'], [/ o /g, ' or '], [/ y /g, ' and '], [/Como /g, 'Like '],
     [/sincronismo, cascada y backup entre equipos/g, 'sync, cascade and backup between units'], [/backup de equipo/g, 'unit backup'], [/ranura/g, 'slot'], [/con escalador/g, 'with scaler']],
-  ca: [[/Chasis \(mainframe\)/g, 'Xassís (mainframe)'], [/Tarjeta de salida/g, 'Targeta de sortida'], [/Tarjeta salida/g, 'Targeta sortida'], [/Tarjeta de entrada/g, "Targeta d'entrada"], [/Tarjeta entrada/g, 'Targeta entrada'], [/Tarjeta base/g, 'Targeta base'],
+  ca: [[/conv\. por pantalla/g, 'conv. per pantalla'], [/fibras/g, 'fibres'], [/Chasis \(mainframe\)/g, 'Xassís (mainframe)'], [/Tarjeta de salida/g, 'Targeta de sortida'], [/Tarjeta salida/g, 'Targeta sortida'], [/Tarjeta de entrada/g, "Targeta d'entrada"], [/Tarjeta entrada/g, 'Targeta entrada'], [/Tarjeta base/g, 'Targeta base'],
     [/de previo \/ monitorización \(recomendada\)/g, 'de previ / monitoratge (recomanada)'], [/\(mínima del equipo\)/g, "(mínima de l'equip)"], [/Conv\. fibra→10 RJ45 multimodo \(incluye sus módulos SFP\+\)/g, 'Conv. fibra→10 RJ45 multimode (inclou els mòduls SFP+)'],
     [/Conv\. fibra→10 RJ45 \(pantalla\)/g, 'Conv. fibra→10 RJ45 (pantalla)'], [/Módulo SFP\+ 10G multimodo \(puertos de la tarjeta de salida\)/g, 'Mòdul SFP+ 10G multimode (ports de la targeta de sortida)'], [/multimodo/g, 'multimode'],
     [/no disponible en este chasis: verificar con el fabricante/g, 'no disponible en aquest xassís: verificar amb el fabricant'], [/líneas?/g, m => m === 'línea' ? 'línia' : 'línies'], [/proyecto/g, 'projecte'],
@@ -199,8 +200,23 @@ function modEspacio() {
     if (ajuste.esp) h += `<p class="aviso">${ajuste.esp}</p>`;
   } else {
     if (E.cantidad === 'varias') h += `<div class="fila c2">${campo(t('num'), numIn('esp.sueltas.n', s.n, 'u', 1, 2, 8))}<div class="campo"><label>${t('disp')}</label><div class="fila c2">${tog(s.disp === 'linea', 'data-set="esp.sueltas.disp" data-v="linea"', t('linea'))}${tog(s.disp === 'arco', 'data-set="esp.sueltas.disp" data-v="arco"', t('arco'))}</div></div></div>`;
-    h += `<div class="fila c3">${campo(t('ancho'), numIn('esp.sueltas.ancho', s.ancho, 'm', 0.1, 0.3, 40))}${campo(t('alto'), numIn('esp.sueltas.alto', s.alto, 'm', 0.1, 0.3, 20))}${campo(t('elev'), numIn('esp.sueltas.elev', s.elev, 'm', 0.1, 0, 10))}</div>`;
-    h += `<div class="fila ${E.cantidad === 'varias' ? (s.disp === 'arco' ? 'c3' : 'c2') : 'c1'}">${E.cantidad === 'varias' ? campo(t('sep'), numIn('esp.sueltas.sep', s.sep, 'm', 0.05, 0, 10)) : ''}${E.cantidad === 'varias' && s.disp === 'arco' ? campo(t('angulo'), numIn('esp.sueltas.angulo', s.angulo, '°', 1, 0, 90)) : ''}${campo(t('dist'), numIn('esp.sueltas.dist', s.dist, 'm', 0.1, 0.5, 100))}</div>`;
+    // v7.9 · auditorio: pantalla central de otra medida que las laterales (desde 3 pantallas)
+    const cen = E.cantidad === 'varias' && s.n >= 3;
+    if (cen) h += `<div class="fila c2">${tog(!s.central, 'data-set="esp.sueltas.central" data-v="0" data-bool="1"', t('mismaMedida'))}${tog(!!s.central, 'data-set="esp.sueltas.central" data-v="1" data-bool="1"', t('centralDistinta'))}</div>`;
+    // con la central distinta, cada medida va en su fila de 2 (en catalán «AMPLADA CENTRAL» no cabía en un tercio del panel)
+    // y la elevación pasa junto a la separación o la distancia; la distancia del público nunca va en un tercio
+    const elevF = campo(t('elev'), numIn('esp.sueltas.elev', s.elev, 'm', 0.1, 0, 10));
+    const sepF = campo(t('sep'), numIn('esp.sueltas.sep', s.sep, 'm', 0.05, 0, 10)), angF = campo(t('angulo'), numIn('esp.sueltas.angulo', s.angulo, '°', 1, 0, 90)), distF = campo(t('dist'), numIn('esp.sueltas.dist', s.dist, 'm', 0.1, 0.5, 100));
+    if (cen && s.central) {
+      h += `<div class="fila c2">${campo(t('anchoCentral'), numIn('esp.sueltas.cAncho', s.cAncho, 'm', 0.1, 0.3, 40))}${campo(t('altoCentral'), numIn('esp.sueltas.cAlto', s.cAlto, 'm', 0.1, 0.3, 20))}</div>`;
+      h += `<div class="fila c2">${campo(t('anchoLat'), numIn('esp.sueltas.ancho', s.ancho, 'm', 0.1, 0.3, 40))}${campo(t('altoLat'), numIn('esp.sueltas.alto', s.alto, 'm', 0.1, 0.3, 20))}</div><p class="ayuda">${t('centralAyuda')}</p>`;
+      h += s.disp === 'arco' ? `<div class="fila c2">${sepF}${angF}</div><div class="fila c2">${elevF}${distF}</div>` : `<div class="fila c2">${sepF}${elevF}</div><div class="fila c1">${distF}</div>`;
+    } else {
+      h += `<div class="fila c3">${campo(t('ancho'), numIn('esp.sueltas.ancho', s.ancho, 'm', 0.1, 0.3, 40))}${campo(t('alto'), numIn('esp.sueltas.alto', s.alto, 'm', 0.1, 0.3, 20))}${elevF}</div>`;
+      if (E.cantidad !== 'varias') h += `<div class="fila c1">${distF}</div>`;
+      else if (s.disp === 'arco') h += `<div class="fila c2">${sepF}${angF}</div><div class="fila c1">${distF}</div>`;
+      else h += `<div class="fila c2">${sepF}${distF}</div>`;
+    }
     if (E.tecnologia === 'proy') h += `<div class="fila c1">${campo(t('techoAlto'), numIn('esp.sueltas.techo', s.techo, 'm', 0.1, 0, 30))}</div><p class="ayuda">${t('techoAyuda')}</p>`;
   }
   h += bloqueObst(sala);
@@ -428,7 +444,8 @@ function rotulo(x) {
     case 'alto': return t('alto') + ' ' + fmt(x.v) + ' m'; case 'paredes': return t('paredesN', { n: x.n }); case 'suelo': return t('suelo');
     case 'arco': return t('arco'); case 'linea': return t('linea'); case 'publico': return t('dist') + ' ' + fmt(x.v, 1) + ' m';
     case 'lux': return fmt(x.v, 0) + ' lx'; case 'ganancia': return t('ganancia') + ' ' + fmt(x.v, 1); case 'techo': return t('techoAlto') + ' ' + fmt(x.v) + ' m';
-    case 'fibra': return t('fibra'); default: return x.v;
+    case 'fibra': return t('fibra'); case 'central': return t('central') + ' ' + x.v.map(v => fmt(v)).join(' × ') + ' m';
+    case 'laterales': return t('laterales') + ' ' + x.v.map(v => fmt(v)).join(' × ') + ' m'; case 'pitch': return 'P' + fmt(x.v, 2) + (x.ok ? ' · ' + x.ok : ''); default: return x.v;
   }
 }
 function calcularPeticion() {
@@ -444,6 +461,11 @@ function calcularPeticion() {
   Object.assign(E.led, c.led); Object.assign(E.proy, c.proy); Object.assign(E.elec, c.elec);
   if (c.led.tipo || c.led.clase) E.led.crm = '';
   if (c.elec.backup || c.elec.conexion) E.elec.sel = '';
+  if (r.pitch) {   // v7.9 · «P1.5», «pitch 1,5»…: el modelo de ese pitch (si el catálogo lo tiene)
+    const l = listaLed(), cob = r.cob ? l.filter(m => /cob/i.test(m.tech + ' ' + m.crm)) : [];
+    const m = (cob.length ? cob : l).find(x => Math.abs(x.pitch - r.pitch) < 0.07);
+    const v = r.vistos.find(x => x.k === 'pitch'); if (m) { E.led.crm = m.crm; if (v) v.ok = m.crm; }
+  }
   actualizar();
   estadoNl(r.vistos.length ? t('nlEntendido') + ' ' + r.vistos.map(rotulo).join(' · ') : t('nlNada'));
 }
@@ -659,7 +681,10 @@ window.addEventListener('afterprint', () => { const d = $('#impresion'); if (d) 
 function tituloPdf(c) {
   const esp = c.esp, T = c.tot || {}, led = E.tecnologia === 'led', sala = esp.tipo === 'sala', n = c.filas.length;
   // el nombre del tipo va en mayúsculas; las medidas no (la «m» de metro no pasa a «M»)
-  const tipo = sala ? `<span>${t('sala')}</span> · ${fmt(esp.ancho)} × ${fmt(esp.fondo)} × ${fmt(esp.alto)} m` : `<span>${n > 1 ? n + ' × ' : ''}${t('pantalla')}</span> · ${fmt(esp.sueltas.ancho)} × ${fmt(esp.sueltas.alto)} m`;
+  const su = esp.sueltas, nCen = c.filas.filter(f => f.s.central).length;   // v7.9 · central de otra medida: «1 central de A × B m + 2 laterales de C × D m»
+  const tipo = sala ? `<span>${t('sala')}</span> · ${fmt(esp.ancho)} × ${fmt(esp.fondo)} × ${fmt(esp.alto)} m`
+    : nCen ? `<span>${n} × ${t('pantalla')}</span> · ${nCen} ${t('central')} ${fmt(su.cAncho)} × ${fmt(su.cAlto)} m + ${n - nCen} ${t('laterales')} ${fmt(su.ancho)} × ${fmt(su.alto)} m`
+    : `<span>${n > 1 ? n + ' × ' : ''}${t('pantalla')}</span> · ${fmt(su.ancho)} × ${fmt(su.alto)} m`;
   const p = [led ? t('led') : t('proy')];
   if (sala) p.push(...c.filas.map(f => f.nombre)); else if (n > 1) p.push(t(esp.sueltas.disp));
   if (led && c.modelo) p.push(`${fmtPx(T.cab)} × ${c.modelo.crm} (${c.modelo.pitch} mm)`);

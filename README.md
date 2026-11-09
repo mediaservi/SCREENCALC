@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v7.8** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v7.9** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -56,7 +56,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 
 ## Datos
 
-La app obtiene el catálogo en vivo y lo guarda cifrado en el dispositivo; no se expone como tabla ni se puede exportar. No usa datos de muestra salvo como último recurso sin conexión. El catálogo de electrónica y mediaservers está en `comun/electronica.js` (constantes `ELEC_DEVICES` y `ELEC_MEDIASERVERS`), común a SCREENS y SCREENS.
+La app obtiene el catálogo en vivo y lo guarda cifrado en el dispositivo; no se expone como tabla ni se puede exportar. Nunca usa datos de muestra: sin conexión y sin copia guardada, avisa de que no se ha podido cargar el catálogo. El catálogo de electrónica y mediaservers está en `comun/electronica.js` (constantes `ELEC_DEVICES` y `ELEC_MEDIASERVERS`), común a SCREENS y SCREENS.
 
 ## Tecnología y despliegue
 
@@ -89,7 +89,22 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v7.8)
+## Cambios de la versión actual (v7.9)
+
+- **Varias pantallas de medidas distintas** (por ejemplo, un auditorio con una pantalla central grande y dos laterales más pequeñas):
+  - en VARIAS → PANTALLAS, desde 3 pantallas, el botón CENTRAL DISTINTA da medidas propias a la central (con un número par, a las dos del medio) y a las laterales;
+  - funciona en línea y en arco, con LED y con proyección, y todas apoyan a la misma elevación;
+  - la tabla marca la central y la línea de cabecera del PDF dice «1 central de A × B m + 2 laterales de C × D m».
+- **La petición lo entiende:** «3 pantallas, una central de 6,6 x 3,712 y dos laterales de 4,2 x 2,362, P1.5 COB, con backup y fibra».
+  - Reconoce la central y las laterales (también «verticales»), en cualquier orden o sin nombrarlas («una de… y dos de…»).
+  - El pitch pedido (P1.5, «pitch 1,5») elige el modelo de ese pitch; con «COB», uno COB.
+  - En inglés entiende «3 LED screens».
+- **Una sola electrónica para varias pantallas, con fibra:** cada pantalla lleva sus propios conversores detrás (en el auditorio, 1 + 2 + 1), con todos los procesadores (COEX MX, VX Pro, H Series…). La ficha del procesador indica el reparto.
+- **Medidas de una oferta en milímetros:** los cabinets se encajan con 5 mm de tolerancia, así que «3712 mm» da 11 filas de 337,5 mm y no 10.
+- **Panel:** «Distancia del público» ya no sale cortada (en arco va en su propia fila).
+- **Sin datos de muestra:** sin conexión y sin copia guardada, el cálculo de una pantalla LED avisa de que no se ha podido cargar el catálogo, en los 6 idiomas.
+
+## Cambios de la versión v7.8
 
 - **Fotos reales de los equipos en todas partes**, en pantalla y en el PDF:
   - la electrónica, el mediaserver, el cabinet y el proyector muestran la foto real de su frontal en lugar de un dibujo; el dibujo queda solo para un equipo que aún no tenga foto;
