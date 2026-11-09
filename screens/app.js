@@ -8,7 +8,7 @@ import '../comun/voz.js';
 import { interpretar } from './peticion.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v7.2';
+const VERSION = 'v7.8';
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   cantidad: 'varias', tecnologia: 'led',
@@ -162,7 +162,7 @@ const MOTOR = {
 };
 const trMotor = (txt) => { let r = String(txt || ''); (MOTOR[idioma()] || []).forEach(([a, b]) => { r = r.replace(a, b); }); return r; };
 function fichaCab(m) {
-  return fichaHTML({ cat: t('fCab'), icono: 'led', marca: m.family || '', modelo: m.crm, foto: m.urlFoto, acento: '#b566ff', stock: enStock(m),
+  return fichaHTML({ cat: t('fCab'), icono: 'led', marca: m.family || '', modelo: m.crm, foto: m.urlFoto, fotoTrasera: m.urlFotoTrasera || m.urlTrasera || m.urlFoto2, vistas: m.fotos, acento: '#b566ff', stock: enStock(m),
     specs: [[t('kPitch'), m.pitch + ' mm'], [t('kCab'), `${m.cabAncho}×${m.cabAlto}${m.thick ? '×' + m.thick : ''} mm`], [t('kPx'), `${m.cabPixAncho}×${m.cabPixAlto}`], [t('kNits'), m.nits ? m.nits + ' nits' : ''], [t('kHz'), m.hz ? m.hz + ' Hz' : ''],
       [t('kKg'), m.cabKg ? fmt(m.cabKg, 1) + ' kg' : ''], [t('kW'), m.wMax ? fmt(m.wMax, 0) + ' W' : ''], [t('kCard'), m.card || ''], [t('kTech'), m.tech || '']],
     enlace: m.crm ? 'https://traulux.net/buscar/?q=' + encodeURIComponent(m.crm) : '', enlaceTxt: t('fichaFab') });
@@ -172,17 +172,17 @@ const epsonManual = (q) => `https://support.epson.net/setupnavi/?MKN=${encodeURI
 const EPSON_CALC = 'https://support.epson-europe.com/TDS/#/page/advanceMode';
 const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbwkc12y4LODbFe-kQidnR2MbbA6cbW1WbhU3UiqmDmshx-ncAdGYrFRy8PNjm9Wg6Mx3w/exec';
 function fichaProy(q, cat) {
-  return fichaHTML({ cat, icono: 'proy', marca: q.marca, modelo: q.nombre, foto: q.imagen, acento: '#00b4ff',
+  return fichaHTML({ cat, icono: 'proy', marca: q.marca, modelo: q.nombre, claveFoto: q.modelo, foto: q.imagen, fotoTrasera: q.trasera, acento: '#00b4ff',
     enlaces: q.marca === 'EPSON' ? [[epsonManual(q), t('epsonManual')], [EPSON_CALC, t('epsonCalc')]] : [],
     specs: [[t('kTR'), (q.trMin === q.trMax ? q.trMin : q.trMin + '–' + q.trMax) + ':1'], [t('kLm'), fmtPx(q.lumens) + ' lm'], [t('kFmt'), q.arTxt], [t('kRes'), q.resX + '×' + q.resY], [t('kDiag'), q.maxDiagPulg + '"'], [t('k4k'), q.k4 ? 'Enhancement' : '—']] });
 }
 function fichaProc(x) {
-  return fichaHTML({ cat: t('procesador'), icono: 'elec', marca: x.marca, modelo: x.modelo, foto: x.front, acento: '#00ff04', stock: x.enStock ? true : null,
+  return fichaHTML({ cat: t('procesador'), icono: 'elec', marca: x.marca, modelo: x.modelo, foto: x.front, fotoTrasera: x.back, acento: '#00ff04', stock: x.enStock ? true : null,
     specs: [[t('puertos'), trMotor(x.puertos)], [t('capacidad'), trMotor(x.capacidad)], [t('kEsc'), x.escalador ? t('si') : t('no')]],
     piezas: (x.equipos || []).map(q => ({ cant: q.cant, ref: q.ref, desc: trMotor(q.desc) })), enlace: x.url, enlaceTxt: t('fichaFab') });
 }
 function fichaMedia(m, need, led) {
-  return fichaHTML({ cat: t('mediaserver'), icono: 'media', marca: m.marca, modelo: m.modelo, foto: m.front, acento: '#ffb000',
+  return fichaHTML({ cat: t('mediaserver'), icono: 'media', marca: m.marca, modelo: m.modelo, foto: m.front, fotoTrasera: m.back, acento: '#ffb000',
     specs: [[t('salidas4kK'), m.out4k], [t('necesita'), need], [t('dante'), m.dante ? t('si') : t('no')]], notas: [trMotor(m.resumen), led ? t('mediaNotaLed') : t('mediaNotaProy')], enlace: m.url, enlaceTxt: t('fichaFab') });
 }
 
@@ -196,6 +196,7 @@ function modEspacio() {
     h += `<div class="etq">${t('superficies')}</div><div class="fila c3">${['frontal', 'izquierda', 'derecha'].map(tp).join('')}</div><div class="fila c2">${['trasera', 'suelo'].map(tp).join('')}</div>`;
     if (E.tecnologia === 'led') h += `<p class="ayuda">${t('sueloLed')}</p>`;
     h += `<div class="fila c2">${campo(t('altoPant'), numIn('esp.altoCubierto', e.altoCubierto, 'm', 0.1, 0, 20))}${campo(t('elev'), numIn('esp.elev', e.elev, 'm', 0.1, 0, 10))}</div><p class="ayuda">${t('altoAyuda')}</p>`;
+    if (ajuste.esp) h += `<p class="aviso">${ajuste.esp}</p>`;
   } else {
     if (E.cantidad === 'varias') h += `<div class="fila c2">${campo(t('num'), numIn('esp.sueltas.n', s.n, 'u', 1, 2, 8))}<div class="campo"><label>${t('disp')}</label><div class="fila c2">${tog(s.disp === 'linea', 'data-set="esp.sueltas.disp" data-v="linea"', t('linea'))}${tog(s.disp === 'arco', 'data-set="esp.sueltas.disp" data-v="arco"', t('arco'))}</div></div></div>`;
     h += `<div class="fila c3">${campo(t('ancho'), numIn('esp.sueltas.ancho', s.ancho, 'm', 0.1, 0.3, 40))}${campo(t('alto'), numIn('esp.sueltas.alto', s.alto, 'm', 0.1, 0.3, 20))}${campo(t('elev'), numIn('esp.sueltas.elev', s.elev, 'm', 0.1, 0, 10))}</div>`;
@@ -209,6 +210,7 @@ function modEspacio() {
 function bloqueObst(sala) {
   const e = E.esp, L = e.obst || [];
   let h = `<div class="etq">${t('obstTit')}</div><div class="fila ${sala ? 'c2' : 'c1'}">${sala ? `<button type="button" class="sec-btn" data-accion="obst-add" data-tipo="puerta">＋ ${t('puerta')}</button>` : ''}<button type="button" class="sec-btn" data-accion="obst-add" data-tipo="obstaculo">＋ ${t('obst')}</button></div>`;
+  if (ajuste.obst) h += `<p class="aviso">${ajuste.obst}</p>`;
   L.forEach((o, i) => {
     if (o.tipo === 'puerta' && !sala) return;
     const k = 'esp.obst.' + i;
@@ -515,6 +517,32 @@ async function crearEscena() {
 }
 
 // ---------- eventos ----------
+// v7.3 · cada casilla actúa sola: si un valor choca con otro (la imagen más alta que la sala, una puerta fuera de su pared…),
+// se ajusta el que depende de él y se avisa en el propio módulo, en vez de ignorar el valor en silencio
+const ajuste = { esp: '', obst: '' };
+function coherencia(k) {
+  const e = E.esp, r2 = (v) => Math.round(v * 100) / 100, sala = e.tipo === 'sala' && E.cantidad === 'varias';
+  ajuste.esp = ''; ajuste.obst = '';
+  if (!sala) return;
+  if ((k === 'esp.altoCubierto' || k === 'esp.elev') && e.altoCubierto > 0 && e.elev + e.altoCubierto > e.alto) { e.alto = r2(e.elev + e.altoCubierto); ajuste.esp = t('ajSala', { v: fmt(e.alto) }); }
+  if (k === 'esp.elev' && !(e.altoCubierto > 0) && e.elev > e.alto - 0.5) { e.elev = r2(Math.max(0, e.alto - 0.5)); ajuste.esp = t('ajElev', { v: fmt(e.elev) }); }
+  if (k === 'esp.alto') {
+    if (e.elev > e.alto - 0.5) { e.elev = r2(Math.max(0, e.alto - 0.5)); ajuste.esp = t('ajElev', { v: fmt(e.elev) }); }
+    if (e.altoCubierto > 0 && e.elev + e.altoCubierto > e.alto) { e.altoCubierto = r2(Math.max(0.1, e.alto - e.elev)); ajuste.esp = t('ajImagen', { v: fmt(e.altoCubierto) }); }
+  }
+  // puertas dentro de su pared y obstáculos dentro de la sala (su x y su z son el centro)
+  const m = /^esp\.obst\.(\d+)\./.exec(k), todas = /^esp\.(ancho|fondo|alto)$/.test(k);
+  if (!m && !todas) return;
+  (e.obst || []).forEach((o, i) => {
+    if (m && +m[1] !== i) return;
+    const antes = JSON.stringify(o);
+    if (o.tipo === 'puerta') { const L = o.pared === 'izquierda' || o.pared === 'derecha' ? e.fondo : e.ancho;
+      o.ancho = r2(Math.min(o.ancho, L)); o.x = r2(Math.min(Math.max(0, o.x), L - o.ancho)); o.alto = r2(Math.min(o.alto, e.alto)); }
+    else { o.ancho = r2(Math.min(o.ancho, e.ancho)); o.fondo = r2(Math.min(o.fondo, e.fondo)); o.alto = r2(Math.min(o.alto, e.alto));
+      o.x = r2(Math.min(Math.max(o.ancho / 2, o.x), e.ancho - o.ancho / 2)); o.z = r2(Math.min(Math.max(o.fondo / 2, o.z), e.fondo - o.fondo / 2)); }
+    if (JSON.stringify(o) !== antes) ajuste.obst = t(o.tipo === 'puerta' ? 'ajPuerta' : 'ajObst', { n: (o.tipo === 'puerta' ? t('puerta') : t('obst')) + ' ' + ((e.obst || []).slice(0, i + 1).filter(x => x.tipo === o.tipo).length) });
+  });
+}
 function fijar(ruta, valor) { const p = ruta.split('.'); let o = E; for (let i = 0; i < p.length - 1; i++) o = o[p[i]]; o[p[p.length - 1]] = valor; }
 document.addEventListener('click', (ev) => {
   const b = ev.target.closest('button, a[data-accion]'); if (!b || b.disabled) return;
@@ -543,8 +571,10 @@ document.addEventListener('click', (ev) => {
   if (a === 'nl-mic') {
     if (escuchando) { try { escuchando.stop(); } catch (e) {} escuchando = null; pintarConsola(); return; }
     const i0 = $('#nl-texto'), base = (i0 ? i0.value : nlTexto).trim();   // lo dictado se añade a lo que ya estaba escrito
-    escuchando = globalThis.SC_VOZ.dictar(idioma(), (txt) => { nlTexto = (base ? base + ' ' : '') + txt; const i = $('#nl-texto'); if (i) i.value = nlTexto; },
-      (e) => { if (e === 'micFin') { escuchando = null; pintarConsola(); if (nlTexto.trim()) estadoNl(t('est_listo')); } else estadoNl(t('est_' + e), e === 'escuchando'); });
+    // los últimos avisos de un dictado ya parado no pisan a uno nuevo que se haya empezado justo después
+    let yo = null; const vivo = () => escuchando === yo || escuchando === null;
+    yo = escuchando = globalThis.SC_VOZ.dictar(idioma(), (txt) => { if (!vivo()) return; nlTexto = (base ? base + ' ' : '') + txt; const i = $('#nl-texto'); if (i) i.value = nlTexto; },
+      (e) => { if (!vivo()) return; if (e === 'micFin') { escuchando = null; pintarConsola(); if (nlTexto.trim()) estadoNl(t('est_listo')); } else estadoNl(t('est_' + e), e === 'escuchando'); });
     pintarConsola(); return;
   }
   if (a === 'elec-dante') { E.elec.dante = !E.elec.dante; E.elec.selMedia = ''; actualizar(); return; }
@@ -568,7 +598,7 @@ function pasoNum(k, dir) {
   if (k === 'proy.dist' && !v && dir > 0 && calculo) { const pw = calculo.filas.find(f => f.s.tipo !== 'suelo'); if (pw && pw.p.tMin) v = Math.round(pw.p.tMin / paso) * paso - paso; }
   let nv = Math.round((v + dir * paso * mult) / paso) * paso;
   if (!isNaN(min)) nv = Math.max(min, nv); if (!isNaN(max)) nv = Math.min(max, nv);
-  nv = Number(nv.toFixed(dec)); i.value = nv; ajustarCasilla(i); fijar(k, nv); pasoPendiente = true; clearTimeout(tNum);
+  nv = Number(nv.toFixed(dec)); i.value = nv; ajustarCasilla(i); fijar(k, nv); coherencia(k); pasoPendiente = true; clearTimeout(tNum);
 }
 function pararRep() { clearTimeout(tRep); tRep = 0; nRep = 0; if (pasoPendiente) { pasoPendiente = false; clearTimeout(tNum); tNum = setTimeout(() => actualizar(), 30); } }
 document.addEventListener('pointerdown', (ev) => {
@@ -585,7 +615,7 @@ document.addEventListener('input', (ev) => {
   const v = parseFloat(String(i.value).replace(',', '.'));
   if (isNaN(v)) return;
   const min = parseFloat(i.min), max = parseFloat(i.max);
-  fijar(i.dataset.num, Math.min(isNaN(max) ? v : max, Math.max(isNaN(min) ? v : min, i.step === '1' ? Math.round(v) : v)));
+  fijar(i.dataset.num, Math.min(isNaN(max) ? v : max, Math.max(isNaN(min) ? v : min, i.step === '1' ? Math.round(v) : v))); coherencia(i.dataset.num);
   clearTimeout(tNum); tNum = setTimeout(() => { const foco = i.dataset.num, pos = i.selectionStart; actualizar(); const n = document.querySelector(`[data-num="${foco}"]`); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} } }, 350);
 });
 document.addEventListener('change', (ev) => {
@@ -601,16 +631,22 @@ document.addEventListener('change', (ev) => {
 });
 
 // PDF: hoja A4 en claro con cabecera, captura 3D, resultados, equipos, electrónica y avisos (se imprime con el navegador)
+// v7.4 · cabecera en una fila de alto común (logo SCREENS a la izquierda, web y fecha al centro, logo AVHUB a la derecha),
+// línea de cabecera suave con el tipo de proyecto y sus datos, y pie (aviso + eslogan) con número de hoja en todas las hojas
 function imprimir() {
   const c = calculo; if (!c || !c.filas.length) return;
-  const esp = c.esp, hoy = new Date(), fecha = hoy.toLocaleDateString(idioma() === 'en' ? 'en-GB' : 'es-ES') + ' · ' + hoy.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-  const titulo = esp.tipo === 'sala' ? `${t('sala')} · ${fmt(esp.ancho)} × ${fmt(esp.fondo)} × ${fmt(esp.alto)} m` : `${c.filas.length} × ${t('pantalla')} · ${fmt(esp.sueltas.ancho)} × ${fmt(esp.sueltas.alto)} m`;
-  let h = `<header class="im-cab"><img class="im-logo" src="assets/screens-logo-negro.svg" alt="SCREENS"><div class="im-tit"><b>${titulo}</b><span>${E.tecnologia === 'led' ? t('led') : t('proy')} · ${c.filas.map(f => f.nombre).join(' · ')}</span></div><div class="im-der"><img src="assets/avhub-logo.svg" alt="AVHUB"><span>${fecha}</span></div></header>`;
+  const hoy = new Date(), fecha = hoy.toLocaleDateString(idioma() === 'en' ? 'en-GB' : 'es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' · ' + hoy.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  const pie = `SCREENS ${VERSION} ${hoy.getFullYear()} ${t('pie')}`, web = 'by mediaservi.com · screens.mediaservi.com';
+  let h = `<header class="im-cab"><img class="im-logo" src="assets/screens-logo-negro.svg" alt="SCREENS"><div class="im-url"><b>avhub.mediaservi.com</b><span>${fecha}</span></div><img class="im-avhub" src="assets/avhub-logo.svg" alt="AVHUB"></header>`;
+  h += `<div class="im-titulo">${tituloPdf(c)}</div>`;
   if (escena) h += `<figure class="im-captura"><img src="${escena.captura(true)}" alt=""></figure>`;
   h += `<div class="im-res">${vistaResultados(c)}</div>`;
   const fichas = E.tecnologia === 'led' ? (c.modelo ? [fichaCab(c.modelo)] : []) : [fichaProy(c.proyector, t('fProy'))].concat(c.prSuelo && c.prSuelo !== c.proyector && c.filas.some(f => f.s.tipo === 'suelo') ? [fichaProy(c.prSuelo, t('fProySuelo'))] : []);
   if (fichas.length) h += `<section class="res-sec"><div class="res-tit">${t('equipos')}</div><div class="fichas">${fichas.join('')}</div></section>`;
-  h += `<p class="im-aviso">${t('avisoPdf')}</p><footer class="im-pie">SCREENS ${VERSION} ${hoy.getFullYear()} ${t('pie')} <i class="ic ic-footer" aria-hidden="true"></i> by mediaservi.com · screens.mediaservi.com</footer>`;
+  // pie en el margen inferior de cada hoja; si el navegador no dibuja esos márgenes (Safari, Firefox), va al final del documento.
+  // Las cajas vacías de arriba y de abajo a la izquierda evitan que el navegador añada su fecha, título y dirección a la hoja
+  if (cajasMargen()) h += `<style>@page { margin-bottom: 18mm; @top-left { content: "" } @top-center { content: "" } @top-right { content: "" } @bottom-left { content: "" } @bottom-center { content: ${cssTxt(t('avisoPdf'))} "\\A" ${cssTxt(pie + ' ')} ${icoPie()} ${cssTxt(' ' + web)}; } @bottom-right { content: counter(page) "/" counter(pages); } }</style>`;
+  else h += `<p class="im-aviso">${t('avisoPdf')}</p><footer class="im-pie">${pie} <i class="ic ic-footer" aria-hidden="true"></i> ${web}</footer>`;
   const d = $('#impresion'); d.innerHTML = h;
   // fotos sin carga diferida (el bloque está oculto en pantalla) y, como mucho, 3 s de espera
   const imgs = [...d.querySelectorAll('img')]; imgs.forEach(i => { i.loading = 'eager'; });
@@ -618,6 +654,32 @@ function imprimir() {
   Promise.race([espera, new Promise(r => setTimeout(r, 3000))]).then(() => setTimeout(() => window.print(), 60));
 }
 window.addEventListener('afterprint', () => { const d = $('#impresion'); if (d) d.innerHTML = ''; });
+
+// línea de cabecera del PDF: tipo de proyecto y medidas, tecnología, superficies o disposición, equipos y cifras clave
+function tituloPdf(c) {
+  const esp = c.esp, T = c.tot || {}, led = E.tecnologia === 'led', sala = esp.tipo === 'sala', n = c.filas.length;
+  // el nombre del tipo va en mayúsculas; las medidas no (la «m» de metro no pasa a «M»)
+  const tipo = sala ? `<span>${t('sala')}</span> · ${fmt(esp.ancho)} × ${fmt(esp.fondo)} × ${fmt(esp.alto)} m` : `<span>${n > 1 ? n + ' × ' : ''}${t('pantalla')}</span> · ${fmt(esp.sueltas.ancho)} × ${fmt(esp.sueltas.alto)} m`;
+  const p = [led ? t('led') : t('proy')];
+  if (sala) p.push(...c.filas.map(f => f.nombre)); else if (n > 1) p.push(t(esp.sueltas.disp));
+  if (led && c.modelo) p.push(`${fmtPx(T.cab)} × ${c.modelo.crm} (${c.modelo.pitch} mm)`);
+  if (!led) { const g = new Map(); c.filas.forEach(f => g.set(f.proyector, (g.get(f.proyector) || 0) + f.p.n)); p.push([...g].map(([q, k]) => `${fmtPx(k)} × ${q.marca ? q.marca + ' ' : ''}${q.nombre}`).join(' + ')); }
+  if (T.lienzoW) p.push(`${fmtPx(T.lienzoW)}×${fmtPx(T.lienzoH)} px`);
+  if (led && T.kw) p.push(`${fmt(T.kw, 1)} kW`);
+  if (!led && isFinite(T.nitsMin)) p.push(`${fmt(T.nitsMin, 0)} nits`);
+  return `<b>${tipo}</b> · ${p.join(' · ')}`;
+}
+// ¿dibuja el navegador las cajas de margen de @page (pie y número en cada hoja)? Chrome, Edge y Samsung Internet sí
+function cajasMargen() { try { const s = new CSSStyleSheet(); s.replaceSync('@page { @bottom-center { content: "x" } }'); const r = s.cssRules[0]; return !!(r && r.cssRules && r.cssRules.length); } catch (e) { return false; } }
+function cssTxt(s) { return '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, ' ') + '"'; }
+// icono del pie (engranaje con corazón) en violeta para el margen de la hoja, a partir de la misma máscara de la interfaz
+function icoPie() {
+  const i = document.createElement('i'); i.className = 'ic ic-footer'; document.body.appendChild(i);
+  const m = (getComputedStyle(i).getPropertyValue('--m').match(/data:image\/png;base64,[A-Za-z0-9+/=]+/) || [''])[0]; i.remove();
+  if (!m) return '';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="3 3 58 58"><filter id="f"><feFlood flood-color="#9900ff"/><feComposite in2="SourceGraphic" operator="in"/></filter><image width="64" height="64" href="${m}" filter="url(#f)"/></svg>`;
+  return `url("data:image/svg+xml;base64,${btoa(svg)}")`;
+}
 
 // vídeo o imagen propios: se cargan en el navegador (no se suben a ningún servidor) y se aplican a todas las superficies
 function cargarMedio(f) {

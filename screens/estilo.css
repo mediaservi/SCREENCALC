@@ -235,16 +235,29 @@ select.sel { width: 100%; background: var(--hundido); color: var(--verde); borde
 @media print {
   /* márgenes blancos: el esquema oscuro de la pantalla pintaba los márgenes de la hoja en negro */
   @page { size: A4 portrait; margin: 12mm; }
+  /* v7.4 · pie de cada hoja: aviso y eslogan al centro, número de hoja abajo a la derecha (el contenido se pone al imprimir).
+     Va en un @page aparte para que los navegadores que no conocen las cajas de margen conserven el tamaño y los márgenes */
+  @page {
+    @bottom-center { font: 400 7pt/1.55 'Inter', Arial, sans-serif; color: #555; white-space: pre-wrap; text-align: center; vertical-align: middle; }
+    @bottom-right { font: 400 8pt 'Share Tech Mono', ui-monospace, monospace; color: #555; letter-spacing: .08em; text-align: right; vertical-align: middle; }
+  }
   :root { color-scheme: light !important; }
   html, body { background: #fff !important; color: #111 !important; height: auto !important; display: block !important; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body > .cab, body > .consola, #app, body > .pie { display: none !important; }
   .impresion { display: block !important; font-family: var(--sans); color: #111; }
-  .im-cab { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding-bottom: 8px; border-bottom: 2px solid #9900ff; margin-bottom: 8px; }
-  .im-logo { height: 28pt; filter: none; }
-  .im-tit { display: flex; flex-direction: column; text-align: center; } .im-tit b { font-size: 12pt; letter-spacing: .04em; } .im-tit span { font-size: 8pt; color: #555; }
-  .im-der { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font: 7.5pt var(--mono); color: #555; } .im-der img { height: 26pt; }
+  /* v7.4 · cabecera: tres piezas del mismo alto visible (28 pt) alineadas a izquierda, centro y derecha del ancho útil */
+  .im-cab { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 12pt; margin-bottom: 7pt; }
+  .im-logo { justify-self: start; height: 30.4pt; margin-left: -1.4pt; filter: none; }
+  .im-avhub { justify-self: end; height: 29.2pt; margin-right: -0.7pt; }
+  .im-url { display: flex; flex-direction: column; align-items: center; text-align: center; white-space: nowrap; }
+  .im-url b { font: 700 15pt/1 var(--sans); color: #111; letter-spacing: .01em; }
+  .im-url span { margin-top: 8pt; font: 400 8pt/1 var(--mono); color: #555; letter-spacing: .32em; margin-right: -.32em; }
+  .im-titulo { margin: 0 0 8px; padding: 5pt 10pt; border-radius: 4px; background: #f1e6ff; color: #4a0a8c; font-size: 8pt; line-height: 1.45; text-align: center; text-wrap: balance; break-after: avoid; }
+  .im-titulo b { font-weight: 700; } .im-titulo b span { text-transform: uppercase; letter-spacing: .05em; }
   .im-captura { margin: 0 0 8px; border: 1px solid #d6d6de; border-radius: 6px; overflow: hidden; break-inside: avoid; } .im-captura img { display: block; width: 100%; max-height: 100mm; object-fit: contain; background: #f4f4f6; }
+  /* v7.7 · el render 3D, con menos densidad de tinta para que no quede oscuro (la misma de los gráficos del PDF de una pantalla LED) */
+  .impresion { --densidad: .6; } .im-captura img { opacity: var(--densidad); }
   .im-res { display: grid; gap: 8px; }
   .impresion .res-tot { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
   .impresion .tar { background: #fff !important; border: 1px solid #d6d6de !important; border-top: 3px solid var(--ac) !important; box-shadow: none !important; break-inside: avoid; }

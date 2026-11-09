@@ -71,6 +71,8 @@ async function leerMaestro() {
     const r = await fetch(ADMIN_URL + '?accion=catalogo', { cache: 'no-store' });
     if (!r.ok) return null;
     const j = await r.json();
+    // v7.8 · fotos de los equipos que busca el motor cada noche (frontal, trasera y otras vistas)
+    if (j && j.e && globalThis.SC_FICHA && globalThis.SC_FICHA.recibirFotos) globalThis.SC_FICHA.recibirFotos(j.e);
     if (!j || !j.d) return null;
     const b = atob(j.d), u = new Uint8Array(b.length);
     for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
