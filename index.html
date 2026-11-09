@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v6.5                              ║
+║                          Versión actual: v6.6                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v6.5
+ÚLTIMA ACTUALIZACIÓN: v6.6
+- v6.6: SCREENS: puertas (quitan los cabinets del hueco ajustado a la rejilla; en proyección, aviso de enmascarar) y obstáculos (columnas o cajas, en rojo si cortan algún haz); contenido propio (vídeo o imagen del cliente, sin subirlo a ningún servidor) con ajuste continuo por todas las paredes, estirar, rellenar, encajar, repetir o espejo, y demostración «ascensor» en movimiento; el panorama recorre la sala sin cortes en las esquinas (izquierda → frontal → derecha → trasera); PDF de SCREENS en claro (cabecera, captura 3D, resultados, safety zone, electrónica y equipos)
+ANTERIOR: v6.5
 - v6.5: ficha de equipo común (comun/ficha.js y comun/ficha.css) con foto del fabricante, especificaciones, piezas, stock y enlace, en SCREENCALC (cabinet) y en SCREENS (cabinet, proyector, electrónica y mediaserver); motor de electrónica común (comun/electronica.js); SCREENS: electrónica de control para todas las superficies (backup, escalador, RJ45 o fibra, H Series por piezas, reparto de líneas por superficie) y mediaserver; proyección: sombras del público y safety zone (franjas rayadas y cinta amarilla y negra en el suelo), proyectores dentro del haz de otra superficie en rojo, cruces de haces, chasis con sus medidas y holgura de ventilación (si chocan se cuelgan más altos o más bajos), y en paredes con solape excesivo un proyector menos con recorte vertical; «líneas» en plural en la electrónica
 ANTERIOR: v6.4
 - v6.4: SCREENS es la página de inicio y la web principal pasa a screens.mediaservi.com (screencalc.mediaservi.com deja de usarse): al entrar se elige una o varias superficies y LED o proyección; «Una + LED» abre SCREENCALC; el botón de la cabecera que llevaba a SCREENS pasa a ser INICIO (vuelve al selector); logo SCREENS (isotipo cubo) en la cabecera de SCREENS e icono propio; idioma común entre SCREENCALC y SCREENS; el botón Atrás del navegador alterna entre el selector y el cálculo; textos sin referencias a SCREENBOX
@@ -6817,7 +6819,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v6.5</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v6.6</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -9138,7 +9140,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v6.5 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v6.6 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -9148,7 +9150,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENCALC</a> v6.5 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a>
+                      <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENCALC</a> v6.6 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a>
                     </div>
                   </div>
               </main>

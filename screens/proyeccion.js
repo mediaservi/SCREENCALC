@@ -212,3 +212,16 @@ export function analizarSombras(filas, esp, alto) {
   }
   return { haces, franjas, zona, conflictos, cruces, avisos, persona: ALTO_PERSONA, movs: colocacion.movs, choques: colocacion.choques };
 }
+
+// Obstáculos (columnas, cajas…) que cortan algún haz: harán sombra en esa imagen
+export function obstaculosEnHaces(obs, haces) {
+  const out = [];
+  obs.forEach((o, k) => {
+    const pts = [];
+    for (const a of [-0.5, 0, 0.5]) for (const b of [-0.5, 0, 0.5]) for (const c of [0.02, 0.5, 1]) pts.push({ x: o.x + a * o.ancho, y: c * o.alto, z: o.z + b * o.fondo });
+    const tocados = haces.filter(h => pts.some(P => dentroHaz(P, h)));
+    const sups = [...new Set(tocados.map(h => h.nombre))];
+    if (sups.length) out.push({ k, nombres: sups });
+  });
+  return out;
+}

@@ -203,9 +203,14 @@ export class Escena {
       this._cotaSuelo(new THREE.Vector3(-W / 2, 0, D / 2), new THREE.Vector3(W / 2, 0, D / 2), `${fmt(W)} m`, 0.55);
       this._cotaSuelo(new THREE.Vector3(W / 2, 0, D / 2), new THREE.Vector3(W / 2, 0, -D / 2), `${fmt(D)} m`, 0.55);
     }
+    // contenido en movimiento (ascensor de demostración o vídeo / imagen propios): base apagada y capa de contenido encima
+    const vivo = m.contenido === 'ascensor' || (m.contenido === 'propio' && !!m.medio), cont = vivo || m.contenido === 'propio' ? 'apagado' : m.contenido;
+    this._vivos = [];
     const pano = m.contenido === 'panorama' ? this._panorama() : null;
     // tramos del panorama en el orden de recorrido
-    const ordenPano = m.superficies.filter(f => f.s.tipo !== 'suelo');
+    // recorrido continuo alrededor de la sala: izquierda → frontal → derecha → trasera (las esquinas casan); pantallas, de izquierda a derecha
+    const ORD = ['izquierda', 'frontal', 'derecha', 'trasera'];
+    const ordenPano = m.superficies.filter(f => f.s.tipo !== 'suelo').slice().sort((a, b) => (ORD.indexOf(a.s.id) + 10 * (a.s.num || 0)) - (ORD.indexOf(b.s.id) + 10 * (b.s.num || 0)));
     const anchoPano = ordenPano.reduce((a, f) => a + (f.r ? f.r.ancho : f.s.ancho), 0) || 1;
     let acum = 0; const tramo = {};
     ordenPano.forEach(f => { const w = f.r ? f.r.ancho : f.s.ancho; tramo[f.s.id] = { u0: acum / anchoPano, u1: (acum + w) / anchoPano }; acum += w; });
@@ -217,7 +222,7 @@ export class Escena {
       if (sala && s.tipo === 'pared') { g.userData = { normal: new THREE.Vector3(Math.sin(s.rot), 0, Math.cos(s.rot)), plano: new THREE.Vector3(s.x, 0, s.z) }; this.paredes.push(g); }
       if (m.tecnologia === 'led' && f.r) {
         const r = f.r, t = (f.grosor || 0.08);
-        const tex = this._cartaLed(s, r, f.nombre, m.contenido, pano ? { img: pano.img, ...tramo[s.id], altoMax } : null);
+        const tex = this._cartaLed(s, r, f.nombre, cont, pano ? { img: pano.img, ...tramo[s.id], altoMax } : null);
         if (s.tipo === 'suelo') {
           const lo = new THREE.Mesh(new THREE.BoxGeometry(r.ancho, 0.06, r.alto), [mMetal(), mMetal(), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }), mMetal(), mMetal(), mMetal()]);
           lo.position.y = 0.03; G.add(lo); return;
@@ -225,13 +230,16 @@ export class Escena {
         const frente = new THREE.MeshBasicMaterial({ map: tex, toneMapped: false });
         const caja = new THREE.Mesh(new THREE.BoxGeometry(r.ancho, r.alto, t), [mMetal(), mMetal(), mMetal(), mMetal(), frente, mMetal()]);
         caja.position.set(0, s.elev + r.alto / 2, t / 2 + 0.005); caja.castShadow = true; g.add(caja);
+        // huecos de las puertas (cabinets quitados, ajustados a la rejilla)
+        (r.huecos || []).forEach(hh => { const b = new THREE.Mesh(new THREE.BoxGeometry(hh.w, hh.h, 0.02), new THREE.MeshStandardMaterial({ color: 0x0d0d10, roughness: 0.9 })); b.position.set(hh.x + hh.w / 2, s.elev + hh.h / 2, t + 0.016); g.add(b); });
         if (s.tipo === 'pantalla') { // estructura de suelo para pantallas sueltas elevadas
           if (s.elev > 0.05) [-1, 1].forEach(lado => { const pata = new THREE.Mesh(new THREE.BoxGeometry(0.08, s.elev, 0.08), mMetal()); pata.position.set(lado * (r.ancho / 2 - 0.2), s.elev / 2, t / 2); pata.castShadow = true; g.add(pata); });
         }
         // la pantalla ilumina la sala con su color medio
-        if (luces < 6 && m.contenido !== 'apagado') {
+        if (vivo) this._capaMedio(g, { x: 0, y: s.elev + r.alto / 2, z: t + 0.009, w: r.ancho, h: r.alto }, tramo[s.id], m);
+        if (luces < 6 && (vivo || m.contenido !== 'apagado')) {
           // la luz rectangular emite hacia su −Z: girada 180° para que ilumine hacia la sala (+Z local)
-          const l = new THREE.RectAreaLight(tex.userData.medio, 9, r.ancho, r.alto); l.position.set(0, s.elev + r.alto / 2, t + 0.02); l.rotation.set(0, Math.PI, 0);
+          const l = new THREE.RectAreaLight(vivo ? new THREE.Color(0x7f8bb0) : tex.userData.medio, vivo ? 6 : 9, r.ancho, r.alto); l.position.set(0, s.elev + r.alto / 2, t + 0.02); l.rotation.set(0, Math.PI, 0);
           g.add(l); luces++;
         }
         if (m.etiquetas) this._etiquetaLocal(g, `${f.nombre.toUpperCase()} · ${r.cols}×${r.rows} · ${r.resW}×${r.resH}`, new THREE.Vector3(0, s.elev + r.alto + 0.28, t + 0.05));
@@ -239,7 +247,8 @@ export class Escena {
       if (m.tecnologia === 'proy' && f.p) {
         const p = f.p, prod = f.proyector;
         if (s.tipo === 'suelo') {
-          const tex = this._sueloProy(s, p, m.contenido);
+          const tex = this._sueloProy(s, p, cont);
+          if (vivo && m.contenido === 'propio') { const gS = new THREE.Group(); gS.rotation.x = -Math.PI / 2; G.add(gS); this._capaMedio(gS, { x: 0, y: 0, z: 0.012, w: s.ancho, h: s.alto }, null, m, true); }
           const pl = new THREE.Mesh(new THREE.PlaneGeometry(s.ancho, s.alto), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
           pl.rotation.x = -Math.PI / 2; pl.position.y = 0.006; G.add(pl);
           p.pos.forEach((q, i) => this._proyector(G, new THREE.Vector3(q.x, H - 0.15, q.z), [
@@ -248,7 +257,9 @@ export class Escena {
           return;
         }
         const altoPared = sala ? H : s.elev + s.alto + 0.2;
-        const tex = this._paredProy(s, p, m.contenido, altoPared, f.nombre);
+        const tex = this._paredProy(s, p, cont, altoPared, f.nombre);
+        if (vivo) { const wU = Math.min(s.ancho, p.n * p.imgW - (p.n - 1) * p.solape), yB = Math.max(0, s.elev - Math.max(0, p.imgH - s.alto) / 2), yT = Math.min(altoPared, yB + p.imgH);
+          this._capaMedio(g, { x: 0, y: (yB + yT) / 2, z: 0.008, w: wU, h: yT - yB }, tramo[s.id], m); }
         const lienzo = new THREE.Mesh(new THREE.PlaneGeometry(s.ancho, altoPared), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
         lienzo.position.set(0, altoPared / 2, 0.004); g.add(lienzo);
         if (!sala) { const marco = new THREE.Mesh(new THREE.BoxGeometry(s.ancho + 0.08, altoPared + 0.04, 0.04), mMetal()); marco.position.set(0, altoPared / 2, -0.02); g.add(marco); }
@@ -260,6 +271,28 @@ export class Escena {
         if (m.etiquetas) this._etiquetaLocal(g, `${f.nombre.toUpperCase()} · ${p.n}× · ${p.resW}×${p.resH}`, new THREE.Vector3(0, s.elev + p.imgH + 0.3, 0.08));
       }
       void idx;
+    });
+    // puertas: hoja con marco y manilla delante de su pared (en paredes LED, delante del hueco)
+    (m.puertas || []).forEach(p => {
+      const fila = m.superficies.find(f => f.s.id === p.pared), z0 = (m.tecnologia === 'led' && fila && fila.r ? (fila.grosor || 0.08) + 0.03 : 0.02);
+      const g = new THREE.Group(); g.position.set(p.x, 0, p.z); g.rotation.y = p.rot; G.add(g);
+      // se secciona con su pared al mirar desde fuera
+      g.userData = { normal: new THREE.Vector3(Math.sin(p.rot), 0, Math.cos(p.rot)), plano: new THREE.Vector3(p.x, 0, p.z) }; this.paredes.push(g);
+      const marco = new THREE.Mesh(new THREE.BoxGeometry(p.ancho + 0.1, p.alto + 0.05, 0.03), new THREE.MeshStandardMaterial({ color: 0x9a9aa2, roughness: 0.5, metalness: 0.3 }));
+      marco.position.set(0, (p.alto + 0.05) / 2, z0); g.add(marco);
+      const hoja = new THREE.Mesh(new THREE.BoxGeometry(p.ancho, p.alto, 0.045), new THREE.MeshStandardMaterial({ color: 0x3c3c44, roughness: 0.7 }));
+      hoja.position.set(0, p.alto / 2, z0 + 0.012); hoja.castShadow = true; g.add(hoja);
+      const man = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.025, 0.04), new THREE.MeshStandardMaterial({ color: 0xd8d8de, metalness: 0.8, roughness: 0.25 }));
+      man.position.set(p.ancho / 2 - 0.12, 1.05, z0 + 0.05); g.add(man);
+    });
+    // obstáculos: columnas o cajas; en rojo si cortan algún haz
+    (m.obstaculos || []).forEach((o, k) => {
+      const malo = m.obstTapa && m.obstTapa.has(k);
+      const b = new THREE.Mesh(new THREE.BoxGeometry(o.ancho, o.alto, o.fondo), new THREE.MeshStandardMaterial({ color: malo ? 0x8a3038 : 0x77777e, roughness: 0.85 }));
+      b.position.set(o.x, o.alto / 2, o.z); b.castShadow = true; b.receiveShadow = true; G.add(b);
+      const aristas = new THREE.LineSegments(new THREE.EdgesGeometry(b.geometry), new THREE.LineBasicMaterial({ color: malo ? 0xff4d5e : 0x2a2a30 }));
+      aristas.position.copy(b.position); G.add(aristas);
+      if (malo) this._etiqueta('⚠', new THREE.Vector3(o.x, o.alto + 0.25, o.z), 0.24, { borde: '#ff4d5e', col: '#ffd500' });
     });
     if (m.sombras) this._zonaSegura(m.sombras, !!sala);
     // figura humana: en el centro de la sala, o delante de las pantallas a la distancia del público
@@ -280,6 +313,8 @@ export class Escena {
     const R = Math.max(W, D) * 0.8; Object.assign(this.sol.shadow.camera, { left: -R, right: R, top: R, bottom: -R, near: 1, far: 60 }); this.sol.shadow.camera.updateProjectionMatrix();
     this.ctrl.target.set(0, Math.min(H, altoMax) * 0.45, sala ? 0 : -1);
     this.vista(this.vistaActual, true);
+    if (this._vivos.length && !this._animando) { this._animando = true; requestAnimationFrame(() => this._bucle()); }
+    if (!this._vivos.length) this._animando = false;
   }
   // Safety zone: cinta discontinua amarilla y negra en el suelo y, en rayado rojo tenue, las franjas donde el público hace sombra
   _zonaSegura(S, sala) {
@@ -324,6 +359,63 @@ export class Escena {
       for (let k = 0; k < 4; k++) cinta(P[k], P[(k + 1) % 4]);
       this._etiqueta('SAFETY ZONE', new THREE.Vector3((z.x0 + z.x1) / 2, 0.06, z.z1 - 0.35), 0.24, { borde: '#ffd500', col: '#ffd500' });
     }
+  }
+  // ---------- contenido propio y demostración en movimiento ----------
+  // Capa de contenido sobre una superficie con el modo de ajuste elegido:
+  // continuo (un ultrapanorámico recorre todas las superficies sin cortes), estirar, rellenar (recorta), encajar (bandas negras), repetir y espejo
+  _capaMedio(g, R, tramo, m, suelo) {
+    const demo = m.contenido === 'ascensor', base = demo ? this._ascensor() : this._medioTex(m.medio);
+    if (!base) return;
+    const t = base.clone(); t.colorSpace = THREE.SRGBColorSpace; t.needsUpdate = true;
+    const aC = demo ? this._asc.c.width / this._asc.c.height : (m.medio.w / m.medio.h) || 1.78, aS = R.w / R.h;
+    let modo = demo ? 'continuo' : (m.medio.modo || 'continuo'); if (modo === 'continuo' && !tramo) modo = 'rellenar';
+    let w = R.w, h = R.h;
+    t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; t.repeat.set(1, 1); t.offset.set(0, 0);
+    if (modo === 'continuo') { t.repeat.x = tramo.u1 - tramo.u0; t.offset.x = tramo.u0; }
+    else if (modo === 'rellenar') { if (aC > aS) { t.repeat.x = aS / aC; t.offset.x = (1 - t.repeat.x) / 2; } else { t.repeat.y = aC / aS; t.offset.y = (1 - t.repeat.y) / 2; } }
+    else if (modo === 'encajar') { if (aC > aS) h = w / aC; else w = h * aC; }
+    else if (modo === 'repetir' || modo === 'espejo') { t.wrapS = modo === 'espejo' ? THREE.MirroredRepeatWrapping : THREE.RepeatWrapping; t.repeat.x = aS / aC; }
+    const pl = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: t, toneMapped: false }));
+    pl.position.set(R.x, R.y, R.z); g.add(pl);
+    if (demo || m.medio.tipo === 'video') this._vivos.push(t); void suelo;
+  }
+  _medioTex(md) {
+    if (!md || !md.el) return null;
+    if (this._medio && this._medio.el === md.el) return this._medio.t;
+    const t = md.tipo === 'video' ? new THREE.VideoTexture(md.el) : new THREE.Texture(md.el);
+    t.colorSpace = THREE.SRGBColorSpace; t.needsUpdate = true; this._medio = { el: md.el, t }; return t;
+  }
+  // Demostración «ascensor»: un hueco que baja, continuo en todas las paredes (vigas, luces y plantas que suben)
+  _ascensor() {
+    if (!this._asc) { const c = document.createElement('canvas'); c.width = 2048; c.height = 512; this._asc = { c, x: c.getContext('2d'), t: new THREE.CanvasTexture(c), t0: performance.now() }; this._asc.t.colorSpace = THREE.SRGBColorSpace; }
+    this._pintaAscensor(); return this._asc.t;
+  }
+  _pintaAscensor() {
+    const A = this._asc, x = A.x, W = A.c.width, H = A.c.height, s = (performance.now() - A.t0) / 1000;
+    const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#07080c'); g.addColorStop(0.5, '#1b1f29'); g.addColorStop(1, '#07080c'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+    // hormigón con juntas que suben (la cabina baja a 1,2 m/s)
+    const paso = H * 0.55, v = H * 0.42, off = (s * v) % paso;
+    x.strokeStyle = 'rgba(255,255,255,.06)'; x.lineWidth = 2;
+    for (let y = H + paso - off; y > -paso; y -= paso / 4) { x.beginPath(); x.moveTo(0, y); x.lineTo(W, y); x.stroke(); }
+    for (let y = H + paso - off; y > -paso; y -= paso) {
+      const pl = Math.floor((s * v + (H + paso - y)) / paso);
+      x.fillStyle = '#2a2f3b'; x.fillRect(0, y - 18, W, 36);
+      x.fillStyle = 'rgba(255,190,90,.9)'; for (let u = 64; u < W; u += 256) { x.fillRect(u, y - 4, 60, 8); }
+      x.fillStyle = '#ffd500'; x.font = `800 ${Math.round(H * 0.07)}px ${SANS}`; x.textAlign = 'center'; x.textBaseline = 'middle';
+      for (let u = 256; u < W; u += 512) x.fillText('−' + (pl % 40), u, y - 46);
+    }
+    // guías de la cabina (fijas)
+    x.fillStyle = '#3a3f4b'; for (let u = 0; u < 4; u++) { x.fillRect(W * (u + 0.5) / 4 - 10, 0, 20, H); }
+    x.fillStyle = 'rgba(0,255,4,.75)'; x.font = `700 ${Math.round(H * 0.045)}px ${MONO}`; x.textAlign = 'left'; x.fillText('▼ SCREENS · DEMO', 24, 30);
+  }
+  _bucle() {
+    if (!this._animando || !this._vivos.length) { this._animando = false; return; }
+    if (!document.hidden) {
+      if (this._asc && this.modelo && this.modelo.contenido === 'ascensor') { this._pintaAscensor(); this._vivos.forEach(t => { t.needsUpdate = true; }); }
+      else if (this._medio && this.modelo && this.modelo.medio && this.modelo.medio.tipo === 'img') { /* imagen fija: sin redibujar */ }
+      this.render();
+    }
+    requestAnimationFrame(() => this._bucle());
   }
   _etiquetaLocal(g, txt, pos) { g.updateMatrixWorld(true); this._etiqueta(txt, pos.applyMatrix4(g.matrixWorld), 0.32, { borde: '#9900ff' }); }
   _texSuelo() {
@@ -397,7 +489,16 @@ export class Escena {
     this.renderer.render(this.scene, this.cam);
     this.alCambiar();
   }
-  captura() { this.render(); return this.renderer.domElement.toDataURL('image/png'); }
+  // captura para el PDF: con fondo claro, para imprimir en papel blanco
+  // (lienzo de 1600 × 820 encuadrado con la vista actual; después se devuelve la cámara donde estaba)
+  captura(claro) {
+    const r = this.renderer, bg = this.scene.background, pr = r.getPixelRatio(), pos = this.cam.position.clone(), obj = this.ctrl.target.clone();
+    if (claro) this.scene.background = new THREE.Color(0xf4f4f6);
+    r.setPixelRatio(1); r.setSize(1600, 820, false); this.cam.aspect = 1600 / 820; this.cam.updateProjectionMatrix(); this.vista(this.vistaActual, true);
+    this.render(); const url = r.domElement.toDataURL('image/jpeg', 0.9);
+    this.scene.background = bg; r.setPixelRatio(pr); this.cam.position.copy(pos); this.ctrl.target.copy(obj); this.ctrl.update(); this.ajustar();
+    return url;
+  }
 }
 
 function mMetal() { return new THREE.MeshStandardMaterial({ color: 0x1b1b1e, roughness: 0.55, metalness: 0.65 }); }

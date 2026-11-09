@@ -11,7 +11,7 @@ Web app de mediaservi.com para calcular pantallas LED y de proyección, desde un
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v6.5** (estética AVHUB · SCREENS como página de inicio)
+**Versión actual: v6.6** (estética AVHUB · SCREENS como página de inicio)
 
 Web principal: **https://screens.mediaservi.com** (sustituye a screencalc.mediaservi.com y screenbox.mediaservi.com, que dejan de usarse). Para abrir directamente SCREENCALC: https://screens.mediaservi.com/?led
 
@@ -86,7 +86,33 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v6.5)
+## Cambios de la versión actual (v6.6)
+
+- **SCREENS · puertas y obstáculos** (bloque en ESPACIO, con ＋ PUERTA y ＋ OBSTÁCULO):
+  - **Puerta:** pared, posición desde la izquierda, ancho y alto.
+    - En LED quita los cabinets del hueco, ajustado a la rejilla, y recalcula cabinets, peso, consumo y líneas.
+    - En proyección avisa de que hay que enmascararla en el contenido.
+  - **Obstáculo** (columna, caja…): posición, ancho, fondo y alto. Si corta el haz de algún proyector, sale en rojo y con aviso de sombra.
+- **SCREENS · contenido propio:**
+  - **PROPIO:** se sube un vídeo o una imagen del cliente. Se abre solo en el navegador, no se sube a ningún servidor.
+  - **Modos de ajuste:**
+    - **continuo**: un ultrapanorámico recorre todas las paredes sin cortes;
+    - **estirar** a cada superficie;
+    - **rellenar**, que recorta;
+    - **encajar**, con bandas;
+    - **repetir**;
+    - **espejo**.
+  - **ASCENSOR:** demostración en movimiento, continua en todas las paredes.
+- **Panorama sin cortes:** recorre la sala en orden izquierda → frontal → derecha → trasera, y las esquinas casan.
+- **PDF de SCREENS** (icono de la cabecera), en claro para imprimir en blanco:
+  - cabecera con los logos de SCREENS y AVHUB, el espacio y la fecha;
+  - captura 3D encuadrada;
+  - resultados y tabla por superficie;
+  - sombras y safety zone;
+  - electrónica y mediaserver;
+  - fichas de los equipos y aviso de cálculo automático.
+
+## Cambios de la versión v6.5
 
 - **Ficha de equipo común** para todas las pantallas de cálculo (`comun/ficha.js` y `comun/ficha.css`):
   - foto del fabricante, marca y modelo, especificaciones en rejilla, piezas de los equipos montados por módulos, stock y enlace a la ficha;

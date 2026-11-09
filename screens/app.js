@@ -1,22 +1,23 @@
 // SCREENS · interfaz (selector inicial, panel de rack, simulación 3D y resultados)
 import { cargarCatalogo, ordenar, enStock } from './catalogo.js';
-import { superficies, distanciaPublico, elegirModelo, calcularLed, totales } from './led.js';
-import { PROYECTORES, calcularPared, calcularSuelo, sugerir, SOLAPE_MAX, analizarSombras } from './proyeccion.js';
+import { superficies, distanciaPublico, elegirModelo, calcularLed, totales, aplicarPuertas, obstaculoMundo, puertaMundo } from './led.js';
+import { PROYECTORES, calcularPared, calcularSuelo, sugerir, SOLAPE_MAX, analizarSombras, obstaculosEnHaces } from './proyeccion.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v6.5';
+const VERSION = 'v6.6';
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   paso: 'inicio', cantidad: 'varias', tecnologia: 'led',
   esp: { tipo: 'sala', ancho: 8, fondo: 6, alto: 3.5, elev: 0, altoCubierto: 0,
     paredes: { frontal: true, izquierda: true, derecha: true, trasera: false, suelo: false },
-    sueltas: { n: 3, disp: 'arco', ancho: 4, alto: 2.25, elev: 0.6, sep: 0.1, angulo: 25, dist: 5 } },
+    sueltas: { n: 3, disp: 'arco', ancho: 4, alto: 2.25, elev: 0.6, sep: 0.1, angulo: 25, dist: 5 },
+    obst: [] },
   led: { clase: 'INSTALL', tipo: 'INDOOR', crm: '', ajuste: 'dentro' },
   proy: { id: '', idSuelo: '', solape: 15 },
   elec: { backup: false, escalador: 'con', conexion: 'directo', sel: '', marca: 'todos', dante: false, selMedia: '' },
-  vista: { contenido: 'carta', etiquetas: true, camara: 'exterior', zona: true }
+  vista: { contenido: 'carta', etiquetas: true, camara: 'exterior', zona: true, modo: 'continuo' }
 });
 let E = DEF();
 try { const g = JSON.parse(localStorage.getItem('screens_estado') || 'null'); if (g && g.esp) { const d = DEF(); E = Object.assign(d, g, { elec: Object.assign(d.elec, g.elec || {}), vista: Object.assign(d.vista, g.vista || {}) }); } } catch (e) {}
@@ -25,6 +26,7 @@ const pasoDeHash = () => (location.hash === '#trabajo' ? 'trabajo' : 'inicio');
 E.paso = pasoDeHash();
 const guardar = () => { try { localStorage.setItem('screens_estado', JSON.stringify(E)); } catch (e) {} };
 let catalogo = [], estadoCat = 'cargando', escena = null, calculo = null;
+let medio = null;   // vídeo o imagen propios (solo en este navegador, no se guarda)
 
 const $ = (s, r = document) => r.querySelector(s);
 const fmt = (v, d = 2) => Number(v || 0).toLocaleString(idioma() === 'en' ? 'en-GB' : 'es-ES', { minimumFractionDigits: 0, maximumFractionDigits: d });
@@ -57,7 +59,8 @@ function calcular() {
     if (!modelo) return { esp, dist, filas: [], modelo: null, lista };
     const grosor = (modelo.thick || 80) / 1000;
     const sups = superficies(esp, grosor);
-    const filas = sups.map(s => ({ s, r: calcularLed(s, modelo, E.led.ajuste), nombre: nombreSup(s), grosor }));
+    const puertas = puertasDe(esp);
+    const filas = sups.map(s => ({ s, r: aplicarPuertas(calcularLed(s, modelo, E.led.ajuste), s, modelo, puertas.filter(p => p.pared === s.id)), nombre: nombreSup(s), grosor }));
     const c = { esp, dist, modelo, lista, filas, tot: totales(filas) };
     c.elec = electronica(c); return c;
   }
@@ -76,8 +79,12 @@ function calcular() {
   const c = { esp, dist, proyector, prSuelo, filas, tot };
   const altoEsc = esp.tipo === 'sala' ? esp.alto : Math.max(3, ...filas.map(f => f.s.elev + f.s.alto)) + 0.8;
   c.sombras = analizarSombras(filas, esp, altoEsc);
+  c.sombras.obst = obstaculosEnHaces(obstaculosDe(esp), c.sombras.haces);
   c.elec = electronica(c); return c;
 }
+// puertas (solo en sala, en paredes) y obstáculos del espacio
+const puertasDe = (esp) => (esp.tipo === 'sala' ? (esp.obst || []).filter(o => o.tipo === 'puerta') : []);
+const obstaculosDe = (esp) => (esp.obst || []).filter(o => o.tipo === 'obstaculo').map(o => obstaculoMundo(o, esp));
 // Electrónica de control (LED) y mediaserver (LED y proyección) con el motor común de SCREENCALC
 function electronica(c) {
   const e = E.elec, out = { procesadores: [], proc: null, medias: [], media: null, need: 0 };
@@ -171,7 +178,23 @@ function modEspacio() {
     h += `<div class="fila c3">${campo(t('ancho'), numIn('esp.sueltas.ancho', s.ancho, 'm', 0.1, 0.3, 40))}${campo(t('alto'), numIn('esp.sueltas.alto', s.alto, 'm', 0.1, 0.3, 20))}${campo(t('elev'), numIn('esp.sueltas.elev', s.elev, 'm', 0.1, 0, 10))}</div>`;
     h += `<div class="fila ${E.cantidad === 'varias' ? (s.disp === 'arco' ? 'c3' : 'c2') : 'c1'}">${E.cantidad === 'varias' ? campo(t('sep'), numIn('esp.sueltas.sep', s.sep, 'm', 0.05, 0, 10)) : ''}${E.cantidad === 'varias' && s.disp === 'arco' ? campo(t('angulo'), numIn('esp.sueltas.angulo', s.angulo, '°', 1, 0, 90)) : ''}${campo(t('dist'), numIn('esp.sueltas.dist', s.dist, 'm', 0.1, 0.5, 100))}</div>`;
   }
+  h += bloqueObst(sala);
   return h + '</section>';
+}
+// puertas y obstáculos: cada uno en una fila con sus medidas y un botón para quitarlo
+function bloqueObst(sala) {
+  const e = E.esp, L = e.obst || [];
+  let h = `<div class="etq">${t('obstTit')}</div><div class="fila ${sala ? 'c2' : 'c1'}">${sala ? `<button type="button" class="sec-btn" data-accion="obst-add" data-tipo="puerta">＋ ${t('puerta')}</button>` : ''}<button type="button" class="sec-btn" data-accion="obst-add" data-tipo="obstaculo">＋ ${t('obst')}</button></div>`;
+  L.forEach((o, i) => {
+    if (o.tipo === 'puerta' && !sala) return;
+    const k = 'esp.obst.' + i;
+    h += `<div class="obst"><div class="obst-cab"><b>${o.tipo === 'puerta' ? t('puerta') : t('obst')} ${L.slice(0, i + 1).filter(x => x.tipo === o.tipo).length}</b>${o.tipo === 'puerta' ? `<select class="sel" data-sel="${k}.pared">${['frontal', 'izquierda', 'derecha', 'trasera'].map(w => `<option value="${w}"${o.pared === w ? ' selected' : ''}>${t(w)}</option>`).join('')}</select>` : '<span></span>'}<button type="button" class="sec-btn quitar" data-accion="obst-del" data-i="${i}" aria-label="${t('quitar')}" title="${t('quitar')}">✕</button></div>`;
+    h += o.tipo === 'puerta'
+      ? `<div class="fila c3">${campo(t('desdeIzq'), numIn(k + '.x', o.x, 'm', 0.1, 0, 60))}${campo(t('ancho'), numIn(k + '.ancho', o.ancho, 'm', 0.1, 0.5, 20))}${campo(t('alto'), numIn(k + '.alto', o.alto, 'm', 0.1, 1, 10))}</div>`
+      : `<div class="fila c2">${campo(sala ? t('aIzq') : t('desp'), numIn(k + '.x', o.x, 'm', 0.1, sala ? 0 : -60, 60))}${campo(sala ? t('aFrontal') : t('delante'), numIn(k + '.z', o.z, 'm', 0.1, 0, 60))}</div><div class="fila c3">${campo(t('ancho'), numIn(k + '.ancho', o.ancho, 'm', 0.1, 0.1, 20))}${campo(t('fondo'), numIn(k + '.fondo', o.fondo, 'm', 0.1, 0.1, 20))}${campo(t('alto'), numIn(k + '.alto', o.alto, 'm', 0.1, 0.1, 20))}</div>`;
+    h += '</div>';
+  });
+  return h;
 }
 function modLed(c) {
   const l = E.led, lista = c.lista || [];
@@ -242,8 +265,10 @@ function vistaResultados(c) {
       ${tarjeta(t('salidas'), fmtPx(T.salidas4k), '', 'mediaserver', '#ffb000')}
     </div>`;
     h += `<div class="tabla-caja"><table class="tabla"><thead><tr><th>${t('supCol')}</th><th>${t('medida')}</th><th>${t('cabCol')}</th><th>${t('resol')}</th><th>${t('pesoCol')}</th><th>${t('potCol')}</th><th>${t('linCol')}</th></tr></thead><tbody>
-      ${c.filas.map(f => `<tr><td>${f.nombre}</td><td>${fmt(f.r.ancho)} × ${fmt(f.r.alto)} m</td><td>${f.r.cols}×${f.r.rows} = ${f.r.cab}</td><td>${f.r.resW}×${f.r.resH}</td><td>${fmt(f.r.peso, 0)} kg</td><td>${fmt(f.r.kw, 2)} kW</td><td>${f.r.lineas}${f.lin ? ` <span class="tenue">L${f.lin[0]}${f.lin[1] > f.lin[0] ? '–' + f.lin[1] : ''}</span>` : ''}</td></tr>`).join('')}
+      ${c.filas.map(f => `<tr><td>${f.nombre}</td><td>${fmt(f.r.ancho)} × ${fmt(f.r.alto)} m</td><td>${f.r.cols}×${f.r.rows} = ${f.r.cab}${f.r.quitados ? ` <span class="tenue">(−${f.r.quitados})</span>` : ''}</td><td>${f.r.resW}×${f.r.resH}</td><td>${fmt(f.r.peso, 0)} kg</td><td>${fmt(f.r.kw, 2)} kW</td><td>${f.r.lineas}${f.lin ? ` <span class="tenue">L${f.lin[0]}${f.lin[1] > f.lin[0] ? '–' + f.lin[1] : ''}</span>` : ''}</td></tr>`).join('')}
     </tbody></table></div>`;
+    const qu = c.filas.filter(f => f.r && f.r.quitados);
+    if (qu.length) h += `<ul class="avisos">${qu.map(f => `<li>${t('puertaLed', { n: f.nombre, c: f.r.quitados, w: fmt(f.r.huecos.reduce((a, x) => a + x.w, 0), 2), h: fmt(Math.max(...f.r.huecos.map(x => x.h)), 2) })}</li>`).join('')}</ul>`;
   } else if (c.tot) {
     const T = c.tot, p = c.proyector;
     const tiros = c.filas.filter(f => f.s.tipo !== 'suelo').map(f => f.p.tiro);
@@ -291,21 +316,24 @@ function vistaSombras(c) {
   S.choques.forEach(k => li.push(`<li class="mal">${t('choque', { a: k.h.nombre + ' P' + (k.h.i + 1), b: k.con ? k.con.nombre + ' P' + (k.con.i + 1) : '' })}</li>`));
   if (S.movs.length || S.choques.length) li.push(`<li>${t('holgura')}</li>`);
   S.cruces.forEach(k => li.push(`<li>${t('cruce', { a: k.na, b: k.nb })}</li>`));
-  if (!S.conflictos.length && !S.cruces.length && !S.choques.length) li.push(`<li class="ok">${t('sinProblemas')}</li>`);
+  (S.obst || []).forEach(k => li.push(`<li class="mal">${t('obstSombra', { k: k.k + 1, n: k.nombres.join(' · ') })}</li>`));
+  puertasDe(c.esp).forEach((p, i) => { const f = c.filas.find(x => x.s.id === p.pared); if (f) li.push(`<li>${t('puertaProy', { n: f.nombre })}</li>`); });
+  if (!S.conflictos.length && !S.cruces.length && !S.choques.length && !(S.obst || []).length) li.push(`<li class="ok">${t('sinProblemas')}</li>`);
   return `<section class="res-sec"><div class="res-tit"><span class="cinta-ico" aria-hidden="true"></span>${t('segTit')}</div><ul class="avisos">${li.join('')}</ul></section>`;
 }
 
 function vistaTrabajo() {
   return `<div class="trabajo"><aside class="panel" id="panel"></aside><main class="vista">
     <div class="escena" id="escena"><canvas id="lienzo3d" aria-label="Simulación 3D"></canvas>
-      <div class="esc-barra"><div id="esc-vistas"></div><div id="esc-cont"></div></div>
+      <div class="esc-barra"><div id="esc-vistas"></div><div id="esc-cont"></div><div id="esc-medio" class="esc-medio"></div></div>
       <div class="esc-info">${t('vista3d')}</div></div>
     <div class="res" id="res"></div></main></div>`;
 }
 function barraEscena() {
   const v = E.vista;
   $('#esc-vistas').innerHTML = ['exterior', 'interior', 'planta'].map(k => tog(v.camara === k, `data-cam="${k}"`, t(k))).join('');
-  $('#esc-cont').innerHTML = ['carta', 'panorama', 'apagado'].map(k => tog(v.contenido === k, `data-set="vista.contenido" data-v="${k}"`, t(k))).join('') + tog(v.etiquetas, 'data-accion="etiquetas"', t('etiquetas')) + (E.tecnologia === 'proy' ? tog(v.zona, 'data-accion="zona"', t('zonaBtn')) : '');
+  $('#esc-cont').innerHTML = ['carta', 'panorama', 'ascensor', 'propio', 'apagado'].map(k => tog(v.contenido === k, `data-set="vista.contenido" data-v="${k}"`, t(k))).join('') + tog(v.etiquetas, 'data-accion="etiquetas"', t('etiquetas')) + (E.tecnologia === 'proy' ? tog(v.zona, 'data-accion="zona"', t('zonaBtn')) : '');
+  $('#esc-medio').innerHTML = (v.contenido === 'propio' ? `<button type="button" class="sec-btn" data-accion="subir">⬆ ${medio ? medio.nombre : t('subir')}</button><select class="sel" data-sel="vista.modo" aria-label="${t('modoMedio')}">${['continuo', 'estirar', 'rellenar', 'encajar', 'repetir', 'espejo'].map(k => `<option value="${k}"${v.modo === k ? ' selected' : ''}>${t('m_' + k)}</option>`).join('')}</select><input type="file" id="medio-archivo" accept="image/*,video/*" hidden>` : '');
 }
 
 // ---------- ciclo ----------
@@ -313,6 +341,7 @@ let tEsc = 0;
 function actualizar(sinEscena) {
   guardar();
   const app = $('#app');
+  $('#btn-pdf').hidden = E.paso === 'inicio';
   if (E.paso === 'inicio') { app.innerHTML = vistaInicio(); escena = null; return; }
   if (!$('#panel')) { app.innerHTML = vistaTrabajo(); crearEscena(); }
   calculo = calcular();
@@ -328,8 +357,9 @@ function construirEscena() {
   const c = calculo, sala = c.esp.tipo === 'sala' ? { ancho: c.esp.ancho, fondo: c.esp.fondo, alto: c.esp.alto } : null;
   const xs = c.filas.map(f => Math.abs(f.s.x) + f.s.ancho / 2), zs = c.filas.map(f => Math.abs(f.s.z));
   escena.construir({
-    sala, tecnologia: E.tecnologia, contenido: E.vista.contenido, etiquetas: E.vista.etiquetas,
+    sala, tecnologia: E.tecnologia, contenido: E.vista.contenido, etiquetas: E.vista.etiquetas, medio: medio ? { ...medio, modo: E.vista.modo } : null,
     sombras: E.tecnologia === 'proy' && E.vista.zona ? c.sombras : null, haces: c.sombras ? c.sombras.haces : null,
+    puertas: puertasDe(c.esp).map(p => puertaMundo(p, c.esp)), obstaculos: obstaculosDe(c.esp), obstTapa: new Set(c.sombras && c.sombras.obst ? c.sombras.obst.map(x => x.k) : []),
     conflictos: new Set(E.tecnologia === 'proy' && c.sombras ? c.sombras.conflictos.map(k => k.tapa.sup + ':' + k.tapa.i).concat(c.sombras.choques.map(k => k.h.sup + ':' + k.h.i)) : []),
     superficies: c.filas, distPublico: c.dist, extX: Math.max(4, ...xs) * 2, extZ: Math.max(2, ...zs, c.dist),
     altoMax: Math.max(2, ...c.filas.map(f => f.s.elev + f.s.alto))
@@ -369,9 +399,16 @@ document.addEventListener('click', (ev) => {
   if (a === 'idioma') { fijarIdioma(IDIOMAS[(IDIOMAS.indexOf(idioma()) + 1) % IDIOMAS.length]); pintarCabecera(); const p = E.paso; if (p === 'trabajo') { $('#app').innerHTML = ''; } actualizar(); return; }
   if (a === 'etiquetas') { E.vista.etiquetas = !E.vista.etiquetas; actualizar(); return; }
   if (a === 'zona') { E.vista.zona = !E.vista.zona; actualizar(); return; }
+  if (a === 'subir') { const f = $('#medio-archivo'); if (f) f.click(); return; }
+  if (a === 'pdf') { imprimir(); return; }
   if (a === 'elec-dante') { E.elec.dante = !E.elec.dante; E.elec.selMedia = ''; actualizar(); return; }
   if (a === 'reset-elec') { E.elec = DEF().elec; actualizar(); return; }
   if (a === 'reset-esp') { E.esp = DEF().esp; actualizar(); return; }
+  if (a === 'obst-add') { const e = E.esp; e.obst = e.obst || [];
+    e.obst.push(b.dataset.tipo === 'puerta' ? { tipo: 'puerta', pared: e.paredes.trasera ? 'trasera' : 'frontal', x: 0.4, ancho: 0.9, alto: 2.1 }
+      : { tipo: 'obstaculo', x: e.tipo === 'sala' ? e.ancho * 0.3 : 1.5, z: e.tipo === 'sala' ? e.fondo * 0.35 : 2, ancho: 0.4, fondo: 0.4, alto: e.tipo === 'sala' ? e.alto : 3 });
+    actualizar(); return; }
+  if (a === 'obst-del') { E.esp.obst.splice(Number(b.dataset.i), 1); actualizar(); return; }
   if (a === 'reset-led') { E.led = DEF().led; actualizar(); return; }
   if (a === 'reset-proy') { E.proy = DEF().proy; actualizar(); return; }
 });
@@ -385,8 +422,38 @@ document.addEventListener('input', (ev) => {
   clearTimeout(tNum); tNum = setTimeout(() => { const foco = i.dataset.num, pos = i.selectionStart; actualizar(); const n = document.querySelector(`[data-num="${foco}"]`); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} } }, 350);
 });
 document.addEventListener('change', (ev) => {
-  const s = ev.target; if (s.dataset.sel) { fijar(s.dataset.sel, s.value); actualizar(); }
+  const s = ev.target;
+  if (s.id === 'medio-archivo' && s.files && s.files[0]) { cargarMedio(s.files[0]); return; }
+  if (s.dataset.sel) { fijar(s.dataset.sel, s.value); actualizar(); }
 });
+
+// PDF: hoja A4 en claro con cabecera, captura 3D, resultados, equipos, electrónica y avisos (se imprime con el navegador)
+function imprimir() {
+  const c = calculo; if (!c || !c.filas.length) return;
+  const esp = c.esp, hoy = new Date(), fecha = hoy.toLocaleDateString(idioma() === 'en' ? 'en-GB' : 'es-ES') + ' · ' + hoy.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  const titulo = esp.tipo === 'sala' ? `${t('sala')} · ${fmt(esp.ancho)} × ${fmt(esp.fondo)} × ${fmt(esp.alto)} m` : `${c.filas.length} × ${t('pantalla')} · ${fmt(esp.sueltas.ancho)} × ${fmt(esp.sueltas.alto)} m`;
+  let h = `<header class="im-cab"><img class="im-logo" src="../assets/screens-logo.svg" alt="SCREENS"><div class="im-tit"><b>${titulo}</b><span>${E.tecnologia === 'led' ? t('led') : t('proy')} · ${c.filas.map(f => f.nombre).join(' · ')}</span></div><div class="im-der"><img src="../assets/avhub-logo.svg" alt="AVHUB"><span>${fecha}</span></div></header>`;
+  if (escena) h += `<figure class="im-captura"><img src="${escena.captura(true)}" alt=""></figure>`;
+  h += `<div class="im-res">${vistaResultados(c)}</div>`;
+  const fichas = E.tecnologia === 'led' ? (c.modelo ? [fichaCab(c.modelo)] : []) : [fichaProy(c.proyector, t('fProy'))].concat(c.prSuelo && c.prSuelo !== c.proyector && c.filas.some(f => f.s.tipo === 'suelo') ? [fichaProy(c.prSuelo, t('fProySuelo'))] : []);
+  if (fichas.length) h += `<section class="res-sec"><div class="res-tit">${t('equipos')}</div><div class="fichas">${fichas.join('')}</div></section>`;
+  h += `<p class="im-aviso">${t('avisoPdf')}</p><footer class="im-pie">SCREENS ${VERSION} ${hoy.getFullYear()} ${t('pie')} <i class="ic ic-footer" aria-hidden="true"></i> by mediaservi.com · screens.mediaservi.com</footer>`;
+  const d = $('#impresion'); d.innerHTML = h;
+  // fotos sin carga diferida (el bloque está oculto en pantalla) y, como mucho, 3 s de espera
+  const imgs = [...d.querySelectorAll('img')]; imgs.forEach(i => { i.loading = 'eager'; });
+  const espera = Promise.all(imgs.map(i => (i.complete ? 1 : new Promise(r => { i.addEventListener('load', r); i.addEventListener('error', r); }))));
+  Promise.race([espera, new Promise(r => setTimeout(r, 3000))]).then(() => setTimeout(() => window.print(), 60));
+}
+window.addEventListener('afterprint', () => { const d = $('#impresion'); if (d) d.innerHTML = ''; });
+
+// vídeo o imagen propios: se cargan en el navegador (no se suben a ningún servidor) y se aplican a todas las superficies
+function cargarMedio(f) {
+  const url = URL.createObjectURL(f), esVideo = /^video\//.test(f.type), nombre = f.name.length > 22 ? f.name.slice(0, 20) + '…' : f.name;
+  const listo = (el, w, h) => { if (medio && medio.url) URL.revokeObjectURL(medio.url); medio = { el, tipo: esVideo ? 'video' : 'img', w, h, url, nombre }; E.vista.contenido = 'propio'; actualizar(); };
+  if (esVideo) { const v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.autoplay = true; v.src = url;
+    v.addEventListener('loadedmetadata', () => { listo(v, v.videoWidth, v.videoHeight); v.play().catch(() => {}); }, { once: true }); }
+  else { const im = new Image(); im.onload = () => listo(im, im.naturalWidth, im.naturalHeight); im.src = url; }
+}
 
 // ---------- textos con margen de seguridad (si no caben, se reducen) ----------
 function ajustarTextos() {
@@ -409,7 +476,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajustarTex
 function pintarCabecera() {
   $('#btn-idioma').textContent = idioma().toUpperCase();
   $('#btn-idioma').title = t('idioma');
-  $('#btn-inicio').title = t('inicio');
+  $('#btn-inicio').title = t('inicio'); $('#btn-pdf').title = t('pdf');
   $('#pie').innerHTML = `SCREENS ${VERSION} ${new Date().getFullYear()} ${t('pie')} <i class="ic ic-footer" aria-hidden="true"></i> by <a href="https://mediaservi.com" target="_blank" rel="noopener">mediaservi.com</a>`;
 }
 window.addEventListener('hashchange', () => { const p = pasoDeHash(); if (p !== E.paso) { E.paso = p; actualizar(); } });
