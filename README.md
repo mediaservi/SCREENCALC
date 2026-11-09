@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v7.3** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v7.4** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -43,6 +43,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **Logo:** sin enlace; al pulsarlo se reinicia la app para un nuevo cálculo (igual que RESET).
 - **Ficha de equipo común:** cabinets, proyectores, electrónicas y mediaservers se muestran con la misma ficha en el cálculo de una pantalla y en el de varias (`comun/ficha.js` y `comun/ficha.css`): foto del fabricante, marca y modelo, especificaciones clave, piezas de los equipos montados por módulos, stock y enlace a la ficha. El motor de electrónica también es común (`comun/electronica.js`).
 - **Consola de SCREENS:** la web abre directamente el cuadro de mandos, sin página de selector. El modo se cambia con un toque en la barra de la consola; el botón NUEVO CÁLCULO (casa) y el logo vuelven a los valores por defecto sin salir del modo. El idioma, el PDF y la petición son los mismos para todas las combinaciones. La raíz sin parámetros abre la consola; `?led` abre el cálculo de una pantalla LED solo.
+- **PDF de la consola** (una pantalla de proyección, varias pantallas y salas inmersivas): en claro sobre papel blanco. Cabecera en una fila con tres piezas del mismo alto (logo de SCREENS a la izquierda, avhub.mediaservi.com con la fecha debajo al centro y logo de AVHUB a la derecha) y, debajo, una línea en violeta suave con el tipo de proyecto y sus datos. Siguen la captura 3D, los resultados, la electrónica y los equipos. En todas las hojas, el aviso y el eslogan van abajo al centro y el número de hoja (1/2) abajo a la derecha.
 - **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
 - **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios, las consultas internas y la documentación (DOCS), que ya no es pública.
 - **Anuncios (motor AVHUB ADS):** 3 zonas (pie del menú y pie de resultados, izquierda y derecha). Cada zona admite varios anuncios con rotación; cada anuncio tiene formato estándar (horizontal 16:9, vertical 9:16, cuadrado 1:1, retrato 4:5, hero a sangre 21:9, banner 728×90, banner móvil 320×100, rectángulo 300×250, rascacielos 160×600), texto al lado, debajo, encima o sin texto, botón opcional, carrusel de fotos, vídeos y YouTube, fechas de inicio y fin, solo móvil o solo escritorio, y contador de clics. Todo el anuncio abre su enlace en una pestaña nueva (o `ads.json` mientras el panel no responda). Además, el minibanner fijo del configurador oficial de TRAULUX va encima de la zona del menú y se activa desde el panel.
@@ -88,7 +89,17 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v7.3)
+## Cambios de la versión actual (v7.4)
+
+- **PDF de la consola rediseñado** (una pantalla de proyección, varias pantallas y salas inmersivas):
+  - **cabecera en una fila** con las tres piezas del mismo alto: logo de SCREENS a la izquierda, avhub.mediaservi.com al centro con la fecha debajo (centrada y espaciada) y logo de AVHUB a la derecha, alineados con el ancho útil de la hoja;
+  - **línea de cabecera** en violeta suave con el tipo de proyecto y sus datos: medidas, tecnología, superficies o disposición, equipos (cabinets o proyectores), resolución y consumo o brillo;
+  - **pie en todas las hojas:** el aviso y el eslogan abajo al centro, y el número de hoja (1/2, 2/2) abajo a la derecha;
+  - el navegador ya no añade su fecha, su título ni la dirección en los márgenes, aunque tenga activados los encabezados y pies de página;
+  - en los navegadores que aún no dibujan esos márgenes (Safari y Firefox), el pie sale al final del documento, como antes.
+- El PDF del cálculo de una pantalla LED no cambia.
+
+## Cambios de la versión v7.3
 
 - **Cada casilla actúa sola**, sin esperar a otro dato. Si un valor choca con otro, se ajusta el que depende de él y se avisa en el propio módulo:
   - un alto de imagen mayor que la pared sube el alto de la sala para que quepa;
