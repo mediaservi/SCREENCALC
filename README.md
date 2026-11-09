@@ -1,12 +1,19 @@
-<p align="center"><img src="assets/logo-verde.svg" alt="SCREENCALC" height="56"></p>
+<p align="center"><img src="assets/screens-logo.svg" alt="SCREENS" height="56"></p>
 
-# SCREENCALC
+# SCREENS
+
+Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Al entrar se elige **una o varias superficies** y **LED o proyección**:
+
+- **Una pantalla LED → SCREENCALC** (la raíz del repositorio, descrita en este README).
+- **Varias pantallas, salas inmersivas o proyección → módulo SCREENS** (`screens/`), con simulación 3D renderizada.
+
+## SCREENCALC
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v6.3** (estética AVHUB · con el módulo SCREENS)
+**Versión actual: v6.4** (estética AVHUB · SCREENS como página de inicio)
 
-Web principal: **https://screencalc.mediaservi.com**
+Web principal: **https://screens.mediaservi.com** (la antigua https://screencalc.mediaservi.com redirige aquí). Para abrir directamente SCREENCALC: https://screens.mediaservi.com/?led
 
 Copias redundantes: https://mediaservi.github.io/SCREENCALC/ · https://screencalcx.netlify.app/
 
@@ -32,7 +39,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **PDF:** un único PDF de 2 páginas desde el icono de la cabecera, en claro sobre papel blanco y con los mismos bloques que la pantalla (tarjetas con filete de color, icono y título; datos en Share Tech Mono y textos en Inter). Cabecera en una línea: logo de SCREENCALC, web y fecha, y logo de AVHUB (con enlace) al margen derecho. Página 1: título, características de la pantalla en tarjetas, observaciones, características del cabinet en fichas y simulación ajustada al hueco de la hoja. Página 2: electrónica y mediaserver elegidos para el proyecto (en una fila), esquema de conexiones con su material, propuestas de cableado de señal y eléctrico, y el aviso de cálculo por IA. Si no cabe, el esquema se reduce para mantener las 2 páginas. Los anuncios no salen en el PDF.
 - **Información (ⓘ):** el icono de la cabecera ofrece 2 opciones: **INFORMACIÓN** (este README en una ventana al 80 % que se puede desplazar y cerrar) y **DESCARGAR APP** (uso sin conexión).
 - **Logo:** sin enlace; al pulsarlo se reinicia la app para un nuevo cálculo (igual que RESET).
-- **SCREENS:** el isotipo de la cabecera abre `screens/`, el módulo que une SCREENCALC (LED) y SCREENBOX (proyección) para una o varias pantallas y salas inmersivas de hasta 4 paredes y suelo, con simulación 3D renderizada.
+- **Inicio (SCREENS):** la web abre el selector de SCREENS (una o varias superficies · LED o proyección); «Una + LED» abre SCREENCALC. El botón INICIO (casa) de la cabecera vuelve al selector y el botón Atrás del navegador vuelve al cálculo. El idioma elegido es el mismo en SCREENCALC y en SCREENS.
 - **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
 - **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios, las consultas internas y la documentación (DOCS), que ya no es pública.
 - **Anuncios (motor AVHUB ADS):** 3 zonas (pie del menú y pie de resultados, izquierda y derecha). Cada zona admite varios anuncios con rotación; cada anuncio tiene formato estándar (horizontal 16:9, vertical 9:16, cuadrado 1:1, retrato 4:5, hero a sangre 21:9, banner 728×90, banner móvil 320×100, rectángulo 300×250, rascacielos 160×600), texto al lado, debajo, encima o sin texto, botón opcional, carrusel de fotos, vídeos y YouTube, fechas de inicio y fin, solo móvil o solo escritorio, y contador de clics. Todo el anuncio abre su enlace en una pestaña nueva (o `ads.json` mientras el panel no responda). Además, el minibanner fijo del configurador oficial de TRAULUX va encima de la zona del menú y se activa desde el panel.
@@ -78,7 +85,20 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v6.3)
+## Cambios de la versión actual (v6.4)
+
+- **SCREENS es la página de inicio.** La web principal pasa a **screens.mediaservi.com**, y la antigua screencalc.mediaservi.com redirige allí.
+  - Al entrar se elige una o varias superficies y LED o proyección. «Una + LED» abre SCREENCALC; el resto, el módulo SCREENS.
+  - Enlace directo a SCREENCALC: `?led`.
+- **Cabecera de SCREENCALC:** el botón que llevaba a SCREENS pasa a ser **INICIO** (casa) y vuelve al selector.
+- **Logo SCREENS:** isotipo CUBO (el cubo de SCREENBOX montado con los paneles de SCREENCALC) y el rótulo de SCREENCALC con las dos S grandes.
+  - Va en la cabecera de SCREENS, que al pulsarlo vuelve al inicio.
+  - Icono propio de la página y de la app instalable (SCREENS).
+- **Navegación:** el botón Atrás del navegador alterna entre el selector y el cálculo, y al recargar se queda donde estabas. SCREENS también funciona sin conexión con el mismo service worker.
+- **Idioma común:** el idioma elegido se comparte entre SCREENCALC y SCREENS.
+- **Textos y enlaces:** sin referencias a SCREENBOX en la interfaz, y todos los enlaces, el pie y el PDF apuntan a screens.mediaservi.com.
+
+## Cambios de la versión v6.3
 
 - **Fusión de SCREENCALC y SCREENBOX: nuevo módulo SCREENS** (`screens/`, desde el icono de la cabecera que llevaba a SCREENBOX). Primer paso de la fusión de SCREENCALC y SCREENBOX en una sola interfaz.
   - **Selector inicial:** una o varias superficies, y LED o proyección. Con «una pantalla LED» se abre SCREENCALC.

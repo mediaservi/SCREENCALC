@@ -4,8 +4,8 @@ const T = {
     lema: 'Pantallas LED y proyección para una o varias superficies, hasta salas inmersivas de 4 paredes y suelo.',
     titulo: '¿Qué vas a calcular?', cuantas: 'Superficies', tecno: 'Tecnología',
     una: 'Una pantalla', unaD: 'Una sola superficie', varias: 'Varias · sala inmersiva', variasD: 'Dos o más pantallas, o una sala de hasta 4 paredes y suelo',
-    led: 'LED', ledD: 'Cabinets del catálogo en vivo', proy: 'Proyección', proyD: 'Proyectores con blending (motor SCREENBOX)',
-    empezar: 'Empezar', irSc: 'Abrir SCREENCALC', inicio: 'Inicio', volverSc: 'Volver a SCREENCALC', idioma: 'Idioma',
+    led: 'LED', ledD: 'Cabinets del catálogo en vivo', proy: 'Proyección', proyD: 'Proyectores con edge blending',
+    empezar: 'Empezar', irSc: 'Abrir SCREENCALC', inicio: 'Inicio', idioma: 'Idioma',
     espacio: 'Espacio', sala: 'Sala inmersiva', pantallas: 'Pantallas', ancho: 'Ancho', fondo: 'Fondo', alto: 'Alto',
     superficies: 'Superficies', frontal: 'Frontal', izquierda: 'Izquierda', derecha: 'Derecha', trasera: 'Trasera', suelo: 'Suelo',
     altoPant: 'Alto de imagen', elev: 'Elevación', altoAyuda: 'Alto de imagen 0 = toda la altura de la pared.',
@@ -16,7 +16,7 @@ const T = {
     ajusteAyuda: 'Dentro: los cabinets nunca sobresalen de la pared. Más cercano: el tamaño más próximo al pedido.',
     proyMod: 'Proyección', proyector: 'Proyector', solape: 'Solape mínimo', proySuelo: 'Proyector del suelo',
     autoAyudaProy: 'AUTO elige el proyector que cubre todas las paredes con menos equipos, cabiendo en la sala y con más brillo.',
-    datosProy: 'Catálogo de proyectores heredado de SCREENBOX: pendiente de pasar a la hoja para que salga en vivo.',
+    datosProy: 'Catálogo de proyectores provisional (EPSON): pronto se actualizará en vivo.',
     resultados: 'Resultados', cabinets: 'Cabinets', lienzo: 'Lienzo de contenido', peso: 'Peso', consumo: 'Consumo', lineas: 'Líneas Ethernet', salidas: 'Salidas 4K',
     proyectores: 'Proyectores', brillo: 'Brillo estimado', lumenes: 'Lúmenes', tiro: 'Tiro', supCol: 'Superficie', medida: 'Medida', resol: 'Resolución',
     cabCol: 'Cabinets', pesoCol: 'Peso', potCol: 'Potencia', linCol: 'Líneas', proyCol: 'Proyectores', solCol: 'Solape', tiroCol: 'Distancia de tiro', brCol: 'Brillo',
@@ -35,8 +35,8 @@ const T = {
     lema: 'LED screens and projection for one or more surfaces, up to immersive rooms with 4 walls and floor.',
     titulo: 'What are you calculating?', cuantas: 'Surfaces', tecno: 'Technology',
     una: 'One screen', unaD: 'A single surface', varias: 'Several · immersive room', variasD: 'Two or more screens, or a room with up to 4 walls and floor',
-    led: 'LED', ledD: 'Cabinets from the live catalogue', proy: 'Projection', proyD: 'Projectors with edge blending (SCREENBOX engine)',
-    empezar: 'Start', irSc: 'Open SCREENCALC', inicio: 'Home', volverSc: 'Back to SCREENCALC', idioma: 'Language',
+    led: 'LED', ledD: 'Cabinets from the live catalogue', proy: 'Projection', proyD: 'Projectors with edge blending',
+    empezar: 'Start', irSc: 'Open SCREENCALC', inicio: 'Home', idioma: 'Language',
     espacio: 'Space', sala: 'Immersive room', pantallas: 'Screens', ancho: 'Width', fondo: 'Depth', alto: 'Height',
     superficies: 'Surfaces', frontal: 'Front', izquierda: 'Left', derecha: 'Right', trasera: 'Back', suelo: 'Floor',
     altoPant: 'Image height', elev: 'Elevation', altoAyuda: 'Image height 0 = full wall height.',
@@ -47,7 +47,7 @@ const T = {
     ajusteAyuda: 'Inside: cabinets never exceed the wall. Nearest: the size closest to the one requested.',
     proyMod: 'Projection', proyector: 'Projector', solape: 'Minimum overlap', proySuelo: 'Floor projector',
     autoAyudaProy: 'AUTO picks the projector that covers every wall with the fewest units, fits the room and gives the most brightness.',
-    datosProy: 'Projector catalogue inherited from SCREENBOX: to be moved to the sheet so it loads live.',
+    datosProy: 'Provisional projector catalogue (EPSON): live updates coming soon.',
     resultados: 'Results', cabinets: 'Cabinets', lienzo: 'Content canvas', peso: 'Weight', consumo: 'Power', lineas: 'Ethernet lines', salidas: '4K outputs',
     proyectores: 'Projectors', brillo: 'Estimated brightness', lumenes: 'Lumens', tiro: 'Throw', supCol: 'Surface', medida: 'Size', resol: 'Resolution',
     cabCol: 'Cabinets', pesoCol: 'Weight', potCol: 'Power', linCol: 'Lines', proyCol: 'Projectors', solCol: 'Overlap', tiroCol: 'Throw distance', brCol: 'Brightness',
@@ -66,8 +66,8 @@ const T = {
     lema: 'Pantalles LED i projecció per a una o diverses superfícies, fins a sales immersives de 4 parets i terra.',
     titulo: 'Què calcularàs?', cuantas: 'Superfícies', tecno: 'Tecnologia',
     una: 'Una pantalla', unaD: 'Una sola superfície', varias: 'Diverses · sala immersiva', variasD: 'Dues o més pantalles, o una sala de fins a 4 parets i terra',
-    led: 'LED', ledD: 'Cabinets del catàleg en viu', proy: 'Projecció', proyD: 'Projectors amb blending (motor SCREENBOX)',
-    empezar: 'Començar', irSc: 'Obrir SCREENCALC', inicio: 'Inici', volverSc: 'Tornar a SCREENCALC', idioma: 'Idioma',
+    led: 'LED', ledD: 'Cabinets del catàleg en viu', proy: 'Projecció', proyD: 'Projectors amb edge blending',
+    empezar: 'Començar', irSc: 'Obrir SCREENCALC', inicio: 'Inici', idioma: 'Idioma',
     espacio: 'Espai', sala: 'Sala immersiva', pantallas: 'Pantalles', ancho: 'Amplada', fondo: 'Fons', alto: 'Alçada',
     superficies: 'Superfícies', frontal: 'Frontal', izquierda: 'Esquerra', derecha: 'Dreta', trasera: 'Posterior', suelo: 'Terra',
     altoPant: 'Alçada d\'imatge', elev: 'Elevació', altoAyuda: 'Alçada d\'imatge 0 = tota l\'alçada de la paret.',
@@ -78,7 +78,7 @@ const T = {
     ajusteAyuda: 'Dins: els cabinets mai no sobresurten de la paret. Més proper: la mida més propera a la demanada.',
     proyMod: 'Projecció', proyector: 'Projector', solape: 'Solapament mínim', proySuelo: 'Projector del terra',
     autoAyudaProy: 'AUTO tria el projector que cobreix totes les parets amb menys equips, que cap a la sala i amb més brillantor.',
-    datosProy: 'Catàleg de projectors heretat de SCREENBOX: pendent de passar-lo al full perquè surti en viu.',
+    datosProy: 'Catàleg de projectors provisional (EPSON): aviat s’actualitzarà en viu.',
     resultados: 'Resultats', cabinets: 'Cabinets', lienzo: 'Llenç de contingut', peso: 'Pes', consumo: 'Consum', lineas: 'Línies Ethernet', salidas: 'Sortides 4K',
     proyectores: 'Projectors', brillo: 'Brillantor estimada', lumenes: 'Lúmens', tiro: 'Tir', supCol: 'Superfície', medida: 'Mida', resol: 'Resolució',
     cabCol: 'Cabinets', pesoCol: 'Pes', potCol: 'Potència', linCol: 'Línies', proyCol: 'Projectors', solCol: 'Solapament', tiroCol: 'Distància de tir', brCol: 'Brillantor',
@@ -97,10 +97,11 @@ const T = {
 export const IDIOMAS = ['es', 'en', 'ca'];
 let actual = 'es';
 export function idiomaInicial() {
-  let l = null; try { l = localStorage.getItem('screens_idioma') || localStorage.getItem('screencalc_idioma'); } catch (e) {}
+  // idioma común con SCREENCALC (misma clave); SCREENS se ofrece en es / en / ca
+  let l = null; try { l = localStorage.getItem('screencalc_lang') || localStorage.getItem('screens_idioma'); } catch (e) {}
   if (!l) { const n = (navigator.language || 'es').slice(0, 2).toLowerCase(); l = n === 'ca' ? 'ca' : n === 'en' ? 'en' : 'es'; }
   actual = IDIOMAS.includes(l) ? l : 'es'; return actual;
 }
-export function fijarIdioma(l) { actual = IDIOMAS.includes(l) ? l : 'es'; try { localStorage.setItem('screens_idioma', actual); } catch (e) {} document.documentElement.lang = actual; }
+export function fijarIdioma(l, recordar = true) { actual = IDIOMAS.includes(l) ? l : 'es'; if (recordar) try { localStorage.setItem('screencalc_lang', actual); localStorage.setItem('screens_idioma', actual); } catch (e) {} document.documentElement.lang = actual; }
 export const idioma = () => actual;
 export function t(k, vars) { let s = (T[actual] && T[actual][k]) || T.es[k] || k; if (vars) Object.keys(vars).forEach(v => { s = s.replace('{' + v + '}', vars[v]); }); return s; }

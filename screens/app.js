@@ -4,7 +4,7 @@ import { superficies, distanciaPublico, elegirModelo, calcularLed, totales } fro
 import { PROYECTORES, calcularPared, calcularSuelo, sugerir, SOLAPE_MAX } from './proyeccion.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v6.3';
+const VERSION = 'v6.4';
 const DEF = () => ({
   paso: 'inicio', cantidad: 'varias', tecnologia: 'led',
   esp: { tipo: 'sala', ancho: 8, fondo: 6, alto: 3.5, elev: 0, altoCubierto: 0,
@@ -15,7 +15,10 @@ const DEF = () => ({
   vista: { contenido: 'carta', etiquetas: true, camara: 'exterior' }
 });
 let E = DEF();
-try { const g = JSON.parse(localStorage.getItem('screens_estado') || 'null'); if (g && g.esp) E = Object.assign(DEF(), g, { paso: g.paso || 'inicio' }); } catch (e) {}
+try { const g = JSON.parse(localStorage.getItem('screens_estado') || 'null'); if (g && g.esp) E = Object.assign(DEF(), g); } catch (e) {}
+// el paso lo marca la dirección (#inicio / #trabajo): SCREENS es la página de inicio y el botón Atrás del navegador vuelve al selector
+const pasoDeHash = () => (location.hash === '#trabajo' ? 'trabajo' : 'inicio');
+E.paso = pasoDeHash();
 const guardar = () => { try { localStorage.setItem('screens_estado', JSON.stringify(E)); } catch (e) {} };
 let catalogo = [], estadoCat = 'cargando', escena = null, calculo = null;
 
@@ -244,10 +247,10 @@ document.addEventListener('click', (ev) => {
   if (b.dataset.cam) { E.vista.camara = b.dataset.cam; if (escena) escena.vista(b.dataset.cam === 'interior' ? 'dentro' : b.dataset.cam); barraEscena(); guardar(); return; }
   const a = b.dataset.accion;
   if (a === 'empezar') {
-    if (E.cantidad === 'una' && E.tecnologia === 'led') { location.href = '../'; return; }
-    E.paso = 'trabajo'; actualizar(); return;
+    if (E.cantidad === 'una' && E.tecnologia === 'led') { try { sessionStorage.setItem('screens_una', '1'); } catch (e) {} guardar(); location.href = '../'; return; }
+    location.hash = 'trabajo'; return;
   }
-  if (a === 'inicio') { E.paso = 'inicio'; actualizar(); return; }
+  if (a === 'inicio') { if (location.hash !== '#inicio') location.hash = 'inicio'; else { E.paso = 'inicio'; actualizar(); } return; }
   if (a === 'idioma') { fijarIdioma(IDIOMAS[(IDIOMAS.indexOf(idioma()) + 1) % IDIOMAS.length]); pintarCabecera(); const p = E.paso; if (p === 'trabajo') { $('#app').innerHTML = ''; } actualizar(); return; }
   if (a === 'etiquetas') { E.vista.etiquetas = !E.vista.etiquetas; actualizar(); return; }
   if (a === 'reset-esp') { E.esp = DEF().esp; actualizar(); return; }
@@ -288,10 +291,13 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajustarTex
 function pintarCabecera() {
   $('#btn-idioma').textContent = idioma().toUpperCase();
   $('#btn-idioma').title = t('idioma');
-  $('#btn-inicio').title = t('inicio'); $('#btn-sc').title = t('volverSc');
-  $('#pie').innerHTML = `<a href="../">SCREENCALC</a> ${VERSION} · SCREENS ${new Date().getFullYear()} ${t('pie')} <i class="ic ic-footer" aria-hidden="true"></i> by <a href="https://mediaservi.com" target="_blank" rel="noopener">mediaservi.com</a>`;
+  $('#btn-inicio').title = t('inicio');
+  $('#pie').innerHTML = `SCREENS ${VERSION} ${new Date().getFullYear()} ${t('pie')} <i class="ic ic-footer" aria-hidden="true"></i> by <a href="https://mediaservi.com" target="_blank" rel="noopener">mediaservi.com</a>`;
 }
-fijarIdioma(idiomaInicial());
+window.addEventListener('hashchange', () => { const p = pasoDeHash(); if (p !== E.paso) { E.paso = p; actualizar(); } });
+fijarIdioma(idiomaInicial(), false);
 pintarCabecera();
 actualizar();
+// uso sin conexión: el mismo service worker de la raíz (red primero, copia guardada si no hay red)
+try { if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('../sw.js').catch(() => {}); } catch (e) {}
 cargarCatalogo((lista, estado) => { catalogo = lista; estadoCat = estado; if (E.paso === 'trabajo') actualizar(); });
