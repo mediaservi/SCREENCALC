@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v5.1** (propuesta de nueva estética AVHUB)
+**Versión actual: v5.2** (propuesta de nueva estética AVHUB)
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -74,7 +74,17 @@ La app usa solo estas cuatro tonalidades de verde (además de blanco, negro, gri
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v5.1 · propuesta)
+## Cambios de la versión actual (v5.2 · propuesta)
+
+- **Simulación más real:** la pared lleva textura a escala real (hormigón, madera, ladrillo claro, rojo u oscuro y mármol); el suelo es siempre el gris oscuro uniforme y la pared empieza a ras de suelo. La pared se elige en «Simular contenido» o con los minibotones de muestra de la franja del suelo.
+- **Figura y cotas:** la figura es gris claro sobre paredes oscuras; su altura aparece como texto horizontal junto a sus pies; las cotas de ancho y alto se apoyan por fuera de su línea y quedan pegadas a la pantalla; el control de elevación queda siempre bajo la línea de suelo.
+- **Carta de ajuste:** muestra la resolución, la clase (HD, FHD, 4K…) y el formato reales de la pantalla configurada; en pantallas estrechas pasa a varias líneas.
+- **Numeración de cabinets legible:** si las celdas son demasiado pequeñas se numera cada 2, 3… para que los números no se pisen.
+- **Total de cabinets:** en grande en el resumen de la simulación (en móvil, junto a la resolución) y entre columnas y filas en «Tamaño de pantalla», donde las casillas muestran ya las medidas reales.
+- **Resolución:** botones AUTO / HD / FHD / UHD y casillas H × V para una resolución a medida. Con solo el ancho o solo el alto, el otro se calcula por la proporción de la resolución; sin medidas, se propone la pantalla más pequeña que la alcanza.
+- **Rigor visual:** tipografía coherente por tipo de campo (datos y medidas en Share Tech Mono); ningún texto llega al filo de su botón o caja: si no cabe, se reduce con margen de seguridad.
+
+## Cambios de la versión v5.1 · propuesta
 
 - **Petición más fiable:** «externa», «le da el sol directo», «terraza», «azotea»… se entienden como exterior; «cerca de un río», lago, embalse, piscina, puerto… como entorno húmedo (marino / tropical). «Sol directo» ya no se confunde con «conexión directa»: la electrónica y la conexión solo se marcan como «de tu petición» si se piden.
 - **Popup «Datos del proyecto» compacto:** 3 columnas en PC (sin desplazamiento a partir de 1000 × 600 px), 2 en tablet y móvil horizontal, 1 en móvil vertical; cada grupo (pantalla y sitio · electrónica · mediaserver y fuentes) queda en su columna.

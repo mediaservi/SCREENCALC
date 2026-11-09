@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              SCREENCALC - INDEX                             ║
-║                          Versión actual: v5.1                              ║
+║                          Versión actual: v5.2                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v5.1
+ÚLTIMA ACTUALIZACIÓN: v5.2
+- v5.2 (PROPUESTA): simulación: pared a escala real (hormigón, madera, ladrillo claro / rojo / oscuro y mármol) con suelo gris uniforme y minibotones de muestra en la franja del suelo (sin taparse con el botón PANEL); figura en gris claro sobre fondos oscuros y altura de la figura en texto horizontal junto a sus pies; cotas de ancho y alto apoyadas por fuera de su línea y pegadas a la pantalla; la carta de ajuste muestra la resolución, la clase y el formato reales de la pantalla configurada (en varias líneas si la pantalla es estrecha); numeración de cabinets cada 2, 3… cuando las celdas son demasiado pequeñas para que los números no se pisen; control de elevación siempre bajo la línea de suelo; total de cabinets en grande en el resumen (y en móvil, junto a la resolución); Tamaño de pantalla: medidas reales en las casillas, total de cabinets entre columnas y filas; Resolución: AUTO / HD / FHD / UHD y casillas H × V para una resolución a medida, el alto o el ancho que falte se calcula por la proporción; tipografía coherente por tipo de campo (datos en Share Tech Mono); ningún texto llega al filo de su botón o caja (se autorreduce con margen de seguridad); botón SIMULAR CONTENIDO a dos líneas
+ANTERIOR: v5.1
 - v5.1: petición: «externa», «sol directo», «terraza»… se entienden como exterior; «cerca de un río», lago, piscina, puerto… como entorno húmedo (marino / tropical); «sol directo» ya no activa la conexión directa ni la electrónica (solo «conexión directa», «directo por cable», RJ45 o cable de red); popup «Datos del proyecto» compacto: 3 columnas desde 1000 px (sin desplazamiento en PC), 2 columnas desde 680 px y 1 en móvil vertical, rellenando por columnas para que cada grupo quede junto; modo manual: con una resolución mínima (HD / FHD / 4K) y sin ancho ni alto, CALCULAR da la pantalla más pequeña que la alcanza con el cabinet elegido (luego se amplía con + / −); tipografía unificada: solo Inter (400 / 700 / 800) y Share Tech Mono para datos y displays
 ANTERIOR: v5.0
 - v5.0 (PROPUESTA): nueva estética AVHUB en toda la app en pantalla, con un solo sistema visual: chasis gris neutrón, verde eléctrico para lo activado, violeta de marca para la acción principal, tipografía Inter y displays Share Tech Mono (incluidas en la app, sin servicios externos); cabecera con botones metálicos redondos; panel de control en módulos de rack; interruptores con estado inequívoco (apagado metal / encendido verde con brillo); pitch y nits en display LED; tarjetas de resultados oscuras con filete de color por sección; cabeceras de bloque en violeta; simulación sobre rejilla técnica; esquema de conexiones, distancia de visionado, popups y anuncios adaptados al modo oscuro. El PDF no cambia. En móvil y tablet el margen inferior del panel va dentro de la zona desplazable (sin franja vacía). ?tema=clasico muestra la estética anterior (se recuerda en el navegador) y ?tema=avhub la recupera. Correcciones de la revisión: entre 1024 y 1279 px el panel va en una columna con scroll y los resultados quedan a la vista (antes en tablet horizontal no se veían); un solo verde en toda la interfaz; esquema de conexiones desplazable en móvil para que se lea; botones táctiles sin brillo pegado; CALCULAR del popup con aspecto desactivado si falta la medida; etiquetas de «Solicitud aplicada» como lectura, no como interruptores; README con cabecera violeta; idioma en dos columnas en móvil horizontal; rótulo de elevación sobre fondo propio; se entiende «2 HDMI inputs» en inglés; esquema en móvil con aviso «Desliza para ver el esquema completo»
@@ -1145,6 +1147,12 @@ ANTERIOR: v4.1
         }
 
         /* ── EXCEPCIONES: elementos que NO deben inflarse ── */
+        /* Control de elevación de la simulación: botones de 32×28 para que no invadan la pantalla ni el suelo */
+        .av-elev button {
+          min-height: 0 !important;
+          min-width: 0 !important;
+          font-size: 12px !important;
+        }
         .toggle-switch-btn {
           width: 36px !important;
           height: 20px !important;
@@ -1701,36 +1709,50 @@ ANTERIOR: v4.1
     <script>/* Estética AVHUB: activa por defecto; ?tema=clasico vuelve a la anterior (se recuerda), ?tema=avhub la recupera */
       (function(){var d=document.documentElement,t='avhub',q=null;try{q=new URLSearchParams(location.search).get('tema');}catch(e){}if(q){t=q;try{localStorage.setItem('screencalc_tema',q);}catch(e){}}else{try{t=localStorage.getItem('screencalc_tema')||'avhub';}catch(e){}}if(t!=='clasico'){d.classList.add('av');var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#232325');}})();
     </script>
-    <script>/* Texto de botones siempre dentro del botón con margen: si no cabe en una línea se reduce la letra (mín. 8,5 px); solo si aun así no cabe, pasa a dos líneas */
+    <script>/* DIRECTRIZ: el texto NUNCA desborda ni toca el filo de su contenedor; siempre hay margen de seguridad (mín. 4 px).
+       Si no cabe, se reduce la letra (mín. 8 px); en botones, solo si aun así no cabe pasa a dos líneas. */
       (function(){
-        var SEL='button, .nl-op, .lang-op, .av-chip';
+        var BOT='button, .nl-op, .lang-op, .av-chip';
+        var CAJ='.av-ajusta, .av-resumen, .cota-lbl, .av-figv, .av-elev > span, .av-dist-mini, .carta-rotulo span, .av-totcab, .car-tarjeta .text-xl, .car-tarjeta .text-2xl, .nl-marca, .av-pared i, .av-flota, .nl-flota, .resumen-pantalla';
+        var MARGEN=4;
         function cabe(el){
-          var cs=getComputedStyle(el), disp=el.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
-          if(disp<=0) return true;
-          var r=document.createRange(); r.selectNodeContents(el); var rs=r.getClientRects(), w=0;
-          for(var i=0;i<rs.length;i++){ if(rs[i].width>w) w=rs[i].width; }
-          return w<=disp+0.5 && el.scrollWidth<=el.clientWidth+1;
+          var b=el.getBoundingClientRect(); if(!b.width) return true;
+          var cs=getComputedStyle(el);
+          /* El margen de seguridad se exige cuando el elemento dibuja una caja (fondo, borde o sombra);
+             si es solo texto, basta con que no se salga de su propio espacio */
+          var visible=(cs.backgroundColor&&cs.backgroundColor!=='rgba(0, 0, 0, 0)'&&cs.backgroundColor!=='transparent')||cs.backgroundImage!=='none'
+            ||parseFloat(cs.borderLeftWidth)>0||parseFloat(cs.borderTopWidth)>0||(cs.boxShadow&&cs.boxShadow!=='none');
+          var M=visible?MARGEN:0;
+          var izq=b.left+parseFloat(cs.borderLeftWidth)+Math.max(M,parseFloat(cs.paddingLeft));
+          var der=b.right-parseFloat(cs.borderRightWidth)-Math.max(M,parseFloat(cs.paddingRight));
+          var r=document.createRange(); r.selectNodeContents(el); var rs=r.getClientRects(), L=1e9, R=-1e9, n=0;
+          for(var i=0;i<rs.length;i++){ if(rs[i].width<0.5) continue; n++; if(rs[i].left<L) L=rs[i].left; if(rs[i].right>R) R=rs[i].right; }
+          if(!n) return true;
+          var vert=cs.writingMode&&cs.writingMode.indexOf('vertical')===0;
+          if(vert){ var arr=b.top+parseFloat(cs.borderTopWidth)+Math.max(M,parseFloat(cs.paddingTop)), abj=b.bottom-parseFloat(cs.borderBottomWidth)-Math.max(M,parseFloat(cs.paddingBottom)), T=1e9,B=-1e9;
+            for(var j=0;j<rs.length;j++){ if(rs[j].height<0.5) continue; if(rs[j].top<T) T=rs[j].top; if(rs[j].bottom>B) B=rs[j].bottom; }
+            return T>=arr-0.5 && B<=abj+0.5; }
+          return L>=izq-0.5 && R<=der+0.5 && el.scrollWidth<=el.clientWidth+1;
         }
-        function ajustar(el){
+        function ajustar(el,esBoton){
           if(!el.isConnected||!el.offsetWidth) return;
-          var t=(el.textContent||'').trim(); if(t.length<2) return;
+          var t=(el.textContent||'').trim(); if(t.length<1) return;
           var key=el.clientWidth+'|'+el.clientHeight+'|'+t+'|'+el.className; if(el.dataset.fitKey===key) return; el.dataset.fitKey=key;
           if(el.dataset.fit){ el.style.fontSize=el.dataset.fitOrig||''; el.style.whiteSpace=el.dataset.fitWs||''; delete el.dataset.fit; }
           if(cabe(el)) return;
           el.dataset.fitOrig=el.style.fontSize||''; el.dataset.fitWs=el.style.whiteSpace||''; el.dataset.fit='1';
-          var fs=parseFloat(getComputedStyle(el).fontSize), n=0;
-          while(!cabe(el) && fs>8.5 && n<20){ fs-=0.5; n++; el.style.setProperty('font-size',fs+'px','important'); }
-          if(!cabe(el)) el.style.setProperty('white-space','normal','important');
+          var fs=parseFloat(getComputedStyle(el).fontSize), k=0;
+          while(!cabe(el) && fs>8 && k<30){ fs-=0.5; k++; el.style.setProperty('font-size',fs+'px','important'); }
+          if(esBoton && !cabe(el)) el.style.setProperty('white-space','normal','important');
         }
         var pend=false;
-        function todo(){ pend=false; var l=document.querySelectorAll(SEL); for(var i=0;i<l.length;i++) ajustar(l[i]); }
+        function todo(){ pend=false; var l=document.querySelectorAll(BOT), i; for(i=0;i<l.length;i++) ajustar(l[i],true); l=document.querySelectorAll(CAJ); for(i=0;i<l.length;i++) ajustar(l[i],false); }
         function pedir(){ if(!pend){ pend=true; requestAnimationFrame(function(){ setTimeout(todo,0); }); } }
         function arrancar(){ if(!document.body) return setTimeout(arrancar,50);
-          new MutationObserver(function(ms){ for(var i=0;i<ms.length;i++){ var tg=ms[i].target; if(tg&&tg.nodeType===1&&tg.dataset&&tg.dataset.fit&&ms[i].type==='attributes') continue; pedir(); return; } })
-            .observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class']});
+          new MutationObserver(function(){ pedir(); }).observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class']});
           window.addEventListener('resize',pedir); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(pedir); pedir(); }
         arrancar();
-        window.SC_AJUSTAR_BOTONES=todo;
+        window.SC_AJUSTAR_TEXTOS=todo;
       })();
     </script>
     <style id="tema-avhub">
@@ -2470,7 +2492,8 @@ html.av .av-pared span { display: block; height: 30px; border-radius: 4px; backg
 html.av .av-pared i { font-style: normal; font-size: 10px; font-weight: 700; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 html.av .av-pared.on { border-color: var(--av-verde) !important; color: var(--av-verde) !important; box-shadow: 0 0 0 1px rgba(0,255,4,.3), 0 0 10px rgba(0,255,4,.25); }
 /* Botón SIMULAR CONTENIDO con margen interior */
-html.av .av-simular { padding: 8px 10px !important; }
+html.av .av-simular { padding: 8px 10px !important; white-space: normal !important; text-align: left; line-height: 1.15 !important; letter-spacing: .05em !important; }
+html.av .av-simular .av-sim-t { min-width: 0; }
 
 /* ===== Pared y suelo: la textura es solo la pared y arranca a ras de suelo; el suelo es siempre el mismo gris oscuro ===== */
 html.av .visualizer-container {
@@ -2494,6 +2517,51 @@ html.av .av-suelo { border-bottom-color: rgba(255,255,255,.16) !important; box-s
 
 /* Pares de campos (ancho/alto, horizontal/vertical): casillas siempre alineadas */
 html.av aside.controls-sidebar .card-sec > div[style*="grid-template-columns: 1fr 1fr"] > div { display: flex; flex-direction: column; justify-content: flex-end; }
+
+/* Minibotones de pared en la franja del suelo */
+.av-paredes-mini { display: none; }
+html.av .av-paredes-mini { display: flex; position: absolute; z-index: 35; align-items: center; }
+html.av .av-pmini { padding: 0 !important; min-height: 0 !important; min-width: 0 !important; border-radius: 4px; background-size: cover !important; background-position: center !important;
+  border: 1px solid #000 !important; box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 2px 4px rgba(0,0,0,.6) !important; cursor: pointer; transition: transform .1s, box-shadow .1s; }
+@media (hover: hover) { html.av .av-pmini:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(255,255,255,.5), 0 3px 6px rgba(0,0,0,.6) !important; } }
+html.av .av-pmini.on { box-shadow: 0 0 0 2px var(--av-verde), 0 0 10px rgba(0,255,4,.45) !important; }
+/* Cotas: la etiqueta se apoya en su línea, por fuera */
+html.av .cota-ancho .cota-lbl { top: 10px !important; transform: translateY(-100%) !important; border-radius: 4px 4px 0 0 !important; border-bottom: 0 !important; }
+html.av .cota-alto .cota-lbl { left: 10px !important; transform: translate(0, -50%) !important; border-radius: 0 4px 4px 0 !important; border-left: 0 !important; }
+
+/* Total de cabinets en el resumen de la simulación: número grande y CABINETS al mismo ancho */
+.av-cabtot { display: none; }
+html.av .av-cabtot { display: inline-flex; flex-direction: column; align-items: stretch; margin-left: .5em; flex: none; }
+html.av .av-cabtot { min-width: 2.4em; }
+html.av .av-cabtot-m { margin-left: 0; font-size: clamp(11px, 3.3vw, 15px); }
+html.av .av-cabtot b { font-family: var(--av-mono); font-weight: 400; font-size: 2.3em; line-height: .9; color: var(--av-verde); text-shadow: 0 0 10px rgba(0,255,4,.45); text-align: center; }
+html.av .av-cabtot svg { display: block; width: 100%; height: .7em; margin-top: .25em; }
+html.av .av-cabtot svg { stroke: none !important; }
+html.av .av-cabtot svg text { stroke: none !important; font-family: 'Inter', system-ui, sans-serif !important; font-weight: 700 !important; font-size: 14px; fill: var(--av-tenue); }
+html.av .av-resumen > div:first-child { width: auto !important; flex: 1 1 auto; }
+
+/* ===== Coherencia tipográfica: TODOS los datos y medidas en Share Tech Mono; títulos, etiquetas y botones en Inter Bold; texto en Inter Regular ===== */
+html.av .resolution-box-print > .bg-white .font-bold, html.av .resolution-box-print .bg-black .font-black, html.av .resolution-box-print .bg-black > div:first-child {
+  font-family: var(--av-mono) !important; font-weight: 400 !important; letter-spacing: .02em; }
+html.av .resolution-box-print > .bg-white .font-bold { line-height: 1.25; color: var(--av-txt) !important; }
+@media (min-width: 768px) { html.av .resolution-box-print > .bg-white .font-bold { font-size: 15px !important; } html.av .resolution-box-print .bg-black > div:first-child { font-size: 24px !important; } html.av .av-resumen { font-size: 15px; } }
+html.av .av-resumen .text-white { font-family: var(--av-mono) !important; font-weight: 400 !important; font-size: 1em !important; }
+html.av .carta-rotulo span { font-family: var(--av-mono) !important; font-weight: 400 !important; letter-spacing: .06em !important; }
+html.av .car-tarjeta .text-xl, html.av .car-tarjeta .text-2xl { font-family: var(--av-mono) !important; font-weight: 400 !important; letter-spacing: .01em; }
+html.av .car-tarjeta .text-xl .text-sm, html.av .car-tarjeta .text-2xl .text-sm { font-family: 'Inter', system-ui, sans-serif !important; font-weight: 700 !important; }
+html.av .car-tarjeta .flex.justify-between > span:last-child { font-family: var(--av-mono) !important; font-weight: 400 !important; font-size: 13px; letter-spacing: .02em; color: var(--av-txt) !important; }
+html.av .car-tarjeta .text-lg.font-extrabold { font-family: var(--av-mono) !important; font-weight: 400 !important; font-size: 20px !important; }
+html.av .av-elev > span { font-weight: 700 !important; }
+
+html.av .av-resumen { padding-left: 10px !important; padding-right: 10px !important; }
+/* Altura de la figura: solo texto, horizontal, junto a los pies */
+html.av .av-figv { display: block !important; writing-mode: horizontal-tb !important; transform: none; background: none !important; border: 0 !important; padding: 0 !important; border-radius: 0 !important;
+  font-family: var(--av-mono) !important; font-size: 11px !important; line-height: 1 !important; color: var(--hum, #c3c3ca) !important; text-shadow: 0 1px 2px rgba(0,0,0,.7); white-space: nowrap; }
+html.av .visualizer-container[data-pared="marmol"] .av-figv, html.av .visualizer-container[data-pared="ladrillo-claro"] .av-figv { text-shadow: 0 0 3px rgba(255,255,255,.8); }
+
+/* Barra de datos bajo la simulación (móvil): sin separadores sueltos al partir línea; datos repartidos a partes iguales */
+html.av .av-barra-movil .av-sep { display: none !important; }
+html.av .av-barra-movil { justify-content: space-evenly !important; }
 
 }
 /*TEMA-AVHUB-FIN*/
@@ -6578,6 +6646,8 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
         const cotaRightSpace = isMobile ? 36 : 46;                      // cota ALTO + rótulo
         const topPx = isMobile ? 36 : 46;                               // cota ANCHO + rótulo
         const humanOffsetFromScreen = isMobile ? 8 : 20;
+        const elevTactil = isMobile || window.innerWidth <= 1024;              // control de elevación: botones más grandes en táctil
+        const elevBtnW = elevTactil ? 32 : 24, elevBtnH = elevTactil ? 28 : 22;
         const sceneLeft = isMobile ? padX : infoW + padX * 2;
         const availW = Math.max(120, containerSize.w - sceneLeft - padX - cotaRightSpace - humanOffsetFromScreen);
         const sceneHm = Math.max(humanH, elevation + screenH) || humanH;
@@ -6595,6 +6665,11 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
         const vFloorH = elevation * scale;
         const vHumanH = humanH * scale;
         const vHumanW = visualHumanW * scale;
+        // Numeración de cabinets: si las celdas son más pequeñas que el rótulo, se numera cada N para que los números no se pisen
+        const etqNumPx = window.innerWidth <= 1024 ? 8.8 : 12;
+        const pasoNumC = Math.max(1, Math.ceil((etqNumPx * 1.3 + 4) / Math.max(1, (screenW * scale) / Math.max(1, stats?.cols || 1))));
+        const pasoNumF = Math.max(1, Math.ceil((etqNumPx + 4) / Math.max(1, (screenH * scale) / Math.max(1, stats?.rows || 1))));
+        const verNumC = (i) => i % pasoNumC === 0, verNumF = (i) => i % pasoNumF === 0;
 
         // POSICIONES (anclado al suelo: COTA_CERO_BASE_Y), grupo centrado en el área libre de la escena
         const totalContentW = vScreenW + vHumanW + humanOffsetFromScreen;
@@ -6654,7 +6729,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             <header className="app-header bg-corp-green h-16 flex items-center justify-between px-4 shadow-lg shrink-0 z-50 no-print">
                <div className="flex items-center gap-3 hover:opacity-80 transition">
                  <img src={APP_LOGO} onClick={handleReset} className="app-logo cursor-pointer" alt="SCREENCALC" title="Nuevo cálculo" />
-                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v5.1</div>
+                 <div className="text-[9px] text-gray-300 font-mono opacity-80 leading-none self-end pb-1">v5.2</div>
                </div>
                <a href={AVHUB_URL} target="_blank" rel="noopener noreferrer" className="avhub-hdr" title="Nueva app en preparación" aria-label="AVHUB: nueva app en preparación"><img src="assets/avhub-logo.svg" alt="AVHUB" /></a>
                
@@ -6939,7 +7014,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                             {/* Tarjeta Card - siempre visible */}
                             <div className="w-20 bg-gray-200 rounded px-1 py-0.5 text-center">
                               <span className="text-[8px] text-gray-500 uppercase block">Card</span>
-                              <span className="text-[10px] font-bold text-gray-700 block truncate">{selectedModel.card || '-'}</span>
+                              <span className="text-[10px] font-bold text-gray-700 block av-ajusta" style={{ whiteSpace: 'normal', lineHeight: 1.15 }}>{selectedModel.card || '-'}</span>
                             </div>
                           </div>
                           {/* Columna derecha: Specs + Switch 90° */}
@@ -6951,7 +7026,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                             <div className="flex items-center gap-1.5">
                               {selectedModel.girok && String(selectedModel.girok).toLowerCase().trim() === 'girok' ? (
                                 <div className="flex-1 flex items-center justify-between gap-1 px-1.5 py-1 bg-white border border-gray-300 rounded min-w-0 overflow-hidden">
-                                  <span className="text-[9px] font-bold text-gray-600 truncate" style={{minWidth:0}}>Instalado a 90°</span>
+                                  <span className="text-[9px] font-bold text-gray-600 av-ajusta" style={{ minWidth: 0, whiteSpace: 'nowrap' }}>Instalado a 90°</span>
                                   <button
                                     onClick={() => setGiro90(!giro90)}
                                     className={`toggle-switch-btn relative w-9 h-5 rounded-full transition-colors duration-200 flex-shrink-0 ${giro90 ? 'bg-[#00a792]' : 'bg-gray-300'}`}
@@ -7239,6 +7314,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                            }}>
                         <div className="bg-white border border-gray-300 rounded shadow-md" style={{ flex: isMobile ? '1 1 0' : 'none', minWidth: 0, padding: isMobile ? '4px 6px' : '8px' }}>
                         {(() => {
+                          const bloqueRes = (() => {
                           const resInfo = getResolutionInfo(stats?.resW, stats?.resH);
                           return resInfo ? (
                             <div className="flex flex-col items-center">
@@ -7259,6 +7335,17 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                               <div className="font-bold text-center" style={{fontSize: isMobile ? 'clamp(9px, 2.4vw, 12px)' : '14px'}}>{stats?.resW}x{stats?.resH}<br/>pixels</div>
                             </div>
                           );
+                          })();
+                          // Móvil (estética AVHUB): el total de cabinets comparte la caja de resolución, en el hueco libre a su lado
+                          return (isMobile && stats) ? (
+                            <div className="flex items-center h-full" style={{ justifyContent: 'space-evenly', gap: '6px' }}>
+                              {bloqueRes}
+                              <div className="av-cabtot av-cabtot-m no-print" aria-label={(stats.cols * stats.rows) + ' cabinets'}>
+                                <b>{stats.cols * stats.rows}</b>
+                                <svg viewBox="0 0 100 16" preserveAspectRatio="none" aria-hidden="true"><text x="0" y="13" textLength="100" lengthAdjust="spacingAndGlyphs">CABINETS</text></svg>
+                              </div>
+                            </div>
+                          ) : bloqueRes;
                         })()}
                         </div>
 
@@ -7291,6 +7378,12 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                                 <span className="text-white font-black" style={{fontSize: isMobile ? 'clamp(11px, 3vw, 14px)' : '15px', lineHeight: 1}}>{Math.round(parseFloat(stats.heightM) * 100)}cm</span>
                               </div>
                             </div>
+                            {!isMobile && (
+                              <div className="av-cabtot no-print" aria-label={(stats.cols * stats.rows) + ' cabinets'}>
+                                <b>{stats.cols * stats.rows}</b>
+                                <svg viewBox="0 0 100 16" preserveAspectRatio="none" aria-hidden="true"><text x="0" y="13" textLength="100" lengthAdjust="spacingAndGlyphs">CABINETS</text></svg>
+                              </div>
+                            )}
                           </div>
                         )}
                       {/* Botón de contenido: mismo ancho que el resumen verde */}
@@ -7298,7 +7391,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                         <button onClick={() => setShowMedia(true)} title="Simular contenido en la pantalla"
                           className="av-sec av-simular bg-corp-teal text-white font-bold rounded hidden lg:flex items-center justify-center gap-2 uppercase"
                           style={{ width: '100%', padding: '8px 6px', fontSize: '11px', lineHeight: 1.1, letterSpacing: '.04em' }}>
-                          <Ic n="contenido" size="18px" /> Simular contenido
+                          <Ic n="contenido" size="18px" /><span className="av-sim-t">Simular contenido</span>
                         </button>
                       )}
                       {!isMobile && stats && (
@@ -7412,8 +7505,9 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                                 const fs = Math.max(7, Math.min(vScreenH * 0.05, vScreenW * 0.036));
                                 return (
                                   <div className="carta-rotulo" style={{ position: 'absolute', left: 0, right: 0, top: '90.3%', height: '5.1%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 22, pointerEvents: 'none' }}>
-                                    <span style={{ fontFamily: "'Inter', 'Segoe UI', Arial, sans-serif", fontWeight: 800, fontSize: fs + 'px', lineHeight: 1, letterSpacing: '0.08em', color: '#fff', background: 'rgba(0,0,0,.55)', padding: (fs * 0.28) + 'px ' + (fs * 0.6) + 'px', borderRadius: (fs * 0.25) + 'px', whiteSpace: 'nowrap', textShadow: '0 1px 2px rgba(0,0,0,.8)' }}>
-                                      {rw} × {rh}{ri ? ' · ' + ri.displayName : ''} · {arT}
+                                    <span style={{ fontFamily: "'Inter', 'Segoe UI', Arial, sans-serif", fontWeight: 800, fontSize: fs + 'px', lineHeight: 1.2, letterSpacing: '0.08em', color: '#fff', background: 'rgba(0,0,0,.55)', padding: (fs * 0.28) + 'px ' + (fs * 0.6) + 'px', borderRadius: (fs * 0.25) + 'px', whiteSpace: 'normal', maxWidth: '94%', textAlign: 'center', textShadow: '0 1px 2px rgba(0,0,0,.8)' }}>
+                                      {/* En pantallas estrechas el rótulo pasa a varias líneas, cortando solo entre datos */}
+                                      <span style={{ whiteSpace: 'nowrap' }}>{rw} × {rh}</span>{ri ? <> <span style={{ whiteSpace: 'nowrap' }}>· {ri.displayName}</span></> : null} <span style={{ whiteSpace: 'nowrap' }}>· {arT}</span>
                                     </span>
                                   </div>
                                 );
@@ -7619,7 +7713,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                                     return lineas;
                                   })()}
                                   {/* Numeración columnas (primera fila) */}
-                                  {Array.from({ length: stats?.cols }).map((_, cIndex) => (
+                                  {Array.from({ length: stats?.cols }).map((_, cIndex) => verNumC(cIndex) && (
                                     <div 
                                       key={`num-h-${cIndex}`}
                                       className="cabinet-number absolute"
@@ -7644,7 +7738,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                                     
                                     for (let i = 0; i < stats?.filas100; i++) {
                                       const centro = acumulado + (alto100 / 2);
-                                      nums.push(
+                                      if (verNumF(filaNum - 1)) nums.push(
                                         <div 
                                           key={`num-v-100-${i}`}
                                           className="cabinet-number absolute"
@@ -7655,14 +7749,15 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                                             textAlign: 'center',
                                           }}
                                         >
-                                          {String(filaNum++).padStart(2, '0')}
+                                          {String(filaNum).padStart(2, '0')}
                                         </div>
                                       );
+                                      filaNum++;
                                       acumulado += alto100;
                                     }
                                     for (let i = 0; i < stats?.filas50; i++) {
                                       const centro = acumulado + (alto50 / 2);
-                                      nums.push(
+                                      if (verNumF(filaNum - 1)) nums.push(
                                         <div 
                                           key={`num-v-50-${i}`}
                                           className="cabinet-number absolute text-cyan-200"
@@ -7673,9 +7768,10 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                                             textAlign: 'center',
                                           }}
                                         >
-                                          {String(filaNum++).padStart(2, '0')}
+                                          {String(filaNum).padStart(2, '0')}
                                         </div>
                                       );
+                                      filaNum++;
                                       acumulado += alto50;
                                     }
                                     return nums;
@@ -7724,7 +7820,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                                           }}/>
                                         )}
                                         {/* Numeración: fila superior */}
-                                        {colCenters.map((cx, ci) => (
+                                        {colCenters.map((cx, ci) => verNumC(ci) && (
                                           <div key={`hn-t-${ci}`} className="cabinet-number absolute"
                                             style={{
                                               top: holoRows === 2 ? `${topPct/2}%` : '50%',
@@ -7736,7 +7832,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                                           </div>
                                         ))}
                                         {/* Numeración: fila inferior (si 2 filas) */}
-                                        {holoRows === 2 && colCenters.map((cx, ci) => (
+                                        {holoRows === 2 && colCenters.map((cx, ci) => verNumC(ci) && (
                                           <div key={`hn-b-${ci}`} className="cabinet-number absolute"
                                             style={{
                                               top: `${topPct + (100-topPct)/2}%`,
@@ -7785,7 +7881,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                                 {Array.from({ length: stats?.rows || 0 }).map((_, rIndex) => 
                                   Array.from({ length: stats?.cols || 0 }).map((_, cIndex) => {
                                     
-                                      if (cIndex === 0) {
+                                      if (cIndex === 0 && verNumF(rIndex)) {
                                         return (
                                             <div 
                                                 key={`num-v-${rIndex}`}
@@ -7802,7 +7898,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                                         );
                                       }
 
-                                      if (rIndex === 0) { 
+                                      if (rIndex === 0 && verNumC(cIndex)) { 
                                         return (
                                             <div 
                                                 key={`num-h-${cIndex}`}
@@ -7886,7 +7982,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                            {/* ELEVACIÓN - Debajo de la pantalla, con botones para subir y bajar */}
                            <div className="absolute flex items-center no-print av-elev" style={{
                               left: '50%',
-                              bottom: isMobile ? '-30px' : '-24px',
+                              bottom: (-(elevBtnH + 2)) + 'px',
                               transform: 'translateX(-50%)',
                               whiteSpace: 'nowrap',
                               zIndex: 40,
@@ -7894,24 +7990,68 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                               fontSize: isMobile ? 'clamp(12px, 3.2vw, 16px)' : '12px'
                            }}>
                               <button onClick={() => setFloorDist_cm(Math.max(0, floorDist_cm - 10))} disabled={floorDist_cm <= 0} title="Bajar la pantalla 10 cm" aria-label="Bajar la pantalla"
-                                className="av-acc bg-corp-teal text-white rounded flex items-center justify-center" style={{ width: isMobile ? '32px' : '24px', height: isMobile ? '28px' : '22px', minHeight: 0, minWidth: 0, padding: 0, fontSize: '12px', opacity: floorDist_cm <= 0 ? 0.4 : 1 }}>▼</button>
+                                className="av-acc bg-corp-teal text-white rounded flex items-center justify-center" style={{ width: elevBtnW + 'px', height: elevBtnH + 'px', minHeight: 0, minWidth: 0, padding: 0, fontSize: '12px', opacity: floorDist_cm <= 0 ? 0.4 : 1 }}>▼</button>
                               <span className="font-bold text-gray-700" style={{ fontSize: 'inherit' }}>
                                 {isMobile ? `Elevación ${U(floorDist_cm / 100)}${unit}` : `Elevación desde el suelo ${U(floorDist_cm / 100)}${unit}`}
                               </span>
                               <button onClick={() => setFloorDist_cm(Math.min(500, floorDist_cm + 10))} disabled={floorDist_cm >= 500} title="Subir la pantalla 10 cm" aria-label="Subir la pantalla"
-                                className="av-acc bg-corp-teal text-white rounded flex items-center justify-center" style={{ width: isMobile ? '32px' : '24px', height: isMobile ? '28px' : '22px', minHeight: 0, minWidth: 0, padding: 0, fontSize: '12px', opacity: floorDist_cm >= 500 ? 0.4 : 1 }}>▲</button>
+                                className="av-acc bg-corp-teal text-white rounded flex items-center justify-center" style={{ width: elevBtnW + 'px', height: elevBtnH + 'px', minHeight: 0, minWidth: 0, padding: 0, fontSize: '12px', opacity: floorDist_cm >= 500 ? 0.4 : 1 }}>▲</button>
                            </div>
 
                         </div>
                       </div>
                       
-                      {/* Estética AVHUB (solo pantalla): altura de la figura de referencia rotulada sobre la propia silueta */}
-                      {stats && vHumanH >= 86 && (
-                        <div className="av-figv no-print" aria-hidden="true" style={{
-                          left: `${groupX + vHumanW / 2}px`,
-                          bottom: `${COTA_CERO_BASE_Y + vHumanH * 0.45}px`
-                        }}><span>REF</span>{fmtDist(1.75)} {unit}</div>
-                      )}
+                      {/* Estética AVHUB (solo pantalla): selector rápido de pared en la franja del suelo, en el lado con más sitio */}
+                      {document.documentElement.classList.contains('av') && (() => {
+                        const PAREDES = [['hormigon', 'Hormigón'], ['madera', 'Madera'], ['ladrillo-claro', 'Ladrillo claro'], ['ladrillo-rojo', 'Ladrillo rojo'], ['ladrillo-oscuro', 'Ladrillo oscuro'], ['marmol', 'Mármol']];
+                        const cx = groupX + vHumanW + humanOffsetFromScreen + vScreenW / 2;
+                        const mitadElev = isMobile ? 92 : 138;
+                        const fab = window.innerWidth < 1024 ? 96 : 0;                   // reserva para el botón flotante PANEL (abajo a la izquierda)
+                        const iniIzq = isMobile ? padX + fab : Math.max(padX + infoW + padX, padX + fab); // en PC la columna de datos baja hasta la franja del suelo
+                        const izq = cx - mitadElev - 8 - iniIzq, der = containerSize.w - padX - (cx + mitadElev) - 8;
+                        const lado = izq >= der ? 'izq' : 'der', sitio = Math.max(izq, der);
+                        const gap = 4, wMax = isMobile ? 26 : 30, wMin = 22;
+                        const wLado = Math.min(wMax, Math.floor((sitio - gap * 5) / 6));
+                        const abajo = wLado < wMin; // sin sitio al lado del control de elevación: fila centrada bajo el suelo
+                        const w = abajo ? (isMobile ? 26 : 22) : wLado;
+                        const h = abajo ? (isMobile ? 17 : 13) : Math.round(w * 0.68);
+                        const elevAbajo = elevBtnH + 2;                                  // el control de elevación baja hasta aquí bajo el suelo
+                        const pos = abajo ? { left: '50%', transform: 'translateX(-50%)', bottom: (COTA_CERO_BASE_Y - elevAbajo - 5 - h) + 'px' } : { [lado === 'izq' ? 'left' : 'right']: (lado === 'izq' ? iniIzq : padX) + 'px', bottom: (COTA_CERO_BASE_Y - 4 - 12 - h) + 'px' };
+                        return (
+                          <div className="av-paredes-mini no-print" role="group" aria-label="Pared" style={{ ...pos, gap: gap + 'px' }}>
+                            {PAREDES.map(([k, lab]) => (
+                              <button key={k} type="button" title={lab} aria-label={lab} aria-pressed={paredSim === k} className={'av-pmini' + (paredSim === k ? ' on' : '')}
+                                style={{ width: w + 'px', height: h + 'px', backgroundImage: 'url(assets/sim/' + k + '-mini.jpg)' }}
+                                onClick={() => { setParedSim(k); try { localStorage.setItem('screencalc_pared', k); } catch (e) {} }} />
+                            ))}
+                          </div>
+                        );
+                      })()}
+                      {/* Estética AVHUB (solo pantalla): altura de la figura en horizontal, solo texto, a la izquierda de sus pies sobre el suelo.
+                          Si ahí no cabe (columna de datos, borde) pasa a la derecha de los pies; si tampoco (pantalla a ras de suelo pegada), sobre la cabeza.
+                          El control de elevación queda siempre bajo la línea de suelo, así que no se cruzan */}
+                      {stats && (() => {
+                        const txt = fmtDist(1.75) + ' ' + unit, W = 4 + txt.length * 5.6; // Share Tech Mono 11 px ≈ 5,5 px por carácter
+                        const limIzq = isMobile ? 4 : padX + infoW + 8, limDer = containerSize.w - padX;
+                        const pantIzq = groupX + vHumanW + humanOffsetFromScreen;
+                        const izq0 = groupX - 6 - W, der0 = groupX + vHumanW + 5;
+                        const izqOK = izq0 >= limIzq;
+                        const derOK = der0 + W <= limDer && (vFloorH > 18 || der0 + W <= pantIzq - 4);
+                        // Sobre la cabeza: centrado en la figura pero sin salirse ni alcanzar la pantalla
+                        const cab0 = Math.min(Math.max(groupX + vHumanW / 2 - W / 2, limIzq), pantIzq - 4 - W);
+                        const cabezaOK = cab0 >= limIzq;
+                        const cxPant = pantIzq + vScreenW / 2;
+                        const rotElev = isMobile ? `Elevación ${U(floorDist_cm / 100)}${unit}` : `Elevación desde el suelo ${U(floorDist_cm / 100)}${unit}`;
+                        const fElev = isMobile ? Math.min(16, Math.max(12, window.innerWidth * 0.032)) : 12;
+                        const elevIzq = cxPant - ((rotElev.length * fElev * 0.54 + 20 + 2 * elevBtnW + 12) / 2 + 4);
+                        const sue0 = Math.max(limIzq, groupX);
+                        const st = izqOK ? { left: (groupX - 6) + 'px', bottom: (COTA_CERO_BASE_Y + 3) + 'px', transform: 'translateX(-100%)' }
+                          : derOK ? { left: der0 + 'px', bottom: (COTA_CERO_BASE_Y + 3) + 'px' }
+                          : cabezaOK ? { left: cab0 + 'px', bottom: (COTA_CERO_BASE_Y + vHumanH + 4) + 'px' }
+                          : (sue0 + W <= elevIzq) ? { left: sue0 + 'px', bottom: (COTA_CERO_BASE_Y - 16) + 'px' }   // figura diminuta: justo bajo la línea de suelo, bajo sus pies
+                          : { left: limIzq + 'px', bottom: (COTA_CERO_BASE_Y + vHumanH + 4) + 'px' };
+                        return <div className="av-figv no-print" aria-hidden="true" style={st}>{txt}</div>;
+                      })()}
                       {/* Figura ref: sobre la línea de suelo, pegada a la izquierda del monigote */}
                       {!isMobile && stats && (
                         <div className="av-figref absolute z-30" style={{
@@ -7956,9 +8096,9 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       ) : null;
                     })()}
                     <span style={{fontWeight: 700}}>{stats?.resW}×{stats?.resH} px</span>
-                    <span style={{color: '#9ca3af'}}>|</span>
+                    <span className="av-sep" style={{color: '#9ca3af'}}>|</span>
                     <span style={{fontWeight: 700}}>Ref. 1,75m</span>
-                    <span style={{color: '#9ca3af'}}>|</span>
+                    <span className="av-sep" style={{color: '#9ca3af'}}>|</span>
                     <span style={{display: 'inline-flex', alignItems: 'center', gap: '3px'}}>
                       <svg width="10" height="10" style={{minWidth: '10px', minHeight: '10px', width: '10px', height: '10px'}} viewBox="0 0 24 24" fill="none" stroke="#00a792" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                       {U(stats?.minView)}{unit} (mín) · {U(stats?.optView)}{unit} (ópt)
@@ -8940,14 +9080,14 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v5.1 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    <a href="https://screencalc.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENCALC</a> v5.2 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
                   {/* Footer para impresión - SIEMPRE VISIBLE en PDF - ANCHO COMPLETO */}
                   <div className="print-footer hidden print:block" style={{display: 'none'}}>
                     <div style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v5.1 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
+                      ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual. SCREENCALC v5.2 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by mediaservi.com
                     </div>
                   </div>
               </main>
