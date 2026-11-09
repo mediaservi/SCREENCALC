@@ -6,7 +6,7 @@ import '../comun/electronica.js';
 import '../comun/ficha.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v6.6';
+const VERSION = 'v6.7';
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   paso: 'inicio', cantidad: 'varias', tecnologia: 'led',
@@ -432,7 +432,7 @@ function imprimir() {
   const c = calculo; if (!c || !c.filas.length) return;
   const esp = c.esp, hoy = new Date(), fecha = hoy.toLocaleDateString(idioma() === 'en' ? 'en-GB' : 'es-ES') + ' · ' + hoy.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
   const titulo = esp.tipo === 'sala' ? `${t('sala')} · ${fmt(esp.ancho)} × ${fmt(esp.fondo)} × ${fmt(esp.alto)} m` : `${c.filas.length} × ${t('pantalla')} · ${fmt(esp.sueltas.ancho)} × ${fmt(esp.sueltas.alto)} m`;
-  let h = `<header class="im-cab"><img class="im-logo" src="../assets/screens-logo.svg" alt="SCREENS"><div class="im-tit"><b>${titulo}</b><span>${E.tecnologia === 'led' ? t('led') : t('proy')} · ${c.filas.map(f => f.nombre).join(' · ')}</span></div><div class="im-der"><img src="../assets/avhub-logo.svg" alt="AVHUB"><span>${fecha}</span></div></header>`;
+  let h = `<header class="im-cab"><img class="im-logo" src="../assets/screens-logo-negro.svg" alt="SCREENS"><div class="im-tit"><b>${titulo}</b><span>${E.tecnologia === 'led' ? t('led') : t('proy')} · ${c.filas.map(f => f.nombre).join(' · ')}</span></div><div class="im-der"><img src="../assets/avhub-logo.svg" alt="AVHUB"><span>${fecha}</span></div></header>`;
   if (escena) h += `<figure class="im-captura"><img src="${escena.captura(true)}" alt=""></figure>`;
   h += `<div class="im-res">${vistaResultados(c)}</div>`;
   const fichas = E.tecnologia === 'led' ? (c.modelo ? [fichaCab(c.modelo)] : []) : [fichaProy(c.proyector, t('fProy'))].concat(c.prSuelo && c.prSuelo !== c.proyector && c.filas.some(f => f.s.tipo === 'suelo') ? [fichaProy(c.prSuelo, t('fProySuelo'))] : []);

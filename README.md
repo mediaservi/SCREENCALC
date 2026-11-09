@@ -11,7 +11,7 @@ Web app de mediaservi.com para calcular pantallas LED y de proyección, desde un
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v6.6** (estética AVHUB · SCREENS como página de inicio)
+**Versión actual: v6.7** (estética AVHUB · SCREENS como página de inicio)
 
 Web principal: **https://screens.mediaservi.com** (sustituye a screencalc.mediaservi.com y screenbox.mediaservi.com, que dejan de usarse). Para abrir directamente SCREENCALC: https://screens.mediaservi.com/?led
 
@@ -86,7 +86,12 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v6.6)
+## Cambios de la versión actual (v6.7)
+
+- **PDF de SCREENS con márgenes blancos:** la hoja ya no sale a sangre. Antes, el esquema oscuro de la pantalla pintaba los márgenes de negro; ahora el margen es blanco y de 12 mm.
+- **Logo SCREENS en negro en el PDF** (`assets/screens-logo-negro.svg`): el verde lima sobre blanco no se leía.
+
+## Cambios de la versión v6.6
 
 - **SCREENS · puertas y obstáculos** (bloque en ESPACIO, con ＋ PUERTA y ＋ OBSTÁCULO):
   - **Puerta:** pared, posición desde la izquierda, ancho y alto.
