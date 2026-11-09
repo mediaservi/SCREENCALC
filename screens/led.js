@@ -1,5 +1,5 @@
-// SCREENS · geometría del espacio y cálculo LED por superficie (misma lógica que SCREENCALC).
-export const PX_PUERTO = 650000;            // píxeles por puerto Ethernet (8 bit, 60 Hz), igual que SCREENCALC
+// SCREENS · geometría del espacio y cálculo LED por superficie (misma lógica que led.html).
+export const PX_PUERTO = 650000;            // píxeles por puerto Ethernet (8 bit, 60 Hz), igual que led.html
 export const PX_SALIDA_4K = 3840 * 2160;   // una salida 4K UHD de mediaserver
 
 // Superficies del espacio. Sala centrada en el origen, suelo en y = 0; el público mira hacia la pared frontal (−z).
@@ -103,4 +103,35 @@ export function totales(filas) {
   t.lienzoW = sec.reduce((s, f) => s + f.r.resW, 0);
   t.lienzoH = sec.reduce((s, f) => Math.max(s, f.r.resH), 0);
   return t;
+}
+
+// Puertas en una pared LED: se quitan los cabinets que tocan el hueco (el hueco se ajusta a la rejilla de cabinets).
+// puerta: { x (m desde el extremo izquierdo de la pared, mirando desde dentro), ancho, alto (desde el suelo) }
+export function aplicarPuertas(r, s, m, puertas) {
+  if (!puertas || !puertas.length) return r;
+  const cw = m.cabAncho / 1000, ch = m.cabAlto / 1000, x0 = -r.ancho / 2, huecos = [], set = new Set();
+  puertas.forEach(p => {
+    const a = -s.ancho / 2 + p.x, b = a + p.ancho, alto = p.alto - s.elev;
+    const i0 = Math.max(0, Math.floor((a - x0) / cw + 1e-6)), i1 = Math.min(r.cols - 1, Math.ceil((b - x0) / cw - 1e-6) - 1);
+    if (i1 < i0 || alto <= 0) return;
+    const j1 = Math.min(r.rows - 1, Math.ceil(alto / ch - 1e-6) - 1);
+    for (let i = i0; i <= i1; i++) for (let j = 0; j <= j1; j++) set.add(i + ',' + j);
+    huecos.push({ x: x0 + i0 * cw, w: (i1 - i0 + 1) * cw, h: (j1 + 1) * ch, cab: (i1 - i0 + 1) * (j1 + 1), puerta: p });
+  });
+  const q = set.size; if (!q) return r;
+  const pixCab = m.cabPixAncho * m.cabPixAlto, cabPuerto = Math.floor(PX_PUERTO / pixCab), k = (r.cab - q) / r.cab;
+  return { ...r, cab: r.cab - q, quitados: q, huecos, peso: r.peso * k, kw: r.kw * k, amp: r.amp * k, pix: r.pix - q * pixCab,
+    lineas: cabPuerto > 0 ? Math.ceil((r.cab - q) / cabPuerto) : r.lineas };
+}
+// Obstáculo en coordenadas de la escena: en sala, desde la pared izquierda (x) y la frontal (z); con pantallas, desde el centro y delante de ellas
+export function obstaculoMundo(o, esp) {
+  const sala = esp.tipo === 'sala';
+  return { x: sala ? -esp.ancho / 2 + o.x : o.x, z: sala ? -esp.fondo / 2 + o.z : o.z, ancho: o.ancho, fondo: o.fondo, alto: o.alto };
+}
+// Puerta en coordenadas de la escena (centro de la base y giro de su pared)
+export function puertaMundo(p, esp) {
+  const W = esp.ancho, D = esp.fondo, lat = p.pared === 'izquierda' || p.pared === 'derecha', L = lat ? D : W;
+  const lx = -L / 2 + p.x + p.ancho / 2;
+  const P = { frontal: { x: 0, z: -D / 2, rot: 0 }, trasera: { x: 0, z: D / 2, rot: Math.PI }, izquierda: { x: -W / 2, z: 0, rot: Math.PI / 2 }, derecha: { x: W / 2, z: 0, rot: -Math.PI / 2 } }[p.pared] || { x: 0, z: -D / 2, rot: 0 };
+  return { x: P.x + lx * Math.cos(P.rot), z: P.z - lx * Math.sin(P.rot), rot: P.rot, lx, ancho: p.ancho, alto: p.alto, pared: p.pared };
 }
