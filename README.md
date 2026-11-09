@@ -4,7 +4,7 @@
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v6.1** (estética AVHUB)
+**Versión actual: v6.1.1** (estética AVHUB)
 
 Web principal: **https://screencalc.mediaservi.com**
 
@@ -78,7 +78,16 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v6.1)
+## Cambios de la versión actual (v6.1.1)
+
+- **Electrónica H Series (equipo modular):** en el listado de material el equipo sale como titular sin cantidad y, debajo, sus piezas, cada una con su cantidad y alineadas. La burbuja de electrónica las muestra en columnas (cantidad · referencia · descripción).
+- **Piezas:**
+  - el chasis lleva su referencia comercial (H2-MAINFRAME, H5-MAINFRAME…);
+  - se añade siempre la tarjeta base de previo H-OUT2RJ45-1HDMI-MVR (recomendada);
+  - si no se indican entradas (o es una sola) o son 4K, la entrada es la tarjeta H-INPC-1XHDMI2.0.
+- **Chasis:** se elige según las posiciones de salida y de entrada / previo de las fichas de NovaStar (H2: 2 salidas y 4 entradas; H5: 3 y 10; H9: 5 y 15; H20: 20 y 40; H15: 10 salidas y 30 entradas, pendiente de confirmar en su ficha).
+
+## Cambios de la versión v6.1
 
 - **Nueva versión pública con la estética AVHUB**, que sustituye a la estética clara anterior en pantalla y en el PDF. Reúne las propuestas v5.0 a v5.3, revisadas y aprobadas:
   - un solo sistema visual de rack digital, con tipografía Inter y Share Tech Mono;
