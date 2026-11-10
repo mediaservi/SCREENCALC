@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v8.4** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v8.5** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -43,6 +43,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **Logo:** sin enlace; al pulsarlo se reinicia la app para un nuevo cálculo (igual que RESET).
 - **Ficha de equipo común:** cabinets, proyectores, electrónicas y mediaservers se muestran con la misma ficha en el cálculo de una pantalla y en el de varias (`comun/ficha.js` y `comun/ficha.css`): foto del fabricante, marca y modelo, especificaciones clave, piezas de los equipos montados por módulos, stock y enlace a la ficha. El motor de electrónica también es común (`comun/electronica.js`).
 - **Consola de SCREENS:** la web abre directamente el cuadro de mandos, sin página de selector. El modo se cambia con un toque en la barra de la consola; el botón NUEVO CÁLCULO (casa) y el logo vuelven a los valores por defecto sin salir del modo. El idioma, el PDF y la petición son los mismos para todas las combinaciones. La raíz sin parámetros abre la consola; `?led` abre el cálculo de una pantalla LED solo.
+- **Tres zonas en todos los modos (v8.5):** dos columnas de menú fijas —«La pantalla» (Tipo, Tamaño, Luz y Entorno, con CALCULAR al pie) y «El equipo» (Material, Ajuste del equipo y Electrónica, con lo elegido y su FICHA al pie)— y el centro desplazable con la vista, las cifras y el detalle. Los mismos bloques están en el mismo sitio en LED y en proyección, con una o varias pantallas; si falta altura se pliegan solos y en el móvil se apilan.
 - **PDF de la consola** (una pantalla de proyección, varias pantallas y salas inmersivas): en claro sobre papel blanco. Cabecera en una fila con tres piezas del mismo alto (logo de SCREENS a la izquierda, avhub.mediaservi.com con la fecha debajo al centro y logo de AVHUB a la derecha) y, debajo, una línea en violeta suave con el tipo de proyecto y sus datos. Siguen la captura 3D (con menos densidad de tinta, para que no quede oscura), los resultados, la electrónica y los equipos, cada uno con su foto. En todas las hojas, el aviso y el eslogan van abajo al centro y el número de hoja (1/2) abajo a la derecha. Todos los PDF de SCREENS siguen esta misma línea de diseño.
 - **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
 - **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios, las consultas internas y la documentación (DOCS), que ya no es pública.
@@ -89,7 +90,23 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## Cambios de la versión actual (v8.4)
+## Cambios de la versión actual (v8.5)
+
+**Consola de 3 zonas** en varias pantallas LED, salas inmersivas y proyección (una o varias), igual que el cálculo de una pantalla LED:
+
+- **Dos columnas de menú que no se mueven nunca** y se ajustan a la altura de la pantalla, y **el centro, que se desplaza** con la vista, las cifras y el detalle.
+- **Columna A · La pantalla:** Tipo, Tamaño, Luz y superficie (en proyección) y Entorno, siempre en ese orden. Al pie, **CALCULAR** (lleva a las cifras) y **RESTABLECER** de toda la columna.
+- **Columna B · El equipo:** Material (cabinet o proyector y óptica), Ajuste del equipo y Electrónica o Mediaserver. Al pie, **lo elegido** con su botón **FICHA**.
+- **Mismo sitio en todos los modos:** al pasar de LED a proyección o de una a varias pantallas, CALCULAR, el material y el tamaño siguen donde estaban; solo cambia lo que hay dentro de cada bloque.
+- **Si la altura no da para todo** (portátil, tablet apaisada), los bloques se pliegan solos enseñando su resumen en una línea; quedan abiertos los últimos que se han tocado y un toque abre cualquiera.
+- **Cada bloque tiene su RESTABLECER**, que solo devuelve los valores de ese bloque.
+- **En el móvil y en vertical** las zonas se apilan: la pantalla, el equipo y el resultado, con todo abierto.
+- La ficha del equipo elegido y la lista de superficies pasan al centro, con el resto del detalle.
+- Los rótulos largos pasan a dos líneas antes que reducirse hasta no leerse.
+
+El cálculo de una pantalla LED no cambia en esta versión.
+
+## Cambios de la versión v8.4
 
 - **Datos principales de proyección en el orden de los simuladores de Epson y de Vivitek.** En el módulo Espacio van, por este orden:
   - el **tipo de proyección** (mapping, pared o sala inmersiva), que sustituye a «sala / pantallas»;
