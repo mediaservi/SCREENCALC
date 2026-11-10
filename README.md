@@ -90,23 +90,9 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## SYSTEMS · Audio y escenario (beta v0.2)
+## SYSTEMS
 
-**SYSTEMS** es el apartado de AVHUB que ayuda a técnicos e ingenieros a dar con la configuración correcta de cualquier proyecto: audio, vídeo, conectividad o videoconferencia. Su primer bloque es una consola de calculadores para profesionales del sonido, la iluminación y el montaje de escenarios. Vive en `systems/` (página propia, con su cabecera y su número de versión; su dirección definitiva será systems.mediaservi.com) y usa la misma consola de 3 zonas que SCREENS: los calculadores a la izquierda, los datos en la segunda columna con CALCULAR y RESTABLECER al pie, y el resultado en el centro con cifras, gráficas, tablas y notas. En español, inglés y catalán, sin conexión a ningún servidor: todo se calcula en el navegador.
-
-**Versión actual de SYSTEMS: v0.2 (en pruebas).** Cambio de la v0.2: el apartado pasa a llamarse SYSTEMS (en la v0.1 se llamaba Hardware) y su carpeta es `systems/`. 26 calculadores en 9 grupos:
-
-- **Acústica:** nivel SPL a distancia (con gráfica), suma de dos niveles por fase, tiempo o distancia (con el filtro de peine dibujado), cobertura de altavoces de techo (con la planta de la sala), absorción del aire según la norma ISO 9613-1, tiempo ↔ distancia y frecuencia ↔ longitud de onda.
-- **Arrays:** distancia de transición de un line array, array de subgraves end-fire y línea de subgraves (broadside) con arco electrónico y orientación por retardo. Los dos de subgraves dibujan el diagrama polar, el mapa de cobertura de 50 × 50 m y la respuesta en frecuencia delante, al lado y detrás, y dan la tabla de retardos de cada caja.
-- **Electrónica de audio:** dBu ↔ dBV ↔ voltios, factor Q ↔ ancho de banda, umbral y tiempos del limitador y ganancia del amplificador.
-- **Cableado:** cable de altavoz en baja impedancia (pérdida, factor de amortiguamiento y comparación de secciones) y en línea de 70 / 100 V.
-- **Iluminación y vídeo:** direcciones DMX con sus microinterruptores, color (RGB, RGBW, RGBA, CMY y hexadecimal) y proyector (distancia, brillo y contraste).
-- **Electricidad:** ley de Ohm y de Joule, y potencia en kVA, kW y amperios en monofásico y trifásico.
-- **Música y grabación:** tempo (BPM ↔ tiempo, con botón TAP), tamaño y tiempo de grabación y nota ↔ frecuencia.
-- **Pesos y medidas:** conversor de peso, longitud, superficie, volumen y temperatura.
-- **Referencia:** asignación de pines (XLR, jack, speakON, DB25, DMX y RJ45) y patrones polares de micrófonos.
-
-Los cálculos son orientativos: hay que comprobar siempre los datos del fabricante y la normativa antes de montar.
+Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
 ## Cambios de la versión actual (v8.5)
 
