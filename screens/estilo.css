@@ -118,6 +118,58 @@ body.con-led { height: 100%; }
   padding-bottom: 7px; border-bottom: 1px solid var(--linea); text-shadow: 0 1px 0 #000; }
 .mod-tit svg { width: 15px; height: 15px; color: var(--verde); flex: none; }
 .mod-tit .reset { margin-left: auto; }
+/* v8.5 · consola de 3 zonas: «la pantalla» (A) y «el equipo» (B) son columnas fijas de alto completo que nunca se desplazan; el centro se desplaza.
+   Mismos bloques en el mismo orden en todos los modos; si la altura no da, los bloques se pliegan enseñando su resumen (plegar() en app.js). */
+@media (min-width: 1024px) { .trabajo.z3 { grid-template-columns: clamp(256px, 20vw, 340px) clamp(256px, 20vw, 340px) minmax(0, 1fr); } }
+.zona { display: flex; flex-direction: column; gap: 8px; overflow: hidden; min-height: 0; padding: 8px 10px 10px; align-content: normal; }
+.zona-cab { flex: none; display: flex; align-items: center; gap: 8px; font-size: var(--t-lab); font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--tenue); text-shadow: 0 1px 0 #000; white-space: nowrap; }
+.zona-cab b { flex: none; width: 18px; height: 18px; border-radius: 4px; display: grid; place-items: center; background: var(--hundido); border: 1px solid #000; color: var(--verde); font: 400 12px/1 var(--mono); letter-spacing: 0; box-shadow: inset 0 1px 3px rgba(0,0,0,.6); }
+.zona-cab::after { content: ""; flex: 1; height: 1px; background: var(--linea); }
+.blq { flex: none; gap: 7px; padding: 8px 10px 10px; min-width: 0; }
+.blq .mod-tit { gap: 6px; padding-bottom: 6px; min-width: 0; }
+.blq-cab { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; background: none; border: 0; padding: 2px 0; margin: 0; color: inherit; font: inherit; letter-spacing: inherit; text-transform: inherit; text-shadow: inherit; text-align: left; cursor: default; }
+.blq-led { flex: none; width: 9px; height: 9px; border-radius: 2px; background: var(--verde); box-shadow: 0 0 6px rgba(0,255,4,.55); }
+.blq-nom { flex: 0 1 auto; min-width: 0; line-height: 1.2; padding-right: 2px; }   /* un nombre largo junto a RESTABLECER pasa a dos líneas, no se encoge */
+.blq.pleg .blq-nom { flex: none; white-space: nowrap; }
+.blq-res { display: none; flex: 1 0 auto; max-width: 100%; min-width: 0; font: 400 12px/1.2 var(--mono); letter-spacing: 0; text-transform: none; color: var(--verde); white-space: nowrap; overflow: hidden; text-align: right; }
+.blq.pleg .blq-cab { flex-wrap: wrap; row-gap: 5px; }   /* si el resumen no cabe junto al nombre, baja a su propia línea (y, si aun así no cabe, se reduce la letra) */
+.blq.pleg { padding-bottom: 8px; }
+.blq.pleg .blq-cuerpo, .blq.pleg .mod-tit .reset { display: none; }
+.blq.pleg .mod-tit { padding-bottom: 0; border-bottom: 0; }
+.blq.pleg .blq-cab { cursor: pointer; }
+.blq.pleg .blq-res { display: block; }
+.blq.pleg .blq-led { background: #3a3a3f; box-shadow: none; }
+@media (hover: hover) { .blq.pleg .blq-cab:hover .blq-nom { color: #fff; } .blq.pleg .blq-cab:hover .blq-led { background: var(--verde); } }
+.blq-cab:focus-visible { outline: 2px solid var(--verde); outline-offset: 2px; border-radius: 4px; }
+.blq-cuerpo { display: grid; gap: 8px; min-width: 0; }
+/* en las columnas, un rótulo largo pasa a dos líneas antes que reducirse hasta no leerse; las casillas siguen alineadas por abajo */
+.zona .fila { align-items: end; }
+.zona { container-type: inline-size; }
+@container (max-width: 300px) { .zona .fila.c3:has(.num) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }   /* columna estrecha: tres casillas con flechas no caben en una fila */
+.zona .campo label { white-space: normal; line-height: 1.15; overflow-wrap: normal; }
+.blq.act { flex: 0 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.blq.act .blq-cuerpo { min-height: 0; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; }
+.zona-pie { flex: none; margin-top: auto; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 8px; padding-top: 8px; border-top: 1px solid var(--linea); }
+.zona-pie .pri, .zona-pie .sec-btn { min-height: 40px; }
+.zona-pie.eleg { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+.eleg-txt { min-width: 0; display: grid; gap: 2px; }
+.eleg-txt small { font-size: var(--t-lab); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--tenue); }
+.eleg-txt b { font: 400 14px/1.2 var(--mono); color: var(--verde); overflow-wrap: anywhere; }
+.eleg-txt span { font: 400 11.5px/1.3 var(--mono); color: var(--txt); }
+.zona-pie.eleg .sec-btn { padding: 0 14px; }
+.res .dest, .res-tot.dest { animation: destino 1.1s ease-out; }
+@keyframes destino { 0% { box-shadow: 0 0 0 2px var(--verde), 0 0 22px rgba(0,255,4,.45); } 100% { box-shadow: 0 0 0 2px rgba(0,255,4,0), 0 0 0 rgba(0,255,4,0); } }
+@media (prefers-reduced-motion: reduce) { .res .dest, .res-tot.dest { animation: none; } }
+/* el centro se desplaza entero: la vista arriba y, debajo, las cifras y el detalle */
+@media (min-width: 1024px) {
+  .trabajo.z3 .vista { display: block; overflow-y: auto; container-type: size; scrollbar-width: thin; }
+  .trabajo.z3 .escena { height: max(300px, 60vh - 110px); }
+  @supports (height: 1cqh) { .trabajo.z3 .escena { height: max(300px, 62cqh); } }
+  .trabajo.z3 .res { max-height: none; overflow: visible; }
+  .res-tot { scroll-margin-top: 10px; } #det-equipo { scroll-margin-top: 10px; }
+  @container (max-width: 900px) { .trabajo.z3 .res-tot { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+}
+.res > .mod { box-shadow: none; }
 .campo { display: grid; gap: 4px; min-width: 0; }
 .campo label, .etq { font-size: var(--t-lab); font-weight: 700; color: var(--tenue); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: clip; }
 .num { display: flex; align-items: stretch; min-width: 0; background: var(--hundido); border: 1px solid var(--borde); border-radius: 7px; overflow: hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,.45); }
@@ -201,6 +253,7 @@ select.sel { width: 100%; background: var(--hundido); color: var(--verde); borde
   .con-nl { grid-column: 1 / -1; }
   .trabajo { grid-template-columns: minmax(0, 1fr); }
   .panel { border-right: 0; border-bottom: 1px solid #000; overflow: visible; }
+  .zona { overflow: visible; } .zona-pie { margin-top: 2px; } .zona + .zona { padding-top: 10px; }
   .vista { overflow: visible; grid-template-rows: auto auto; }
   .escena { height: min(62vh, 520px); }
   .res { max-height: none; overflow: visible; }
