@@ -1,4 +1,4 @@
-// HARDWARE · textos en español, inglés y catalán (nativos). La clave es el texto en español: 'es': ['en', 'ca'].
+// SYSTEMS · textos en español, inglés y catalán (nativos). La clave es el texto en español: 'es': ['en', 'ca'].
 // T(s) busca la frase entera y, si no está (frases con cifras: «Pérdida en 50 m», «Canal 3»), traduce los trozos que conoce.
 export const IDIOMAS = ['es', 'en', 'ca'];
 let actual = 'es';

@@ -1,4 +1,4 @@
-/* HARDWARE · estilos propios. La base (paleta AVHUB, botones, casillas, bloques y las 3 zonas) viene de ../screens/estilo.css */
+/* SYSTEMS · estilos propios. La base (paleta AVHUB, botones, casillas, bloques y las 3 zonas) viene de ../screens/estilo.css */
 .hw-marca { display: flex; flex-direction: column; gap: 3px; text-decoration: none; min-width: 0; line-height: 1; }
 .hw-marca b { font: 900 24px/1 var(--sans); letter-spacing: .04em; color: #ccff00; text-shadow: 0 0 10px rgba(204,255,0,.35), 0 1px 0 #000; font-style: italic; }
 .hw-marca span { font-size: 9.5px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; color: var(--tenue); white-space: nowrap; }

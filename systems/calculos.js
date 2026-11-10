@@ -1,4 +1,4 @@
-// HARDWARE · AUDIO Y ESCENARIO — cálculos de refuerzo sonoro, electrónica, cableado, iluminación, electricidad y música.
+// SYSTEMS · AUDIO Y ESCENARIO — cálculos de refuerzo sonoro, electrónica, cableado, iluminación, electricidad y música.
 // Fórmulas de física e ingeniería de uso común (ley inversa del cuadrado, ISO 9613-1, ley de Ohm…), escritas para esta app.
 // Cada calculador declara sus campos y una función calc(v) que devuelve cifras, tablas, gráficas y notas; la interfaz es común (app.js).
 // Los textos van en español y se traducen al pintar (textos.js). Licencia GPL-3.0 · mediaservi.com

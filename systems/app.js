@@ -1,10 +1,10 @@
-// HARDWARE · AUDIO Y ESCENARIO — interfaz. Consola de 3 zonas como la de SCREENS: «calculadores» (A) y «datos» (B, con CALCULAR al pie)
+// SYSTEMS · AUDIO Y ESCENARIO — interfaz. Consola de 3 zonas como la de SCREENS: «calculadores» (A) y «datos» (B, con CALCULAR al pie)
 // son columnas fijas; el centro se desplaza con las cifras, las gráficas, las tablas y las notas. En el móvil, las zonas se apilan.
 // Licencia GPL-3.0 · mediaservi.com
 import { CALC, GRUPOS } from './calculos.js';
 import { T, IDIOMAS, idioma, fijarIdioma, idiomaInicial } from './textos.js';
 
-const VERSION = 'v0.1';
+const VERSION = 'v0.2';
 const $ = (s, r = document) => r.querySelector(s);
 const COL = ['#b566ff', '#00b4ff', '#e100ff', '#ff4d5e', '#00ff04', '#ffb000'];
 const porId = (id) => CALC.find(c => c.id === id) || CALC[0];
@@ -13,8 +13,8 @@ const esc = (s) => String(s).replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;
 const F = (x, d = 2) => { if (typeof x !== 'number' || !isFinite(x)) return '—'; const en = idioma() === 'en'; return Number(x).toLocaleString(en ? 'en-GB' : 'es-ES', { maximumFractionDigits: d, useGrouping: !en }).replace('-', '−'); };
 
 let E = { sel: 'spl', vals: {} };
-try { const g = JSON.parse(localStorage.getItem('hardware_estado') || 'null'); if (g && g.vals && CALC.some(c => c.id === g.sel)) E = g; } catch (e) {}
-const guardar = () => { try { localStorage.setItem('hardware_estado', JSON.stringify(E)); } catch (e) {} };
+try { const g = JSON.parse(localStorage.getItem('systems_estado') || 'null'); if (g && g.vals && CALC.some(c => c.id === g.sel)) E = g; } catch (e) {}
+const guardar = () => { try { localStorage.setItem('systems_estado', JSON.stringify(E)); } catch (e) {} };
 const valores = (c) => { const g = E.vals[c.id] || (E.vals[c.id] = {}); c.campos.forEach(f => { if (g[f.k] === undefined || (f.ops ? !f.ops.some(o => o[0] === g[f.k]) : typeof g[f.k] !== 'number')) g[f.k] = f.def; }); return g; };
 const visibles = (c, v) => c.campos.filter(f => !f.si || f.si(v));
 
@@ -143,7 +143,7 @@ function pintarTodo() {
   $('#btn-idioma').textContent = idioma().toUpperCase(); $('#btn-idioma').setAttribute('aria-label', T('Idioma')); $('#btn-inicio').setAttribute('aria-label', T('Inicio')); $('#hw-lema').textContent = T('Audio y escenario');
   if (!$('#panelA')) $('#app').innerHTML = `<div class="trabajo z3"><aside class="panel zona" id="panelA" data-zona="a"></aside><aside class="panel zona" id="panelB" data-zona="b"></aside><main class="vista"><div class="res" id="res"></div></main></div>`;
   pintarConsola(); pintarZonas(); pintarResultado();
-  $('#pie').innerHTML = `HARDWARE ${VERSION} ${new Date().getFullYear()} ${T('es un proyecto hecho con')} <i class="ic ic-footer" aria-hidden="true"></i> by <a href="https://mediaservi.com" target="_blank" rel="noopener">mediaservi.com</a>`;
+  $('#pie').innerHTML = `SYSTEMS ${VERSION} ${new Date().getFullYear()} ${T('es un proyecto hecho con')} <i class="ic ic-footer" aria-hidden="true"></i> by <a href="https://mediaservi.com" target="_blank" rel="noopener">mediaservi.com</a>`;
   guardar();
 }
 // los textos de una sola línea nunca tocan el borde: si no caben, se reduce la letra

@@ -9,7 +9,7 @@ Web app de mediaservi.com para calcular pantallas LED y de proyección, desde un
   - **una pantalla LED** → el cálculo de una pantalla (`led.html`, descrito en este README), dentro de la misma consola;
   - **una pantalla de proyección, varias pantallas o salas inmersivas** → `screens/`, con simulación 3D renderizada.
 
-Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREENS es uno de los apartados de AVHUB, cada uno con su subdominio definitivo: screens.mediaservi.com (con HARDWARE como parte suya en hardware.mediaservi.com), news, vjshow y msgame; avhub.mediaservi.com es la máquina que los reúne. Sin redirecciones: la consola es la propia página de inicio (`index.html`).
+Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREENS es uno de los apartados de AVHUB, cada uno con su subdominio definitivo: screens.mediaservi.com (con SYSTEMS, antes HARDWARE, en systems.mediaservi.com), news, vjshow y msgame; avhub.mediaservi.com es la máquina que los reúne. Sin redirecciones: la consola es la propia página de inicio (`index.html`).
 
 ## Una pantalla LED
 
@@ -90,11 +90,11 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 - ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
 - *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
 
-## HARDWARE · Audio y escenario (beta v0.1)
+## SYSTEMS · Audio y escenario (beta v0.2)
 
-Primer bloque del apartado **HARDWARE** de AVHUB: una consola de calculadores para profesionales del sonido, la iluminación y el montaje de escenarios. Vive en `hardware/` (página propia, con su cabecera y su número de versión) y usa la misma consola de 3 zonas que SCREENS: los calculadores a la izquierda, los datos en la segunda columna con CALCULAR y RESTABLECER al pie, y el resultado en el centro con cifras, gráficas, tablas y notas. En español, inglés y catalán, sin conexión a ningún servidor: todo se calcula en el navegador.
+**SYSTEMS** es el apartado de AVHUB que ayuda a técnicos e ingenieros a dar con la configuración correcta de cualquier proyecto: audio, vídeo, conectividad o videoconferencia. Su primer bloque es una consola de calculadores para profesionales del sonido, la iluminación y el montaje de escenarios. Vive en `systems/` (página propia, con su cabecera y su número de versión; su dirección definitiva será systems.mediaservi.com) y usa la misma consola de 3 zonas que SCREENS: los calculadores a la izquierda, los datos en la segunda columna con CALCULAR y RESTABLECER al pie, y el resultado en el centro con cifras, gráficas, tablas y notas. En español, inglés y catalán, sin conexión a ningún servidor: todo se calcula en el navegador.
 
-**Versión actual de HARDWARE: v0.1 (en pruebas).** 26 calculadores en 9 grupos:
+**Versión actual de SYSTEMS: v0.2 (en pruebas).** Cambio de la v0.2: el apartado pasa a llamarse SYSTEMS (en la v0.1 se llamaba Hardware) y su carpeta es `systems/`. 26 calculadores en 9 grupos:
 
 - **Acústica:** nivel SPL a distancia (con gráfica), suma de dos niveles por fase, tiempo o distancia (con el filtro de peine dibujado), cobertura de altavoces de techo (con la planta de la sala), absorción del aire según la norma ISO 9613-1, tiempo ↔ distancia y frecuencia ↔ longitud de onda.
 - **Arrays:** distancia de transición de un line array, array de subgraves end-fire y línea de subgraves (broadside) con arco electrónico y orientación por retardo. Los dos de subgraves dibujan el diagrama polar, el mapa de cobertura de 50 × 50 m y la respuesta en frecuencia delante, al lado y detrás, y dan la tabla de retardos de cada caja.
