@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v8.9** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v9.0** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -94,7 +94,11 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v8.9)
+## Cambios de la versión actual (v9.0)
+
+**Aviso legal.** Detrás de la línea de crédito hay un enlace «Aviso legal» que explica, en lenguaje llano y en es/en/ca, que esto es software gratuito hecho por afición, sin garantías, con resultados orientativos que hay que comprobar siempre y de uso bajo la responsabilidad de cada cual.
+
+Sigue de la v8.9:
 
 **Línea de crédito común.** El pie («SCREENS v8.9 2026 es un proyecto hecho con ⚙ by mediaservi.com») es ahora el mismo en todas las apps de AVHUB y su texto se cambia desde el panel de administración; vale para el pie de la consola, el de «una pantalla LED» y el de las hojas impresas.
 
@@ -738,3 +742,7 @@ Tipografías incluidas en `assets/fonts/`: Inter y Share Tech Mono, bajo la SIL 
 ## Autoría
 
 Proyecto de [mediaservi.com](https://mediaservi.com). Si te gusta, prueba también [AVHUB](https://avhub.mediaservi.com/).
+
+## Aviso
+
+Software gratuito y de código abierto, hecho con pasión por un aficionado en su tiempo libre. No es un producto profesional. Se ofrece «tal cual», sin garantías de ningún tipo; los resultados son orientativos y hay que comprobarlos siempre; se usa bajo la responsabilidad de cada cual, hasta donde lo permita la ley aplicable. El aviso completo (es/en/ca) está en la propia app, en el enlace «Aviso legal» que acompaña a la línea de crédito. Licencia GPL-3.0.
