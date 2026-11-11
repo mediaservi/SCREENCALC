@@ -1,6 +1,16 @@
 // SCREENS · geometría del espacio y cálculo LED por superficie (misma lógica que led.html).
 export const PX_PUERTO = 650000;            // píxeles por puerto Ethernet (8 bit, 60 Hz), igual que led.html
 export const PX_SALIDA_4K = 3840 * 2160;   // una salida 4K UHD de mediaserver
+/* v9.7 · líneas de datos con el mismo cosido que el configurador (led.html → planCosido, modo automático): columnas o filas ENTERAS por puerto,
+   que es como se cablea; solo si ni una columna ni una fila caben en un puerto se reparte en serpentina. Da igual o una línea más que antes, nunca menos. */
+export function lineasCosido(cols, rows, pixCab) {
+  const total = cols * rows, cabPuerto = pixCab > 0 ? Math.floor(PX_PUERTO / pixCab) : 0;
+  if (cabPuerto < 1) return Math.max(1, Math.ceil(total * pixCab / PX_PUERTO));
+  const colsPP = Math.floor(cabPuerto / rows), filasPP = Math.floor(cabPuerto / cols);
+  const v = colsPP >= 1 ? Math.ceil(cols / colsPP) : 0, h = filasPP >= 1 ? Math.ceil(rows / filasPP) : 0;
+  if (v && h) return Math.min(v, h);
+  return v || h || Math.ceil(total / cabPuerto);
+}
 
 // Superficies del espacio. Sala centrada en el origen, suelo en y = 0; el público mira hacia la pared frontal (−z).
 // Cada superficie: id, ancho y alto disponibles (m), elevación, posición del centro de su base y giro (rad) en el eje Y.
@@ -92,7 +102,7 @@ export function calcularLed(sup, m, ajuste = 'dentro') {
   const resW = cols * m.cabPixAncho, resH = rows * m.cabPixAlto, pix = resW * resH;
   const pixCab = m.cabPixAncho * m.cabPixAlto;
   const cabPuerto = Math.floor(PX_PUERTO / pixCab);
-  const lineas = cabPuerto > 0 ? Math.ceil(cab / cabPuerto) : Math.ceil(pix / PX_PUERTO);
+  const lineas = lineasCosido(cols, rows, pixCab);
   return {
     cols, rows, cab, ancho: cols * cw, alto: rows * ch, resW, resH, pix, lineas,
     peso: cab * (m.cabKg || 0), kw: m.wMax ? cab * m.wMax / 1000 : 0, amp: cab * (Number(m.cabAmp) || 0),
