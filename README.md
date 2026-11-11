@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v9.3** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v9.4** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -46,11 +46,9 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **Tres zonas en todos los modos (v8.5):** dos columnas de menú fijas —«La pantalla» (Tipo, Tamaño, Luz y Entorno, con CALCULAR al pie) y «El equipo» (Material, Ajuste del equipo y Electrónica, con lo elegido y su FICHA al pie)— y el centro desplazable con la vista, las cifras y el detalle. Los mismos bloques están en el mismo sitio en LED y en proyección, con una o varias pantallas; si falta altura se pliegan solos y en el móvil se apilan.
 - **PDF de la consola** (una pantalla de proyección, varias pantallas y salas inmersivas): en claro sobre papel blanco. Cabecera en una fila con tres piezas del mismo alto (logo de SCREENS a la izquierda, avhub.mediaservi.com con la fecha debajo al centro y logo de AVHUB a la derecha) y, debajo, una línea en violeta suave con el tipo de proyecto y sus datos. Siguen la captura 3D (con menos densidad de tinta, para que no quede oscura), los resultados, la electrónica y los equipos, cada uno con su foto. En todas las hojas, el aviso y el eslogan van abajo al centro y el número de hoja (1/2) abajo a la derecha. Todos los PDF de SCREENS siguen esta misma línea de diseño.
 - **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
-- **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se gestionan los anuncios, las consultas internas y la documentación (DOCS), que ya no es pública.
-- **Anuncios (motor AVHUB ADS):** 3 zonas (pie del menú y pie de resultados, izquierda y derecha). Cada zona admite varios anuncios con rotación; cada anuncio tiene formato estándar (horizontal 16:9, vertical 9:16, cuadrado 1:1, retrato 4:5, hero a sangre 21:9, banner 728×90, banner móvil 320×100, rectángulo 300×250, rascacielos 160×600), texto al lado, debajo, encima o sin texto, botón opcional, carrusel de fotos, vídeos y YouTube, fechas de inicio y fin, solo móvil o solo escritorio, y contador de clics. Todo el anuncio abre su enlace en una pestaña nueva (o `ads.json` mientras el panel no responda). Además, el minibanner fijo del configurador oficial de TRAULUX va encima de la zona del menú y se activa desde el panel.
+- **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se mantiene el catálogo y la documentación interna. La app no lleva publicidad ni anuncios de ningún tipo.
 - **AVHUB ADMIN (`admin/anuncios.html`):** panel interno con 4 pestañas (la cuarta, **CATÁLOGO**, prepara el catálogo maestro de modelos y el informe de incoherencias de la web para marketing): **ANUNCIOS** (gestor visual con arrastrar y soltar y previo), **FIRMAS** (firmas de correo visuales con banners estáticos, animados en GIF o en mosaico y contador de clics, listas para pegar en Gmail, Outlook o Apple Mail) y **NEWSLETTER** (editor por bloques con vista escritorio y móvil, exportación HTML y envío desde el panel).
 - **Página de configuradores (`configuradores/`):** compara SCREENS y el configurador oficial de TRAULUX y lleva a cada uno (es / en / ca).
-- **Gestor de anuncios (`admin/anuncios.html`, pestaña ANUNCIOS):** pantalla visual para arrastrar anuncios entre zonas, arrastrar fotos entre anuncios o desde la biblioteca, subir fotos, elegir formato y ver al lado de cada anuncio el previo real en escritorio o móvil. En el panel de administrador guarda de verdad; abierto desde el repositorio funciona en modo demo (guarda en el navegador) y `index.html?anuncios=demo` muestra esos anuncios de prueba. **Desde la v9.1 la app pública no muestra anuncios**: el gestor queda sin uso.
 - **Adaptada a PC y móvil:** el panel lateral de entrada va en 2 columnas sin scroll en PC y se ve en grande en móvil.
 
 - **AVHUB:** el logo de AVHUB en la cabecera (entre el logo de SCREENS y los iconos) lleva a https://avhub.mediaservi.com/. AVHUB es la nueva app en preparación que reunirá en un solo sitio SCREENS, el hardware de proyectos AV, novedades y VJSHOW, con el mismo idioma en todas las secciones.
@@ -94,7 +92,11 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v9.3)
+## Cambios de la versión actual (v9.4)
+
+**Fuera el motor de anuncios.** Desde la v9.1 la app ya no mostraba anuncios, pero el código seguía dentro, dormido. Ahora se ha retirado del todo: el motor, su modo editor, sus estilos, las tres zonas y el archivo `ads.json`. El enlace a los configuradores sigue en su sitio, como enlace informativo. No cambia ningún cálculo ni el aspecto de la app.
+
+Sigue de la v9.3:
 
 **Aviso legal:** se añade que es un proyecto personal del autor, ajeno a su empleador, que no lo encarga, financia ni respalda.
 
