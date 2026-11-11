@@ -8,7 +8,7 @@
 (function () {
   'use strict';
   const ELEC_PX_PUERTO = 650000;          // píxeles por puerto Ethernet (8 bit, 60 Hz)
-  const ELEC_PX_4K = 4096 * 2160;         // píxeles de una salida 4K
+  const ELEC_PX_4K = 3840 * 2160;         // píxeles de una salida 4K UHD (la misma constante que la consola)
   const ELEC_CVT = { ref: 'CVT10 Pro', porCvt: 10, desc: 'Conv. fibra→10 RJ45 (pantalla)' };
   const CHARMEX_NOVASTAR = 'https://charmex.net/novastar-';
   // Búsqueda en Charmex por modelo: sirve de enlace cuando no hay URL directa de producto
@@ -17,7 +17,7 @@
   // rj = salidas RJ45 · opt = salidas ópticas 10G (espejo de los RJ45 salvo equipos solo fibra)
   // ppo = puertos Ethernet que transporta cada salida óptica · capPx = capacidad total en píxeles
   const ELEC_DEVICES = [
-    { id: 'MCTRL660PRO', marca: 'NOVASTAR', serie: 'MCTRL',        modelo: 'MCTRL660 PRO', rj: 6,  opt: 0,  ppo: 0,  capPx: 3900000,   escalador: false, url: null },
+    { id: 'MCTRL660PRO', marca: 'NOVASTAR', serie: 'MCTRL',        modelo: 'MCTRL660 PRO', rj: 6,  opt: 2,  ppo: 6,  capPx: 2304000,   escalador: false, url: null },
     { id: 'MCTRL4K',     marca: 'NOVASTAR', serie: 'MCTRL',        modelo: 'MCTRL 4K',     rj: 16, opt: 4,  ppo: 8,  capPx: 8800000,   escalador: false, url: 'https://www.novastar.tech/product/detail.html?catid=2&id=24' },
     { id: 'VX400PRO',    marca: 'NOVASTAR', serie: 'VX Pro',       modelo: 'VX400 Pro',    rj: 4,  opt: 2,  ppo: 10, capPx: 2600000,   escalador: true,  url: 'https://charmex.net/novastar-serie-vx--vx400-pro/44270' },
     { id: 'VX600PRO',    marca: 'NOVASTAR', serie: 'VX Pro',       modelo: 'VX600 Pro',    rj: 6,  opt: 2,  ppo: 10, capPx: 3900000,   escalador: true,  url: null },
@@ -48,7 +48,7 @@
   // ref = referencia comercial del chasis en Charmex.
   const ELEC_H_CHASIS = [
     { id: 'H2', ref: 'H2-MAINFRAME', maxTarj: 2, maxIn: 4 }, { id: 'H5', ref: 'H5-MAINFRAME', maxTarj: 3, maxIn: 10 }, { id: 'H9', ref: 'H9-MAINFRAME', maxTarj: 5, maxIn: 15 },
-    { id: 'H15', ref: 'H15-MAINFRAME', maxTarj: 10, maxIn: 30 /* entradas por confirmar en la ficha del H15 */ }, { id: 'H20', ref: 'H20-MAINFRAME', maxTarj: 20, maxIn: 40 }
+    { id: 'H15', ref: 'H15-MAINFRAME', maxTarj: 10, maxIn: 30 }, { id: 'H20', ref: 'H20-MAINFRAME', maxTarj: 20, maxIn: 40 }
   ];
   // Tarjeta de entrada mínima (si no se indicó tipo ni número de entradas) y tarjeta base de previo y salidas, recomendada en todos los proyectos
   const ELEC_H_IN_BASE = { ref: 'H-INPC-1XHDMI2.0', desc: 'Tarjeta de entrada 1×HDMI 2.0 (mínima del equipo)' };
@@ -208,7 +208,8 @@
   // Mediaservers adecuados (marca: todos|novastar|pixelhue; dante: exige audio Dante)
   const calcularMediaservers = (stats, o) => {
     if (!stats) return [];
-    const need = Math.max(1, Math.ceil((stats.totalPix || 0) / ELEC_PX_4K));
+    /* v9.7 · salidas 4K por rejilla (ancho y alto del lienzo entre 3840 × 2160), como la consola: una tira de 6144 px de ancho no cabe en una sola salida aunque tenga pocos píxeles */
+    const need = stats.resW > 0 && stats.resH > 0 ? Math.max(1, Math.ceil(stats.resW / 3840) * Math.ceil(stats.resH / 2160)) : Math.max(1, Math.ceil((stats.totalPix || 0) / ELEC_PX_4K));
     const lista = ELEC_MEDIASERVERS.filter(m =>
       m.out4k >= need && (!o.entradas || m.inp == null || m.inp >= o.entradas) &&
       (o.marca === 'todos' || m.marca.toLowerCase() === o.marca) &&

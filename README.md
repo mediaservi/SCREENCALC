@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v9.6** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v9.7** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,17 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v9.6)
+## Cambios de la versión actual (v9.7)
+
+Correcciones de la revisión técnica de fórmulas (11-11-2026). Sin cambios de diseño.
+
+- **MCTRL660 PRO** con su capacidad real: 2,3 Mpx (1920 × 1200 a 60 Hz) y 2 salidas ópticas. Entre 2,3 y 3,9 Mpx pasa a proponerse el MCTRL 4K.
+- **Líneas de datos de la consola** con el mismo cosido que el configurador: columnas o filas enteras por puerto. Da igual o una línea más que antes, nunca menos, y coincide con el esquema que se entrega. Junto al número se indica que vale para 8 bit y 60 Hz.
+- **Salidas 4K del mediaserver** con un solo criterio en la consola y en el configurador: rejilla de 3840 × 2160 sobre el ancho y el alto del lienzo (una tira muy ancha ya no cabe «por píxeles» en una sola salida).
+- **Reparto eléctrico**: si una sola columna (o fila) pasa de 16 A, se parte en tramos seguidos de 16 A como máximo, en lugar de asignarle un magnetotérmico mayor.
+- Catálogo: cerrada la nota del H15 (30 entradas, confirmado en la ficha).
+
+### v9.6
 
 - **Botón «Instalar»** en la barra de la consola, junto a la seta: instala SCREENS como una app en el móvil, la tableta o el ordenador. Es el botón común a las apps de AVHUB (`instalar.js`). La copia para usarla sin conexión la sigue llevando el service worker que ya tenía (`sw.js`): con internet, siempre lo último; sin internet, la última copia guardada.
 - **La copia sin conexión se completa ya en la primera visita:** antes hacía falta abrir la app una segunda vez para que quedara guardada entera.
