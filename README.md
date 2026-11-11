@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v8.8** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v8.9** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -94,7 +94,16 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v8.8)
+## Cambios de la versión actual (v8.9)
+
+**Línea de crédito común.** El pie («SCREENS v8.9 2026 es un proyecto hecho con ⚙ by mediaservi.com») es ahora el mismo en todas las apps de AVHUB y su texto se cambia desde el panel de administración; vale para el pie de la consola, el de «una pantalla LED» y el de las hojas impresas.
+
+**ADPOSTER sustituye a NEWS** en los logos de la familia (cabecera y pie).
+
+**Seta roja de aviso de fallos** en la barra de botones, del mismo tamaño que el resto: al pasar el cursor explica para qué es; al pulsarla se abre una ventana para contar el fallo y adjuntar hasta tres capturas.
+
+Sigue de la v8.8:
+
 
 **Las otras apps de AVHUB, a mano.** En la cabecera de la consola, a los dos lados del logo de AVHUB y centrados en el hueco libre, aparecen en pequeño los logos de SYSTEMS, NEWS, VJSHOW y MSGAME, cada uno enlazado a su web. Van en tinta mate, como grabados en el frontal, y recuperan su color al pasar el cursor. En móvil y tablet pasan a una línea encima del pie.
 

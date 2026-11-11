@@ -242,6 +242,7 @@ ANTERIOR: v4.1
     <meta name="apple-mobile-web-app-capable" content="yes" />
     
     <!-- Tailwind CSS 3.4.17 pinado — CDN estable, sin riesgo de breaking changes -->
+    <script src="credito.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Days One font — inline base64, zero CDN -->
@@ -5637,9 +5638,10 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             const q = (x) => '"' + String(x).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, ' ') + '"';
             const aviso = tr('*Cálculo automático que puede contener errores: verifícalo con tu método habitual o con un técnico antes de presupuestar o instalar.');
             const ver = ((document.querySelector('.print-footer-lema') || {}).textContent || '').match(/v\d+\.\d+/);   // la misma versión que el pie de la app
-            const lema = `SCREENS ${ver ? ver[0] + ' ' : ''}${now.getFullYear()} ${tr('es un proyecto hecho con')} `;
+            const crd = window.AVCREDITO ? window.AVCREDITO.plano('SCREENS', ver ? ver[0] : '', document.documentElement.lang || 'es') : null;   // v8.9 · crédito común de AVHUB
+            const lema = crd ? crd[0] : `SCREENS ${ver ? ver[0] + ' ' : ''}${now.getFullYear()} ${tr('es un proyecto hecho con')} `;
             estiloPie = document.createElement('style');
-            estiloPie.textContent = `@page { margin-bottom: 18mm; @top-left { content: "" } @top-center { content: "" } @top-right { content: "" } @bottom-left { content: "" } @bottom-center { content: ${q(aviso)} "\\A" ${q(lema)} ${icoPiePdf()} ${q(' by mediaservi.com · screens.mediaservi.com')}; } @bottom-right { content: counter(page) "/" counter(pages); } }`;
+            estiloPie.textContent = `@page { margin-bottom: 18mm; @top-left { content: "" } @top-center { content: "" } @top-right { content: "" } @bottom-left { content: "" } @bottom-center { content: ${q(aviso)} "\\A" ${q(lema)} ${icoPiePdf()} ${q((crd ? ' ' + crd[1].trim() : ' by mediaservi.com') + ' · screens.mediaservi.com')}; } @bottom-right { content: counter(page) "/" counter(pages); } }`;
             document.head.appendChild(estiloPie);
             document.documentElement.classList.add('pdf-cajas');
           }
@@ -9444,7 +9446,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                   </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    <a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v8.8 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a>
+                    {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v8.9', document.documentElement.lang || 'es')}} /> : <span><a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v8.9 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a></span>}
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -9455,7 +9457,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       *Cálculo automático que puede contener errores: verifícalo con tu método habitual o con un técnico antes de presupuestar o instalar.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v8.8 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a> · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
+                      {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v8.9', document.documentElement.lang || 'es', {sinEnlaces: true})}} /> : <span><a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v8.9 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a></span>} · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
                     </div>
                   </div>
               </main>

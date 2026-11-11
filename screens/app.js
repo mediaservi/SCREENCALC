@@ -9,7 +9,11 @@ import { interpretar } from './peticion.js';
 import { vistasTecnicas, activarVistas } from './vistas.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v8.8';
+const VERSION = 'v8.9';
+// v8.9 · crédito común de AVHUB (credito.js) y seta de aviso de fallos (fallo.js), los mismos en toda la familia
+if (window.AVCREDITO) window.AVCREDITO.alCambiar(() => { try { pintarCabecera(); } catch (e) {} });
+if (window.AVFALLO) { const bi = document.querySelector('#btn-idioma'); if (bi) { const bf = window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() }); bf.id = 'btn-fallo'; bi.before(bf);
+  const talla = () => { const h = bi.offsetHeight; if (h) bf.style.setProperty('--avf', h + 'px'); }; talla(); addEventListener('resize', talla); setTimeout(talla, 800); } }
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   cantidad: 'varias', tecnologia: 'led',
@@ -880,7 +884,9 @@ document.addEventListener('change', (ev) => {
 function imprimir() {
   const c = calculo; if (!c || !c.filas.length) return;
   const hoy = new Date(), fecha = hoy.toLocaleDateString(idioma() === 'en' ? 'en-GB' : 'es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' · ' + hoy.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-  const pie = `SCREENS ${VERSION} ${hoy.getFullYear()} ${t('pie')}`, web = 'by mediaservi.com · screens.mediaservi.com';
+  // v8.9 · la línea de crédito es la común de AVHUB (credito.js): el texto se edita en AVHUB ADMIN y es el mismo en todas las apps
+  const cr = window.AVCREDITO ? window.AVCREDITO.plano('SCREENS', VERSION, idioma()) : null;
+  const pie = cr ? cr[0].trim() : `SCREENS ${VERSION} ${hoy.getFullYear()} ${t('pie')}`, web = (cr ? cr[1].trim() : 'by mediaservi.com') + ' · screens.mediaservi.com';
   let h = `<header class="im-cab"><img class="im-logo" src="assets/screens-logo-negro.svg" alt="SCREENS"><div class="im-url"><b>avhub.mediaservi.com</b><span>${fecha}</span></div><img class="im-avhub" src="assets/avhub-logo.svg" alt="AVHUB"></header>`;
   h += `<div class="im-titulo">${tituloPdf(c)}</div>`;
   if (escena) h += `<figure class="im-captura"><img src="${escena.captura(true)}" alt=""></figure>`;
@@ -969,7 +975,7 @@ function pintarCabecera() {
   $('#btn-idioma').title = t('idioma');
   [['#btn-inicio', 'nuevo'], ['#btn-pdf', 'pdf'], ['#btn-info', 'info']].forEach(([id, k]) => { const b = $(id); b.title = t(k); b.setAttribute('aria-label', t(k)); });
   $('.marca').title = t('nuevo');
-  $('#pie').innerHTML = `SCREENS ${VERSION} ${new Date().getFullYear()} ${t('pie')} <i class="ic ic-footer" aria-hidden="true"></i> by <a href="https://mediaservi.com" target="_blank" rel="noopener">mediaservi.com</a><a class="admin-btn" href="${ADMIN_URL}" target="_blank" rel="noopener" title="${t('admin')}" aria-label="${t('admin')}"><i class="ic ic-admin" aria-hidden="true"></i></a>`;
+  $('#pie').innerHTML = (window.AVCREDITO ? window.AVCREDITO.html('SCREENS', VERSION, idioma()) : `SCREENS ${VERSION} ${new Date().getFullYear()} ${t('pie')} <i class="ic ic-footer" aria-hidden="true"></i> by <a href="https://mediaservi.com" target="_blank" rel="noopener">mediaservi.com</a>`) + `<a class="admin-btn" href="${ADMIN_URL}" target="_blank" rel="noopener" title="${t('admin')}" aria-label="${t('admin')}"><i class="ic ic-admin" aria-hidden="true"></i></a>`;
 }
 fijarIdioma(idiomaInicial(), false);
 pintarCabecera();
