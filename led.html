@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                SCREENS - INDEX                               ║
-║                          Versión actual: v8.8                              ║
+║                          Versión actual: v9.4                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v8.8
+ÚLTIMA ACTUALIZACIÓN: v9.4
+- v9.4: se retira del todo el motor de anuncios (motor AVHUB ADS, modo editor, estilos, zonas y ads.json); el enlace a los configuradores queda fijo. Sin cambios en cálculos ni en diseño.
+ANTERIOR: v8.8
 - v8.8: los logos de las otras apps de la cabecera se reparten a los dos lados del de AVHUB, centrados en el hueco libre y algo más grandes.
 ANTERIOR: v8.7
 - v8.7: en la cabecera de la consola, junto al logo de AVHUB, los logos pequeños de las otras apps (SYSTEMS, NEWS, VJSHOW y MSGAME) enlazados a cada una; en móvil pasan a una línea encima del pie.
@@ -1656,56 +1658,14 @@ ANTERIOR: v4.1
         .controls-sidebar > div > div { box-shadow: none !important; }
       }
       /* ===== v4.25 · Resumen destacado de TAMAÑO PANTALLA (3 líneas) ===== */
-      /* ===== v4.25 · Anuncios y acceso de administrador ===== */
-      /* Anuncios v4.4: auto-expandibles (la altura la marca la foto o el vídeo; admiten media vertical grande).
-         AD1 menú (media | texto), AD2 hero (media a sangre + texto encima), AD3 final (media | media | texto). Nunca en el PDF. */
-      .ad-slot { position: relative; margin: 10px 0; border: 1px dashed #cbd5e1; border-radius: 10px; background: #fff; font-size: 13px; overflow: hidden; }
-      .ad-slot .ad-tag { position: absolute; top: 3px; right: 8px; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: #94a3b8; pointer-events: none; z-index: 3; }
-      .ad-slot .ad-link { display: grid; align-items: center; gap: 10px; padding: 18px 12px 12px; color: #0f584c; font-weight: 700; text-decoration: none; cursor: pointer; }
-      .ad-slot img, .ad-slot video, .ad-slot iframe { pointer-events: none; display: block; }
-      .ad-slot .ad-m { display: block; min-width: 0; }
-      .ad-slot .ad-m img, .ad-slot .ad-m video { width: 100%; height: auto; max-height: 640px; object-fit: contain; border-radius: 6px; }
-      .ad-slot .ad-yt { display: block; position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; background: #000; }
-      .ad-slot .ad-yt.ad-yt-v { aspect-ratio: 9 / 16; max-height: 640px; margin: 0 auto; width: auto; height: auto; }
-      .ad-slot .ad-yt iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-      .ad-slot ul.ad-texto { margin: 0; padding-left: 18px; text-align: left; list-style: disc; font-weight: 600; line-height: 1.45; }
-      .ad-slot .ad-link:hover .ad-texto { text-decoration: underline; }
-      .ad-menu .ad-link { grid-template-columns: 1fr 1fr; }
-      .ad-final .ad-link { grid-template-columns: 1fr 1fr 1.2fr; }
-      /* AD2 hero: la media va a todo el ancho y marca la altura; el texto va encima */
-      .ad-hero { border-style: solid; border-color: transparent; }
-      .ad-hero .ad-link { display: block; position: relative; padding: 0; min-height: 120px; }
-      .ad-hero .ad-fondo { width: 100%; height: auto; max-height: 720px; object-fit: cover; }
-      .ad-hero .ad-yt-fondo { border-radius: 0; }
-      .ad-hero .ad-yt-fondo.ad-yt-v { width: 100%; max-height: 720px; aspect-ratio: 9 / 16; }
-      .ad-hero .ad-txt { position: absolute; left: 16px; right: 16px; top: 50%; transform: translateY(-50%); z-index: 1; font-size: 17px; font-weight: 800; max-width: 70%; }
-      .ad-hero .ad-txt:only-child { position: relative; top: auto; transform: none; display: block; padding: 22px 16px 14px; }
-      .ad-hero .ad-txt ul.ad-texto { font-weight: 700; }
-      .ad-tono-oscuro { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.75); }
-      .ad-tono-claro { color: #111; text-shadow: 0 0 4px rgba(255,255,255,.9), 0 0 2px #fff; }
-      .ad-tono-filete { color: #fff; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 2px 6px rgba(0,0,0,.8); }
-      .ad-fila { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px; }
-      .ad-fila > .ad-slot { flex: 1 1 360px; margin: 10px 0; }
-      /* Móvil: solo AD2 y AD3, apilados al final */
-      @media (max-width: 767px) {
-        .ad-slot[data-slot="panel"] { display: none !important; }
-        .ad-fila { flex-direction: column; align-items: stretch; }
-        .ad-fila > .ad-slot { flex: 0 0 auto; }
-        .ad-final .ad-link { grid-template-columns: 1fr 1fr; } .ad-final .ad-txt { grid-column: 1 / -1; } .ad-hero .ad-txt { max-width: 100%; }
-      }
-      /* Minibanner fijo del configurador oficial de TRAULUX (siempre arriba del AD1; sin indicador de publicidad) */
+      /* Enlace fijo a los configuradores (arriba del pie del menú) */
       .ad-traulux { margin: 10px 0; }
       .ad-traulux a { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 10px; background: #000; color: #fff; text-decoration: none; font-weight: 800; font-size: 12px; line-height: 1.3; letter-spacing: .04em; }
       .ad-traulux a:hover { background: #111; }
       .ad-traulux img { width: 30px; height: 30px; flex: none; }
             header.app-header .hdr-btn.hdr-tx img { width: 24px; height: 24px; display: block; }
       @media (max-width: 767px) { .ad-traulux { display: none !important; } }
-      @media print { .ad-slot, .ad-fila, .ad-traulux { display: none !important; } }
-      /* v4.5 · zonas de anuncios con el motor AVHUB ADS */
-      .ad-fila:has(> .avad-zona), .avad-zona { flex-shrink: 0; }
-      .ad-fila > .avad-zona { flex: 1 1 360px; min-width: 0; max-width: 600px; }
-      .ad-fila:has(> .avad-zona) { justify-content: center; }
-      @media (max-width: 767px) { .avad-zona[data-slot="panel"] { display: none !important; } .ad-fila:has(> .avad-zona) { flex-wrap: nowrap; } .ad-fila > .avad-zona { flex: 0 0 auto; width: 100%; } }
+      @media print { .ad-traulux { display: none !important; } }
       /* ===== v4.25 · Iconos del bloque cabinet: color en el propio icono sobre botón claro con sombra ===== */
       .cab-ico-btn { background: #fff; border: 1px solid #d1d5db; box-shadow: 0 2px 4px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.9); }
       .cab-ico-btn .ic { filter: drop-shadow(0 0 0.6px rgba(15,88,76,.9)); }
@@ -1743,75 +1703,6 @@ ANTERIOR: v4.1
       .readme-md th { background: #f3f4f6; }
       .readme-md img { max-width: 100%; display: inline-block; }
       .readme-md hr { border: 0; border-top: 1px solid #e5e7eb; margin: 14px 0; }
-    </style>
-    <style>
-/* ===== AVHUB ADS · motor de anuncios común (SCREENS y gestor de anuncios) ===== */
-.avad{position:relative;margin:10px 0;border-radius:var(--avad-radio,10px);overflow:hidden;font-family:var(--avad-fuente,Inter,system-ui,sans-serif);font-size:13px;line-height:1.35;background:var(--avad-fondo,#fff);border:1px dashed #cbd5e1;color:#0f172a}
-.avad *{box-sizing:border-box}
-.avad-tag{position:absolute;top:3px;right:8px;z-index:4;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;pointer-events:none}
-.avad-encima .avad-tag{color:rgba(255,255,255,.85);text-shadow:0 1px 2px rgba(0,0,0,.8)}
-.avad-link{display:grid;gap:10px;align-items:center;padding:18px 12px 12px;color:inherit;text-decoration:none;cursor:pointer}
-.avad-media{position:relative;width:100%;max-width:calc(var(--maxh) * var(--ar));aspect-ratio:var(--ar);margin:0 auto;border-radius:6px;overflow:hidden;background:#0b0b0f}
-.avad-capa{position:absolute;inset:0;opacity:0;transition:opacity .6s ease}
-.avad-capa.on{opacity:1}
-.avad-capa img,.avad-capa video{width:100%;height:100%;display:block;pointer-events:none;object-fit:var(--fit,cover);object-position:var(--avad-foco,50% 50%)}
-.avad-capa iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}
-.avad-txt{min-width:0;font-size:var(--avad-tam,13px);font-weight:var(--avad-peso,700);color:var(--avad-color,#0f584c)}
-.avad-txt ul{margin:0;padding-left:18px;list-style:disc;font-weight:var(--avad-peso,600);line-height:1.45;text-align:left}
-.avad-txt .avad-t1{display:block}
-.avad-btn{display:inline-block;margin-top:8px;padding:7px 14px;border-radius:999px;background:var(--avad-btn-bg,#9900ff);color:var(--avad-btn-fg,#fff);font-weight:800;font-size:calc(var(--avad-tam,13px) * .92);letter-spacing:.03em;text-shadow:none}
-.avad-link:hover .avad-btn{filter:brightness(1.15)}
-.avad-link:hover .avad-txt ul,.avad-link:hover .avad-t1{text-decoration:underline}
-/* posiciones del texto */
-.avad-lado .avad-link{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
-.avad-lado.avad-vert .avad-link{grid-template-columns:minmax(0,.85fr) minmax(0,1fr)}
-.avad-lado.avad-vert .avad-media{width:100%}
-.avad-debajo .avad-link{grid-template-columns:1fr}
-.avad-debajo .avad-txt{text-align:center}
-.avad-debajo .avad-txt ul{display:inline-block}
-.avad-ninguno .avad-link{grid-template-columns:1fr}
-.avad-encima{border-style:solid;border-color:transparent;background:var(--avad-fondo,#0b0b0f)}
-.avad-encima .avad-link{display:block;position:relative;padding:0}
-.avad-encima .avad-media{border-radius:0;width:100%;max-width:calc(var(--maxh) * var(--ar))}
-.avad-encima .avad-txt{position:absolute;left:16px;right:16px;top:50%;transform:translateY(-50%);z-index:3;font-size:var(--avad-tam,17px);font-weight:var(--avad-peso,800);max-width:72%}
-.avad-encima.avad-banner .avad-txt{font-size:var(--avad-tam,14px);max-width:80%}
-.avad-sinmedia .avad-txt{position:relative!important;top:auto!important;transform:none!important;padding:22px 16px 14px;max-width:100%!important;color:var(--avad-color,#0f584c)}
-/* formatos fijos IAB: tamaño nativo como máximo, centrados */
-.avad-fijo{max-width:var(--maxw);margin-left:auto;margin-right:auto}
-.avad-fijo.avad-encima .avad-media,.avad-fijo.avad-ninguno .avad-media{max-width:100%}
-/* contraste automático del texto encima de la media */
-.avad-tono-oscuro{color:#fff!important;text-shadow:0 1px 3px rgba(0,0,0,.75)}
-.avad-tono-claro{color:#111!important;text-shadow:0 0 4px rgba(255,255,255,.9),0 0 2px #fff}
-.avad-tono-filete{color:#fff!important;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 2px 6px rgba(0,0,0,.8)}
-.avad-zona{display:block}
-.avad-zona:empty{display:none}
-.avad-estrecho.avad-lado .avad-link{grid-template-columns:1fr}
-.avad-estrecho.avad-lado.avad-vert .avad-media{width:100%}
-.avad-estrecho .avad-txt{text-align:center}
-.avad-estrecho .avad-txt ul{display:inline-block}
-/* estilo de cada anuncio (editor de AVHUB ADMIN) */
-.avad-al-izq .avad-txt{text-align:left!important}
-.avad-al-centro .avad-txt{text-align:center!important}
-.avad-al-der .avad-txt{text-align:right!important}
-.avad-al-centro .avad-txt ul,.avad-al-der .avad-txt ul{display:inline-block;text-align:left}
-.avad-encima.avad-al-centro .avad-txt{left:50%;right:auto;transform:translate(-50%,-50%);width:max-content;max-width:84%}
-.avad-encima.avad-al-der .avad-txt{left:auto;right:16px}
-.avad-conborde{border:2px solid var(--avad-borde)!important}
-.avad-sombra{box-shadow:0 8px 22px rgba(0,0,0,.3)}
-.avad-btn-redondeado .avad-btn{border-radius:6px}
-.avad-btn-recto .avad-btn{border-radius:0}
-.avad-velo .avad-media::after{content:'';position:absolute;inset:0;z-index:2;background:rgba(0,0,0,var(--avad-velo,.3));pointer-events:none}
-.avad-tr-corte .avad-capa{transition:none}
-.avad-tr-deslizar .avad-capa{opacity:1;transform:translateX(100%);transition:transform .7s ease}
-.avad-tr-deslizar .avad-capa.on{transform:none}
-.avad-tr-deslizar .avad-capa.fuera{transform:translateX(-100%)}
-.avad-tr-deslizar .avad-capa.sin-tr{transition:none}
-.avad-tr-zoom .avad-capa{transform:scale(1.08);transition:opacity .9s ease,transform 6s ease-out}
-.avad-tr-zoom .avad-capa.on{transform:scale(1)}
-.avad-hueco{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;aspect-ratio:var(--ar,1.78);min-height:110px;max-height:240px;margin:10px 0;border:2px dashed rgba(153,0,255,.45);border-radius:10px;background:repeating-linear-gradient(45deg,rgba(153,0,255,.05) 0 12px,rgba(153,0,255,.11) 12px 24px);color:#5b21b6;font:600 12px/1.3 Inter,system-ui,sans-serif;text-align:center;padding:8px}
-.avad-hueco b{font:800 18px/1 Inter,system-ui,sans-serif;letter-spacing:.08em}
-.avad-hueco small{font-size:11px;color:#7c3aed}
-@media print{.avad,.avad-zona,.avad-hueco{display:none!important}}
     </style>
     <script>/* Estética AVHUB: activa por defecto; ?tema=clasico vuelve a la anterior (se recuerda), ?tema=avhub la recupera */
       (function(){var d=document.documentElement,t='avhub',q=null;try{q=new URLSearchParams(location.search).get('tema');}catch(e){}if(q){t=q;try{localStorage.setItem('screens_tema',q);}catch(e){}}else{try{t=localStorage.getItem('screens_tema')||'avhub';}catch(e){}}if(t!=='clasico'){d.classList.add('av');var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#232325');}})();
@@ -2178,13 +2069,6 @@ html.av .nl-nota { color: var(--av-tenue) !important; }
 html.av .nl-falta { box-shadow: 0 0 0 1px var(--av-ambar), 0 0 14px rgba(255,176,0,.25) !important; }
 html.av .nl-pie { background: #1e1e21 !important; border-top: 1px solid #000 !important; }
 
-/* Anuncios */
-html.av .avad { background: var(--avad-fondo, #222225) !important; border: 1px solid #333338 !important; color: var(--av-txt) !important; }
-html.av .avad-conborde { border: 2px solid var(--avad-borde) !important; }
-html.av .avad-txt, html.av .avad-sinmedia .avad-txt { color: var(--avad-color, var(--av-txt)) !important; }
-html.av .avad-tag { color: var(--av-tenue-2) !important; }
-html.av .avad-encima { background: var(--avad-fondo, #0b0b0f) !important; }
-html.av .ad-slot { background: #222225 !important; border-color: #333338 !important; }
 /* ---------- Estilos en línea heredados (claro → oscuro) ---------- */
 html.av [style*="background: rgb(255, 255, 255)"], html.av [style*="background-color: rgb(255, 255, 255)"],
 html.av [style*="background: rgb(249, 250, 251)"], html.av [style*="background-color: rgb(249, 250, 251)"] { background-color: var(--av-panel) !important; }
@@ -2353,12 +2237,6 @@ html.av .bg-cyan-50, html.av .bg-sky-50 { background-color: rgba(0,180,255,.08) 
   html.av aside.controls-sidebar > div { grid-template-rows: min-content min-content 1fr; }
   html.av aside.controls-sidebar > div > :nth-child(1), html.av aside.controls-sidebar > div > :nth-child(2), html.av aside.controls-sidebar > div > :nth-child(3) { align-self: start; }
 }
-/* Banner con texto encima: texto y botón en una línea para que quepan en 90-100 px */
-html.av .avad-encima.avad-banner .avad-txt { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: none !important; }
-html.av .avad-encima.avad-banner .avad-btn { margin-top: 0; flex: none; }
-
-html.av .avad-encima.avad-banner .avad-tag { left: 8px; right: auto; }
-
 /* Avisos de sugerencia (giro 90°, combinación, combinación activa) */
 html.av .bg-yellow-100 { background: linear-gradient(180deg, rgba(255,176,0,.16), rgba(255,176,0,.06)) !important; }
 html.av .border-yellow-400 { border-color: rgba(255,176,0,.6) !important; }
@@ -3369,317 +3247,6 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
 })();
 
     </script>
-    <script>
-/* ===== AVHUB ADS · motor de anuncios común (SCREENS y gestor de anuncios) =====
-   Datos v2: { version:2, zonas:{ <id>:{ rotacion, segundos, anuncios:[anuncio…] } }, borradores:[anuncio…] }
-   anuncio: { id, nombre, activo, formato, textoPos, texto, boton, url, medios:[url…], medioSeg, ajuste,
-              desde, hasta, dispositivo, estilo:{ fuente, tam, peso, alin, color, fondo, borde, radio, sombra,
-              btnFondo, btnColor, btnForma, velo, foco, transicion } }
-   Compatible con el formato antiguo { slots:{ panel, hero, resultados } }. */
-(function (G) {
-  'use strict';
-  var FORMATOS = {
-    horizontal:   { nombre: 'Horizontal 16:9',    ar: 16 / 9,    maxh: 420 },
-    vertical:     { nombre: 'Vertical 9:16',      ar: 9 / 16,    maxh: 560, vert: true },
-    cuadrado:     { nombre: 'Cuadrado 1:1',       ar: 1,         maxh: 460 },
-    retrato:      { nombre: 'Retrato 4:5',        ar: 4 / 5,     maxh: 520, vert: true },
-    hero:         { nombre: 'Hero a sangre 21:9', ar: 21 / 9,    maxh: 420 },
-    banner:       { nombre: 'Banner 728×90',      ar: 728 / 90,  maxh: 90,  maxw: 728, fijo: true, banner: true },
-    bannermovil:  { nombre: 'Banner móvil 320×100', ar: 320 / 100, maxh: 100, maxw: 320, fijo: true, banner: true },
-    rectangulo:   { nombre: 'Rectángulo 300×250', ar: 300 / 250, maxh: 250, maxw: 300, fijo: true },
-    rascacielos:  { nombre: 'Rascacielos 160×600', ar: 160 / 600, maxh: 600, maxw: 160, fijo: true, vert: true }
-  };
-  var TEXTOPOS = { lado: 'Al lado', debajo: 'Debajo', encima: 'Encima', ninguno: 'Sin texto' };
-  var ZONAS = {
-    panel:      { nombre: 'Pie del menú',              ubicacion: 'Columna de controles, bajo los botones', ancho: 320, movil: false, codigo: 'AD1', fmt: 'horizontal', tp: 'lado' },
-    hero:       { nombre: 'Resultados · izquierda',    ubicacion: 'Pie de resultados (en móvil, primero)',  ancho: 600, movil: true,  codigo: 'AD2', fmt: 'hero',       tp: 'encima' },
-    resultados: { nombre: 'Resultados · derecha',      ubicacion: 'Pie de resultados (en móvil, segundo)',  ancho: 600, movil: true,  codigo: 'AD3', fmt: 'horizontal', tp: 'lado' }
-  };
-  var ROTACION = { fijo: 'Siempre el primero', orden: 'Rotar en orden', aleatorio: 'Uno al azar por visita', aleatoriociclo: 'Rotar al azar' };
-  /* Estilo de cada anuncio (vacío = el aspecto de siempre) */
-  var FUENTES = { inter: 'Inter,system-ui,sans-serif', mono: "'Share Tech Mono',ui-monospace,monospace", sistema: 'system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif',
-    serif: 'Georgia,"Times New Roman",serif', estrecha: '"Arial Narrow","Roboto Condensed","Helvetica Neue",Arial,sans-serif' };
-  var FOCOS = { centro: '50% 50%', arriba: '50% 0%', abajo: '50% 100%', izq: '0% 50%', der: '100% 50%' };
-  var TRANSICIONES = { fundido: 'Fundido', deslizar: 'Deslizar', zoom: 'Zoom lento', corte: 'Corte' };
-  function colorOk(v) { v = String(v || '').trim().toLowerCase(); return /^#[0-9a-f]{6}$/.test(v) ? v : ''; }
-  function entre(v, a, b) { v = +v; return isFinite(v) ? Math.max(a, Math.min(b, v)) : a; }
-  function estiloBase(e) {
-    e = e || {};
-    return {
-      fuente: FUENTES[e.fuente] ? e.fuente : '', tam: +e.tam ? Math.round(entre(e.tam, 9, 44)) : 0,
-      peso: [400, 600, 700, 800].indexOf(+e.peso) >= 0 ? +e.peso : 0, alin: /^(izq|centro|der)$/.test(e.alin) ? e.alin : '',
-      color: colorOk(e.color), fondo: colorOk(e.fondo), borde: colorOk(e.borde),
-      radio: e.radio === '' || e.radio == null ? '' : Math.round(entre(e.radio, 0, 40)), sombra: !!e.sombra,
-      btnFondo: colorOk(e.btnFondo), btnColor: colorOk(e.btnColor), btnForma: /^(pildora|redondeado|recto)$/.test(e.btnForma) ? e.btnForma : '',
-      velo: +e.velo ? Math.round(entre(e.velo, 0, 85)) : 0, foco: FOCOS[e.foco] ? e.foco : '', transicion: TRANSICIONES[e.transicion] ? e.transicion : ''
-    };
-  }
-  function aplicarEstilo(box, s) {
-    s = s || {};
-    var p = function (k, v) { box.style.setProperty(k, v); };
-    if (s.fuente) p('--avad-fuente', FUENTES[s.fuente]);
-    if (s.tam) p('--avad-tam', s.tam + 'px');
-    if (s.peso) p('--avad-peso', s.peso);
-    if (s.alin) box.classList.add('avad-al-' + s.alin);
-    if (s.color) { p('--avad-color', s.color); box.classList.add('avad-color-fijo'); }
-    if (s.fondo) p('--avad-fondo', s.fondo);
-    if (s.borde) { p('--avad-borde', s.borde); box.classList.add('avad-conborde'); }
-    if (s.radio !== '' && s.radio != null) p('--avad-radio', s.radio + 'px');
-    if (s.sombra) box.classList.add('avad-sombra');
-    if (s.btnFondo) p('--avad-btn-bg', s.btnFondo);
-    if (s.btnColor) p('--avad-btn-fg', s.btnColor);
-    if (s.btnForma) box.classList.add('avad-btn-' + s.btnForma);
-    if (s.velo) { p('--avad-velo', (s.velo / 100).toFixed(2)); box.classList.add('avad-velo'); }
-    if (s.foco) p('--avad-foco', FOCOS[s.foco]);
-    box.classList.add('avad-tr-' + (s.transicion || 'fundido'));
-  }
-
-  function nuevoId() { return 'ad' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-  function lista(v) {
-    return (Array.isArray(v) ? v : String(v || '').split(/[\n,]+/)).map(function (x) { return String(x).trim(); })
-      .filter(function (x) { return /^(https?:\/\/|data:image\/|blob:)/i.test(x); });
-  }
-  function anuncioBase(o) {
-    o = o || {};
-    return {
-      id: o.id || nuevoId(), nombre: o.nombre || 'Anuncio', activo: o.activo !== false,
-      formato: FORMATOS[o.formato] ? o.formato : 'horizontal',
-      textoPos: TEXTOPOS[o.textoPos] ? o.textoPos : 'lado',
-      texto: o.texto == null ? '' : String(o.texto), boton: o.boton == null ? '' : String(o.boton),
-      url: o.url || '', medios: lista(o.medios), medioSeg: Math.max(2, +o.medioSeg || 4),
-      ajuste: o.ajuste === 'contain' ? 'contain' : 'cover',
-      desde: o.desde || '', hasta: o.hasta || '', dispositivo: /^(movil|escritorio)$/.test(o.dispositivo) ? o.dispositivo : 'todos',
-      estilo: estiloBase(o.estilo)
-    };
-  }
-  /* Convierte cualquier respuesta (v2 o antigua) al formato v2 */
-  function normalizar(j) {
-    var out = { version: 2, zonas: {}, borradores: [], biblioteca: [], traulux: { activo: true } };
-    var tx = j && (j.traulux || (j.slots && j.slots.traulux));
-    if (tx) out.traulux.activo = tx.activo !== false;
-    Object.keys(ZONAS).forEach(function (z) { out.zonas[z] = { rotacion: 'orden', segundos: 8, anuncios: [] }; });
-    if (j && j.version === 2 && j.zonas) {
-      Object.keys(j.zonas).forEach(function (z) {
-        var s = j.zonas[z] || {};
-        out.zonas[z] = { rotacion: ROTACION[s.rotacion] ? s.rotacion : 'orden', segundos: Math.max(3, +s.segundos || 8),
-          anuncios: (s.anuncios || []).map(anuncioBase) };
-      });
-      out.borradores = (j.borradores || []).map(anuncioBase);
-      out.biblioteca = lista(j.biblioteca);
-      return out;
-    }
-    var sl = (j && j.slots) || {};
-    var MAP = { panel: ['horizontal', 'lado'], hero: ['hero', 'encima'], resultados: ['horizontal', 'lado'] };
-    Object.keys(MAP).forEach(function (z) {
-      var s = sl[z]; if (!s) return;
-      var medios = lista(s.imagenes).concat(lista(s.imagen));
-      if (!s.url && !medios.length) return;
-      out.zonas[z].anuncios.push(anuncioBase({ nombre: ZONAS[z].nombre, activo: !!s.activo, formato: MAP[z][0], textoPos: MAP[z][1],
-        texto: s.texto || '', url: s.url, medios: medios.filter(function (u, i) { return medios.indexOf(u) === i; }) }));
-    });
-    return out;
-  }
-  /* Formato antiguo derivado (para versiones anteriores de las apps) */
-  function aLegado(d) {
-    var slots = {};
-    Object.keys(ZONAS).forEach(function (z) {
-      var a = ((d.zonas[z] || {}).anuncios || []).filter(function (x) { return vigente(x, new Date(), null); })[0];
-      slots[z] = a ? { activo: true, tipo: 'propio', url: a.url, texto: a.texto, imagen: '', imagenes: a.medios.join('\n') }
-                   : { activo: false, url: '', texto: '', imagen: '', imagenes: '' };
-    });
-    slots.traulux = { activo: !d.traulux || d.traulux.activo !== false, url: 'https://screens.mediaservi.com/configuradores/', texto: 'CONFIGURADOR OFICIAL DE PANTALLAS LED DE TRAULUX' };
-    return slots;
-  }
-  function hoyISO(d) { var z = new Date(d.getTime() - d.getTimezoneOffset() * 60000); return z.toISOString().slice(0, 10); }
-  /* esMovil: true/false para filtrar por dispositivo; null para no filtrar */
-  function vigente(a, ahora, esMovil) {
-    if (!a || !a.activo || !a.url) return false;
-    var h = hoyISO(ahora || new Date());
-    if (a.desde && h < a.desde) return false;
-    if (a.hasta && h > a.hasta) return false;
-    if (esMovil === true && a.dispositivo === 'escritorio') return false;
-    if (esMovil === false && a.dispositivo === 'movil') return false;
-    return true;
-  }
-  function estado(a, ahora) {
-    if (!a.activo) return 'desactivado';
-    if (!a.url) return 'sin enlace';
-    var h = hoyISO(ahora || new Date());
-    if (a.desde && h < a.desde) return 'programado';
-    if (a.hasta && h > a.hasta) return 'caducado';
-    return 'activo';
-  }
-  function youtubeId(u) {
-    var m = String(u).match(/(?:youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i);
-    return m ? m[1] : null;
-  }
-  function esVideo(u) { return /\.(mp4|webm|ogg|mov)(\?|#|$)/i.test(u); }
-  function tipoMedio(u) { return youtubeId(u) ? 'youtube' : (esVideo(u) ? 'video' : 'imagen'); }
-  function miniatura(u) { var y = youtubeId(u); return y ? 'https://i.ytimg.com/vi/' + y + '/hqdefault.jpg' : (esVideo(u) ? '' : u); }
-  function luminancia(u) {
-    return new Promise(function (res) {
-      if (tipoMedio(u) !== 'imagen') return res(null);
-      var im = new Image(); im.crossOrigin = 'anonymous';
-      im.onload = function () {
-        try {
-          var c = document.createElement('canvas'); c.width = 24; c.height = 24;
-          var x = c.getContext('2d'); x.drawImage(im, 0, 0, 24, 24);
-          var d = x.getImageData(0, 0, 24, 24).data, t = 0;
-          for (var i = 0; i < d.length; i += 4) t += (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) / 255;
-          res(t / (d.length / 4));
-        } catch (e) { res(null); }
-      };
-      im.onerror = function () { res(null); };
-      im.src = u;
-    });
-  }
-  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function capa(u) {
-    var y = youtubeId(u), el = document.createElement('div'); el.className = 'avad-capa';
-    if (y) el.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + y + '?autoplay=1&mute=1&loop=1&playlist=' + y +
-      '&controls=0&modestbranding=1&playsinline=1&rel=0" allow="autoplay; encrypted-media" tabindex="-1" title=""></iframe>';
-    else if (esVideo(u)) el.innerHTML = '<video src="' + esc(u) + '" autoplay muted loop playsinline></video>';
-    else el.innerHTML = '<img src="' + esc(u) + '" alt="" loading="lazy">';
-    return el;
-  }
-  /* Pinta UN anuncio dentro de el. Devuelve una función de limpieza. */
-  function pintar(el, a, opt) {
-    opt = opt || {};
-    var f = FORMATOS[a.formato] || FORMATOS.horizontal, tp = a.textoPos, timers = [], vivo = true;
-    var lineas = String(a.texto || '').split(/\n+/).map(function (l) { return l.replace(/^\s*[-•*·]\s*/, '').trim(); }).filter(Boolean);
-    if (tp !== 'ninguno' && !lineas.length && !a.boton && !a.medios.length) lineas = ['Ver oferta'];
-    var conTexto = tp !== 'ninguno' && (lineas.length || a.boton);
-    var box = document.createElement('div');
-    box.className = 'avad avad-' + (conTexto ? tp : 'ninguno') + ' avad-f-' + a.formato + (f.fijo ? ' avad-fijo' : '') +
-      (f.vert ? ' avad-vert' : '') + (f.banner ? ' avad-banner' : '') + (a.medios.length ? '' : ' avad-sinmedia');
-    box.style.setProperty('--ar', f.ar);
-    box.style.setProperty('--maxh', f.maxh + 'px');
-    if (f.maxw) box.style.setProperty('--maxw', (tp === 'lado' && conTexto ? f.maxw * 2.2 : f.maxw) + 'px');
-    box.style.setProperty('--fit', a.ajuste || 'cover');
-    aplicarEstilo(box, a.estilo);
-    var link = document.createElement('a');
-    link.className = 'avad-link'; link.href = a.url || '#'; link.target = '_blank'; link.rel = 'sponsored noopener noreferrer';
-    link.addEventListener('click', function (e) { if (opt.preview) { e.preventDefault(); return; } if (opt.onClic) opt.onClic(a.id); });
-    var capas = [];
-    if (a.medios.length) {
-      var m = document.createElement('div'); m.className = 'avad-media';
-      a.medios.forEach(function (u, i) { var c = capa(u); if (i === 0) c.classList.add('on'); m.appendChild(c); capas.push(c); });
-      link.appendChild(m);
-    }
-    var txt = null;
-    if (conTexto) {
-      txt = document.createElement('div'); txt.className = 'avad-txt';
-      txt.innerHTML = (lineas.length > 1 ? '<ul>' + lineas.map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ul>'
-        : (lineas.length ? '<span class="avad-t1">' + esc(lineas[0]) + '</span>' : '')) +
-        (a.boton ? '<span class="avad-btn">' + esc(a.boton) + '</span>' : '');
-      link.appendChild(txt);
-    }
-    box.appendChild(link);
-    var tag = document.createElement('span'); tag.className = 'avad-tag'; tag.textContent = opt.etiqueta || 'Publicidad'; box.appendChild(tag);
-    el.appendChild(box);
-    var idx = 0;
-    function tono() {
-      if (!txt || tp !== 'encima' || !a.medios.length || (a.estilo && a.estilo.color)) return;
-      luminancia(a.medios[idx]).then(function (l) {
-        if (!vivo) return;
-        txt.classList.remove('avad-tono-claro', 'avad-tono-oscuro', 'avad-tono-filete');
-        txt.classList.add(l == null ? 'avad-tono-filete' : (l > 0.6 ? 'avad-tono-claro' : 'avad-tono-oscuro'));
-      });
-    }
-    tono();
-    var desliza = !!(a.estilo && a.estilo.transicion === 'deslizar');
-    if (capas.length > 1) timers.push(setInterval(function () {
-      var ant = capas[idx]; ant.classList.remove('on');
-      if (desliza) { ant.classList.add('fuera'); setTimeout(function () { ant.classList.add('sin-tr'); ant.classList.remove('fuera'); void ant.offsetWidth; ant.classList.remove('sin-tr'); }, 800); }
-      idx = (idx + 1) % capas.length; capas[idx].classList.add('on'); tono();
-    }, Math.max(2, a.medioSeg || 4) * 1000));
-    var ro = null;
-    if (G.ResizeObserver) { ro = new ResizeObserver(function () { box.classList.toggle('avad-estrecho', box.clientWidth < 300); }); ro.observe(box); }
-    return function () { vivo = false; timers.forEach(clearInterval); if (ro) ro.disconnect(); if (box.parentNode) box.parentNode.removeChild(box); };
-  }
-  /* Hueco de una zona sin anuncio (solo en el editor): marca dónde irá y con qué proporción */
-  function hueco(el, zonaId) {
-    var d = ZONAS[zonaId] || { nombre: zonaId }, f = FORMATOS[d.fmt] || FORMATOS.horizontal;
-    var h = document.createElement('div'); h.className = 'avad-hueco'; h.style.setProperty('--ar', f.ar);
-    h.innerHTML = '<b>' + esc(d.codigo || '') + '</b><span>' + esc(d.nombre) + '</span><small>Arrastra aquí un anuncio</small>';
-    el.appendChild(h);
-    return function () { if (h.parentNode) h.parentNode.removeChild(h); };
-  }
-  /* Monta una zona completa (rotación entre anuncios). Devuelve la limpieza.
-     opt.ver: id de un anuncio de la zona que se muestra fijo (editor); opt.hueco: marca la zona vacía (editor) */
-  function montar(el, zonaId, datos, opt) {
-    opt = opt || {};
-    var z = (datos.zonas || {})[zonaId];
-    var esMovil = opt.esMovil == null ? (G.matchMedia ? G.matchMedia('(max-width: 767px)').matches : false) : opt.esMovil;
-    var ads = z ? (z.anuncios || []).filter(function (a) { return vigente(a, new Date(), esMovil); }) : [];
-    if (opt.ver && z) { var fijo = (z.anuncios || []).filter(function (a) { return a.id === opt.ver; })[0]; if (fijo) ads = [fijo]; }
-    if (!ads.length) return opt.hueco ? hueco(el, zonaId) : function () {};
-    var rot = z.rotacion || 'orden', i = 0, limpiar = null, t = null;
-    if (rot === 'aleatorio' || rot === 'aleatoriociclo') i = Math.floor(Math.random() * ads.length);
-    function mostrar() { if (limpiar) limpiar(); limpiar = pintar(el, ads[i], opt); }
-    mostrar();
-    if (ads.length > 1 && (rot === 'orden' || rot === 'aleatoriociclo')) t = setInterval(function () {
-      if (rot === 'orden') i = (i + 1) % ads.length;
-      else { var n = i; while (n === i) n = Math.floor(Math.random() * ads.length); i = n; }
-      mostrar();
-    }, Math.max(3, z.segundos || 8) * 1000);
-    return function () { if (t) clearInterval(t); if (limpiar) limpiar(); };
-  }
-  G.AVHUB_ADS = { FORMATOS: FORMATOS, TEXTOPOS: TEXTOPOS, ZONAS: ZONAS, ROTACION: ROTACION, normalizar: normalizar, aLegado: aLegado,
-    anuncioBase: anuncioBase, nuevoId: nuevoId, vigente: vigente, estado: estado, pintar: pintar, montar: montar,
-    tipoMedio: tipoMedio, miniatura: miniatura, youtubeId: youtubeId, lista: lista,
-    FUENTES: FUENTES, FOCOS: FOCOS, TRANSICIONES: TRANSICIONES, estiloBase: estiloBase };
-})(typeof window !== 'undefined' ? window : this);
-    </script>
-    <script>
-/* v8.1 · modo editor de anuncios (?anuncios=editor): el editor de AVHUB ADMIN enseña esta página real con los anuncios
-   que se están editando. Los recibe por mensajes, marca las zonas vacías y le devuelve dónde está cada zona. */
-(function () {
-  if (!/[?&]anuncios=editor\b/.test(location.search)) return;
-  var permitido = function (o) {
-    return o === location.origin || /^https:\/\/([a-z0-9-]+\.)*(googleusercontent\.com|google\.com|mediaservi\.com|githack\.com)$/.test(o) ||
-      /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(o);
-  };
-  var E = window.AVHUB_EDITOR = { datos: null, ver: {}, subs: [] };
-  E.avisar = function () { E.subs.slice().forEach(function (f) { try { f(); } catch (e) {} }); };
-  document.documentElement.classList.add('avad-editor');
-  var aPadre = function (m) { m.tipo = 'avhub-ads'; try { window.parent.postMessage(m, '*'); } catch (e) {} };
-  var pend = false, ultimo = '';
-  function medir() {
-    pend = false;
-    var zonas = Array.prototype.slice.call(document.querySelectorAll('[data-slot]')).map(function (el) {
-      var r = el.getBoundingClientRect(), cs = getComputedStyle(el);
-      return { id: el.getAttribute('data-slot'), x: Math.round(r.left), y: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height),
-        visible: el.offsetParent !== null && cs.display !== 'none' && cs.visibility !== 'hidden' && r.width > 0 && r.height > 0 };
-    });
-    var m = { accion: 'zonas', zonas: zonas, vw: window.innerWidth, vh: window.innerHeight }, k = JSON.stringify(m);
-    if (k !== ultimo) { ultimo = k; aPadre(m); }
-  }
-  E.medir = function () { if (!pend) { pend = true; requestAnimationFrame(medir); } };
-  E.observar = function () {};
-  if (window.ResizeObserver) { var ro = new ResizeObserver(E.medir); E.observar = function (el) { try { if (el) ro.observe(el); } catch (e) {} }; }
-  window.addEventListener('scroll', E.medir, true);
-  window.addEventListener('resize', E.medir);
-  setInterval(E.medir, 1000);
-  // un clic en un anuncio o en una zona vacía la elige en el editor (los enlaces no se abren)
-  document.addEventListener('click', function (e) {
-    var z = e.target && e.target.closest ? e.target.closest('[data-slot]') : null; if (!z) return;
-    e.preventDefault(); e.stopPropagation(); aPadre({ accion: 'clic', zona: z.getAttribute('data-slot') });
-  }, true);
-  window.addEventListener('message', function (e) {
-    var d = e.data;
-    if (!d || typeof d !== 'object' || d.tipo !== 'avhub-ads' || e.source !== window.parent || !permitido(e.origin)) return;
-    if (d.accion === 'hola') { ultimo = ''; aPadre({ accion: 'listo' }); E.medir(); }
-    else if (d.accion === 'datos') { E.datos = window.AVHUB_ADS ? window.AVHUB_ADS.normalizar(d.datos || {}) : null; E.ver = d.ver || {}; E.avisar(); E.medir(); }
-    else if (d.accion === 'ir') {
-      var z = document.querySelector('[data-slot="' + String(d.zona || '').replace(/[^a-z0-9_-]/gi, '') + '"]');
-      if (z) z.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    }
-    else if (d.accion === 'desplazar') { var se = document.scrollingElement || document.documentElement; se.scrollTop += +d.dy || 0; }
-  });
-  aPadre({ accion: 'listo' });
-})();
-    </script>
     <script src="comun/electronica.js"></script>
     <script src="comun/ficha.js"></script>
     <link rel="stylesheet" href="comun/ficha.css" />
@@ -3870,73 +3437,14 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
       // PANEL DE ADMINISTRADOR (solo propietario): web app propia con acceso por cuenta de Google.
       // La comprobación del email se hace en el servidor; aquí solo va el enlace (vacío = aún no publicado).
       const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbwkc12y4LODbFe-kQidnR2MbbA6cbW1WbhU3UiqmDmshx-ncAdGYrFRy8PNjm9Wg6Mx3w/exec';
-      // ANUNCIOS: puntos de inserción localizados. La configuración (activo/inactivo y contenido) la da el
-      // panel de administrador; si no está publicado, se usa ads.json del repositorio.
-      let ANUNCIOS_PROMESA = null;
-      const SIN_PUBLICIDAD = true;   // v9.1 · SCREENS no lleva publicidad, afiliación ni monetización de ningún tipo: no se piden ni se muestran anuncios
-      const cargarAnuncios = () => {
-        if (SIN_PUBLICIDAD && !/[?&]anuncios=editor\b/.test(location.search)) return Promise.resolve(null);
-        if (!ANUNCIOS_PROMESA) {
-          const fuentes = (ADMIN_URL ? [ADMIN_URL + '?accion=anuncios'] : []).concat(['ads.json']);
-          ANUNCIOS_PROMESA = (async () => {
-            // Modo de prueba del gestor de anuncios (?anuncios=demo): usa lo guardado en el gestor en este navegador
-            if (/[?&]anuncios=demo\b/.test(location.search)) {
-              try { const d = JSON.parse(localStorage.getItem('avhub-anuncios-demo') || 'null'); if (d) return window.AVHUB_ADS.normalizar(d); } catch (e) { /* sigue */ }
-            }
-            for (const u of fuentes) {
-              try { const r = await fetch(u, { cache: 'no-cache' }); if (r.ok) { const j = await r.json(); if (j && (j.slots || j.zonas)) return window.AVHUB_ADS.normalizar(j); } } catch (e) { /* siguiente */ }
-            }
-            return window.AVHUB_ADS.normalizar({});
-          })();
-        }
-        return ANUNCIOS_PROMESA;
-      };
-      // Anuncios (v4.5): motor común AVHUB ADS (formatos, rotación, fechas, dispositivo y clics).
-      // Cada zona es un contenedor vacío que el motor rellena; si no hay anuncio vigente queda oculto.
-      const adClic = (id) => {
-        if (!ADMIN_URL || !id) return;
-        try { fetch(ADMIN_URL + '?accion=clic&id=' + encodeURIComponent(id), { mode: 'no-cors', keepalive: true }); } catch (e) { /* sin conexión */ }
-      };
-      const AdSlot = ({ id }) => {
-        const ref = useRef(null);
-        useEffect(() => {
-          let vivo = true, limpiar = null;
-          const mq = window.matchMedia('(max-width: 767px)');
-          let datos = null;
-          // v8.1 · en el editor de anuncios (?anuncios=editor) se pintan los anuncios que se están editando
-          const ED = window.AVHUB_EDITOR;
-          const pintar = () => {
-            if (limpiar) limpiar(); limpiar = null;
-            if (!vivo || !ref.current) return;
-            if (ED) { limpiar = window.AVHUB_ADS.montar(ref.current, id, ED.datos || window.AVHUB_ADS.normalizar({}), { esMovil: mq.matches, preview: true, ver: (ED.ver || {})[id], hueco: true }); ED.medir(); return; }
-            if (datos) limpiar = window.AVHUB_ADS.montar(ref.current, id, datos, { esMovil: mq.matches, onClic: adClic });
-          };
-          if (ED) { ED.subs.push(pintar); ED.observar(ref.current); pintar(); }
-          else cargarAnuncios().then(d => { datos = d; pintar(); });
-          const cambio = () => pintar();
-          if (mq.addEventListener) mq.addEventListener('change', cambio); else mq.addListener(cambio);
-          return () => { vivo = false; if (ED) ED.subs = ED.subs.filter(f => f !== pintar); if (limpiar) limpiar(); if (mq.removeEventListener) mq.removeEventListener('change', cambio); else mq.removeListener(cambio); };
-        }, [id]);
-        return <div ref={ref} className="avad-zona no-print" data-slot={id} />;
-      };
-      // Minibanner fijo del configurador oficial de TRAULUX: va siempre en la posición del AD1, encima del AD1 si lo hay.
-      // Se activa o desactiva desde el panel de administrador (slots.traulux.activo); si no hay dato, aparece.
+      // Enlace fijo a los configuradores (informativo: sin publicidad, afiliación ni seguimiento). v9.4 · ya no depende de ningún motor de anuncios.
       const CONFIGURADORES_URL = 'configuradores/';
       const TRAULUX_OFICIAL_URL = 'https://traulux.net/led/configurador';
-      const AdTraulux = () => {
-        const [on, setOn] = useState(false);
-        useEffect(() => {
-          const ED = window.AVHUB_EDITOR;
-          if (ED) { const f = () => setOn(!(ED.datos && ED.datos.traulux && ED.datos.traulux.activo === false)); ED.subs.push(f); f(); return () => { ED.subs = ED.subs.filter(x => x !== f); }; }
-          let vivo = true; cargarAnuncios().then(sl => { if (vivo) setOn(!(sl && sl.traulux && sl.traulux.activo === false)); }); return () => { vivo = false; };
-        }, []);
-        if (!on) return null;
-        return (
+      const AdTraulux = () => (
           <div className="ad-traulux no-print" data-slot="traulux">
             <a href={CONFIGURADORES_URL} target="_blank" rel="noopener noreferrer"><img src="assets/traulux-x.svg" alt="TRAULUX" /><span>CONFIGURADOR OFICIAL DE PANTALLAS LED DE TRAULUX</span></a>
           </div>
-        );
-      };
+      );
       // Motor de electrónica: comun/electronica.js (común con SCREENS)
       const { elecNorm, elecMpx, elecDeHoja, calcularElectronicas, calcularMediaservers } = window.SC_ELEC;
 
@@ -7445,7 +6953,6 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                     </div>
                     {cosidoSel}
                     <AdTraulux />
-                    <AdSlot id="panel" />
                     </div>
                     ) : (
                     <div className="col-der"><div className="card-sec space-y-2 lg:space-y-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
@@ -7620,7 +7127,6 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                     </div>
                     {cosidoSel}
                     <AdTraulux />
-                    <AdSlot id="panel" />
                     </div>
                     )}
                   </div>
@@ -9442,13 +8948,9 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                     </div></div>
                   )}
 
-                  <div className="ad-fila no-print">
-                    <AdSlot id="hero" />
-                    <AdSlot id="resultados" />
-                  </div>
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v9.3', document.documentElement.lang || 'es')}} /> : <span><a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a></span>}
+                    {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v9.4', document.documentElement.lang || 'es')}} /> : <span><a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a></span>}
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -9459,7 +8961,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       *Cálculo automático que puede contener errores: verifícalo con tu método habitual o con un técnico antes de presupuestar o instalar.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v9.3', document.documentElement.lang || 'es', {sinEnlaces: true})}} /> : <span><a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a></span>} · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
+                      {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v9.4', document.documentElement.lang || 'es', {sinEnlaces: true})}} /> : <span><a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a></span>} · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
                     </div>
                   </div>
               </main>
