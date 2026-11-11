@@ -32,8 +32,7 @@ Como cualquier web, al abrirla tu navegador se conecta a los servicios que la ha
 | GitHub Pages (GitHub, Inc.) | alojamiento de la web | dirección IP y datos técnicos de la conexión, que GitHub registra por seguridad |
 | Google Apps Script y Gmail (Google) | leer textos y datos comunes de la familia y recibir los avisos de fallo | dirección IP; en un aviso de fallo, lo que tú escribas, el correo que indiques (opcional), las capturas que adjuntes, la dirección de la página, el tamaño de pantalla y el tipo de navegador |
 | Hoja de cálculo de catálogo servida por Google Apps Script | mostrar el catálogo de equipos | dirección IP |
-| Google Fonts (Google) | tipos de letra | dirección IP |
-| Redes de distribución de librerías (unpkg, cdnjs/Cloudflare, jsDelivr, Tailwind CDN) | cargar librerías de código abierto | dirección IP |
+| jsDelivr y Hugging Face, solo si usas el dictado por voz | cargar el reconocimiento de voz, que se ejecuta en tu dispositivo | dirección IP |
 | YouTube y Vimeo, solo cuando abres o reproduces un vídeo incrustado | mostrar vídeos | dirección IP y las cookies propias de esos servicios |
 | Enlaces a webs de fabricantes y redes sociales, solo si los pulsas | información de productos y compartir | los que recoja cada web de destino |
 

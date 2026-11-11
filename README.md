@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v9.4** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v9.6** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,24 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v9.4)
+## Cambios de la versión actual (v9.6)
+
+- **Botón «Instalar»** en la barra de la consola, junto a la seta: instala SCREENS como una app en el móvil, la tableta o el ordenador. Es el botón común a las apps de AVHUB (`instalar.js`). La copia para usarla sin conexión la sigue llevando el service worker que ya tenía (`sw.js`): con internet, siempre lo último; sin internet, la última copia guardada.
+- **La copia sin conexión se completa ya en la primera visita:** antes hacía falta abrir la app una segunda vez para que quedara guardada entera.
+- Sin cambios de diseño ni de cálculos.
+
+## Cambios de la versión v9.5
+
+**Todo en casa.** SCREENS deja de pedir piezas a redes de distribución externas:
+
+- **Tailwind** ya no se carga ni se compila en el navegador: `assets/tailwind.css` es su hoja ya generada, solo con las clases que usa la ventana «una pantalla LED». Carga más rápido y funciona sin conexión a ese servicio. Si se añaden clases nuevas, se regenera con `sh tools/tailwind.sh`.
+- **three.js** y sus módulos se sirven desde `assets/lib/three/`.
+- **Inter** se sirve desde `assets/fonts/` también en la página de configuradores.
+- Solo queda fuera, y solo si se usa, el dictado por voz. Los datos del catálogo siguen llegando en vivo de la hoja de cálculo, como siempre.
+- No cambia ningún cálculo ni el diseño. Licencias en `assets/lib/LICENCIAS.md`.
+
+Sigue de la v9.4:
+
 
 **Fuera el motor de anuncios.** Desde la v9.1 la app ya no mostraba anuncios, pero el código seguía dentro, dormido. Ahora se ha retirado del todo: el motor, su modo editor, sus estilos, las tres zonas y el archivo `ads.json`. El enlace a los configuradores sigue en su sitio, como enlace informativo. No cambia ningún cálculo ni el aspecto de la app.
 

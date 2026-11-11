@@ -9,11 +9,14 @@ import { interpretar } from './peticion.js';
 import { vistasTecnicas, activarVistas } from './vistas.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v9.4';
+const VERSION = 'v9.6';
 // v8.9 · crédito común de AVHUB (credito.js) y seta de aviso de fallos (fallo.js), los mismos en toda la familia
 if (window.AVCREDITO) window.AVCREDITO.alCambiar(() => { try { pintarCabecera(); } catch (e) {} });
 if (window.AVFALLO) { const bi = document.querySelector('#btn-idioma'); if (bi) { const bf = window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() }); bf.id = 'btn-fallo'; bi.before(bf);
   const talla = () => { const h = bi.offsetHeight; if (h) bf.style.setProperty('--avf', h + 'px'); }; talla(); addEventListener('resize', talla); setTimeout(talla, 800); } }
+// v9.6 · botón «Instalar», común a toda la familia (instalar.js): instala SCREENS como una app; la copia sin conexión la lleva el service worker de siempre (sw.js)
+if (window.AVINSTALA) { const bi = document.querySelector('#btn-idioma'); if (bi) { const bn = window.AVINSTALA.boton({ app: 'SCREENS', idioma: () => idioma(), sw: false }); bn.id = 'btn-instala'; (document.querySelector('#btn-fallo') || bi).before(bn);
+  const talla = () => { const h = bi.offsetHeight; if (h) bn.style.setProperty('--avi', h + 'px'); }; talla(); addEventListener('resize', talla); setTimeout(talla, 800); } }
 const ELEC = globalThis.SC_ELEC, { fichaHTML } = globalThis.SC_FICHA;
 const DEF = () => ({
   cantidad: 'varias', tecnologia: 'led',
