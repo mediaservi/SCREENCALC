@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v9.0** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v9.1** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -50,7 +50,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **Anuncios (motor AVHUB ADS):** 3 zonas (pie del menú y pie de resultados, izquierda y derecha). Cada zona admite varios anuncios con rotación; cada anuncio tiene formato estándar (horizontal 16:9, vertical 9:16, cuadrado 1:1, retrato 4:5, hero a sangre 21:9, banner 728×90, banner móvil 320×100, rectángulo 300×250, rascacielos 160×600), texto al lado, debajo, encima o sin texto, botón opcional, carrusel de fotos, vídeos y YouTube, fechas de inicio y fin, solo móvil o solo escritorio, y contador de clics. Todo el anuncio abre su enlace en una pestaña nueva (o `ads.json` mientras el panel no responda). Además, el minibanner fijo del configurador oficial de TRAULUX va encima de la zona del menú y se activa desde el panel.
 - **AVHUB ADMIN (`admin/anuncios.html`):** panel interno con 4 pestañas (la cuarta, **CATÁLOGO**, prepara el catálogo maestro de modelos y el informe de incoherencias de la web para marketing): **ANUNCIOS** (gestor visual con arrastrar y soltar y previo), **FIRMAS** (firmas de correo visuales con banners estáticos, animados en GIF o en mosaico y contador de clics, listas para pegar en Gmail, Outlook o Apple Mail) y **NEWSLETTER** (editor por bloques con vista escritorio y móvil, exportación HTML y envío desde el panel).
 - **Página de configuradores (`configuradores/`):** compara SCREENS y el configurador oficial de TRAULUX y lleva a cada uno (es / en / ca).
-- **Gestor de anuncios (`admin/anuncios.html`, pestaña ANUNCIOS):** pantalla visual para arrastrar anuncios entre zonas, arrastrar fotos entre anuncios o desde la biblioteca, subir fotos, elegir formato y ver al lado de cada anuncio el previo real en escritorio o móvil. En el panel de administrador guarda de verdad; abierto desde el repositorio funciona en modo demo (guarda en el navegador) y `index.html?anuncios=demo` muestra esos anuncios de prueba. Como afiliado de Amazon, se obtienen ingresos por las compras adscritas que cumplen los requisitos aplicables.
+- **Gestor de anuncios (`admin/anuncios.html`, pestaña ANUNCIOS):** pantalla visual para arrastrar anuncios entre zonas, arrastrar fotos entre anuncios o desde la biblioteca, subir fotos, elegir formato y ver al lado de cada anuncio el previo real en escritorio o móvil. En el panel de administrador guarda de verdad; abierto desde el repositorio funciona en modo demo (guarda en el navegador) y `index.html?anuncios=demo` muestra esos anuncios de prueba. **Desde la v9.1 la app pública no muestra anuncios**: el gestor queda sin uso.
 - **Adaptada a PC y móvil:** el panel lateral de entrada va en 2 columnas sin scroll en PC y se ve en grande en móvil.
 
 - **AVHUB:** el logo de AVHUB en la cabecera (entre el logo de SCREENS y los iconos) lleva a https://avhub.mediaservi.com/. AVHUB es la nueva app en preparación que reunirá en un solo sitio SCREENS, el hardware de proyectos AV, novedades y VJSHOW, con el mismo idioma en todas las secciones.
@@ -94,7 +94,13 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v9.0)
+## Cambios de la versión actual (v9.1)
+
+**Sin publicidad ni afiliación.** La app pública ya no pide ni muestra anuncios (las zonas AD1, AD2 y AD3 quedan vacías) y desaparece la declaración de afiliado. El enlace al configurador oficial de Traulux se mantiene solo como información.
+
+**Documentación legal completa:** `LEGAL.md`, `DISCLAIMER.md`, `PRIVACY.md` y `COOKIES.md` en el repositorio, enlazados desde el «Aviso legal» de la app, que añade que esto no es un proyecto técnico ni asesoramiento profesional y un apartado de privacidad y contacto.
+
+Sigue de la v9.0:
 
 **Aviso legal.** Detrás de la línea de crédito hay un enlace «Aviso legal» que explica, en lenguaje llano y en es/en/ca, que esto es software gratuito hecho por afición, sin garantías, con resultados orientativos que hay que comprobar siempre y de uso bajo la responsabilidad de cada cual.
 
@@ -746,3 +752,5 @@ Proyecto de [mediaservi.com](https://mediaservi.com). Si te gusta, prueba tambi�
 ## Aviso
 
 Software gratuito y de código abierto, hecho con pasión por un aficionado en su tiempo libre. No es un producto profesional. Se ofrece «tal cual», sin garantías de ningún tipo; los resultados son orientativos y hay que comprobarlos siempre; se usa bajo la responsabilidad de cada cual, hasta donde lo permita la ley aplicable. El aviso completo (es/en/ca) está en la propia app, en el enlace «Aviso legal» que acompaña a la línea de crédito. Licencia GPL-3.0.
+
+Documentos legales del repositorio: [`LEGAL.md`](LEGAL.md) (aviso legal), [`DISCLAIMER.md`](DISCLAIMER.md) (garantías y responsabilidad), [`PRIVACY.md`](PRIVACY.md) (privacidad), [`COOKIES.md`](COOKIES.md) (cookies y almacenamiento local) y [`LICENSE`](LICENSE) (GPL-3.0). Sin publicidad, afiliación ni ingresos de ningún tipo.
