@@ -462,10 +462,10 @@ html.estudio-fijo header{position:relative;flex:none}
 <header>
   <div class="marca">
     <svg viewBox="0 0 60 48" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9900ff"/><stop offset=".55" stop-color="#00b4ff"/><stop offset="1" stop-color="#00ff04"/></linearGradient></defs><path d="M8 44 L28 8 Q30 4 32 8 L54 44 Z" fill="none" stroke="url(#g)" stroke-width="7" stroke-linejoin="round"/><path d="M26 22 L38 30 L26 38 Z" fill="#9900ff"/></svg>
-    <div>AVHUB · ADMIN <span style="font-size:10px;color:var(--tenue)">v1.4</span><small>ANUNCIOS · FIRMAS · NEWSLETTER · CATÁLOGO</small></div>
+    <div>AVHUB · ADMIN <span style="font-size:10px;color:var(--tenue)">v1.4</span><small>CATÁLOGO</small></div>
   </div>
   <span id="modo" class="modo"></span>
-  <div class="tabs" id="tabs"><button data-s="ads" class="on">ANUNCIOS</button><button data-s="firmas">FIRMAS</button><button data-s="news">NEWSLETTER</button><button data-s="catalogo">CATÁLOGO</button></div>
+  <div class="tabs" id="tabs"><!-- v9.2 · AVHUB no lleva publicidad, boletines ni firmas con contador: esas pestañas quedan retiradas y el panel abre en CATÁLOGO --><button data-s="ads" hidden>ANUNCIOS</button><button data-s="firmas" hidden>FIRMAS</button><button data-s="news" hidden>NEWSLETTER</button><button data-s="catalogo" class="on">CATÁLOGO</button></div>
   <div id="led" class="led">Cargando…</div>
   <div class="cab-acciones">
     <div class="seg" id="vista"><button data-v="escritorio" class="on">Escritorio</button><button data-v="movil">Móvil</button></div>
@@ -1601,7 +1601,7 @@ html.estudio-fijo header{position:relative;flex:none}
   var TEMAS_ICONO = { original: 'Colores originales', linea: 'Línea negra', lineablanca: 'Línea blanca', oscuro: 'Círculo gris oscuro', marca: 'Círculo violeta', verde: 'Círculo verde', gris: 'Círculo gris claro' };
   var CORREO_BAJA = 'tronik.dts@gmail.com';
   var F = { lista: [], banners: [] }, N = { lista: [], destinatarios: '' };
-  var seccion = 'ads', firmaSel = null, newsSel = null, bloqueSel = null;
+  var seccion = 'catalogo', firmaSel = null, newsSel = null, bloqueSel = null;   // v9.2 · el panel abre en CATÁLOGO (anuncios, firmas y boletín retirados)
   function ea(s) { return esc(s).replace(/'/g, '&#39;'); }
   function urlOk(u) { u = String(u || '').trim(); return /^(https?:\/\/|mailto:|tel:|data:image\/)/i.test(u) ? u : ''; }
   function webUrl(u) { u = String(u || '').trim(); if (!u) return ''; return /^https?:\/\//i.test(u) ? u : 'https://' + u; }
