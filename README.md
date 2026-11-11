@@ -95,6 +95,7 @@ Los calculadores de audio y escenario que nacieron aquí (primero como «Hardwar
 ## Cambios de la versión actual (v9.6)
 
 - **Botón «Instalar»** en la barra de la consola, junto a la seta: instala SCREENS como una app en el móvil, la tableta o el ordenador. Es el botón común a las apps de AVHUB (`instalar.js`). La copia para usarla sin conexión la sigue llevando el service worker que ya tenía (`sw.js`): con internet, siempre lo último; sin internet, la última copia guardada.
+- **La copia sin conexión se completa ya en la primera visita:** antes hacía falta abrir la app una segunda vez para que quedara guardada entera.
 - Sin cambios de diseño ni de cálculos.
 
 ## Cambios de la versión v9.5
