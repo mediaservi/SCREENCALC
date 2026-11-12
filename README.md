@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v9.9** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.0** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,11 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v9.9)
+## Cambios de la versión actual (v10.0)
+
+- **Petición por texto · pitch con la cifra delante**: ahora se entiende «3.9p», «exterior3.9p» o «2,6 p» (como lo rotula la propia simulación), además de «P3.9», «pitch 3.9» y «3.9 mm de pitch». Antes no se reconocía y, al no ver ningún pitch, la app aplicaba el más fino del catálogo para ese tipo de pantalla. Vale para una pantalla y para varias superficies. «24p», «25p», «30p», «50p» y «60p» se siguen leyendo como fotogramas, no como pitch.
+
+### v9.9
 
 - **El botón PDF vuelve a dar un PDF**: descarga el archivo directamente (`SCREENS_fecha_hora.pdf`) en lugar de abrir el diálogo de impresión del navegador, que en muchos aparatos solo ofrecía impresoras. Vale para una pantalla LED (dos hojas), varias superficies y proyección, en ordenador, tableta y móvil.
 - La hoja es la misma de siempre (cabecera, simulación, resultados, equipos, electrónica, cableado, pie y número de hoja); los bloques no se parten entre hojas.

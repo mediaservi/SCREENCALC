@@ -2,10 +2,11 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                SCREENS - INDEX                               ║
-║                          Versión actual: v9.9                              ║
+║                          Versión actual: v10.0                             ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v9.9
+ÚLTIMA ACTUALIZACIÓN: v10.0
+- v10.0: la petición por texto entiende el pitch escrito con la cifra delante de la p («3.9p», «exterior3.9p», «2,6 p»), igual que lo rotula la simulación; antes solo valía «P3.9», «pitch 3.9» o «3.9 mm de pitch», y al no reconocerlo se aplicaba el pitch más fino del catálogo. Mismo arreglo en la consola (varias superficies).
 - v9.9: el botón PDF descarga el archivo directamente (pdf.js, con html2canvas y jsPDF alojados en assets/lib/pdf) con la misma hoja de dos páginas; ya no depende del diálogo de impresión del navegador, que queda solo como recurso si la descarga falla. Sin cambios de diseño ni de cálculos.
 - v9.8: logo de MSGAME con dirección nueva y caché renovada.
 - v9.7: correcciones de la revisión de fórmulas: una columna (o fila) de más de 16 A se parte en tramos de 16 A como máximo; las salidas 4K del mediaserver se cuentan por rejilla de 3840 × 2160 (igual que la consola); MCTRL660 PRO con su capacidad real (2,3 Mpx, 2 salidas ópticas). Sin cambios de diseño.
@@ -3360,15 +3361,16 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
         else if (/interior|indoor|\bsala\b|salon|oficina|\bstand\b|showroom/.test(t)) r.tipo = 'INDOOR';
         if (/alquiler|rental|evento|\bgira\b|touring|concierto|feria|escenario|temporal/.test(t)) r.clase = 'RENTAL';
         else if (/instalacion|instalar|\bfij[oa]\b|permanente|install/.test(t)) r.clase = 'INSTALL';
-        // Pitch: se recogen TODAS las menciones («pitch 1.9 o 2.5», «P2.6 y P3.9», «2.5 mm de pitch», «1.9 pitch»)
+        // Pitch: se recogen TODAS las menciones («pitch 1.9 o 2.5», «P2.6 y P3.9», «2.5 mm de pitch», «1.9 pitch», «3.9p»)
         // y se usa la primera; si hay varias distintas se avisa para que se pueda elegir otra.
         const pitches = [];
         const addP = (v) => { const x = parseFloat(v); if (x > 0 && x <= 40 && !pitches.includes(x)) pitches.push(x); };
         const NP = '(\\d{1,2}(?:\\.\\d+)?)';
-        const reP = new RegExp('(?:pitch|paso(?: de pixel)?|pixel pitch)\\s*(?:de\\s*|:\\s*)?' + NP + '(?:\\s*mm)?((?:\\s*(?:,|/|o|y|u|or|and|ou|e|i|ala|a)\\s*(?:p\\s?)?' + NP + '(?:\\s*mm)?(?![\\d.]*\\s*(?:m|mts?|metros?|cm)(?![a-z])))*)|\\bp\\s?' + NP + '\\b|' + NP + '\\s*(?:mm\\s*)?(?:de\\s*)?(?:pitch|paso)', 'g');
+        const reP = new RegExp('(?:pitch|paso(?: de pixel)?|pixel pitch)\\s*(?:de\\s*|:\\s*)?' + NP + '(?:\\s*mm)?((?:\\s*(?:,|/|o|y|u|or|and|ou|e|i|ala|a)\\s*(?:p\\s?)?' + NP + '(?:\\s*mm)?(?![\\d.]*\\s*(?:m|mts?|metros?|cm)(?![a-z])))*)|\\bp\\s?' + NP + '\\b|' + NP + '\\s*(?:mm\\s*)?(?:de\\s*)?(?:pitch|paso)|(?:^|[^\\d.])' + NP + '\\s?p(?![a-z0-9])', 'g');
         let mp;
         while ((mp = reP.exec(t))) {
           if (mp[1]) { addP(mp[1]); (mp[2] || '').replace(/(\d{1,2}(?:\.\d+)?)/g, (x) => addP(x)); }
+          else if (mp[6]) { if (/\./.test(mp[6]) || parseFloat(mp[6]) <= 20) addP(mp[6]); }   /* v10.0 · «3.9p», «exterior3.9p», «2.6 p»: la cifra delante de la p, como en el rótulo de la simulación (24p, 25p, 30p, 50p y 60p son fotogramas, no pitch) */
           else addP(mp[4] || mp[5]);
         }
         if (pitches.length) r.pitch = pitches[0];
@@ -8958,7 +8960,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
 
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v9.9', document.documentElement.lang || 'es')}} /> : <span><a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a></span>}
+                    {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v10.0', document.documentElement.lang || 'es')}} /> : <span><a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a></span>}
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -8969,7 +8971,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       *Cálculo automático que puede contener errores: verifícalo con tu método habitual o con un técnico antes de presupuestar o instalar.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v9.9', document.documentElement.lang || 'es', {sinEnlaces: true})}} /> : <span><a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a></span>} · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
+                      {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v10.0', document.documentElement.lang || 'es', {sinEnlaces: true})}} /> : <span><a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a></span>} · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
                     </div>
                   </div>
               </main>

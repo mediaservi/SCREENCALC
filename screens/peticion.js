@@ -95,7 +95,8 @@ export function interpretar(texto) {
   if (/backup|redundan/.test(t)) { c.elec.backup = true; vistos.push({ k: 'txt', v: 'BACKUP' }); }
   if (/fibra|fiber|fibre/.test(t)) { c.elec.conexion = 'fibra'; vistos.push({ k: 'fibra' }); }
   // v7.9 · pitch pedido («P1.5», «pitch 1,5», «1,5 mm de pitch»): la consola elige el modelo de ese pitch; «COB», uno COB
-  const pi = t.match(/\bp\s?(\d{1,2}(?:\.\d{1,3})?)\b|pitch\s*(?:de\s*)?(\d{1,2}(?:\.\d{1,3})?)|(\d{1,2}(?:\.\d{1,3})?)\s*mm\s*de\s*pitch/);
+  // v10.0 · también la cifra delante de la p («3.9p», «exterior3.9p»), salvo 24p, 25p, 30p, 50p y 60p, que son fotogramas
+  const pi = t.match(/\bp\s?(\d{1,2}(?:\.\d{1,3})?)\b|pitch\s*(?:de\s*)?(\d{1,2}(?:\.\d{1,3})?)|(\d{1,2}(?:\.\d{1,3})?)\s*mm\s*de\s*pitch/) || (() => { const m = t.match(/(?:^|[^\d.,])(\d{1,2}(?:[.,]\d{1,3})?)\s?p(?![a-z0-9])/); return m && (/[.,]/.test(m[1]) || parseFloat(m[1]) <= 20) ? [0, m[1].replace(',', '.')] : null; })();
   const pitch = pi ? n(pi[1] || pi[2] || pi[3]) : null; if (pitch) vistos.push({ k: 'pitch', v: pitch });
   return { cantidad, tecnologia, cambios: c, vistos, pitch, cob: /\bcob\b/.test(t) };
 }
