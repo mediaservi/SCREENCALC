@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.12** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.13** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,15 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.12 · beta)
+## Cambios de la versión actual (v10.13 · beta)
+
+- **BLOCKS beta 11** (`blocks/`), correcciones de Josep:
+  - **DIMENSIONES** (M2A, icono de la regla) une Tamaño y Dimensiones: ancho y alto en una fila, unidades, formatos, ajuste a la medida, la medida real con cabinets enteros y diagonal, formato, superficie y fondo.
+  - **RESOLUCIÓN** (M3A) une Pitch y Resolución: pitch con sus flechas y el origen de la elección, distancia del público, resolución resultante, resolución mínima (con ✓ en los niveles a los que llega) y píxeles, píxeles por cabinet y refresco.
+  - **Colocación:** Entorno y uso en M1A, Dimensiones en M2A, Resolución en M3A; Cabinet sigue en M2B. M1B y M3B quedan libres.
+  - **Cota de altura sobre el suelo** de la simulación con contraste: etiqueta blanca con borde violeta y línea con reborde blanco, legible sobre cualquier pared.
+
+### v10.12 (beta)
 
 - **BLOCKS beta 10** (`blocks/`): el botón de nuevo cálculo usa el icono de reinicio elegido por Josep, y pulsar el logo de SCREENS hace lo mismo (vuelve a la página de inicio por defecto), como en la clásica.
 

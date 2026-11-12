@@ -1,7 +1,7 @@
 /* SCREENS · service worker: uso sin conexión.
    Estrategia: red primero (datos siempre actualizados) y, si no hay red, la copia guardada
    (aplicación, librerías e imágenes). */
-const CACHE = 'screens-offline-v19';
+const CACHE = 'screens-offline-v20';
 const EXCLUIR = /youtube|googlevideo|ytimg|google-analytics|script\.google\.com|docs\.google\.com|googleusercontent|google\.com/;
 
 self.addEventListener('install', () => self.skipWaiting());

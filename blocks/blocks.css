@@ -214,3 +214,22 @@ select.sel { width: 100%; min-width: 0; border: 1px solid var(--verde-txt); back
 .fila.op.cf > span { flex: 0 0 auto; }
 .fila.op.cf b { flex: 1 1 0; }
 .fila.tres.peq .tog { font-size: calc(var(--u) * 11.5); letter-spacing: 0; }
+/* beta 11: DIMENSIONES (tamaño + medidas) y RESOLUCIÓN (pitch + resolución) fusionados */
+.gran.med { font-size: calc(var(--u) * 28); flex: none; overflow: hidden; text-overflow: ellipsis; }
+.gran.med small { font-size: calc(var(--u) * 12.5); }
+.celdas { display: flex; gap: calc(var(--u) * 8); justify-content: space-between; flex: none; border-top: 1px dotted var(--linea); padding-top: calc(var(--u) * 4); }
+.cel { min-width: 0; display: flex; flex-direction: column; }
+.cel span { font-size: calc(var(--u) * 10.5); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tenue); white-space: nowrap; }
+.cel b { font-family: 'Share Tech Mono', monospace; font-weight: 400; font-size: calc(var(--u) * 14.5); white-space: nowrap; }
+[data-blk="M2A"] .blk-cu, [data-blk="M3A"] .blk-cu { gap: calc(var(--u) * 6); }
+[data-blk="M2A"] .num label { font-size: calc(var(--u) * 10); padding: 0 calc(var(--u) * 5); letter-spacing: .04em; }
+[data-blk="M2A"] .num input { font-size: calc(var(--u) * 22); padding: calc(var(--u) * 5) calc(var(--u) * 2); }
+[data-blk="M2A"] .num span { font-size: calc(var(--u) * 12); padding-right: calc(var(--u) * 3); }
+[data-blk="M2A"] .num .pm button { width: calc(var(--u) * 22); }
+[data-blk="M2A"] .fila.tres .tog { min-height: calc(var(--u) * 28); }
+[data-blk="M3A"] .num input { font-size: calc(var(--u) * 22); padding: calc(var(--u) * 4) calc(var(--u) * 4); }
+.fila.pit { gap: calc(var(--u) * 5); }
+.fila.pit .chip { flex: none; }
+[data-blk="M2A"] .blk-cab .pestanas { gap: calc(var(--u) * 2); }
+[data-blk="M2A"] .blk-cab .pestanas button { padding: calc(var(--u) * 2) calc(var(--u) * 5); font-size: calc(var(--u) * 11); letter-spacing: 0; }
+[data-blk="M2A"] .blk-cab { gap: calc(var(--u) * 6); }
