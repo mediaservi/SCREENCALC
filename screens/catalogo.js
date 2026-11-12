@@ -97,7 +97,7 @@ export async function cargarCatalogo(alActualizar) {
   else if (!cache || !cache.length) alActualizar([], 'error');
 }
 export const enStock = (m) => String(m.disp || m.stock || '').toUpperCase() === 'STOCK' || String(m.stock || '').toUpperCase() === 'SI';
-// Prioridad a igual pitch (misma regla que led.html): prioridad manual, stock y familia preferente
+// Prioridad a igual pitch (misma regla que led.html): 1º stock, 2º prioridad manual, 3º familia preferente (v10.1)
 export function ordenar(lista) {
   const fam = (m) => String(m.family || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const rank = (m) => {
@@ -110,5 +110,5 @@ export function ordenar(lista) {
     return (enStock(m) ? 0 : 10) + f;
   };
   const pm = (m) => { const p = parseFloat(m.prioridad); return isNaN(p) ? 999 : p; };
-  return [...lista].sort((a, b) => (a.pitch - b.pitch) || (pm(a) - pm(b)) || (rank(a) - rank(b)) || (a.nits - b.nits));
+  return [...lista].sort((a, b) => (a.pitch - b.pitch) || ((enStock(a) ? 0 : 1) - (enStock(b) ? 0 : 1)) || (pm(a) - pm(b)) || (rank(a) - rank(b)) || (a.nits - b.nits));
 }
