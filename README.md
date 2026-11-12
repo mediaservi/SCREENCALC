@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.4** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.5** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,11 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.4 · beta)
+## Cambios de la versión actual (v10.5 · beta)
+
+- **BLOCKS beta 3** (`blocks/`): cada bloque recupera su relieve de burbuja (fondo propio, esquinas redondas y sombra, sin línea de marco); las franjas de cabecera y de pie siguen sin rectángulos marcados.
+
+### v10.4 (beta)
 
 - **BLOCKS beta 2 · una pantalla LED** (`blocks/`; la versión clásica no cambia):
   - Los bloques ya no dibujan su marco: la plantilla ordena la pantalla pero no se ve. Cada bloque conserva su icono distintivo y su título.

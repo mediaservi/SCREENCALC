@@ -163,3 +163,11 @@ select.sel { width: 100%; min-width: 0; border: 1px solid var(--verde-txt); back
 .fondos button[aria-pressed="true"] { border-color: var(--marca); }
 .ic-bt:hover, .ic-bt:focus-visible, .tog:hover, .tog:focus-visible, .pestanas button:hover { box-shadow: 0 0 0 calc(var(--u) * 2) var(--verde), 0 0 calc(var(--u) * 12) color-mix(in srgb, var(--verde) 60%, transparent); border-color: var(--verde); outline: none; }
 .ic-bt:hover, .ic-bt:focus-visible { color: inherit; }
+/* beta 3: vuelve el relieve de burbuja de cada bloque (sin línea de marco); cabeceras y pie siguen sin rectángulos */
+:root { --relieve: inset 0 1px 0 rgba(255, 255, 255, .09), inset 0 -1px 0 rgba(0, 0, 0, .28), 0 calc(var(--u) * 7) calc(var(--u) * 18) rgba(0, 0, 0, .34); }
+:root[data-tema="claro"] { --relieve: inset 0 1px 0 rgba(255, 255, 255, .55), inset 0 -1px 0 rgba(0, 0, 0, .12), 0 calc(var(--u) * 6) calc(var(--u) * 16) rgba(30, 34, 46, .26); }
+.blk { background: linear-gradient(180deg, var(--blk), color-mix(in srgb, var(--blk) 86%, var(--fondo))); border-radius: calc(var(--u) * 18); box-shadow: var(--relieve); overflow: hidden; }
+.blk-cab { padding: calc(var(--u) * 8) calc(var(--u) * 14) calc(var(--u) * 4); }
+.blk-cu { padding: calc(var(--u) * 2) calc(var(--u) * 14) calc(var(--u) * 12); }
+.blk.pant .blk-cu { padding: 0 calc(var(--u) * 8) calc(var(--u) * 8); }
+.rejilla { gap: calc(var(--u) * 12); }
