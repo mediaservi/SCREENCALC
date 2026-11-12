@@ -349,3 +349,20 @@ select.sel { width: 100%; min-width: 0; border: 1px solid var(--verde-txt); back
   .f-hm .ic-bt { order: 3; }
   .pide-res { white-space: nowrap; font-size: calc(var(--u) * 13) !important; }
 }
+/* ===== beta 13 ===== */
+/* logos: cada tema usa su versión; ya no se invierten colores */
+.t-cla { display: none !important; } :root[data-tema="claro"] .t-cla { display: block !important; } :root[data-tema="claro"] .t-osc { display: none !important; }
+:root[data-tema="claro"] .logo.inv, :root[data-tema="claro"] .fam img { filter: none; }
+/* cabecera de bloque en una franja propia, con icono y título más grandes */
+.blk-cab { background: color-mix(in srgb, var(--blk2) 78%, #000 22%); border-bottom: 1px solid color-mix(in srgb, var(--linea) 60%, transparent); padding: calc(var(--u) * 6) calc(var(--u) * 12); margin-bottom: calc(var(--u) * 8); min-height: calc(var(--u) * 46); font-size: calc(var(--u) * 15); letter-spacing: .11em; }
+:root[data-tema="claro"] .blk-cab { background: color-mix(in srgb, var(--blk2) 80%, #000 20%); }
+.blk-cab b { color: var(--txt); font-weight: 900; }
+.blk-ic { width: calc(var(--u) * 28); height: calc(var(--u) * 28); }
+.blk.pant .blk-cab { margin-bottom: calc(var(--u) * 8); }
+[data-blk="M2A"] .blk-cab { gap: calc(var(--u) * 5); padding-right: calc(var(--u) * 8); }
+[data-blk="M3B"] select.sel, [data-blk="M3C"] select.sel { padding: calc(var(--u) * 4) calc(var(--u) * 6); font-size: calc(var(--u) * 16); }
+[data-blk="M3C"] .blk-cu, [data-blk="M3B"] .blk-cu { gap: calc(var(--u) * 6); }
+@media (max-width: 900px), (max-height: 520px) {
+  [data-blk="M1A"] { order: 1; } [data-blk="M2A"] { order: 2; } [data-blk="M3A"] { order: 3; } [data-blk="M1B"] { order: 4; } [data-blk="S1A"] { order: 5; } [data-blk="M2B"] { order: 6; } [data-blk="S1B"] { order: 7; } [data-blk="M3E"] { order: 8; } [data-blk="M3B"] { order: 9; } [data-blk="M3C"] { order: 10; } [data-blk="M3F"] { order: 11; }
+}
+@media (max-width: 559px) { .blk-cab { font-size: calc(var(--u) * 13.5); letter-spacing: .08em; } [data-blk="S1A"] .blk-cab .ic-bt { width: calc(var(--u) * 34); height: calc(var(--u) * 34); } }

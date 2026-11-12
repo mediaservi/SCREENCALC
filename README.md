@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.14** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.15** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,16 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.14 · beta)
+## Cambios de la versión actual (v10.15 · beta)
+
+- **Botón de instalar** (`instalar.js`, común a la clásica y a BLOCKS): al pasar el cursor o enfocarlo enseña un bocadillo como el del botón de fallos, con la flecha de descarga y su ámbar, en lugar del rótulo del navegador.
+- **BLOCKS beta 13** (`blocks/`):
+  - **Colocación:** Cabinet en M1B, Cabinets en M2B, Electrónica en M3B, Mediaserver en M3C, Señal en M3E y Alimentación en M3F. M3D queda libre.
+  - **MEDIASERVER**, bloque nuevo: añadir sí / no, marca (todas, NovaStar, PixelHue), audio Dante y elección del modelo entre los que valen, con sus salidas 4K.
+  - **Cabecera de cada bloque** en una franja propia, con el icono y el título más grandes.
+  - **Tema claro:** los logos conservan sus colores; solo las letras blancas pasan a oscuras para que se lean (`*-logo-claro.svg`).
+
+### v10.14 (beta)
 
 - **Idioma del navegador también en la página clásica de una pantalla LED** (`led.html`): la primera vez se abre en el idioma del navegador si está entre los suyos; después manda el último elegido.
 - **BLOCKS beta 12** (`blocks/`):
