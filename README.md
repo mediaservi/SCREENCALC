@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.0** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.1** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,11 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.0)
+## Cambios de la versión actual (v10.1)
+
+- **Qué modelo se propone primero** (entre modelos del mismo pitch): 1.º los que están en stock, 2.º la prioridad manual del catálogo (1 = primero), 3.º la familia preferente. Antes la prioridad manual iba por delante del stock. Vale para el calculador de una pantalla y para la consola.
+
+### v10.0
 
 - **Petición por texto · pitch con la cifra delante**: ahora se entiende «3.9p», «exterior3.9p» o «2,6 p» (como lo rotula la propia simulación), además de «P3.9», «pitch 3.9» y «3.9 mm de pitch». Antes no se reconocía y, al no ver ningún pitch, la app aplicaba el más fino del catálogo para ese tipo de pantalla. Vale para una pantalla y para varias superficies. «24p», «25p», «30p», «50p» y «60p» se siguen leyendo como fotogramas, no como pitch.
 
