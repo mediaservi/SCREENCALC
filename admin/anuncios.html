@@ -139,8 +139,8 @@ input[type=color]{width:34px;height:28px;padding:0;border:1px solid var(--linea)
 @media (max-width:760px){.nl-grid{grid-template-columns:1fr}.paleta{position:relative;top:0;flex-direction:row;flex-wrap:wrap}.paleta button{flex:1 1 130px}}
 
 /* catálogo */
-.catlista{display:flex;flex-direction:column;gap:4px;max-height:calc(100vh - 230px);overflow:auto;margin-top:8px}
-.catfila{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:8px;align-items:center;text-align:left;border:1px solid var(--linea);background:#141417;border-radius:7px;padding:7px 9px;color:var(--txt);font-size:12px;cursor:pointer}
+.catlista{display:flex;flex-direction:column;gap:4px;max-height:max(320px,calc(100vh - 340px));overflow:auto;margin-top:8px}
+.catfila{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto auto;gap:8px;align-items:center;text-align:left;border:1px solid var(--linea);background:#141417;border-radius:7px;padding:7px 9px;color:var(--txt);font-size:12px;cursor:pointer}
 .catinfo{display:flex;flex-direction:column;min-width:0}.catinfo b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.catinfo span{color:var(--tenue);font-size:11px}
 .catfila i{font-style:normal;white-space:nowrap}
 .catck{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--tenue);cursor:pointer}
@@ -148,6 +148,21 @@ input[type=color]{width:34px;height:28px;padding:0;border:1px solid var(--linea)
 .catck.grande{flex-direction:row;gap:8px;font-size:11px;color:var(--txt);border:1px solid var(--linea);border-radius:7px;padding:6px 10px}
 .catpri{display:flex;align-items:center;gap:3px}.catpri button{border:1px solid var(--linea);background:#1e1e24;border-radius:5px;font-size:10px;padding:2px 6px;color:var(--txt)}.catpri button:disabled{opacity:.3}.catpri b{font-size:11px;min-width:28px;text-align:center}
 .catfila.on{border-color:var(--on);background:#0f1f10}
+/* cabeceras del catálogo: filtros por columna, selección y acciones en grupo */
+.catcab{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:6px;margin-top:8px}
+.catcab label{display:flex;flex-direction:column;gap:2px;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--tenue);min-width:0}
+.catcab select{width:100%;min-width:0;border:1px solid var(--linea);background:#141417;color:var(--txt);border-radius:6px;padding:6px 6px;font-size:12px}
+.catcab select.puesto{border-color:var(--on);color:#00ff04}
+.catgrupo{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px;padding:7px 9px;border:1px solid var(--linea);border-radius:7px;background:#101013;font-size:12px}
+.catgrupo.hay{border-color:var(--on);background:#0f1f10}
+.catgrupo .todo{display:flex;align-items:center;gap:7px;font-weight:700;cursor:pointer;margin-right:auto}
+.catgrupo input[type=checkbox],.catsel input{width:18px;height:18px;accent-color:#b56bff;cursor:pointer}
+.catgrupo input[type=number]{width:58px;border:1px solid var(--linea);background:#141417;color:var(--txt);border-radius:6px;padding:5px 6px;font-size:12px}
+.catgrupo button{border:1px solid var(--linea);background:#1e1e24;color:var(--txt);border-radius:6px;padding:6px 9px;font-size:11px;font-weight:800;letter-spacing:.04em;cursor:pointer}
+.catgrupo button.pral{border-color:var(--on);color:#00ff04}
+.catgrupo button:disabled,.catgrupo input:disabled{opacity:.35;cursor:default}
+.catsel{display:flex;align-items:center}
+.catfila.marcada{border-color:#b56bff}
 .catfila.apagada{opacity:.5}
 .revision{border:1px solid var(--ambar);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px;background:#1e1a10}
 .revfila{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px}
@@ -161,7 +176,7 @@ input[type=color]{width:34px;height:28px;padding:0;border:1px solid var(--linea)
 .catder{position:sticky;top:76px}
 .tabs{flex-wrap:wrap;max-width:100%}
 @media (max-width:900px){.catgrid{grid-template-columns:1fr}.catder{position:relative;top:0}}
-@media (max-width:560px){.tabs button{padding:7px 9px;font-size:11px;letter-spacing:.04em}.catfila{grid-template-columns:auto minmax(0,1fr) auto}.catfila i{grid-column:2/-1;justify-self:start}.catlista{max-height:none}}
+@media (max-width:560px){.tabs button{padding:7px 9px;font-size:11px;letter-spacing:.04em}.catfila{grid-template-columns:auto auto minmax(0,1fr) auto}.catfila i{grid-column:3/-1;justify-self:start}.catlista{max-height:none}}
 
 :root{--chasis:#2A2A2A;--fondo:#18181c;--panel:#222226;--linea:#3a3a42;--txt:#e7e7ee;--tenue:#9a9aa8;--marca:#9900ff;--on:#00ff04;--ambar:#ffb000;--azul:#00b4ff;--rojo:#ff3b5c}
 *{box-sizing:border-box}
@@ -462,7 +477,7 @@ html.estudio-fijo header{position:relative;flex:none}
 <header>
   <div class="marca">
     <svg viewBox="0 0 60 48" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9900ff"/><stop offset=".55" stop-color="#00b4ff"/><stop offset="1" stop-color="#00ff04"/></linearGradient></defs><path d="M8 44 L28 8 Q30 4 32 8 L54 44 Z" fill="none" stroke="url(#g)" stroke-width="7" stroke-linejoin="round"/><path d="M26 22 L38 30 L26 38 Z" fill="#9900ff"/></svg>
-    <div>AVHUB · ADMIN <span style="font-size:10px;color:var(--tenue)">v1.4</span><small>CATÁLOGO</small></div>
+    <div>AVHUB · ADMIN <span style="font-size:10px;color:var(--tenue)">v1.5</span><small>CATÁLOGO</small></div>
   </div>
   <span id="modo" class="modo"></span>
   <div class="tabs" id="tabs"><!-- v9.2 · AVHUB no lleva publicidad, boletines ni firmas con contador: esas pestañas quedan retiradas y el panel abre en CATÁLOGO --><button data-s="ads" hidden>ANUNCIOS</button><button data-s="firmas" hidden>FIRMAS</button><button data-s="news" hidden>NEWSLETTER</button><button data-s="catalogo" class="on">CATÁLOGO</button></div>
@@ -2380,7 +2395,7 @@ html.estudio-fijo header{position:relative;flex:none}
   /* =====================================================================
      CATÁLOGO DE PANTALLAS LED (sustituye a la hoja: se edita aquí y se contrasta con la web)
      ===================================================================== */
-  var C = null, catSucio = false, catSel = null, catFiltro = 'todos', catBusca = '', catCargando = false, sincDiaria = null;
+  var C = null, catSucio = false, catSel = null, catFiltro = 'todos', catBusca = '', catCab = { family: '', subfamily: '', pitch: '', tipo: '', 'class': '' }, catMarca = {}, catCargando = false, sincDiaria = null;
   var GRUPOS = [
     ['Identificación', { prioridad: 'Prioridad en su pitch (1 = primero)', crm: 'Referencia', family: 'Familia', subfamily: 'Subgama', class: 'Clase', tipo: 'Tipo', tech: 'Tecnología', disp: 'Disponibilidad', stock: 'Stock' }],
     ['Cabinet', { pitch: 'Pitch (mm)', pitchV: 'Pitch vertical', cabAncho: 'Ancho (mm)', cabAlto: 'Alto (mm)', thick: 'Fondo (mm)', cabPixAncho: 'Píxeles ancho', cabPixAlto: 'Píxeles alto', cabPix: 'Píxeles por cabinet', ar: 'Proporción', cabKg: 'Peso (kg)' }],
@@ -2477,6 +2492,18 @@ html.estudio-fijo header{position:relative;flex:none}
     var bus = el('input'); bus.type = 'text'; bus.placeholder = 'Buscar referencia, familia, pitch…'; bus.value = catBusca;
     bus.oninput = function () { catBusca = bus.value; pintarLista(); };
     ic.appendChild(bus);
+    /* v10.2 · cabeceras: un desplegable por columna para filtrar, y debajo la selección y las acciones en grupo */
+    var CABS = [['family', 'Familia'], ['subfamily', 'Subgama'], ['pitch', 'Pitch'], ['tipo', 'Tipo'], ['class', 'Clase']], cabs = el('div', 'catcab');
+    CABS.forEach(function (c) {
+      var vals = {}; C.modelos.forEach(function (m) { var v = String(m[c[0]] == null ? '' : m[c[0]]).trim(); if (v) vals[v] = (vals[v] || 0) + 1; });
+      var ks = Object.keys(vals); if (!ks.length) return; ks.sort(function (a, b) { return c[0] === 'pitch' ? parseFloat(String(a).replace(',', '.')) - parseFloat(String(b).replace(',', '.')) : a.localeCompare(b); });
+      if (catCab[c[0]] && !vals[catCab[c[0]]]) catCab[c[0]] = '';
+      var lb = el('label', '', esc(c[1])), se = el('select'); se.innerHTML = '<option value="">Todos</option>' + ks.map(function (k) { return '<option value="' + esc(k) + '"' + (catCab[c[0]] === k ? ' selected' : '') + '>' + esc((c[0] === 'pitch' ? 'P' : '') + k) + ' · ' + vals[k] + '</option>'; }).join('');
+      se.className = catCab[c[0]] ? 'puesto' : ''; se.onchange = function () { catCab[c[0]] = se.value; se.className = se.value ? 'puesto' : ''; pintarLista(); };
+      lb.appendChild(se); cabs.appendChild(lb);
+    });
+    ic.appendChild(cabs);
+    var barra = el('div', 'catgrupo'); ic.appendChild(barra);
     var lista = el('div', 'catlista'); ic.appendChild(lista); izq.appendChild(ic); grid.appendChild(izq);
     var der = el('div', 'sec catder'); grid.appendChild(der);
     cont.appendChild(grid);
@@ -2491,15 +2518,42 @@ html.estudio-fijo header{position:relative;flex:none}
       var q = catBusca.trim().toLowerCase();
       return C.modelos.slice().sort(function (a, b) { return (parseFloat(a.pitch) || 99) - (parseFloat(b.pitch) || 99) || pr(a) - pr(b) || String(a.crm).localeCompare(String(b.crm)); }).filter(function (m) {
         if (catFiltro === 'ocultos' ? !m._oculto : (catFiltro !== 'todos' && (m._oculto || m._estado !== catFiltro))) return false;
+        for (var k in catCab) if (catCab[k] && String(m[k] == null ? '' : m[k]).trim() !== catCab[k]) return false;
         return !q || [m.crm, m.family, m.subfamily, m.pitch, m.tipo, m.class].join(' ').toLowerCase().indexOf(q) >= 0;
       });
     }
+    function marcados() { return C.modelos.filter(function (m) { return catMarca[m._id]; }); }
+    /* prioridad en grupo: en cada pitch, los marcados pasan a ocupar desde el puesto «n» (1 = los primeros), sin cambiar el orden entre ellos */
+    function prioridadGrupo(n) {
+      var ms = marcados().filter(function (m) { return !m._oculto && m._estado !== 'nuevo'; }); if (!ms.length) { led('Ninguno de los seleccionados entra en los cálculos: no tienen prioridad', 'err'); return; }
+      var pitches = {}; ms.forEach(function (m) { pitches[parseFloat(m.pitch)] = m; });
+      cambioCat(function () { Object.keys(pitches).forEach(function (k) { var g = grupo(pitches[k]), sel = g.filter(function (x) { return catMarca[x._id]; }), resto = g.filter(function (x) { return !catMarca[x._id]; }), i = Math.max(0, Math.min(resto.length, (n === 'fin' ? resto.length : n - 1)));
+        resto.slice(0, i).concat(sel, resto.slice(i)).forEach(function (x, j) { x.prioridad = j + 1; (x._origen = x._origen || {}).prioridad = 'manual'; }); }); });
+      led(ms.length + ' modelos ' + (n === 'fin' ? 'al final' : 'con prioridad ' + n) + ' en ' + Object.keys(pitches).length + ' pitch' + (Object.keys(pitches).length > 1 ? 'es' : '') + '. Recuerda GUARDAR.', 'ok');
+    }
+    function calculosGrupo(usar) { var ms = marcados(); cambioCat(function () { ms.forEach(function (m) { m._oculto = !usar; }); }); led(ms.length + ' modelos ' + (usar ? 'se usan en los cálculos' : 'ocultos: no se usan en los cálculos') + '. Recuerda GUARDAR.', 'ok'); }
+    function pintarBarra(vs) {
+      var ids = {}; C.modelos.forEach(function (m) { ids[m._id] = 1; }); Object.keys(catMarca).forEach(function (k) { if (!ids[k]) delete catMarca[k]; });
+      var n = marcados().length, nv = vs.filter(function (m) { return catMarca[m._id]; }).length; barra.innerHTML = ''; barra.className = 'catgrupo' + (n ? ' hay' : '');
+      var todo = el('label', 'todo', '<input type="checkbox"><span>' + (n ? n + ' seleccionado' + (n > 1 ? 's' : '') : 'Seleccionar los ' + vs.length + ' de la lista') + '</span>'), ck = todo.querySelector('input');
+      ck.checked = vs.length > 0 && nv === vs.length; ck.indeterminate = nv > 0 && nv < vs.length; ck.disabled = !vs.length; ck.title = 'Marca o desmarca todos los modelos que se ven ahora en la lista (lo filtrado)';
+      ck.onchange = function () { vs.forEach(function (m) { if (ck.checked) catMarca[m._id] = 1; else delete catMarca[m._id]; }); pintarLista(); };
+      barra.appendChild(todo);
+      var num = el('input'); num.type = 'number'; num.min = 1; num.step = 1; num.value = 1; num.title = 'Puesto dentro de cada pitch (1 = primero)'; num.setAttribute('aria-label', 'Prioridad');
+      var bp = el('button', 'pral', 'APLICAR PRIORIDAD'), bf = el('button', '', 'AL FINAL'), bu = el('button', '', 'USAR EN CÁLCULOS'), bo = el('button', '', 'OCULTAR'), bq = el('button', '', 'QUITAR SELECCIÓN');
+      bp.title = 'En cada pitch, los seleccionados pasan a ese puesto (1 = los primeros que se proponen)';
+      bp.onclick = function () { prioridadGrupo(Math.max(1, parseInt(num.value, 10) || 1)); }; bf.onclick = function () { prioridadGrupo('fin'); }; bu.onclick = function () { calculosGrupo(true); }; bo.onclick = function () { calculosGrupo(false); };
+      bq.onclick = function () { catMarca = {}; pintarLista(); };
+      [num, bp, bf, bu, bo, bq].forEach(function (b) { b.disabled = !n; barra.appendChild(b); });
+    }
     function pintarLista() {
       lista.innerHTML = '';
-      var vs = visibles();
+      var vs = visibles(); pintarBarra(vs);
       if (!vs.length) { lista.appendChild(el('div', 'nota', 'No hay modelos con este filtro.')); return; }
       vs.forEach(function (m) {
-        var f = el('div', 'catfila' + (m._id === catSel ? ' on' : '') + (m._oculto ? ' apagada' : ''));
+        var f = el('div', 'catfila' + (m._id === catSel ? ' on' : '') + (m._oculto ? ' apagada' : '') + (catMarca[m._id] ? ' marcada' : ''));
+        var sl = el('label', 'catsel', '<input type="checkbox"' + (catMarca[m._id] ? ' checked' : '') + ' aria-label="Seleccionar ' + esc(m.crm) + '">'); sl.title = 'Seleccionar para las acciones en grupo'; sl.onclick = function (e) { e.stopPropagation(); };
+        sl.querySelector('input').onchange = function () { if (this.checked) catMarca[m._id] = 1; else delete catMarca[m._id]; pintarLista(); };
         var np = pendientes(m).length, g = m._oculto || m._estado === 'nuevo' ? [] : grupo(m), pos = g.indexOf(m);
         var ck = el('label', 'catck', '<input type="checkbox"' + (m._oculto ? '' : ' checked') + '><span>Cálculos</span>'); ck.title = 'Marcado: el modelo se usa en los cálculos de la app. Desmarcado: queda oculto.';
         ck.onclick = function (e) { e.stopPropagation(); };
@@ -2513,7 +2567,7 @@ html.estudio-fijo header{position:relative;flex:none}
           pri.children[2].onclick = function (e) { e.stopPropagation(); moverPrioridad(m, 1); };
         }
         var chip = el('i', 'chip ' + (m._estado === 'ok' ? 'activo' : m._estado === 'revisar' ? 'caducado' : m._estado === 'nuevo' ? 'programado' : 'desactivado'), (ESTADOS[m._estado] || m._estado) + (np ? ' · ' + np : ''));
-        [ck, info, pri, chip].forEach(function (x) { f.appendChild(x); });
+        [sl, ck, info, pri, chip].forEach(function (x) { f.appendChild(x); });
         f.onclick = function () { catSel = m._id; pintarLista(); pintarEditor(); };
         lista.appendChild(f);
       });

@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.1** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.2** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,12 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.1)
+## Cambios de la versión actual (v10.2)
+
+- **PDF sin fondos oscuros**: en el PDF ya no queda ningún fondo negro ni gris oscuro (iconos de dimensiones y de distancia de visionado, rótulo de resolución junto a la simulación, etiquetas…). Se aclaran y sus textos y líneas pasan a un color de contraste. La pantalla de la simulación, las fotos y la vista 3D se dejan como están.
+- **Panel de administrador v1.5 · catálogo**: cabeceras para filtrar por familia, subgama, pitch, tipo y clase (además del buscador); casilla para seleccionar todo lo filtrado o modelo a modelo; y acciones en grupo: aplicar una prioridad (en cada pitch, los seleccionados pasan a ese puesto), mandar al final, usar en los cálculos u ocultar. *El panel vive en Apps Script: hay que pegar allí el `anuncios.html` nuevo y publicar una versión.*
+
+### v10.1
 
 - **Qué modelo se propone primero** (entre modelos del mismo pitch): 1.º los que están en stock, 2.º la prioridad manual del catálogo (1 = primero), 3.º la familia preferente. Antes la prioridad manual iba por delante del stock. Vale para el calculador de una pantalla y para la consola.
 
