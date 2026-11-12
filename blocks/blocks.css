@@ -121,3 +121,45 @@ select.sel { width: 100%; min-width: 0; border: 1px solid var(--verde-txt); back
 .aviso-movil { display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 8px 12px; background: #7a00e0; color: #fff; font-size: 12px; justify-content: center; text-align: center; }
 
 .fichas-v { zoom: 1.3; }
+
+/* ===== beta 2 ===== */
+/* temas más grises: el oscuro ya no es negro y el claro ya no es casi blanco */
+:root { --fondo: #2b2c31; --franja: #2b2c31; --franja2: #2b2c31; --blk: #313238; --blk2: #3a3c43; --linea: #53555e; --txt: #eeeef1; --tenue: #abadb7; --campo: #1f2024; }
+:root[data-tema="claro"] { --fondo: #a6a9b0; --franja: #a6a9b0; --franja2: #a6a9b0; --blk: #b3b6bc; --blk2: #babdc3; --linea: #83868f; --txt: #141519; --tenue: #3c3f47; --campo: #ced1d6;
+  --verde-txt: #05480a; --violeta: #5a0aa8; --azul: #004f85; --ambar: #6b4300; --rojo: #9a0f20; }
+/* los bloques no enseñan su marco: la plantilla ordena, no se dibuja */
+.franja, .f-f1 { border: 0; }
+.franja > * + * { border-left: 0; }
+.f-cred { background: transparent; }
+.blk { background: transparent; border: 0; box-shadow: none; border-radius: 0; overflow: visible; }
+.blk::before { display: none; }
+.blk-cab { padding: calc(var(--u) * 6) calc(var(--u) * 6) calc(var(--u) * 6); }
+.blk-cab .id { display: none; }
+.blk-cu { padding: calc(var(--u) * 2) calc(var(--u) * 6) calc(var(--u) * 6); }
+.blk.pant .blk-cu { padding: 0; }
+.rejilla { gap: calc(var(--u) * 14) calc(var(--u) * 18); }
+/* icono distintivo de cada bloque */
+.blk-ic { flex: none; display: inline-flex; width: calc(var(--u) * 24); height: calc(var(--u) * 24); color: var(--ac, var(--verde-txt)); }
+.blk-ic svg { width: 100%; height: 100%; }
+:root[data-tema="claro"] .blk-ic { filter: brightness(.55) saturate(1.4); }
+.tog svg { flex: none; width: 1.25em; height: 1.25em; }
+.fila.grupo { gap: calc(var(--u) * 5); }
+.ic-bt[aria-pressed="true"] { border-color: var(--rojo); color: var(--rojo); box-shadow: 0 0 0 calc(var(--u) * 3) color-mix(in srgb, var(--rojo) 30%, transparent); }
+.h1r { gap: calc(var(--u) * 7) !important; --avf: calc(var(--u) * 38); --avi: calc(var(--u) * 36); }
+.h1r .ic-bt.g { width: calc(var(--u) * 36); height: calc(var(--u) * 36); }
+/* aviso en pantalla */
+.tostada { position: fixed; left: 50%; bottom: calc(var(--u) * 100); z-index: 90; transform: translate(-50%, calc(var(--u) * 14)); max-width: 80vw; padding: calc(var(--u) * 12) calc(var(--u) * 22); border-radius: calc(var(--u) * 12); background: #101114; color: #fff; border: 1px solid #00ff04; font-size: calc(var(--u) * 17); font-weight: 700; box-shadow: 0 calc(var(--u) * 10) calc(var(--u) * 30) rgba(0, 0, 0, .5); opacity: 0; pointer-events: none; transition: opacity .18s, transform .18s; text-align: center; }
+.tostada.on { opacity: 1; transform: translate(-50%, 0); }
+.blk-cab { min-height: calc(var(--u) * 46); }
+.fondos { bottom: auto; top: calc(var(--u) * 8); }
+:root[data-tema="claro"] .fam img { filter: invert(1) hue-rotate(180deg) saturate(1.3); }
+/* color de marca: la lima del cubo de SCREENS manda en lo seleccionado y en los acentos; el verde flúor queda solo para resaltar (foco, paso del ratón, piloto de estado, avisos) */
+:root { --marca: #d4ff00; --verde-txt: #d4ff00; }
+:root[data-tema="claro"] { --marca: #d4ff00; --verde-txt: #3d4a00; }
+.tog[aria-pressed="true"] { background: color-mix(in srgb, var(--marca) 14%, var(--blk)); }
+:root[data-tema="claro"] .tog[aria-pressed="true"], :root[data-tema="claro"] .pestanas button[aria-pressed="true"] { background: var(--marca); color: #1c2200; border-color: #3d4a00; }
+.rej-cab i { background: var(--marca); }
+:root[data-tema="claro"] .rej-cab i { background: #5f7300; }
+.fondos button[aria-pressed="true"] { border-color: var(--marca); }
+.ic-bt:hover, .ic-bt:focus-visible, .tog:hover, .tog:focus-visible, .pestanas button:hover { box-shadow: 0 0 0 calc(var(--u) * 2) var(--verde), 0 0 calc(var(--u) * 12) color-mix(in srgb, var(--verde) 60%, transparent); border-color: var(--verde); outline: none; }
+.ic-bt:hover, .ic-bt:focus-visible { color: inherit; }

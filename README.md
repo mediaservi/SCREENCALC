@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.3** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.4** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,19 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.3 · beta)
+## Cambios de la versión actual (v10.4 · beta)
+
+- **BLOCKS beta 2 · una pantalla LED** (`blocks/`; la versión clásica no cambia):
+  - Los bloques ya no dibujan su marco: la plantilla ordena la pantalla pero no se ve. Cada bloque conserva su icono distintivo y su título.
+  - Temas más grises: el oscuro ya no es negro y el claro ya no es casi blanco.
+  - Simulación: el suelo es una franja de color pastel que contrasta con la pared elegida (ya no la imita); el selector de pared sube arriba.
+  - **Simular contenido**: botón en la simulación para poner una imagen o un vídeo propios en la pantalla (se quedan en el navegador, no se suben a ningún sitio) y otro para volver a la carta de ajuste.
+  - **Copiar captura**: en las dos mini pantallas (S1A y S1B), junto al ojo, un botón copia al portapapeles una imagen de lo que hay en su marco y lo avisa en pantalla; si el navegador no deja copiar imágenes, la descarga.
+  - Cabeceras con sus funciones: información, PDF y versión clásica, AVHUB, instalar, avisar de un fallo, idioma, tema y ajustes; modos Una/Varias y LED/Proyección con icono; dictado por micrófono y nota de voz a texto junto a la petición.
+  - Color de marca: lo seleccionado y los acentos usan la lima oficial del cubo de SCREENS (#d4ff00); el verde flúor queda solo para resaltar (paso del ratón, foco, piloto de estado y avisos).
+  - Sigue solo en castellano, solo para ordenador y sin PDF propio.
+
+### v10.3 (beta)
 
 - **BLOCKS beta 1 · una pantalla LED** (`blocks/`, página aparte; la versión clásica no cambia). Primera adaptación a la interfaz de bloques fijos de AVHUB, según la plantilla de Josep:
   - Pantalla fija, sin desplazamiento de página, que se readapta sola al tamaño de la ventana: dos franjas de cabecera (H1L·H1C·H1R y HM1·HM2·HM3), rejilla central de 6 × 3 con dos «mini pantallas» (S1A y S1B) y franja de pie (F1L·F1C·F1R).
