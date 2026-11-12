@@ -171,3 +171,11 @@ select.sel { width: 100%; min-width: 0; border: 1px solid var(--verde-txt); back
 .blk-cu { padding: calc(var(--u) * 2) calc(var(--u) * 14) calc(var(--u) * 12); }
 .blk.pant .blk-cu { padding: 0 calc(var(--u) * 8) calc(var(--u) * 8); }
 .rejilla { gap: calc(var(--u) * 12); }
+/* cosido de la señal: automático, vertical u horizontal */
+.cosidos { position: absolute; left: 50%; top: calc(var(--u) * 8); transform: translateX(-50%); display: flex; align-items: center; gap: calc(var(--u) * 5); white-space: nowrap; font-size: calc(var(--u) * 12); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--tenue); }
+.cosidos button { border: 1px solid var(--linea); background: var(--blk2); color: var(--tenue); border-radius: calc(var(--u) * 7); padding: calc(var(--u) * 4) calc(var(--u) * 10); font: inherit; }
+.cosidos button[aria-pressed="true"] { border-color: var(--verde-txt); color: var(--verde-txt); }
+:root[data-tema="claro"] .cosidos button[aria-pressed="true"] { background: var(--marca); color: #1c2200; border-color: #3d4a00; }
+.cosidos button:hover { border-color: var(--verde); box-shadow: 0 0 0 calc(var(--u) * 2) var(--verde); }
+.cosidos em { font-style: normal; color: var(--txt); }
+.vent .cosidos { font-size: calc(var(--u) * 15); top: calc(var(--u) * 12); }

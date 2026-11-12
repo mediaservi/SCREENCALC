@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.7** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.8** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,11 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.7 · beta)
+## Cambios de la versión actual (v10.8 · beta)
+
+- **BLOCKS beta 6** (`blocks/`): **cosido de la señal**. La vista de señal dibuja el recorrido del cable de cada puerto (punto de entrada, serpentina y flecha de final) y permite elegir **Auto**, **Vertical** u **Horizontal**, con la misma regla que el configurador clásico (columnas o filas enteras por puerto; automático elige lo que menos líneas pide). El modo elegido cambia el número de líneas y, con él, la electrónica propuesta; si un modo no cabe en un puerto, se avisa y se usa el posible. También en la vista grande y en la captura.
+
+### v10.7 (beta)
 
 - **BLOCKS beta 5** (`blocks/`): la hoja de estilos y el código de BLOCKS se piden con el número de versión (`?v=10.7`) para que el navegador y el enlace de revisión no sirvan una copia antigua. Sin cambios de función respecto a la beta 4.
 

@@ -7,7 +7,7 @@ import { HUMAN_PATH } from '../screens/figura.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'BLOCKS beta 5 · SCREENS v10.7';
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'BLOCKS beta 6 · SCREENS v10.8';
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const IC = {
@@ -46,7 +46,7 @@ const tog = (on, attrs, txt, ic) => `<button type="button" class="tog" aria-pres
 
 /* ---------- estado ---------- */
 const GUARDA = 'screens-blocks-1';
-const E = Object.assign({ w: 3, h: 2, tipo: 'INDOOR', clase: 'INSTALL', pitch: 0, dist: 0, crm: '', elev: 100, fondo: 'hormigon', backup: true, escalador: 'con', conexion: 'directo', marca: 'ninguno', ajuste: 'dentro', vista: 0, tema: 'oscuro', texto: '' },
+const E = Object.assign({ w: 3, h: 2, tipo: 'INDOOR', clase: 'INSTALL', pitch: 0, dist: 0, crm: '', elev: 100, fondo: 'hormigon', cosido: 'auto', backup: true, escalador: 'con', conexion: 'directo', marca: 'ninguno', ajuste: 'dentro', vista: 0, tema: 'oscuro', texto: '' },
   (() => { try { return JSON.parse(localStorage.getItem(GUARDA) || '{}'); } catch (e) { return {}; } })());
 let CAT = [], ESTADO = 'cargando', R = null;   /* R: resultado del cálculo en curso */
 const guarda = () => { try { localStorage.setItem(GUARDA, JSON.stringify(E)); } catch (e) {} };
@@ -92,16 +92,25 @@ function calcula() {
   else { pitch = pitches[0]; origen = 'auto'; }
   const delPitch = lista.filter((m) => m.pitch === pitch), m = delPitch.find((x) => x.crm === E.crm) || delPitch[0];
   const r = calcularLed({ ancho: E.w, alto: E.h }, m, E.ajuste), pixCab = m.cabPixAncho * m.cabPixAlto;
+  /* cosido de la señal, igual que el configurador clásico (planCosido): columnas o filas ENTERAS por puerto; automático elige lo que menos líneas pide (a igualdad, vertical) */
+  const cabPuerto = Math.max(1, Math.floor(PX_PUERTO / pixCab)), colsPP = Math.floor(cabPuerto / r.rows), filasPP = Math.floor(cabPuerto / r.cols);
+  const opV = colsPP >= 1 ? Math.ceil(r.cols / colsPP) : 0, opH = filasPP >= 1 ? Math.ceil(r.rows / filasPP) : 0;
+  let cosido = E.cosido === 'vertical' && opV ? 'vertical' : E.cosido === 'horizontal' && opH ? 'horizontal' : opV && opH ? (opH < opV ? 'horizontal' : 'vertical') : opV ? 'vertical' : opH ? 'horizontal' : 'serpentina';
+  const cosidoNo = E.cosido !== 'auto' && E.cosido !== cosido;
+  r.lineas = cosido === 'vertical' ? opV : cosido === 'horizontal' ? opH : Math.ceil(r.cab / cabPuerto);
+  /* orden en que el cable recorre los cabinets de cada puerto (f = 0 es la fila de abajo) */
+  const rutas = Array.from({ length: r.lineas }, () => []);
+  if (cosido === 'vertical') for (let c = 0; c < r.cols; c++) { const j = c % colsPP; for (let q = 0; q < r.rows; q++) rutas[Math.floor(c / colsPP)].push([c, j % 2 ? r.rows - 1 - q : q]); }
+  else if (cosido === 'horizontal') for (let f = 0; f < r.rows; f++) { const j = f % filasPP; for (let q = 0; q < r.cols; q++) rutas[Math.floor(f / filasPP)].push([j % 2 ? r.cols - 1 - q : q, f]); }
+  else for (let f = 0, n = 0; f < r.rows; f++) for (let q = 0; q < r.cols; q++, n++) rutas[Math.floor(n / cabPuerto)].push([f % 2 ? r.cols - 1 - q : q, f]);
+  const dePuerto = {}; rutas.forEach((ru, i) => ru.forEach(([c, f]) => { dePuerto[c + '_' + f] = i; }));
   const procs = ELEC.calcularElectronicas({ lines: r.lineas, totalPix: r.pix, porSup: null }, { backup: E.backup, escalador: E.escalador, conexion: E.conexion, entradas: 0 }, []);
   const medias = E.marca === 'ninguno' ? [] : ELEC.calcularMediaservers({ totalPix: Math.max(1, r.salidas4k) * ELEC.ELEC_PX_4K, resW: r.resW, resH: r.resH }, { marca: E.marca, dante: false });
-  /* reparto de cabinets por puerto de datos y por línea eléctrica de 16 A (columnas enteras siempre que caben) */
-  const cabPuerto = Math.max(1, Math.floor(PX_PUERTO / pixCab)), colsPP = Math.floor(cabPuerto / r.rows), filasPP = Math.floor(cabPuerto / r.cols);
-  const vert = colsPP >= 1 && (filasPP < 1 || Math.ceil(r.cols / colsPP) <= Math.ceil(r.rows / filasPP));
-  const puerto = (c, f) => (vert ? Math.floor(c / colsPP) : filasPP >= 1 ? Math.floor(f / filasPP) : Math.floor((f * r.cols + (f % 2 ? r.cols - 1 - c : c)) / cabPuerto));
+  const vert = cosido === 'vertical', puerto = (c, f) => dePuerto[c + '_' + f] || 0;
   const ampCab = Number(m.cabAmp) || (m.wMax ? m.wMax / 230 : 0), cabLinea = ampCab > 0 ? Math.max(1, Math.floor(16 / ampCab)) : r.cab, colsPL = Math.floor(cabLinea / r.rows);
   const linea = (c, f) => (colsPL >= 1 ? Math.floor(c / colsPL) : Math.floor((c * r.rows + f) / cabLinea));
   const nLin = colsPL >= 1 ? Math.ceil(r.cols / colsPL) : Math.ceil(r.cab / cabLinea);
-  R = { m, r, lista, pitches, pitch, origen, delPitch, relajado, procs, proc: procs[0] || null, medias, media: medias[0] || null, puerto, linea, nLin, ampCab, vert, nits,
+  R = { m, r, lista, pitches, pitch, origen, delPitch, relajado, procs, proc: procs[0] || null, medias, media: medias[0] || null, puerto, linea, nLin, ampCab, vert, nits, cosido, cosidoNo, rutas, cabPuerto,
     diag: Math.hypot(r.ancho, r.alto), lineasTxt: lineasCosido(r.cols, r.rows, pixCab) };
 }
 
@@ -132,11 +141,14 @@ function svgSim() {
   return g + '</svg>';
 }
 function svgRejilla(tipo) {
-  const { r, m } = R, W = 1000, H = 620, k = Math.min(900 / r.ancho, 440 / r.alto), pw = r.ancho * k, ph = r.alto * k, px = (W - pw) / 2, py = 22, cw = pw / r.cols, chh = ph / r.rows, n = tipo === 'senal' ? r.lineas : R.nLin;
+  const { r, m } = R, W = 1000, H = 620, sen = tipo === 'senal', py = sen ? 66 : 22, k = Math.min(900 / r.ancho, (462 - py) / r.alto), pw = r.ancho * k, ph = r.alto * k, px = (W - pw) / 2, cw = pw / r.cols, chh = ph / r.rows, n = tipo === 'senal' ? r.lineas : R.nLin;
   const de = tipo === 'senal' ? R.puerto : R.linea, tf = Math.max(9, Math.min(22, Math.min(cw, chh) * .42));
   let g = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${tipo === 'senal' ? 'Reparto de cabinets por puerto de datos' : 'Reparto de cabinets por línea eléctrica'}">`;
   for (let f = 0; f < r.rows; f++) for (let c = 0; c < r.cols; c++) { const i = de(c, f), col = COLS[i % COLS.length]; g += `<rect x="${px + c * cw + .6}" y="${py + (r.rows - 1 - f) * chh + .6}" width="${cw - 1.2}" height="${chh - 1.2}" fill="${col}" fill-opacity=".8" stroke="rgba(0,0,0,.35)"/>`;
-    if (cw > 20 && chh > 16) g += `<text x="${px + c * cw + cw / 2}" y="${py + (r.rows - 1 - f) * chh + chh / 2 + tf * .36}" text-anchor="middle" font-size="${tf}" font-weight="800" fill="#0b0b10" fill-opacity=".72" font-family="Inter, sans-serif">${i + 1}</text>`; }
+    if (cw > 20 && chh > 16) g += `<text x="${sen ? px + c * cw + cw * .2 : px + c * cw + cw / 2}" y="${sen ? py + (r.rows - 1 - f) * chh + tf * .62 + chh * .08 : py + (r.rows - 1 - f) * chh + chh / 2 + tf * .36}" text-anchor="middle" font-size="${sen ? tf * .62 : tf}" font-weight="800" fill="#0b0b10" fill-opacity=".72" font-family="Inter, sans-serif">${i + 1}</text>`; }
+  if (sen) { const gr = Math.max(1.6, Math.min(5, Math.min(cw, chh) * .09)), cx = (c) => px + c * cw + cw / 2, cy = (f) => py + (r.rows - 1 - f) * chh + chh / 2;
+    g += `<defs><marker id="fl" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#0b0b10"/></marker></defs>`;
+    R.rutas.forEach((ru) => { if (!ru.length) return; g += `<polyline points="${ru.map(([c, f]) => cx(c).toFixed(1) + ',' + cy(f).toFixed(1)).join(' ')}" fill="none" stroke="#0b0b10" stroke-opacity=".82" stroke-width="${gr}" stroke-linejoin="round" stroke-linecap="round"${ru.length > 1 ? ' marker-end="url(#fl)"' : ''}/><circle cx="${cx(ru[0][0])}" cy="${cy(ru[0][1])}" r="${gr * 2.1}" fill="#fff" stroke="#0b0b10" stroke-width="${gr * .7}"/>`; }); }
   const cols = Math.min(n, 4), lw = Math.min(236, 960 / cols), y0 = py + ph + 22;
   for (let i = 0; i < n && i < 12; i++) { const X = W / 2 - cols * lw / 2 + (i % cols) * lw, Y = y0 + Math.floor(i / cols) * 44, cabs = [...Array(r.cab).keys()].filter((q) => de(q % r.cols, Math.floor(q / r.cols)) === i).length;
     g += `<rect x="${X + 4}" y="${Y}" width="${lw - 8}" height="36" rx="7" fill="${COLS[i % COLS.length]}"/><text x="${X + lw / 2}" y="${Y + 25}" text-anchor="middle" font-size="21" font-weight="700" fill="#0b0b10" font-family="Share Tech Mono, monospace">${tipo === 'senal' ? 'P' : 'L'}${i + 1} · ${cabs} cab${tipo === 'senal' ? '' : ' · ' + fmt(cabs * R.ampCab, 1) + ' A'}</text>`; }
@@ -161,6 +173,8 @@ const VISTAS = [['senal', 'Señal', () => svgRejilla('senal'), () => 'Cableado d
 
 /* ---------- bloques ---------- */
 const ICB = { M1A: 'regla', M1B: 'entorno', M2A: 'pitch', M2B: 'cabinet', S1A: 'sim', S1B: 'cable', M3A: 'dims', M3B: 'res', M3C: 'cabs', M3D: 'rayo', M3E: 'red', M3F: 'chip' };
+const COSN = { auto: 'Auto', vertical: 'Vertical', horizontal: 'Horizontal' };
+const cosidoCtl = () => `<div class="cosidos" role="group" aria-label="Cosido de la señal"><span>Cosido</span>${['auto', 'vertical', 'horizontal'].map((v) => `<button type="button" data-set="cosido" data-v="${v}" aria-pressed="${E.cosido === v}">${COSN[v]}</button>`).join('')}<em>${R.cosidoNo ? 'No cabe así: ' : E.cosido === 'auto' ? '→ ' : ''}${R.cosidoNo || E.cosido === 'auto' ? R.cosido : ''}</em></div>`;
 const blk = (area, id, tit, ac, cuerpo, extra = '', cls = '', ic = ICB[id]) => `<section class="blk ${cls}" style="grid-area:${area};--ac:${ac}" data-blk="${id}"><header class="blk-cab">${ic ? `<i class="blk-ic" aria-hidden="true">${IC[ic]}</i>` : ''}<b>${tit}</b><span class="sep"></span>${extra}<span class="id">${id}</span></header><div class="blk-cu">${cuerpo}</div></section>`;
 const num = (k, lab, val, uni, paso) => `<div class="num"><label for="n-${k}">${lab}</label><input id="n-${k}" type="number" inputmode="decimal" data-num="${k}" value="${val}" step="${paso}" min="0"><span>${uni}</span><div class="pm"><button type="button" data-pm="${k}" data-d="1" tabindex="-1" aria-label="Subir ${lab}">▲</button><button type="button" data-pm="${k}" data-d="-1" tabindex="-1" aria-label="Bajar ${lab}">▼</button></div></div>`;
 const dato = (k, v) => `<div class="dato"><span>${k}</span><b>${v}</b></div>`;
@@ -180,7 +194,7 @@ function pintaRejilla() {
   h += blk('m2b', 'M2B', 'Cabinet', 'var(--violeta)', `<select class="sel" data-crm aria-label="Modelo de cabinet">${R.delPitch.map((x) => `<option value="${esc(x.crm)}"${x.crm === m.crm ? ' selected' : ''}>${esc(x.crm)}${enStock(x) ? ' · stock' : ''}</option>`).join('')}</select><div class="cabmini">${foto}<div style="min-width:0;flex:1">${dato('Cabinet', `${m.cabAncho}×${m.cabAlto} mm`)}${dato('Píxeles', `${m.cabPixAncho}×${m.cabPixAlto}`)}${dato('Brillo', m.nits ? fmt(m.nits) + ' nits' : '—')}</div></div><div class="fila envuelve"><span class="chip ${enStock(m) ? 'ok' : 'no'}">${enStock(m) ? 'En stock' : 'Bajo pedido'}</span><span class="chip">${esc(m.family || '')}</span></div>`, bt('ojo', 'Ver la ficha completa del cabinet', 'data-ver="equipo"'));
   h += blk('s1a', 'S1A', 'Simulación a escala', 'var(--marca)', `<div class="lienzo">${svgSim()}<div class="fondos" role="group" aria-label="Fondo de la pared">${FONDOS.map((f) => `<button type="button" data-fondo="${f}" aria-pressed="${E.fondo === f}" aria-label="Fondo ${f.replace(/-/g, ' ')}" title="${f.replace(/-/g, ' ')}" style="background-image:url(../assets/sim/${f}-mini.jpg)"></button>`).join('')}</div></div>`, bt('contenido', 'Simular contenido: elige una imagen o un vídeo tuyo', 'data-contenido') + (CONT ? bt('carta', 'Volver a la carta de ajuste', 'data-carta') : '') + bt('copia', 'Copiar una captura de esta pantalla', 'data-copia="S1A"') + bt('ojo', 'Ver en grande', 'data-ver="sim"'), 'pant');
   const V = VISTAS[E.vista] || VISTAS[0];
-  h += blk('s1b', 'S1B', V[3](), 'var(--azul)', `<div class="lienzo papel">${V[2]()}</div>`, `<div class="pestanas" role="group" aria-label="Qué se ve en esta pantalla">${VISTAS.map((v, i) => `<button type="button" data-vista="${i}" aria-pressed="${i === E.vista}">${v[1]}</button>`).join('')}</div>` + bt('copia', 'Copiar una captura de esta pantalla', 'data-copia="S1B"') + bt('ojo', 'Ver en grande', 'data-ver="vista"'), 'pant');
+  h += blk('s1b', 'S1B', V[3](), 'var(--azul)', `<div class="lienzo papel">${V[2]()}${V[0] === 'senal' ? cosidoCtl() : ''}</div>`, `<div class="pestanas" role="group" aria-label="Qué se ve en esta pantalla">${VISTAS.map((v, i) => `<button type="button" data-vista="${i}" aria-pressed="${i === E.vista}">${v[1]}</button>`).join('')}</div>` + bt('copia', 'Copiar una captura de esta pantalla', 'data-copia="S1B"') + bt('ojo', 'Ver en grande', 'data-ver="vista"'), 'pant');
   const mcd = (a, b) => (b ? mcd(b, a % b) : a), q = mcd(Math.round(r.ancho * 1000), Math.round(r.alto * 1000)), fa = Math.round(r.ancho * 1000) / q, fb = Math.round(r.alto * 1000) / q, formato = fa <= 32 && fb <= 32 ? fa + ':' + fb : fmt(r.ancho / r.alto, 2) + ':1';
   h += blk('m3a', 'M3A', 'Dimensiones', 'var(--marca)', `<div class="gran">${fmt(r.ancho * 100)}<small>×</small> ${fmt(r.alto * 100)}<small>cm</small></div>${dato('Diagonal', fmt(R.diag * 100) + ' cm · ' + fmt(R.diag / .0254) + '″')}${dato('Formato', formato)}${dato('Superficie', fmt(r.ancho * r.alto, 2) + ' m²')}${dato('Fondo', m.thick ? fmt(m.thick) + ' mm' : '—')}`);
   const RES = [['HD', 1280, 720], ['FHD', 1920, 1080], ['4K', 3840, 2160], ['8K', 7680, 4320]];
@@ -188,7 +202,7 @@ function pintaRejilla() {
   const cs = Math.min(84 / r.cols, 84 / r.rows);
   h += blk('m3c', 'M3C', 'Cabinets', 'var(--violeta)', `<div class="fila"><div class="rej-cab" style="grid-template-columns:repeat(${r.cols},calc(var(--u) * ${cs.toFixed(2)}));grid-auto-rows:calc(var(--u) * ${(cs * Math.min(1.6, m.cabAlto / m.cabAncho)).toFixed(2)})">${'<i></i>'.repeat(Math.min(r.cab, 400))}</div><div class="gran" style="flex:1;text-align:right">${fmt(r.cab)}<small>ud</small></div></div>${dato('Rejilla', r.cols + ' de ancho × ' + r.rows + ' de alto')}${dato('Peso', fmt(r.peso, 1) + ' kg')}${dato('Por cabinet', m.cabKg ? fmt(m.cabKg, 1) + ' kg' : '—')}`);
   h += blk('m3d', 'M3D', 'Alimentación', 'var(--rojo)', `<div class="gran">${fmt(r.kw, 2)}<small>kW máx.</small></div>${dato('Corriente', fmt(r.cab * R.ampCab, 1) + ' A · 230 V')}${dato('Líneas de 16 A', R.nLin)}${dato('Por cabinet', (m.wMax ? fmt(m.wMax) + ' W' : '—') + (R.ampCab ? ' · ' + fmt(R.ampCab, 2) + ' A' : ''))}`, bt('ojo', 'Ver el reparto eléctrico', 'data-ver="elec"'));
-  h += blk('m3e', 'M3E', 'Señal', 'var(--ambar)', `<div class="gran">${r.lineas}<small>línea${r.lineas > 1 ? 's' : ''} Ethernet</small></div>${dato('Backup', E.backup ? '+ ' + r.lineas + ' de reserva' : 'sin backup')}${dato('Conexión', E.conexion === 'directo' ? 'RJ45 directo' : 'fibra óptica')}${dato('Salidas 4K', r.salidas4k)}${dato('Tarjeta', esc(m.card || '—'))}`, bt('ojo', 'Ver el cableado de señal', 'data-ver="senal"'));
+  h += blk('m3e', 'M3E', 'Señal', 'var(--ambar)', `<div class="gran">${r.lineas}<small>línea${r.lineas > 1 ? 's' : ''} Ethernet</small></div>${dato('Backup', E.backup ? '+ ' + r.lineas + ' de reserva' : 'sin backup')}${dato('Cosido', R.cosido + (E.cosido === 'auto' ? ' (auto)' : ''))}${dato('Conexión', E.conexion === 'directo' ? 'RJ45 directo' : 'fibra óptica')}${dato('Salidas 4K', r.salidas4k)}${dato('Tarjeta', esc(m.card || '—'))}`, bt('ojo', 'Ver el cableado de señal', 'data-ver="senal"'));
   const p = R.proc, me = R.media;
   h += blk('m3f', 'M3F', 'Electrónica', 'var(--marca)', (p ? `<div style="font-weight:800;font-size:calc(var(--u)*19);line-height:1.15">${esc(p.modelo)}<div class="nota">${esc(p.marca)} · ${p.escalador ? 'con escalador' : 'sin escalador'}</div></div>${dato('Puertos', esc(p.puertos))}` : '<div class="nota">Sin procesador que cubra este proyecto con estas opciones: cambia la conexión o el backup en los ajustes.</div>') + (me ? dato('Mediaserver', esc(me.modelo)) : dato('Mediaserver', 'no pedido')) + (R.procs.length > 1 ? `<div class="nota">${R.procs.length} procesadores posibles: ábrelos con el ojo.</div>` : ''), bt('ojo', 'Ver la electrónica completa', 'data-ver="equipo"'));
   el.innerHTML = h;
@@ -225,7 +239,7 @@ function abre(que) {
       <p style="margin:0" class="nota">El PDF, la sala inmersiva, la proyección, el inglés y el catalán siguen en la versión clásica (botón del documento). Cálculo automático que puede contener errores: verifícalo antes de presupuestar o instalar.</p></div></div>`;
     VENT = { que };
   } else {
-    const LISTA = R && R.r ? [['sim', 'Simulación a escala', () => `<div class="lienzo">${svgSim()}</div>`], ['senal', VISTAS[0][3](), () => `<div class="lienzo papel">${VISTAS[0][2]()}</div>`], ['elec', VISTAS[1][3](), () => `<div class="lienzo papel">${VISTAS[1][2]()}</div>`], ['dist', VISTAS[2][3](), () => `<div class="lienzo papel">${VISTAS[2][2]()}</div>`], ['equipo', 'Equipos del proyecto', fichas]] : [];
+    const LISTA = R && R.r ? [['sim', 'Simulación a escala', () => `<div class="lienzo">${svgSim()}</div>`], ['senal', VISTAS[0][3](), () => `<div class="lienzo papel">${VISTAS[0][2]()}${cosidoCtl()}</div>`], ['elec', VISTAS[1][3](), () => `<div class="lienzo papel">${VISTAS[1][2]()}</div>`], ['dist', VISTAS[2][3](), () => `<div class="lienzo papel">${VISTAS[2][2]()}</div>`], ['equipo', 'Equipos del proyecto', fichas]] : [];
     if (!LISTA.length) return; if (que === 'vista') que = VISTAS[E.vista][0];
     let i = Math.max(0, LISTA.findIndex((x) => x[0] === que)); VENT = { que: 'visor', LISTA, i };
     const pinta = () => { const x = VENT.LISTA[VENT.i]; v.innerHTML = `<div class="vent" role="dialog" aria-modal="true" aria-label="${esc(x[1])}"><div class="vent-cab">${esc(x[1])}<span class="sep"></span><span class="nota">${VENT.i + 1} / ${VENT.LISTA.length}</span>${bt('ant', 'Anterior', 'data-paso="-1"')}${bt('sig', 'Siguiente', 'data-paso="1"')}${bt('x', 'Cerrar', 'data-cierra')}</div><div class="vent-cu">${x[2]()}</div></div>`; };
@@ -261,7 +275,7 @@ function monta() {
   </div><div class="velo" id="velo"></div><div class="tostada" id="tostada" role="status" aria-live="polite"></div><div class="aviso-movil">BLOCKS beta está pensada de momento para ordenador y pantalla apaisada.</div>`;
   const pide = () => { E.texto = $('#pide').value; const v = interpreta(E.texto); todo(); if (E.texto.trim() && !v.length) $('#pie-c').innerHTML = '<span class="pie-txt" style="color:var(--ambar)">No he entendido la petición: prueba con «3 x 2 interior» o rellena los bloques.</span>'; };
   $('#calcular').onclick = pide; $('#pide').addEventListener('keydown', (e) => { if (e.key === 'Enter') pide(); });
-  const pon = (k, v) => { if (k === 'backup') E.backup = !!v; else E[k] = v; if (k === 'tipo' || k === 'clase') E.crm = ''; if (k === 'tema') document.documentElement.dataset.tema = v; todo(); if (VENT && VENT.que === 'ajustes') abre('ajustes'); };
+  const pon = (k, v) => { if (k === 'backup') E.backup = !!v; else E[k] = v; if (k === 'tipo' || k === 'clase') E.crm = ''; if (k === 'tema') document.documentElement.dataset.tema = v; todo(); if (VENT && VENT.que === 'ajustes') abre('ajustes'); else if (VENT && VENT.pinta) VENT.pinta(); };
   document.addEventListener('click', (e) => { const q = (s) => e.target.closest(s); let b;
     if ((b = q('[data-set]'))) pon(b.dataset.set, b.dataset.v);
     else if ((b = q('[data-pitch]'))) { const i = R.pitches.indexOf(R.pitch) + +b.dataset.pitch; if (R.pitches[i] != null) { E.pitch = R.pitches[i]; E.crm = ''; todo(); } }
@@ -278,7 +292,7 @@ function monta() {
     else if ((b = q('[data-ver]'))) abre(b.dataset.ver);
     else if ((b = q('[data-cambiatema]'))) pon('tema', E.tema === 'oscuro' ? 'claro' : 'oscuro');
     else if ((b = q('[data-paso]'))) { VENT.i = (VENT.i + +b.dataset.paso + VENT.LISTA.length) % VENT.LISTA.length; VENT.pinta(); }
-    else if (q('[data-reset]')) { Object.assign(E, { backup: true, escalador: 'con', conexion: 'directo', marca: 'ninguno', ajuste: 'dentro', elev: 100 }); todo(); abre('ajustes'); }
+    else if (q('[data-reset]')) { Object.assign(E, { backup: true, escalador: 'con', conexion: 'directo', marca: 'ninguno', ajuste: 'dentro', elev: 100, cosido: 'auto' }); todo(); abre('ajustes'); }
     else if (q('[data-cierra]') || e.target.id === 'velo') cierra(); });
   document.addEventListener('change', (e) => { const t = e.target;
     if (t.dataset.num) { const k = t.dataset.num, v = parseFloat(String(t.value).replace(',', '.')); if (k === 'dist') { E.dist = v > 0 ? v : 0; E.pitch = 0; E.crm = ''; } else if (v >= 0) E[k] = k === 'elev' ? v : Math.max(.1, v); todo(); if (VENT && VENT.que === 'ajustes') abre('ajustes'); }
