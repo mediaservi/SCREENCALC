@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.2** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.3** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,16 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.2)
+## Cambios de la versión actual (v10.3 · beta)
+
+- **BLOCKS beta 1 · una pantalla LED** (`blocks/`, página aparte; la versión clásica no cambia). Primera adaptación a la interfaz de bloques fijos de AVHUB, según la plantilla de Josep:
+  - Pantalla fija, sin desplazamiento de página, que se readapta sola al tamaño de la ventana: dos franjas de cabecera (H1L·H1C·H1R y HM1·HM2·HM3), rejilla central de 6 × 3 con dos «mini pantallas» (S1A y S1B) y franja de pie (F1L·F1C·F1R).
+  - Entrada de datos a la izquierda (tamaño con formatos rápidos, entorno y uso, pitch con el origen de la elección siempre a la vista, cabinet) o escribiendo la petición arriba; resultados en la fila de abajo (dimensiones, resolución, cabinets, alimentación, señal y electrónica).
+  - Mini pantallas: simulación a escala con persona de 1,75 m y fondos de pared, y una segunda con cableado de señal, cableado eléctrico y distancia de visionado. El ojo de cada bloque lo abre en grande (88 % de la pantalla) con anterior, siguiente y cerrar; también las fichas de los equipos.
+  - Ruedita de ajustes con lo menos habitual (backup, escalador, conexión, mediaserver, ajuste a la medida, elevación, tema) y RESTABLECER. Tema oscuro y tema gris claro.
+  - Mismo catálogo en vivo y mismo motor de cálculo que la consola. De momento solo en castellano, solo para ordenador y sin PDF (el PDF sigue en la versión clásica).
+
+### v10.2
 
 - **PDF sin fondos oscuros**: en el PDF ya no queda ningún fondo negro ni gris oscuro (iconos de dimensiones y de distancia de visionado, rótulo de resolución junto a la simulación, etiquetas…). Se aclaran y sus textos y líneas pasan a un color de contraste. La pantalla de la simulación, las fotos y la vista 3D se dejan como están.
 - **Panel de administrador v1.5 · catálogo**: cabeceras para filtrar por familia, subgama, pitch, tipo y clase (además del buscador); casilla para seleccionar todo lo filtrado o modelo a modelo; y acciones en grupo: aplicar una prioridad (en cada pitch, los seleccionados pasan a ese puesto), mandar al final, usar en los cálculos u ocultar. *El panel vive en Apps Script: hay que pegar allí el `anuncios.html` nuevo y publicar una versión.*
