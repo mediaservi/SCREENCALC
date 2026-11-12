@@ -7,7 +7,9 @@ import { HUMAN_PATH } from '../screens/figura.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'BLOCKS beta 11 · SCREENS v10.13';
+import { idiomaInicial, idioma, fijaIdioma, vigila, IDIOMAS, NOMBRE } from './idiomas.js?v=10.14';
+idiomaInicial();   /* el idioma guardado de la familia SCREENS o, la primera vez, el del navegador */
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'BLOCKS beta 12 · SCREENS v10.14';
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const IC = {
@@ -25,6 +27,7 @@ const IC = {
   contenido: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 15l-5-5-8 9"/></svg>',
   nuevo: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12,14q-0.82,0-1.41-0.59T10,12t0.59-1.41T12,10t1.41,0.59Q14,11.18 14,12t-0.59,1.41T12,14Zm0,7q-3.47,0-6.03-2.29Q3.43,16.43 3.05,13H5.1q0.35,2.6 2.31,4.3T12,19q2.93,0 4.96-2.04Q19,14.93 19,12q0-2.93-2.04-4.96T12,5Q10.28,5 8.78,5.8T6.25,8H9v2H3V4H5V6.35q1.28-1.6 3.11-2.47T12,3q1.88,0 3.51,0.71t2.85,1.93t1.93,2.85T21,12t-0.71,3.51t-1.93,2.85t-2.85,1.93T12,21Z"/></svg>',
   gira: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="10" height="10" rx="1.5"/><path d="M8 6a9 9 0 0 1 10 10"/><path d="M21 13l-3 3-3-3"/></svg>',
+  pega: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11v6M9 14l3 3 3-3"/></svg>',
   carta: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>',
   una: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></svg>',
   varias: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l6 2v9l-6 2zM22 6l-6 2v9l6 2zM8 8h8v9H8z"/></svg>',
@@ -54,6 +57,8 @@ const GUARDA = 'screens-blocks-1';
 const DEF = { w: 3, h: 2, tipo: 'INDOOR', clase: 'INSTALL', pitch: 0, dist: 0, crm: '', elev: 100, fondo: 'hormigon', cosido: 'auto', backup: true, escalador: 'con', conexion: 'directo', marca: 'ninguno', ajuste: 'dentro', giro: false, gold: false, protegido: false, nitsMin: 0, uni: 'm', resMin: '', procSel: '', vista: 0, tema: 'oscuro', texto: '' };
 const E = Object.assign({}, DEF,
   (() => { try { return JSON.parse(localStorage.getItem(GUARDA) || '{}'); } catch (e) { return {}; } })());
+let USADO = false;   /* el resultado solo ocupa la casilla cuando ya se ha pedido o tocado algo: al abrir se ve la casilla vacía con su ejemplo */
+let EDITA = false;   /* true mientras se escribe una petición: la casilla enseña el texto y no el resultado */
 let CAT = [], ESTADO = 'cargando', R = null;   /* R: resultado del cálculo en curso */
 const guarda = () => { try { localStorage.setItem(GUARDA, JSON.stringify(E)); } catch (e) {} };
 /* fuentes multimedia de prueba: las mismas de la versión clásica (la primera es fija; las otras cinco se editan y se guardan en este navegador, compartidas con la clásica) */
@@ -83,22 +88,22 @@ const FONDOS = ['hormigon', 'madera', 'marmol', 'ladrillo-rojo', 'ladrillo-oscur
 /* ---------- petición escrita ---------- */
 function interpreta(raw) {
   const t = ' ' + String(raw || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/(\d),(\d)/g, '$1.$2') + ' ', v = [];
-  const U = '(mm|cm|m|mts?|metros?)?', aM = (n, u) => { n = parseFloat(n); return u === 'mm' ? n / 1000 : u === 'cm' ? n / 100 : n; };
-  const d = t.match(new RegExp('(\\d+(?:\\.\\d+)?)\\s*' + U + '\\s*(?:x|×|\\*|por)\\s*(\\d+(?:\\.\\d+)?)\\s*' + U + '(?![a-z])'));
+  const U = '(mm|cm|m|mts?|metros?|metres?|meters?)?', aM = (n, u) => { n = parseFloat(n); return u === 'mm' ? n / 1000 : u === 'cm' ? n / 100 : n; };
+  const d = t.match(new RegExp('(\\d+(?:\\.\\d+)?)\\s*' + U + '\\s*(?:x|×|\\*|por|by|per)\\s*(\\d+(?:\\.\\d+)?)\\s*' + U + '(?![a-z])'));
   let resto = t;
   if (d) { const u = d[4] || d[2], u1 = d[2] || d[4]; E.w = aM(d[1], u1); E.h = aM(d[3], u); v.push(fmt(E.w, 2) + ' × ' + fmt(E.h, 2) + ' m'); resto = t.replace(d[0], ' '); }
-  if (/escaparate|vitrina|shop window/.test(t)) { E.tipo = 'ESCAPARATE'; v.push('escaparate'); }
-  else if (/exterior|outdoor|intemperie|aire libre|fachada|\bcalle\b|terraza/.test(t)) { E.tipo = 'OUTDOOR'; v.push('exterior'); }
-  else if (/interior|indoor|\bsala\b|salon|oficina|\bstand\b|showroom/.test(t)) { E.tipo = 'INDOOR'; v.push('interior'); }
-  if (/alquiler|rental|evento|\bgira\b|concierto|feria|escenario|temporal/.test(t)) { E.clase = 'RENTAL'; v.push('alquiler'); }
-  else if (/instalacion|instalar|\bfij[oa]\b|permanente|install/.test(t)) { E.clase = 'INSTALL'; v.push('fija'); }
+  if (/escaparate|vitrina|shop ?window|storefront|aparador/.test(t)) { E.tipo = 'ESCAPARATE'; v.push('escaparate'); }
+  else if (/exterior|outdoor|outside|intemperie|aire libre|aire lliure|fachada|facana|facade|\bcalle\b|carrer|street|terraza|terrassa/.test(t)) { E.tipo = 'OUTDOOR'; v.push('exterior'); }
+  else if (/interior|indoor|inside|\bsala\b|salon|oficina|office|\bstand\b|showroom/.test(t)) { E.tipo = 'INDOOR'; v.push('interior'); }
+  if (/alquiler|lloguer|rental|\brent\b|evento|event|esdeveniment|\bgira\b|\btour\b|concierto|concert|feria|fira|escenario|escenari|\bstage\b|temporal/.test(t)) { E.clase = 'RENTAL'; v.push('alquiler'); }
+  else if (/instalacion|instal.lacio|instalar|\bfij[oa]\b|\bfix[ae]?\b|fixed|permanent|install/.test(t)) { E.clase = 'INSTALL'; v.push('fija'); }
   const p = resto.match(/(?:pitch|paso)\s*(?:de\s*|:\s*)?(\d{1,2}(?:\.\d+)?)|\bp\s?(\d{1,2}(?:\.\d+)?)\b|(\d{1,2}(?:\.\d+)?)\s*(?:mm\s*)?(?:de\s*)?(?:pitch|paso)/) || (() => { const m = resto.match(/(?:^|[^\d.])(\d{1,2}(?:\.\d+)?)\s?p(?![a-z0-9])/); return m && (/\./.test(m[1]) || parseFloat(m[1]) <= 20) ? [0, m[1]] : null; })();
   if (p) { E.pitch = parseFloat(p[1] || p[2] || p[3]); E.crm = ''; v.push('pitch ' + E.pitch); } else if (d || v.length) { E.pitch = 0; E.crm = ''; }
-  const ds = resto.match(/(?:\ba|desde|hasta|distancia(?: de)?|visto a)\s*(?:unos\s*)?(\d+(?:\.\d+)?)\s*(m|mts?|metros?)(?![a-z])/);
+  const ds = resto.match(/(?:\ba|\bat|desde|des de|from|hasta|fins a|distancia(?: de)?|distance(?: of)?|visto a|vist a|seen at)\s*(?:unos\s*|uns\s*|about\s*)?(\d+(?:\.\d+)?)\s*(m|mts?|metros?|metres?|meters?)(?![a-z])/);
   if (ds) { E.dist = parseFloat(ds[1]); v.push('a ' + fmt(E.dist, 1) + ' m'); } else if (d) E.dist = 0;
-  if (/sin (backup|redundancia)/.test(t)) E.backup = false; else if (/backup|redundan/.test(t)) E.backup = true;
-  if (/fibra|fiber/.test(t)) E.conexion = 'fibra';
-  if (/sin (mediaserver|servidor)/.test(t)) E.marca = 'ninguno'; else if (/mediaserver|media server|servidor de/.test(t)) E.marca = 'todos';
+  if (/(sin|sense|without|no) (backup|redundanc)/.test(t)) E.backup = false; else if (/backup|redundan/.test(t)) E.backup = true;
+  if (/fibra|fiber|fibre/.test(t)) E.conexion = 'fibra';
+  if (/(sin|sense|without|no) (mediaserver|media server|servidor)/.test(t)) E.marca = 'ninguno'; else if (/mediaserver|media server|servidor de|content server/.test(t)) E.marca = 'todos';
   return v;
 }
 
@@ -177,7 +182,9 @@ function svgSim() {
   g += `<rect x="${px - 5}" y="${py - 5}" width="${pw + 10}" height="${ph + 10}" fill="#050506" rx="3"/>` + (CONT && CONT.tipo === 'marco' ? (() => { const e = Math.max(pw / 16, ph / 9), iw = 16 * e, ih = 9 * e; return `<foreignObject x="${px}" y="${py}" width="${pw}" height="${ph}"><div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;overflow:hidden;position:relative;background:#000"><iframe src="${esc(CONT.url)}" title="Contenido simulado" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;left:${(pw - iw) / 2}px;top:${(ph - ih) / 2}px;width:${iw}px;height:${ih}px;border:0;pointer-events:none"></iframe></div></foreignObject>`; })() : CONT && CONT.tipo === 'video' ? `<foreignObject x="${px}" y="${py}" width="${pw}" height="${ph}"><video src="${CONT.url}" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;background:#000"></video></foreignObject>` : `<image href="${CONT ? CONT.url : '../assets/SCCHART.jpg'}" x="${px}" y="${py}" width="${pw}" height="${ph}" preserveAspectRatio="${CONT ? 'xMidYMid slice' : 'none'}" clip-path="url(#cp)"/>`);
   if (!CONT) for (let c = 1; c < r.cols; c++) g += `<line x1="${px + c * pw / r.cols}" y1="${py}" x2="${px + c * pw / r.cols}" y2="${py + ph}" stroke="#d4ff00" stroke-opacity=".55" stroke-width="1"/>`;
   if (!CONT) for (let f = 1; f < r.rows; f++) g += `<line x1="${px}" y1="${py + f * ph / r.rows}" x2="${px + pw}" y2="${py + f * ph / r.rows}" stroke="#d4ff00" stroke-opacity=".55" stroke-width="1"/>`;
-  g += figura(hx, sueloY, k, /marmol|claro/.test(E.fondo) ? 'fill="#3f4149" fill-opacity=".9"' : 'fill="#d5d5db" fill-opacity=".92" stroke="#1c1d22" stroke-opacity=".6" stroke-width="1.5" vector-effect="non-scaling-stroke"') + `<text x="${hx}" y="${sueloY + 32}" text-anchor="middle" font-size="22" fill="#1c1d22" font-family="Share Tech Mono, monospace">1,75 m</text>`;
+  g += figura(hx, sueloY, k, /marmol|claro/.test(E.fondo) ? 'fill="#3f4149" fill-opacity=".9"' : 'fill="#d5d5db" fill-opacity=".92" stroke="#1c1d22" stroke-opacity=".6" stroke-width="1.5" vector-effect="non-scaling-stroke"') + `<g transform="translate(${hx},${sueloY - 1.75 * k - 20})"><rect x="-36" y="-13" width="72" height="24" rx="6" fill="#fff" fill-opacity=".9" stroke="#1c1d22" stroke-opacity=".5"/><text y="5" text-anchor="middle" font-size="17" fill="#1c1d22" font-family="Share Tech Mono, monospace">1,75 m</text></g>`;
+  { const cm = (v) => fmt(v * 100) + ' cm', t1 = `PANTALLA LED ${esc(m.crm)} · ${fmt(r.ancho * 100)} × ${fmt(r.alto * 100)} cm · ${fmt(R.diag / .0254)}″ · ${r.cols}×${r.rows} = ${r.cab} cabinets · ${r.resW}×${r.resH} px`, t2 = `Con ${m.pitch}p se ve bien desde ${cm(m.pitch)} (óptimo desde ${cm(m.pitch * 3)}).`, f1 = Math.min(17, 1500 / t1.length), x2 = W / 2 - t2.length * 3.9;
+    g += `<text x="${W / 2}" y="${sueloY + 25}" text-anchor="middle" font-size="${f1.toFixed(1)}" font-weight="800" fill="#1c1d22" font-family="Inter, sans-serif">${t1}</text><g fill="none" stroke="#1c1d22" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" transform="translate(${x2 - 24},${sueloY + 34}) scale(.75)"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></g><text x="${x2}" y="${sueloY + 49}" font-size="15" font-weight="600" fill="#1c1d22" font-family="Inter, sans-serif">${t2}</text>`; }
   const cota = (x1, y1, x2, y2, txt, vert) => { const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, tw = txt.length * 13.4 + 22; return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#37c8ff" stroke-width="1.6" stroke-dasharray="5 4"/><g transform="translate(${mx},${my})${vert ? ' rotate(90)' : ''}"><rect x="${-tw / 2}" y="-18" width="${tw}" height="36" rx="7" fill="#fff" stroke="#0090d0" stroke-width="2"/><text y="8" text-anchor="middle" font-size="24" fill="#005a8a" font-family="Share Tech Mono, monospace">${txt}</text></g>`; };
   g += cota(px, py - 30, px + pw, py - 30, 'ANCHO ' + fmt(r.ancho * 100) + ' cm') + cota(px + pw + 34, py, px + pw + 34, py + ph, 'ALTO ' + fmt(r.alto * 100) + ' cm', true);
   if (elev > 0.05) { const ex = px + pw / 2, ey = (py + ph + sueloY) / 2, et = fmt(E.elev) + ' cm', ew = et.length * 13.4 + 22; g += `<line x1="${ex}" y1="${py + ph + 5}" x2="${ex}" y2="${sueloY}" stroke="#fff" stroke-width="4.2"/><line x1="${ex}" y1="${py + ph + 5}" x2="${ex}" y2="${sueloY}" stroke="#7a14d6" stroke-width="2" stroke-dasharray="6 4"/>` + (sueloY - py - ph > 44 ? `<g transform="translate(${ex},${ey})"><rect x="${-ew / 2}" y="-18" width="${ew}" height="36" rx="7" fill="#fff" stroke="#7a14d6" stroke-width="2"/><text y="8" text-anchor="middle" font-size="24" fill="#5a0aa8" font-family="Share Tech Mono, monospace">${et}</text></g>` : ''); }
@@ -257,11 +264,16 @@ function pintaRejilla() {
   el.innerHTML = h;
 }
 function pintaPie() {
-  const p = $('#pie-c'); if (!p) return;
-  p.innerHTML = R && R.r ? `<span class="pie-txt"><b>PANTALLA LED ${esc(R.m.crm)}</b> · ${fmt(R.r.ancho * 100)} × ${fmt(R.r.alto * 100)} cm · ${fmt(R.diag / .0254)}″ · ${R.r.cols}×${R.r.rows} = ${R.r.cab} cabinets · ${R.r.resW}×${R.r.resH} px · ${fmt(R.r.peso)} kg · ${fmt(R.r.kw, 2)} kW · ${R.r.lineas} línea${R.r.lineas > 1 ? 's' : ''}</span>` : '<span class="pie-txt">Escribe la pantalla que necesitas o rellena los bloques de la izquierda.</span>';
+  /* el resultado aparece en la propia casilla de la petición, destacado; al tocarlo vuelve a ser casilla de escribir */
+  const res = $('#pide-res'), inp = $('#pide'); if (!res) return;
+  const ver = !!(R && R.r) && !EDITA && USADO;
+  res.hidden = !ver; inp.style.visibility = ver ? 'hidden' : '';
+  if (ver) res.textContent = `PANTALLA LED ${R.m.crm} · ${fmt(R.r.ancho * 100)} × ${fmt(R.r.alto * 100)} cm · ${fmt(R.diag / .0254)}″ · ${R.r.cols}×${R.r.rows} = ${R.r.cab} cabinets · ${R.r.resW}×${R.r.resH} px · ${fmt(R.r.peso)} kg · ${fmt(R.r.kw, 2)} kW · ${R.r.lineas} línea${R.r.lineas > 1 ? 's' : ''}`;
+  /* si no cabe entero, se encoge la letra hasta que quepa (lo que se copia es siempre el texto completo) */
+  if (ver) { res.style.fontSize = ''; for (let f = 13.5; res.scrollWidth > res.clientWidth + 1 && f >= 10; f -= .5) res.style.fontSize = `calc(var(--u) * ${f})`; }
   $('#pie-l').innerHTML = '<span class="nota">Cálculo automático por IA: verifícalo antes de presupuestar.</span>';
 }
-function todo() { calcula(); pintaRejilla(); pintaPie(); guarda(); }
+function todo() { if (document.activeElement !== $('#pide')) EDITA = false; calcula(); pintaRejilla(); pintaPie(); guarda(); }
 
 /* ---------- ventana grande (el ojo) y ajustes (la ruedita) ---------- */
 let VENT = null;
@@ -291,11 +303,11 @@ function abre(que) {
     VENT = { que };
   } else if (que === 'info') {
     v.innerHTML = `<div class="vent ajustes" role="dialog" aria-modal="true" aria-label="Información"><div class="vent-cab">${IC.info.replace('<svg', '<svg style="width:1.2em;height:1.2em"')} SCREENS · una pantalla LED<span class="sep"></span>${bt('x', 'Cerrar', 'data-cierra')}</div><div class="vent-cu" style="font-size:calc(var(--u)*16);line-height:1.5">
-      <p style="margin:0"><b>BLOCKS</b> es la nueva interfaz de AVHUB: la pantalla no se desplaza y cada dato tiene siempre su sitio. Esta es una beta de prueba (${esc(VERSION)}).</p>
+      <div class="fila"><button type="button" class="tog" data-guia style="flex:none">Ver la guía rápida</button></div><p style="margin:0"><b>BLOCKS</b> es la nueva interfaz de AVHUB: la pantalla no se desplaza y cada dato tiene siempre su sitio. Esta es una beta de prueba (${esc(VERSION)}).</p>
       <p style="margin:0"><b>Cómo se usa.</b> Escribe o dicta arriba la pantalla que necesitas («3 x 4 para exterior 3.9p a 8 m») y pulsa CALCULAR, o rellena los bloques de la izquierda: entorno y uso, dimensiones, cabinet y resolución. Todo se recalcula al momento.</p>
       <p style="margin:0"><b>Las dos pantallas.</b> A la izquierda, la simulación a escala: puedes cambiar la pared, simular contenido (fuentes de prueba, un enlace de YouTube o Vimeo, o una imagen o vídeo tuyos), copiar una captura y abrirla en grande con el ojo. A la derecha, el cableado de señal, el eléctrico y la distancia de visionado.</p>
       <p style="margin:0"><b>Cada opción en su bloque.</b> Las unidades, los formatos y el ajuste a la medida están en Dimensiones; marino, alcance del público y nits mínimos en Entorno; el pitch, la distancia del público y la resolución mínima en Resolución; columnas y filas en Cabinets; el giro de 90° en Cabinet; la altura sobre el suelo en la simulación; el cosido en el cableado de señal; backup y conexión en Señal; escalador y mediaserver en Electrónica. El icono de reinicio de arriba, o un toque en el logo de SCREENS, empieza un cálculo nuevo.</p>
-      <p style="margin:0" class="nota">El PDF, la sala inmersiva, la proyección, el inglés y el catalán siguen en la versión clásica (botón del documento). Cálculo automático que puede contener errores: verifícalo antes de presupuestar o instalar.</p></div></div>`;
+      <p style="margin:0" class="nota">El PDF, la sala inmersiva y la proyección siguen en la versión clásica (botón del documento). Cálculo automático que puede contener errores: verifícalo antes de presupuestar o instalar.</p></div></div>`;
     VENT = { que };
   } else {
     const LISTA = R && R.r ? [['sim', 'Simulación a escala', () => `<div class="lienzo">${svgSim()}</div>`], ['senal', VISTAS[0][3](), () => `<div class="lienzo papel">${VISTAS[0][2]()}${cosidoCtl()}</div>`], ['elec', VISTAS[1][3](), () => `<div class="lienzo papel">${VISTAS[1][2]()}${cosidoCtl('elec')}</div>`], ['dist', VISTAS[2][3](), () => `<div class="lienzo papel">${VISTAS[2][2]()}</div>`], ['equipo', 'Equipos del proyecto', fichas]] : [];
@@ -322,20 +334,19 @@ function fichas() {
 function monta() {
   document.documentElement.dataset.tema = E.tema;
   $('#app').innerHTML = `<div class="blocks">
-    <header class="franja f-h1"><div data-blk="H1L"><button type="button" data-nuevo title="Nuevo cálculo: lo deja todo como al empezar" aria-label="SCREENS · nuevo cálculo" style="display:flex;border:0;background:none;padding:0"><img class="logo inv" src="../assets/screens-logo.svg" alt="SCREENS"></button><span class="chip av">BLOCKS · beta</span></div>
+    <header class="franja f-h1"><div data-blk="H1L"><button type="button" data-nuevo title="Nuevo cálculo: lo deja todo como al empezar" aria-label="SCREENS · nuevo cálculo" style="display:flex;border:0;background:none;padding:0"><img class="logo inv" src="../assets/screens-logo.svg" alt="SCREENS"></button><span class="chip av" title="${esc(VERSION)}">BLOCKS · beta 12</span></div>
       <nav data-blk="H1C" class="fam" aria-label="Familia AVHUB"><a href="https://systems.mediaservi.com/"><img class="inv" src="../assets/fam/systems-logo.svg" alt="SYSTEMS"></a><a href="https://adposter.mediaservi.com/"><img class="inv" src="../assets/fam/adposter-logo.svg" alt="ADPOSTER"></a><a class="av" href="https://avhub.mediaservi.com/"><img src="../assets/avhub-logo.svg" alt="AVHUB"></a><a href="https://vjshow.mediaservi.com/"><img class="inv" src="../assets/fam/vjshow-logo.svg" alt="VJSHOW"></a><a href="https://msgame.mediaservi.com/"><img src="../assets/fam/msgame-logo.svg" alt="MSGAME"></a></nav>
-      <div data-blk="H1R" class="h1r">${bt('info', 'Qué es esto y cómo se usa', 'data-ver="info"', 'g')}<a class="ic-bt g" href="../" title="PDF y versión clásica" aria-label="PDF y versión clásica">${IC.clasico}</a>${bt('nuevo', 'Nuevo cálculo: lo deja todo como al empezar', 'data-nuevo', 'g')}<button type="button" class="ic-bt g" data-idioma title="Idioma: de momento BLOCKS solo está en castellano" aria-label="Idioma: castellano" >${'<span class="ic ic-lang"></span>'}</button>${bt('tema', 'Cambiar entre gris oscuro y gris claro', 'data-cambiatema', 'g')}</div></header>
+      <div data-blk="H1R" class="h1r">${bt('info', 'Qué es esto y cómo se usa', 'data-ver="info"', 'g')}<a class="ic-bt g" href="../" title="PDF y versión clásica" aria-label="PDF y versión clásica">${IC.clasico}</a>${bt('nuevo', 'Nuevo cálculo: lo deja todo como al empezar', 'data-nuevo', 'g')}<button type="button" class="ic-bt g" data-idioma data-crudo title="${NOMBRE[idioma()]} → ${NOMBRE[IDIOMAS[(IDIOMAS.indexOf(idioma()) + 1) % 3]]}" aria-label="${NOMBRE[idioma()]} → ${NOMBRE[IDIOMAS[(IDIOMAS.indexOf(idioma()) + 1) % 3]]}" style="position:relative">${'<span class="ic ic-lang"></span>'}<small class="cod">${idioma().toUpperCase()}</small></button>${bt('tema', 'Cambiar entre gris oscuro y gris claro', 'data-cambiatema', 'g')}</div></header>
     <div class="franja f-hm"><div data-blk="HM1"><div class="fila grupo" style="flex:1">${tog(true, 'data-nada', 'Una', 'una')}<a class="tog" href="../" style="text-decoration:none" title="Varias pantallas: en la versión clásica">${IC.varias}Varias</a></div><div class="fila grupo" style="flex:1.25">${tog(true, 'data-nada', 'LED', 'led')}<a class="tog" href="../" style="text-decoration:none" title="Proyección: en la versión clásica">${IC.proy}Proyección</a></div></div>
-      <div data-blk="HM2"><input class="pide" id="pide" type="text" autocomplete="off" spellcheck="false" placeholder="Escríbela: «pantalla de 3 x 4 para exterior 3.9p a 8 m»" aria-label="Describe la pantalla" value="${esc(E.texto)}">${bt('mic', 'Dictar la petición con el micrófono', 'data-mic', 'g')}${bt('audio', 'Pasar a texto una nota de voz (archivo de audio)', 'data-audio', 'g')}<input type="file" id="f-audio" accept="audio/*,.opus,.ogg,.m4a,.mp3,.wav,.webm" hidden><input type="file" id="f-cont" accept="image/*,video/*" hidden></div>
+      <div data-blk="HM2">${bt('pega', 'Pegar una petición copiada', 'data-pega', 'g')}<div class="pide-caja"><input class="pide" id="pide" type="text" autocomplete="off" spellcheck="false" placeholder="Escríbela: «pantalla de 3 x 4 para exterior 3.9p a 8 m»" aria-label="Describe la pantalla" value="${esc(E.texto)}"><button type="button" class="pide-res" id="pide-res" hidden title="Resultado del cálculo. Toca para escribir otra petición"></button></div>${bt('copia', 'Copiar el texto de la casilla (la petición o el resultado)', 'data-copiatxt', 'g')}${bt('mic', 'Dictar la petición con el micrófono', 'data-mic', 'g')}${bt('audio', 'Pasar a texto una nota de voz (archivo de audio)', 'data-audio', 'g')}<input type="file" id="f-audio" accept="audio/*,.opus,.ogg,.m4a,.mp3,.wav,.webm" hidden><input type="file" id="f-cont" accept="image/*,video/*" hidden></div>
       <div data-blk="HM3"><button type="button" class="calcular" id="calcular">CALCULAR →</button></div></div>
     <main class="rejilla" id="rejilla"></main>
-    <footer class="franja f-f1"><div data-blk="F1L" id="pie-l"></div><div data-blk="F1C" id="pie-c"></div><div data-blk="F1R" class="f1r" id="hueco-comun"></div></footer>
-    <div class="f-cred">${esc(VERSION)} · 2026 · es un proyecto hecho con ♥ by mediaservi.com · <a href="../LEGAL.md">Aviso legal</a></div>
-  </div><div class="velo" id="velo"></div><div class="tostada" id="tostada" role="status" aria-live="polite"></div><div class="aviso-movil">BLOCKS beta está pensada de momento para ordenador y pantalla apaisada.</div>`;
-  const pide = () => { E.texto = $('#pide').value; const v = interpreta(E.texto); todo(); if (E.texto.trim() && !v.length) $('#pie-c').innerHTML = '<span class="pie-txt" style="color:var(--ambar)">No he entendido la petición: prueba con «3 x 2 interior» o rellena los bloques.</span>'; };
+    <footer class="franja f-f1"><div data-blk="F1L" id="pie-l"></div><div data-blk="F1C" id="pie-c" class="f-cred">SCREENS ${esc(VERSION.split('SCREENS ')[1])} · 2026 · es un proyecto hecho con ♥ by mediaservi.com · <a href="../LEGAL.md">Aviso legal</a></div><div data-blk="F1R" class="f1r" id="hueco-comun"></div></footer>
+  </div><div class="velo" id="velo"></div><div class="tostada" id="tostada" role="status" aria-live="polite"></div>`;
+  const pide = () => { E.texto = $('#pide').value; const v = interpreta(E.texto); EDITA = false; USADO = true; todo(); if (E.texto.trim() && !v.length) tostada('No he entendido la petición: prueba con «3 x 2 interior» o usa los botones.', 5000); };
   $('#calcular').onclick = pide; $('#pide').addEventListener('keydown', (e) => { if (e.key === 'Enter') pide(); });
   const pon = (k, v) => { if (k === 'backup' || k === 'giro' || k === 'gold' || k === 'protegido') E[k] = !!v; else E[k] = v; if (k === 'tipo' || k === 'clase' || k === 'gold' || k === 'protegido') E.crm = ''; if (k === 'tipo') E.nitsMin = 0; if (k === 'resMin') { E.pitch = 0; E.crm = ''; } if (k === 'tema') document.documentElement.dataset.tema = v; todo(); if (VENT && VENT.que === 'ajustes') abre('ajustes'); else if (VENT && VENT.pinta) VENT.pinta(); };
-  document.addEventListener('click', (e) => { const q = (s) => e.target.closest(s); let b;
+  document.addEventListener('click', (e) => { const q = (s) => e.target.closest(s); let b; if (q('.rejilla button, .velo [data-set]')) USADO = true;
     if ((b = q('[data-set]'))) pon(b.dataset.set, b.dataset.v);
     else if ((b = q('[data-nits]'))) { const L = [0].concat(R.nitsLista.filter((x) => x > (MIN_NITS[E.tipo] || 0))), i = Math.max(0, L.indexOf(+E.nitsMin || 0)) + +b.dataset.nits; if (L[i] != null) { E.nitsMin = L[i]; E.crm = ''; todo(); } }
     else if ((b = q('[data-cf]'))) { const { m, r } = R, d = +b.dataset.d; if (b.dataset.cf === 'c') E.w = Math.max(1, r.cols + d) * m.cabAncho / 1000 + .0004; else E.h = Math.max(1, r.rows + d) * m.cabAlto / 1000 + .0004; if (E.resMin) { E.pitch = R.pitch; } todo(); }
@@ -343,6 +354,10 @@ function monta() {
     else if ((b = q('[data-pm]'))) { const k = b.dataset.pm, paso = k === 'elev' ? 10 : k === 'dist' ? .5 : .1; E[k] = Math.max(k === 'w' || k === 'h' ? .1 : 0, +((+E[k] || 0) + paso * +b.dataset.d).toFixed(2)); if (k === 'dist') { E.pitch = 0; E.crm = ''; } todo(); if (VENT && VENT.que === 'ajustes') abre('ajustes'); }
     else if ((b = q('[data-formato]'))) { E.h = Math.max(.1, +(E.w * +b.dataset.formato).toFixed(2)); todo(); }
     else if ((b = q('[data-copia]'))) captura(b.dataset.copia);
+    else if (q('#pide-res')) { EDITA = true; pintaPie(); const i = $('#pide'); i.focus(); i.select(); }
+    else if (q('[data-copiatxt]')) { const r = $('#pide-res'), t = (r && !r.hidden ? r.textContent : $('#pide').value).trim(); if (!t) tostada('La casilla está vacía: no hay nada que copiar.'); else (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => tostada(r && !r.hidden ? 'Resultado copiado: pégalo en WhatsApp o donde quieras.' : 'Petición copiada.'), () => tostada('Este navegador no deja copiar desde aquí.')); }
+    else if (q('[data-pega]')) { (navigator.clipboard && navigator.clipboard.readText ? navigator.clipboard.readText() : Promise.reject()).then((t) => { t = String(t || '').replace(/\s+/g, ' ').trim(); if (!t) { tostada('No hay texto copiado que pegar.'); return; } EDITA = true; pintaPie(); const i = $('#pide'); i.value = t.slice(0, 400); i.focus(); tostada('Petición pegada: pulsa CALCULAR.'); }, () => { EDITA = true; pintaPie(); $('#pide').focus(); tostada('Este navegador no deja pegar con el botón: usa Ctrl+V en la casilla.', 5000); }); }
+    else if (q('[data-guia]')) { cierra(); guia(0); }
     else if (q('[data-sube]')) $('#f-cont').click();
     else if ((b = q('[data-fu-sel]'))) { FSEL = +b.dataset.fuSel; URLP = ''; abre('contenido'); }
     else if (q('[data-cont-aplica]')) { const i = $('#url-propia'); if (i) URLP = i.value.trim(); const c = deEnlace(URLP || (FSEL === 0 ? FUENTE_FIJA : FU[FSEL - 1])); sueltaCont(); CONT = c; cierra(); todo(); tostada(c ? 'Contenido aplicado a la pantalla.' : 'Esa fuente está vacía: se queda la carta de ajuste.'); }
@@ -350,15 +365,15 @@ function monta() {
     else if (q('[data-carta]')) { sueltaCont(); CONT = null; todo(); }
     else if (q('[data-audio]')) $('#f-audio').click();
     else if ((b = q('[data-mic]'))) dicta(b);
-    else if (q('[data-idioma]')) tostada('BLOCKS está de momento solo en castellano; el inglés y el catalán llegarán en otra beta.');
+    else if (q('[data-idioma]')) { fijaIdioma(IDIOMAS[(IDIOMAS.indexOf(idioma()) + 1) % IDIOMAS.length]); guarda(); location.reload(); }
     else if ((b = q('[data-fondo]'))) { E.fondo = b.dataset.fondo; todo(); }
     else if ((b = q('[data-vista]'))) { E.vista = +b.dataset.vista; todo(); }
     else if ((b = q('[data-ver]'))) abre(b.dataset.ver);
     else if ((b = q('[data-cambiatema]'))) pon('tema', E.tema === 'oscuro' ? 'claro' : 'oscuro');
     else if ((b = q('[data-paso]'))) { VENT.i = (VENT.i + +b.dataset.paso + VENT.LISTA.length) % VENT.LISTA.length; VENT.pinta(); }
-    else if (q('[data-nuevo]')) { const tema = E.tema; Object.assign(E, DEF, { tema }); sueltaCont(); CONT = null; FSEL = 0; URLP = ''; $('#pide').value = ''; todo(); tostada('Nuevo cálculo: todo vuelve a como al empezar.'); }
+    else if (q('[data-nuevo]')) { const tema = E.tema; Object.assign(E, DEF, { tema }); sueltaCont(); CONT = null; FSEL = 0; URLP = ''; $('#pide').value = ''; EDITA = false; USADO = false; todo(); tostada('Nuevo cálculo: todo vuelve a como al empezar.'); }
     else if (q('[data-cierra]') || e.target.id === 'velo') cierra(); });
-  document.addEventListener('change', (e) => { const t = e.target;
+  document.addEventListener('change', (e) => { const t = e.target; if (t.closest('.rejilla')) USADO = true;
     if (t.dataset.num) { const k = t.dataset.num, v = parseFloat(String(t.value).replace(',', '.')); if (k === 'dist') { E.dist = v > 0 ? v : 0; E.pitch = 0; E.crm = ''; } else if (v >= 0) E[k] = k === 'elev' ? v : Math.max(.1, v / UNI[E.uni]); todo(); if (VENT && VENT.que === 'ajustes') abre('ajustes'); }
     else if (t.dataset.crm !== undefined) { E.crm = t.value; todo(); }
     else if (t.dataset.proc !== undefined) { E.procSel = t.value; todo(); }
@@ -366,8 +381,8 @@ function monta() {
     else if (t.id === 'url-propia') URLP = t.value.trim();
     else if (t.id === 'f-cont' && t.files && t.files[0]) { const f = t.files[0]; sueltaCont(); if (VENT) cierra(); CONT = { url: URL.createObjectURL(f), tipo: /^video\//.test(f.type) ? 'video' : 'img' }; t.value = ''; todo(); tostada('Contenido puesto en la pantalla. La flecha circular vuelve a la carta de ajuste.'); }
     else if (t.id === 'f-audio' && t.files && t.files[0]) { const f = t.files[0]; t.value = ''; tostada('Pasando el audio a texto… la primera vez tarda un poco.', 60000);
-      globalThis.SC_VOZ.transcribir(f, 'es', () => {}).then((txt) => { if (!txt) { tostada('No se ha entendido nada en ese audio.'); return; } const i = $('#pide'); i.value = (i.value.trim() ? i.value.trim() + ' ' : '') + txt; tostada('Audio pasado a texto: revísalo y pulsa CALCULAR.'); }).catch(() => tostada('No se ha podido leer ese audio.')); } });
-  document.addEventListener('keydown', (e) => { if (!VENT) return; if (e.key === 'Enter' && e.target.id === 'url-propia') { e.preventDefault(); URLP = e.target.value.trim(); const bta = document.querySelector('[data-cont-aplica]'); if (bta) bta.click(); return; } if (e.key === 'Escape') cierra(); else if (VENT.que === 'visor' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { VENT.i = (VENT.i + (e.key === 'ArrowRight' ? 1 : -1) + VENT.LISTA.length) % VENT.LISTA.length; VENT.pinta(); } });
+      globalThis.SC_VOZ.transcribir(f, idioma(), () => {}).then((txt) => { if (!txt) { tostada('No se ha entendido nada en ese audio.'); return; } EDITA = true; pintaPie(); const i = $('#pide'); i.value = (i.value.trim() ? i.value.trim() + ' ' : '') + txt; tostada('Audio pasado a texto: revísalo y pulsa CALCULAR.'); }).catch(() => tostada('No se ha podido leer ese audio.')); } });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('#guia')) { guia(null); return; } if (!VENT) return; if (e.key === 'Enter' && e.target.id === 'url-propia') { e.preventDefault(); URLP = e.target.value.trim(); const bta = document.querySelector('[data-cont-aplica]'); if (bta) bta.click(); return; } if (e.key === 'Escape') cierra(); else if (VENT.que === 'visor' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { VENT.i = (VENT.i + (e.key === 'ArrowRight' ? 1 : -1) + VENT.LISTA.length) % VENT.LISTA.length; VENT.pinta(); } });
 }
 /* ---------- avisos, dictado y captura ---------- */
 let relojT = 0;
@@ -375,8 +390,8 @@ function tostada(txt, ms = 3200) { const t = $('#tostada'); if (!t) return; t.te
 let oyendo = null;
 function dicta(b) {
   if (oyendo) { try { oyendo.stop(); } catch (e) {} oyendo = null; b.setAttribute('aria-pressed', 'false'); return; }
-  const i = $('#pide'), base = i.value.trim();
-  oyendo = globalThis.SC_VOZ.dictar('es', (txt) => { i.value = (base ? base + ' ' : '') + txt; }, (e) => { if (e === 'sinMic') tostada('Este navegador no tiene dictado por voz.'); else if (e === 'escuchando') tostada('Te escucho: di la pantalla que necesitas y pulsa otra vez el micrófono al acabar.', 6000); else if (e === 'micFin') { oyendo = null; b.setAttribute('aria-pressed', 'false'); if (i.value.trim()) tostada('Dictado listo: pulsa CALCULAR.'); } });
+  EDITA = true; pintaPie(); const i = $('#pide'), base = i.value.trim();
+  oyendo = globalThis.SC_VOZ.dictar(idioma(), (txt) => { i.value = (base ? base + ' ' : '') + txt; }, (e) => { if (e === 'sinMic') tostada('Este navegador no tiene dictado por voz.'); else if (e === 'escuchando') tostada('Te escucho: di la pantalla que necesitas y pulsa otra vez el micrófono al acabar.', 6000); else if (e === 'micFin') { oyendo = null; b.setAttribute('aria-pressed', 'false'); if (i.value.trim()) tostada('Dictado listo: pulsa CALCULAR.'); } });
   if (oyendo) b.setAttribute('aria-pressed', 'true');
 }
 const aDatos = (url) => fetch(url).then((r) => r.blob()).then((bl) => new Promise((ok) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.readAsDataURL(bl); }));
@@ -402,8 +417,33 @@ async function captura(id) {
     catch (e) { const a = document.createElement('a'); a.href = URL.createObjectURL(png); a.download = 'SCREENS_' + id + '.png'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); tostada('Este navegador no deja copiar imágenes: la captura se ha descargado.'); }
   } catch (e) { console.warn('captura', e); tostada('No se ha podido hacer la captura.'); }
 }
-monta(); todo();
+/* ---------- guía rápida (la primera vez, o desde Información) ---------- */
+const GUIA = [
+  [null, 'Hola 👋', 'Hay dos formas de calcular una pantalla LED. Te las enseño en tres pasos.'],
+  [['HM2', 'HM3'], '1 · Dímelo', 'Escribe, dicta o suelta un audio con lo que necesitas y pulsa CALCULAR.'],
+  [['M1A', 'M2A', 'M2B', 'M3A'], '2 · O elige con los botones', 'Entorno, medidas, cabinet y resolución. Se calcula al momento.'],
+  [['S1A', 'S1B', 'M3C', 'M3D', 'M3E', 'M3F'], '3 · Y retócalo', 'Lo que salga se puede cambiar desde los mismos botones: todo se recalcula solo.']];
+function guia(n) {
+  let g = $('#guia'); const fin = () => { if (g) g.remove(); try { localStorage.setItem('screens-blocks-guia', '1'); } catch (e) {} };
+  if (n == null || n >= GUIA.length) { fin(); return; }
+  if (!g) { g = document.createElement('div'); g.id = 'guia'; g.className = 'guia'; document.body.appendChild(g); g.addEventListener('click', (e) => { const b = e.target.closest('[data-g]'); if (b) { e.stopPropagation(); guia(b.dataset.g === 'x' ? null : +b.dataset.g); } }); }
+  const [ids, tit, txt] = GUIA[n], W = innerWidth, H = innerHeight; let r = null;
+  if (ids) { const rs = ids.map((i) => document.querySelector(`[data-blk="${i}"]`)).filter(Boolean).map((e) => e.getBoundingClientRect()).filter((x) => x.width > 0); if (rs.length) { const m = 6; r = { l: Math.max(4, Math.min(...rs.map((x) => x.left)) - m), t: Math.max(4, Math.min(...rs.map((x) => x.top)) - m), r: Math.min(W - 4, Math.max(...rs.map((x) => x.right)) + m), b: Math.max(...rs.map((x) => x.bottom)) + m }; const zona = $('#rejilla').getBoundingClientRect(); if (r.t >= zona.top - 8) { r.t = Math.max(r.t, zona.top); r.b = Math.min(r.b, zona.bottom); } r.b = Math.min(H - 4, r.b); if (r.b - r.t < 20) r = null; } }
+  g.innerHTML = (r ? `<div class="guia-foco" style="left:${r.l}px;top:${r.t}px;width:${r.r - r.l}px;height:${r.b - r.t}px"></div>` : '<div class="guia-foco nada"></div>') + `<div class="guia-caja" role="dialog" aria-modal="true" aria-label="Guía rápida"><i class="guia-flecha"></i><b>${tit}</b><p>${txt}</p><div class="guia-pie"><span>${GUIA.map((x, i) => `<i class="${i === n ? 'on' : ''}"></i>`).join('')}</span><button type="button" class="tog" data-g="x">Cerrar guía</button><button type="button" class="calcular" data-g="${n + 1}">${n === GUIA.length - 1 ? 'Empezar' : 'Siguiente →'}</button></div></div>`;
+  /* la caja se coloca donde haya más sitio junto a lo resaltado y la flecha apunta hacia ello */
+  const c = g.querySelector('.guia-caja'), fl = g.querySelector('.guia-flecha'), cw = c.offsetWidth, ch = c.offsetHeight, sep = 18; let x = (W - cw) / 2, y = (H - ch) / 2, lado = '';
+  if (r) { const esp = { abajo: H - r.b, arriba: r.t, dcha: W - r.r, izda: r.l };
+    lado = esp.abajo > ch + sep + 8 ? 'abajo' : esp.dcha > cw + sep + 8 ? 'dcha' : esp.izda > cw + sep + 8 ? 'izda' : esp.arriba > ch + sep + 8 ? 'arriba' : '';
+    const cx = (r.l + r.r) / 2, cy = (r.t + r.b) / 2;
+    if (lado === 'abajo') { x = cx - cw / 2; y = r.b + sep; } else if (lado === 'arriba') { x = cx - cw / 2; y = r.t - sep - ch; } else if (lado === 'dcha') { x = r.r + sep; y = cy - ch / 2; } else if (lado === 'izda') { x = r.l - sep - cw; y = cy - ch / 2; }
+    x = Math.max(8, Math.min(W - cw - 8, x)); y = Math.max(8, Math.min(H - ch - 8, y));
+    if (lado) { fl.className = 'guia-flecha ' + lado; if (lado === 'abajo' || lado === 'arriba') fl.style.left = Math.max(18, Math.min(cw - 18, cx - x)) + 'px'; else fl.style.top = Math.max(18, Math.min(ch - 18, cy - y)) + 'px'; } }
+  if (!lado) fl.remove(); c.style.left = x + 'px'; c.style.top = y + 'px'; const sig = c.querySelector('.calcular'); if (sig) sig.focus();
+}
+monta(); todo(); vigila();
+{ let vista = false; try { vista = !!localStorage.getItem('screens-blocks-guia'); } catch (e) {} if (!vista) setTimeout(() => guia(0), 600); }
+addEventListener('resize', () => { const g = $('#guia'); if (g) { const n = [...g.querySelectorAll('.guia-pie span i')].findIndex((i) => i.classList.contains('on')); guia(Math.max(0, n)); } });
 /* botones comunes de la familia: instalar y avisar de un fallo (los mismos de la versión clásica) */
-{ const h = $('#hueco-comun'); if (h) { if (window.AVINSTALA) { try { h.appendChild(window.AVINSTALA.boton({ app: 'SCREENS', idioma: () => 'es', sw: false })); } catch (e) {} } if (window.AVFALLO) { try { h.appendChild(window.AVFALLO.boton({ app: 'SCREENS · BLOCKS', version: VERSION, idioma: () => 'es' })); } catch (e) {} } } }
+{ const h = $('#hueco-comun'); if (h) { if (window.AVINSTALA) { try { h.appendChild(window.AVINSTALA.boton({ app: 'SCREENS', idioma: () => idioma(), sw: false })); } catch (e) {} } if (window.AVFALLO) { try { h.appendChild(window.AVFALLO.boton({ app: 'SCREENS · BLOCKS', version: VERSION, idioma: () => idioma() })); } catch (e) {} } } }
 cargarCatalogo((lista, origen) => { if (origen === 'error') { if (!CAT.length) ESTADO = 'error'; } else { CAT = lista; ESTADO = origen; } todo(); });
 window.__blocks = { E, get R() { return R; }, todo };

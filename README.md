@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.13** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.14** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,19 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.13 · beta)
+## Cambios de la versión actual (v10.14 · beta)
+
+- **Idioma del navegador también en la página clásica de una pantalla LED** (`led.html`): la primera vez se abre en el idioma del navegador si está entre los suyos; después manda el último elegido.
+- **BLOCKS beta 12** (`blocks/`):
+  - **Resultado en la casilla de la petición**, destacado como un botón; al tocarlo vuelve a ser casilla de escribir. Botones de **pegar** y **copiar** (la petición o el resultado, para pasarlo por WhatsApp).
+  - **Pie:** F1C queda para la línea de créditos; desaparece la franja suelta de abajo.
+  - **Simulación:** en la franja del suelo, el resumen corto de la pantalla en negrita y, debajo, la distancia de visionado con un mini icono de ojo («Con 3.9p se ve bien desde 390 cm (óptimo desde 1170 cm).»). La etiqueta «1,75 m» sube junto a la figura.
+  - **Tema claro:** la lima de lo seleccionado es más suave.
+  - **Idiomas:** castellano, inglés y catalán (`blocks/idiomas.js`). La primera vez se usa el del navegador; el botón de idioma cambia entre los tres. La petición escrita también se entiende en inglés y catalán, y el dictado usa el idioma elegido.
+  - **Guía rápida** la primera vez (y desde Información): cuatro pasos con la zona resaltada, flecha, «Siguiente» y «Cerrar guía».
+  - **Versión para móvil** (primera prueba): cabecera, petición y pie fijos; los bloques se recorren por dentro en una columna (dos en tablet y con el móvil tumbado).
+
+### v10.13 (beta)
 
 - **BLOCKS beta 11** (`blocks/`), correcciones de Josep:
   - **DIMENSIONES** (M2A, icono de la regla) une Tamaño y Dimensiones: ancho y alto en una fila, unidades, formatos, ajuste a la medida, la medida real con cabinets enteros y diagonal, formato, superficie y fondo.

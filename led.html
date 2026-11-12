@@ -2,10 +2,11 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                SCREENS - INDEX                               ║
-║                          Versión actual: v10.13                            ║
+║                          Versión actual: v10.14                            ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v10.13
+ÚLTIMA ACTUALIZACIÓN: v10.14
+- v10.14 (beta): la primera vez, esta página se abre en el idioma del navegador si está entre los suyos. BLOCKS beta 12 (blocks/): resultado en la casilla, idiomas, guía rápida y versión para móvil.
 - v10.13 (beta): BLOCKS beta 11 (blocks/): Dimensiones y Resolución fusionados, nueva colocación y cota de altura con contraste. Esta página no cambia.
 - v10.12 (beta): BLOCKS beta 10 (blocks/): icono de reinicio elegido por Josep; el logo también reinicia. Esta página no cambia.
 - v10.11 (beta): BLOCKS beta 9 (blocks/): funciones de la clásica recuperadas, iconos originales, opciones en su bloque y cableado eléctrico dibujado. Esta página no cambia.
@@ -4462,7 +4463,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
         const [showInfo, setShowInfo] = useState(false);
         const [readmeHtml, setReadmeHtml] = useState(null);
         const [descEstado, setDescEstado] = useState('');
-        const [lang, setLang] = useState(() => { try { const q = new URLSearchParams(location.search).get('lang'); if (q && IDIOMAS.some(x => x[0] === q)) return q; return localStorage.getItem('screens_idioma') || 'es'; } catch (e) { return 'es'; } });
+        const [lang, setLang] = useState(() => { try { const q = new URLSearchParams(location.search).get('lang'); if (q && IDIOMAS.some(x => x[0] === q)) return q; const g = localStorage.getItem('screens_idioma'); if (g) return g; const n = String(navigator.language || 'es').slice(0, 2).toLowerCase(); return IDIOMAS.some(x => x[0] === n) ? n : 'es'; } catch (e) { return 'es'; } });
         const instalarRef = useRef(null);
         const cargarRef = useRef(null);
         useEffect(() => {
@@ -8976,7 +8977,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
 
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v10.13', document.documentElement.lang || 'es')}} /> : <span><a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a></span>}
+                    {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v10.14', document.documentElement.lang || 'es')}} /> : <span><a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a></span>}
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -8987,7 +8988,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       *Cálculo automático que puede contener errores: verifícalo con tu método habitual o con un técnico antes de presupuestar o instalar.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v10.13', document.documentElement.lang || 'es', {sinEnlaces: true})}} /> : <span><a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a></span>} · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
+                      {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v10.14', document.documentElement.lang || 'es', {sinEnlaces: true})}} /> : <span><a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a></span>} · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
                     </div>
                   </div>
               </main>
