@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.10** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.11** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,17 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.10 · beta)
+## Cambios de la versión actual (v10.11 · beta)
+
+- **BLOCKS beta 9** (`blocks/`). Objetivo: mismas funciones que la clásica, solo mejor ordenadas.
+  - **Iconos originales** de SCREENS (los de la versión clásica) en bloques y botones (`blocks/iconos.css`).
+  - **Sin ruedita de ajustes**: cada opción está en su bloque. Tamaño: unidades m / cm / mm y ajuste a la medida. Entorno: marino / tropical (GOLD), al alcance del público (LED protegido) y nits mínimos. Cabinet: giro de 90°. Simulación: altura sobre el suelo. Resolución: resolución mínima (HD, FHD, 4K). Cabinets: columnas y filas con − y +. Señal: backup y conexión. Electrónica: escalador, mediaserver y elección del procesador entre los que valen.
+  - **Cableado eléctrico dibujado**: recorrido de cada línea de 16 A, con el mismo cosido (auto, vertical, horizontal) que la señal.
+  - **Nuevo cálculo** con icono de reinicio en la cabecera (sustituye a la casa): lo deja todo como al empezar.
+  - **Pie**: a la izquierda el aviso «Cálculo automático por IA: verifícalo antes de presupuestar.» (ya no se muestra «Catálogo en vivo»); a la derecha, instalar y avisar de un fallo, en ese orden.
+  - Pendiente respecto a la clásica: PDF, esquema de conexiones y material, datos del proyecto (fuentes de vídeo, Dante, marca de mediaserver), idiomas, información con descarga para uso sin conexión.
+
+### v10.10 (beta)
 
 - **BLOCKS beta 8** (`blocks/`): el aviso del pie pasa a decir «Cálculo automático por IA: verifícalo antes de presupuestar.»
 
