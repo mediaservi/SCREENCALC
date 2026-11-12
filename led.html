@@ -2,10 +2,12 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                SCREENS - INDEX                               ║
-║                          Versión actual: v9.7                              ║
+║                          Versión actual: v9.9                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v9.7
+ÚLTIMA ACTUALIZACIÓN: v9.9
+- v9.9: el botón PDF descarga el archivo directamente (pdf.js, con html2canvas y jsPDF alojados en assets/lib/pdf) con la misma hoja de dos páginas; ya no depende del diálogo de impresión del navegador, que queda solo como recurso si la descarga falla. Sin cambios de diseño ni de cálculos.
+- v9.8: logo de MSGAME con dirección nueva y caché renovada.
 - v9.7: correcciones de la revisión de fórmulas: una columna (o fila) de más de 16 A se parte en tramos de 16 A como máximo; las salidas 4K del mediaserver se cuentan por rejilla de 3840 × 2160 (igual que la consola); MCTRL660 PRO con su capacidad real (2,3 Mpx, 2 salidas ópticas). Sin cambios de diseño.
 - v9.6: botón «Instalar» en la consola (instalar.js), común a las apps de AVHUB. Sin cambios en esta ventana, ni de diseño ni de cálculos.
 - v9.5: Tailwind, three.js y los tipos de letra se sirven desde el propio repositorio (assets/tailwind.css, assets/lib, assets/fonts). Sin cambios de diseño ni de cálculos.
@@ -248,6 +250,7 @@ ANTERIOR: v4.1
     
     <!-- Tailwind CSS 3.4.17 pinado — CDN estable, sin riesgo de breaking changes -->
     <script src="credito.js"></script>
+    <script src="pdf.js"></script>
     <!-- v9.5 · Tailwind ya no llega de fuera: assets/tailwind.css es su hoja ya generada con las clases que usa esta página (se regenera con tools/tailwind.sh).
          Va en el mismo punto donde estaba el script, para que el orden de la cascada no cambie. -->
     <link rel="stylesheet" href="assets/tailwind.css?v=9.5">
@@ -5167,7 +5170,19 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
             if (vz) vz.style.removeProperty('zoom');
           };
           
-          window.print();
+          // v9.8 · el PDF se descarga directamente (pdf.js) con esta misma hoja; el diálogo de impresión queda como recurso si falla
+          const restaura = () => { if (window._screens_print_restore) { window._screens_print_restore(); window._screens_print_restore = null; } };
+          if (!window.AVPDF || !mainEl) { window.print(); return; }
+          const pieEl = document.querySelector('.print-footer');
+          window.AVPDF.exporta({ raiz: mainEl, paginas: [['.print-header', '.pdf-pag1'], ['.pdf-pag2']], pieHtml: pieEl ? pieEl.innerHTML : '', pieClase: 'avpdf-pie-led', ocultar: '.print-footer', margen: 12, depura: window.__pdfDepura,
+            // la simulación se ajusta al hueco real de la hoja 1, igual que al imprimir
+            alClonar: (doc) => { const p1 = doc.querySelector('.pdf-pag1'), vc = p1 && p1.querySelector(':scope > .visualizer-container'), inner = vc && vc.querySelector(':scope > div'); if (!inner) return; const cs = (el) => doc.defaultView.getComputedStyle(el);
+              inner.style.setProperty('zoom', '1', 'important'); const w = parseFloat(inner.style.width) || inner.scrollWidth, h = parseFloat(inner.style.height) || inner.scrollHeight; if (!w || !h) return;
+              const gap = parseFloat(cs(p1).rowGap) || 0; let usado = 0, n = 0; [...p1.children].forEach(k => { if (k !== vc && cs(k).display !== 'none') { usado += k.getBoundingClientRect().height; n++; } });
+              const altoDisp = p1.clientHeight - usado - gap * n - 6, anchoDisp = vc.clientWidth - 12; if (altoDisp < 80 || anchoDisp < 80) return;
+              inner.style.setProperty('zoom', Math.max(0.3, Math.min(2.0, anchoDisp / w, altoDisp / h)).toFixed(3), 'important'); },
+            nombre: window.AVPDF.sello('SCREENS'), titulo: document.title })
+            .then(restaura).catch((e) => { console.warn('PDF directo:', e); window.print(); });
         };
         
         // Función CALCULAR - aplica cálculo basado en tamaño y muestra simulación en móviles
@@ -8943,7 +8958,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
 
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v9.7', document.documentElement.lang || 'es')}} /> : <span><a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a></span>}
+                    {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v9.9', document.documentElement.lang || 'es')}} /> : <span><a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a></span>}
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -8954,7 +8969,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       *Cálculo automático que puede contener errores: verifícalo con tu método habitual o con un técnico antes de presupuestar o instalar.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v9.7', document.documentElement.lang || 'es', {sinEnlaces: true})}} /> : <span><a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a></span>} · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
+                      {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v9.9', document.documentElement.lang || 'es', {sinEnlaces: true})}} /> : <span><a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a></span>} · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
                     </div>
                   </div>
               </main>
