@@ -105,6 +105,15 @@ const MAPA = {
   'Da igual que el procesador lleve escalador o no': ['It does not matter whether the processor has a scaler', 'Tant és que el processador porti escalador o no'],
   'Añadir un servidor de contenidos': ['Add a content server', 'Afegeix un servidor de continguts'], 'Ver la electrónica completa': ['See all the electronics', 'Mostra tota l’electrònica'],
   'Sin procesador que cubra este proyecto con estas opciones: cambia el backup, la conexión o el escalador.': ['No processor covers this project with these options: change the backup, the connection or the scaler.', 'Cap processador cobreix aquest projecte amb aquestes opcions: canvia el backup, la connexió o l’escalador.'],
+  // beta 14
+  'Sol directo': ['Direct sun', 'Sol directe'], 'Sol indirecto': ['Indirect sun', 'Sol indirecte'],
+  'Columnas': ['Columns', 'Columnes'], 'Filas': ['Rows', 'Files'], 'Pitch (mm)': ['Pitch (mm)', 'Pitch (mm)'],
+  'Distancia de visionado': ['Viewing distance', 'Distància de visionat'], 'Subir Distancia de visionado': ['Increase viewing distance', 'Puja la distància de visionat'], 'Bajar Distancia de visionado': ['Decrease viewing distance', 'Baixa la distància de visionat'],
+  'Escribe la resolución que necesitas: se ajustan las columnas y las filas': ['Type the resolution you need: columns and rows adjust to it', 'Escriu la resolució que necessites: s’ajusten les columnes i les files'],
+  'Resolución horizontal en píxeles': ['Horizontal resolution in pixels', 'Resolució horitzontal en píxels'], 'Resolución vertical en píxeles': ['Vertical resolution in pixels', 'Resolució vertical en píxels'],
+  'Elevación desde el suelo': ['Height from floor', 'Elevació des del terra'],
+  'Instalación': ['Installation', 'Instal·lació'], 'peso total de la pantalla': ['total screen weight', 'pes total de la pantalla'], 'Mantenimiento': ['Service', 'Manteniment'], 'Receiving card': ['Receiving card', 'Receiving card'], 'Grosor': ['Depth', 'Gruix'],
+  'Distancia visionado': ['Viewing distance', 'Distància visionat'], 'pixels': ['pixels', 'píxels'],
   // mediaserver
   'Añadir': ['Add', 'Afegeix'], 'Marca': ['Brand', 'Marca'], 'Todas': ['All', 'Totes'], 'Nova': ['Nova', 'Nova'], 'Pixel': ['Pixel', 'Pixel'], 'Audio Dante': ['Dante audio', 'Àudio Dante'],
   'Solo servidores con audio por red Dante': ['Only servers with Dante network audio', 'Només servidors amb àudio per xarxa Dante'],
@@ -187,11 +196,20 @@ const REGLAS = [
   [/^(\d+) líneas? \(de (.+)\)$/, (m, l) => [`${m[1]} line${+m[1] > 1 ? 's' : ''} (of ${m[2]})`, `${m[1]} líni${+m[1] > 1 ? 'es' : 'a'} (de ${m[2]})`][k(l)]],
   [/^(\d+) fibras? (.*)\(de (.+)\)$/, (m, l) => [`${m[1]} fibre${+m[1] > 1 ? 's' : ''} ${m[2]}(of ${m[3]})`, `${m[1]} fibr${+m[1] > 1 ? 'es' : 'a'} ${m[2]}(de ${m[3]})`][k(l)]],
   [/^(.+) · (\d+) salidas? 4K \(hacen falta (\d+)\)$/, (m, l) => [`${m[1]} · ${m[2]} 4K output${+m[2] > 1 ? 's' : ''} (${m[3]} needed)`, `${m[1]} · ${m[2]} sortid${+m[2] > 1 ? 'es' : 'a'} 4K (en calen ${m[3]})`][k(l)]],
+  [/^PANTALLA LED (.+ = \d+) cabinets$/, (m, l) => ['LED SCREEN', 'PANTALLA LED'][k(l)] + ' ' + m[1] + ' cabinets'],
+  [/^· (.+ px · .+ kg · .+ kW) · (\d+) líneas?$/, (m, l) => `· ${m[1]} · ${m[2]} ${[+m[2] > 1 ? 'lines' : 'line', +m[2] > 1 ? 'línies' : 'línia'][k(l)]}`],
+  [/^Mínima (\S+) Óptima (\S+)$/, (m, l) => [`Min ${m[1]} Best ${m[2]}`, `Mínima ${m[1]} Òptima ${m[2]}`][k(l)]],
+  [/^A pleno sol: solo cabinets de (\d+) nits o más$/, (m, l) => [`In full sun: only cabinets of ${m[1]} nits or more`, `A ple sol: només cabinets de ${m[1]} nits o més`][k(l)]],
+  [/^A la sombra o con sol indirecto: cabinets de (\d+) a (\d+) nits$/, (m, l) => [`In shade or indirect sun: cabinets from ${m[1]} to ${m[2]} nits`, `A l’ombra o amb sol indirecte: cabinets de ${m[1]} a ${m[2]} nits`][k(l)]],
+  [/^No hay cabinets entre (\d+) y (\d+) nits: se muestran los de más brillo\.$/, (m, l) => [`No cabinets between ${m[1]} and ${m[2]} nits: showing the brighter ones.`, `No hi ha cabinets entre ${m[1]} i ${m[2]} nits: es mostren els de més brillantor.`][k(l)]],
+  [/^Ningún cabinet de este entorno llega a (\d+) nits: se muestran los que hay\.$/, (m, l) => [`No cabinet for this environment reaches ${m[1]} nits: showing what there is.`, `Cap cabinet d’aquest entorn arriba a ${m[1]} nits: es mostren els que hi ha.`][k(l)]],
+  [/^Con cabinets enteros queda en (.+) px\.$/, (m, l) => [`With whole cabinets it comes to ${m[1]} px.`, `Amb cabinets sencers queda en ${m[1]} px.`][k(l)]],
   [/^(.+) · stock$/, (m, l) => m[1] + [' · stock', ' · estoc'][k(l)]], [/^(.+) · recomendado$/, (m, l) => m[1] + [' · recommended', ' · recomanat'][k(l)]],
   [/^mínima (.+)$/, (m, l) => ['minimum ', 'mínima '][k(l)] + m[1]], [/^óptima desde (.+)$/, (m, l) => ['optimal from ', 'òptima des de '][k(l)] + m[1]], [/^tu público · (.+)$/, (m, l) => ['your audience · ', 'el teu públic · '][k(l)] + m[1]],
   [/^… y (\d+) más$/, (m, l) => [`… and ${m[1]} more`, `… i ${m[1]} més`][k(l)]],
   [/^Enlace de la fuente (\d+)$/, (m, l) => ['Link for source ', 'Enllaç de la font '][k(l)] + m[1]],
   [/^es la nueva interfaz de AVHUB: la pantalla no se desplaza y cada dato tiene siempre su sitio\. Esta es una beta de prueba \((.+)\)\.$/, (m, l) => [`is the new AVHUB interface: the page does not scroll and every figure always has its place. This is a test beta (${m[1]}).`, `és la nova interfície d’AVHUB: la pantalla no es desplaça i cada dada té sempre el seu lloc. Aquesta és una beta de prova (${m[1]}).`][k(l)]],
+  [/^SCREENS (v[\d.]+) 2026 forma parte del proyecto AVHUB ideado por el fundador de$/, (m, l) => [`SCREENS ${m[1]} 2026 is part of the AVHUB project, conceived by the founder of`, `SCREENS ${m[1]} 2026 forma part del projecte AVHUB ideat pel fundador de`][k(l)]],
   [/^SCREENS (v[\d.]+) · 2026 · es un proyecto hecho con ♥ by mediaservi\.com ·$/, (m, l) => [`SCREENS ${m[1]} · 2026 · is a project made with ♥ by mediaservi.com ·`, `SCREENS ${m[1]} · 2026 · és un projecte fet amb ♥ by mediaservi.com ·`][k(l)]]
 ];
 /* traduce un texto suelto (para lo que no pasa por la página, como lo que se copia) */

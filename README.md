@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.15** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.16** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,23 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.15 · beta)
+## Cambios de la versión actual (v10.16 · beta)
+
+- **BLOCKS beta 14** (`blocks/`):
+  - **Simulación como en la clásica**, todo dentro de la imagen para que salga en la captura: cuadro de resolución (nivel y píxeles), cuadro resumen (rejilla, pitch, ancho, alto y número de cabinets), recuadro de distancia de visionado debajo, «175 cm» junto a los pies y, sobre la carta de ajuste, el número de cada columna y fila y el rótulo «3840 × 2160 · 4K · 16:9». En el suelo queda el resumen corto.
+  - **«Elevación desde el suelo»** (antes Altura) y **«Distancia de visionado»** (antes Público a).
+  - **Campos primarios con botones** como en la clásica (rótulo, −, valor en casilla, +): columnas, filas, pitch y nits mínimos.
+  - **Resolución escrita a mano** en píxeles: se ajustan las columnas y las filas; con cabinets enteros puede quedar en la inmediatamente superior y se avisa.
+  - **Entorno y uso:** icono en cada botón y dos botones nuevos, **Sol directo** (5000 nits o más) y **Sol indirecto** (de 2500 a 5000 nits), en exterior y escaparate.
+  - **INSTALACIÓN**, bloque nuevo en M3D: peso total, peso por cabinet, mantenimiento, receiving card y grosor. Sale de Cabinets, que queda con la rejilla, el total y las columnas y filas.
+  - **Tema oscuro:** el fluorescente, atenuado como en el claro.
+  - **Pie sin roturas:** cada texto en una línea, con la letra ajustada para que quepa; en el móvil, dos líneas enteras.
+  - **Texto del pie:** «SCREENS vX.Y 2026 forma parte del proyecto AVHUB ideado por el fundador de mediaservi.com · Aviso legal» (el aviso enlaza a screens.mediaservi.com/#aviso).
+  - **Cabecera de los logos** en una franja más oscura, con degradado de negro al tono del fondo; en el tema claro también es oscura, así los logos se ven con sus colores originales.
+  - **Icono de la simulación:** el elegido por Josep (tabla con ojo).
+  - La simulación se dibuja con la proporción del hueco donde va, para aprovecharlo entero.
+
+### v10.15 (beta)
 
 - **Botón de instalar** (`instalar.js`, común a la clásica y a BLOCKS): al pasar el cursor o enfocarlo enseña un bocadillo como el del botón de fallos, con la flecha de descarga y su ámbar, en lugar del rótulo del navegador.
 - **BLOCKS beta 13** (`blocks/`):
