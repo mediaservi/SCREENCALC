@@ -20,6 +20,35 @@
     } catch (e) {} } };
     for (const h of doc.styleSheets) { try { anda(h.cssRules); } catch (e) {} }
   }
+  /* hoja sin fondos negros ni gris oscuro: en la copia se aclaran los fondos oscuros (cajas, degradados y figuras de los dibujos) y se
+     oscurecen los textos y las líneas que estaban pensados para verse sobre oscuro. No se toca lo que indique «respeta» (la pantalla de
+     la simulación) ni las fotos, los vídeos y los lienzos. */
+  function aclara(doc, raiz, respeta) {
+    const win = doc.defaultView, cv = document.createElement('canvas'), memo = new Map(); cv.width = cv.height = 1; const q = cv.getContext('2d', { willReadFrequently: true });
+    /* cualquier color de CSS (rgb, oklch, color-mix…) leído como lo pinta el navegador */
+    const lee = (v) => { if (!v || v === 'none' || v === 'transparent' || /^url\(/.test(v)) return null; if (memo.has(v)) return memo.get(v); let c = null; try { q.clearRect(0, 0, 1, 1); q.fillStyle = '#000'; q.fillStyle = v; q.fillRect(0, 0, 1, 1); const d = q.getImageData(0, 0, 1, 1).data; c = { r: d[0], g: d[1], b: d[2], a: d[3] / 255 }; } catch (e) {} memo.set(v, c); return c; };
+    const L = (c) => (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) / 255, sat = (c) => { const mx = Math.max(c.r, c.g, c.b), mn = Math.min(c.r, c.g, c.b); return mx ? (mx - mn) / mx : 0; };
+    const negro = (c) => L(c) < .12 || (L(c) < .36 && sat(c) < .35);   /* negro o gris oscuro; los colores vivos oscuros (morado, verde) no cuentan */
+    const oscuro = (c) => { if (sat(c) < .18) return '#1f2937'; const k = .33 / Math.max(.05, L(c)); return 'rgb(' + Math.round(c.r * k) + ',' + Math.round(c.g * k) + ',' + Math.round(c.b * k) + ')'; };
+    /* html2canvas dibuja cada <svg> aparte y sin hojas de estilo: lo que cuenta es el atributo o el estilo en línea, propio o heredado */
+    const svgCol = (el, k) => { for (let e = el; e && e.nodeType === 1; e = e.parentNode) { const v = (e.style && e.style.getPropertyValue(k)) || e.getAttribute(k); if (v) return v === 'currentColor' ? win.getComputedStyle(e).color : v; if (e.tagName.toLowerCase() === 'svg') break; } return k === 'fill' ? '#000' : 'none'; };
+    const pon = (el, k, v) => el.style.setProperty(k, v, 'important'), fuera = (el) => respeta && el.closest(respeta);
+    const fondoClaro = (el) => { for (let e = el; e && e.nodeType === 1; e = e.parentElement) { const c = lee(win.getComputedStyle(e).backgroundColor); if (c && c.a > .5) return L(c) > .5; } return true; };
+    const todos = [...raiz.querySelectorAll('*')].filter((el) => !fuera(el) && !/^(img|canvas|video|picture|source|br|script|style)$/i.test(el.tagName)), svgs = new Set();
+    todos.forEach((el) => { const cs = win.getComputedStyle(el), tag = el.tagName.toLowerCase();
+      if (el.namespaceURI === 'http://www.w3.org/2000/svg') { if (tag === 'svg' || tag === 'g' || tag === 'defs' || tag === 'text' || tag === 'tspan') return; if (tag !== 'rect' && tag !== 'polygon') return; const f = lee(svgCol(el, 'fill')); if (!f || f.a < .4 || !negro(f) || parseFloat(svgCol(el, 'fill-opacity') === 'none' ? 1 : svgCol(el, 'fill-opacity')) < .4) return; let b; try { b = el.getBoundingClientRect(); } catch (e) { return; } if (Math.min(b.width, b.height) < 4 || b.width * b.height < 140) return;
+        pon(el, 'fill', '#eef0f3'); const st = lee(svgCol(el, 'stroke')); if (!st || st.a < .2) { pon(el, 'stroke', '#6b7280'); pon(el, 'stroke-width', '1'); } const raizSvg = el.ownerSVGElement; if (raizSvg) svgs.add(raizSvg); return; }
+      const bg = lee(cs.backgroundColor); if (bg && bg.a > .4 && negro(bg)) { pon(el, 'background-color', '#f3f4f6'); if (!(parseFloat(cs.borderTopWidth) > 0)) pon(el, 'border', '1px solid #9ca3af'); }
+      const bi = cs.backgroundImage; if (bi && /gradient/.test(bi)) { const cols = (bi.match(/(?:rgba?|oklch|oklab|lab|lch|hsla?|color)\((?:[^()]|\([^()]*\))*\)|#[0-9a-f]{3,8}\b/gi) || []).map(lee).filter((c) => c && c.a > .4); if (cols.length && cols.every(negro)) { pon(el, 'background-image', 'none'); pon(el, 'background-color', '#f3f4f6'); if (!(parseFloat(cs.borderTopWidth) > 0)) pon(el, 'border', '1px solid #9ca3af'); } } });
+    todos.forEach((el) => { const cs = win.getComputedStyle(el), tag = el.tagName.toLowerCase();
+      if (el.namespaceURI === 'http://www.w3.org/2000/svg') { const raizSvg = el.ownerSVGElement; if (!raizSvg) return; const f = lee(svgCol(el, 'fill')), st = lee(svgCol(el, 'stroke')), texto = tag === 'text' || tag === 'tspan';
+        /* lo que queda debajo de esta pieza dentro del dibujo: la última figura rellena anterior que contiene su centro */
+        const debajo = () => { let b; try { b = el.getBoundingClientRect(); } catch (e) { return 1; } const cx = b.left + b.width / 2, cy = b.top + b.height / 2; let l = 1; for (const k of raizSvg.querySelectorAll('rect, polygon, path, circle, ellipse')) { if (k === el || (k.compareDocumentPosition(el) & 4) === 0) continue; const r = k.getBoundingClientRect(); if (r.width < 6 || r.height < 6 || cx < r.left || cx > r.right || cy < r.top || cy > r.bottom) continue; const c = lee(svgCol(k, 'fill')); if (c && c.a > .5) l = L(c); } return l; };
+        if (texto) { if (f && f.a > .3 && L(f) > .55 && debajo() > .5) pon(el, 'fill', oscuro(f)); else if (f && f.a > .3 && L(f) < .45 && debajo() < .3) pon(el, 'fill', '#ffffff'); }
+        else if (st && st.a > .3 && L(st) > .7 && (svgs.has(raizSvg) || sat(st) > .6) && debajo() > .5) pon(el, 'stroke', oscuro(st)); return; }
+      const col = lee(cs.color); if (col && col.a > .3 && L(col) > .6 && fondoClaro(el)) pon(el, 'color', oscuro(col));
+      ['Top', 'Right', 'Bottom', 'Left'].forEach((ld) => { if (parseFloat(cs['border' + ld + 'Width']) > 0) { const bc = lee(cs['border' + ld + 'Color']); if (bc && bc.a > .3 && L(bc) > .7 && sat(bc) > .45) pon(el, 'border-' + ld.toLowerCase() + '-color', oscuro(bc)); } }); });
+  }
   function velo(on) {
     let v = document.getElementById('avpdf-velo');
     if (!on) { if (v) v.remove(); return; }
@@ -29,7 +58,8 @@
   }
   /* exporta(o) → Promise. o.raiz: elemento que contiene la hoja; o.paginas: [[selectores…], …] si las hojas ya vienen hechas
      (cada una se encaja en un A4); sin o.paginas se corta sola por donde no parte filas ni bloques. o.pieHtml / o.pieClase: pie de
-     cada hoja; o.ocultar: selectores que no deben salir; o.margen (mm); o.nombre: nombre del archivo. */
+     cada hoja; o.ocultar: selectores que no deben salir; o.margen (mm); o.nombre: nombre del archivo.
+     o.claro (por defecto sí): hoja sin fondos oscuros; o.respeta: selectores que conservan su fondo (la pantalla de la simulación). */
   async function exporta(o) {
     velo(true);
     try {
@@ -40,6 +70,7 @@
           modoImpresion(doc);
           const st = doc.createElement('style'); st.textContent = 'html,body{width:' + ancho + 'px!important;min-width:0!important;max-width:none!important;margin:0!important;padding:0!important;overflow:visible!important;height:auto!important}[data-avpdf-pie]{position:static!important;display:block!important;width:100%!important;box-sizing:border-box;margin:0!important;padding:6px 0 0!important;text-align:center!important;font:400 7pt/1.55 Inter,Arial,sans-serif;color:#555;white-space:pre-line;background:#fff}' + (o.ocultar ? o.ocultar + '{display:none!important}' : '') + (o.css || ''); doc.head.appendChild(st);
           if (o.alClonar) { try { o.alClonar(doc, raiz); } catch (e) {} }
+          if (o.claro !== false) { try { aclara(doc, raiz, o.respeta || '.shadow-screen, [data-pdf-respeta]'); } catch (e) { console.warn('PDF directo: aclarado', e); } }
           /* html2canvas no entiende «zoom»: se cambia por una escala equivalente que ocupa lo mismo en la hoja */
           doc.querySelectorAll('[style*="zoom"]').forEach((el) => { const f = parseFloat(el.style.zoom); if (!f || f === 1) return; el.style.setProperty('zoom', '1', 'important'); const w = el.offsetWidth, h = el.offsetHeight; const pon = (k, v) => el.style.setProperty(k, v, 'important'); pon('transform-origin', '0 0'); pon('transform', 'scale(' + f + ')'); const cs = doc.defaultView.getComputedStyle(el), ml = parseFloat(cs.marginLeft) || 0, pw = el.parentNode.clientWidth, centra = /center/.test(doc.defaultView.getComputedStyle(el.parentNode).justifyContent + cs.alignSelf) || ml > 1; pon('margin-left', (centra ? Math.max(0, (pw - w * f) / 2) : 0) + 'px'); pon('align-self', 'flex-start'); pon('margin-right', (w * (f - 1)) + 'px'); pon('margin-bottom', (h * (f - 1)) + 'px'); });
           let pie = null; if (o.pieHtml) { pie = doc.createElement('div'); pie.setAttribute('data-avpdf-pie', ''); if (o.pieClase) pie.className = o.pieClase; pie.innerHTML = o.pieHtml; pie.style.setProperty('display', 'block', 'important'); pie.style.setProperty('position', 'static', 'important'); pie.style.setProperty('visibility', 'visible', 'important'); raiz.appendChild(pie); }
