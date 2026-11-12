@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.9** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.10** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,11 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.9 · beta)
+## Cambios de la versión actual (v10.10 · beta)
+
+- **BLOCKS beta 8** (`blocks/`): el aviso del pie pasa a decir «Cálculo automático por IA: verifícalo antes de presupuestar.»
+
+### v10.9 (beta)
 
 - **BLOCKS beta 7** (`blocks/`): **simular contenido** completo, como en la versión clásica. El botón abre «Contenido de la pantalla» con las **fuentes multimedia de prueba** (la primera fija, mediaservi.com 24/7, y cinco editables que se guardan en el navegador y se comparten con la clásica), un campo para **pegar un enlace** (YouTube, Vimeo, imagen o vídeo), **subir imagen o vídeo**, y los botones **APLICAR**, **REINICIAR** y **CERRAR**. Los reproductores incrustados cubren la pantalla simulada sin deformarse.
 

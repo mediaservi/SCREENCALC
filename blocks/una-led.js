@@ -7,7 +7,7 @@ import { HUMAN_PATH } from '../screens/figura.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'BLOCKS beta 7 · SCREENS v10.9';
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'BLOCKS beta 8 · SCREENS v10.10';
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const IC = {
@@ -300,7 +300,7 @@ function monta() {
       <div data-blk="HM2"><input class="pide" id="pide" type="text" autocomplete="off" spellcheck="false" placeholder="Escríbela: «pantalla de 3 x 4 para exterior 3.9p a 8 m»" aria-label="Describe la pantalla" value="${esc(E.texto)}">${bt('mic', 'Dictar la petición con el micrófono', 'data-mic', 'g')}${bt('audio', 'Pasar a texto una nota de voz (archivo de audio)', 'data-audio', 'g')}<input type="file" id="f-audio" accept="audio/*,.opus,.ogg,.m4a,.mp3,.wav,.webm" hidden><input type="file" id="f-cont" accept="image/*,video/*" hidden></div>
       <div data-blk="HM3"><button type="button" class="calcular" id="calcular">CALCULAR →</button></div></div>
     <main class="rejilla" id="rejilla"></main>
-    <footer class="franja f-f1"><div data-blk="F1L" id="pie-l"></div><div data-blk="F1C" id="pie-c"></div><div data-blk="F1R" style="justify-content:flex-end"><span class="nota" style="text-align:right">Cálculo automático: verifícalo antes de presupuestar.</span></div></footer>
+    <footer class="franja f-f1"><div data-blk="F1L" id="pie-l"></div><div data-blk="F1C" id="pie-c"></div><div data-blk="F1R" style="justify-content:flex-end"><span class="nota" style="text-align:right">Cálculo automático por IA: verifícalo antes de presupuestar.</span></div></footer>
     <div class="f-cred">${esc(VERSION)} · 2026 · es un proyecto hecho con ♥ by mediaservi.com · <a href="../LEGAL.md">Aviso legal</a></div>
   </div><div class="velo" id="velo"></div><div class="tostada" id="tostada" role="status" aria-live="polite"></div><div class="aviso-movil">BLOCKS beta está pensada de momento para ordenador y pantalla apaisada.</div>`;
   const pide = () => { E.texto = $('#pide').value; const v = interpreta(E.texto); todo(); if (E.texto.trim() && !v.length) $('#pie-c').innerHTML = '<span class="pie-txt" style="color:var(--ambar)">No he entendido la petición: prueba con «3 x 2 interior» o rellena los bloques.</span>'; };
