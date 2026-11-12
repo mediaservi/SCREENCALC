@@ -9,7 +9,7 @@ import { interpretar } from './peticion.js';
 import { vistasTecnicas, activarVistas } from './vistas.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v9.7';
+const VERSION = 'v9.9';
 // v8.9 · crédito común de AVHUB (credito.js) y seta de aviso de fallos (fallo.js), los mismos en toda la familia
 if (window.AVCREDITO) window.AVCREDITO.alCambiar(() => { try { pintarCabecera(); } catch (e) {} });
 if (window.AVFALLO) { const bi = document.querySelector('#btn-idioma'); if (bi) { const bf = window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() }); bf.id = 'btn-fallo'; bi.before(bf);
@@ -881,7 +881,12 @@ function imprimir() {
   // fotos sin carga diferida (el bloque está oculto en pantalla) y, como mucho, 3 s de espera
   const imgs = [...d.querySelectorAll('img')]; imgs.forEach(i => { i.loading = 'eager'; });
   const espera = Promise.all(imgs.map(i => (i.complete ? 1 : new Promise(r => { i.addEventListener('load', r); i.addEventListener('error', r); }))));
-  Promise.race([espera, new Promise(r => setTimeout(r, 3000))]).then(() => setTimeout(() => window.print(), 60));
+  // v9.8 · el PDF se descarga directamente (pdf.js); el diálogo de impresión del navegador queda solo como recurso si falla
+  Promise.race([espera, new Promise(r => setTimeout(r, 3000))]).then(() => setTimeout(() => {
+    if (!window.AVPDF) return window.print();
+    window.AVPDF.exporta({ raiz: d, pieHtml: `${t('avisoPdf')}\n${pie} <i class="ic ic-footer" aria-hidden="true"></i> ${web}`, ocultar: '#impresion .im-aviso, #impresion .im-pie', nombre: window.AVPDF.sello('SCREENS'), titulo: 'SCREENS · ' + fecha })
+      .then(() => { d.innerHTML = ''; }).catch(e => { console.warn('PDF directo:', e); window.print(); });
+  }, 60));
 }
 window.addEventListener('afterprint', () => { const d = $('#impresion'); if (d) d.innerHTML = ''; });
 
