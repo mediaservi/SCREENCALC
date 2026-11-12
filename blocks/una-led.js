@@ -7,7 +7,7 @@ import { HUMAN_PATH } from '../screens/figura.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'BLOCKS beta 6 · SCREENS v10.8';
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'BLOCKS beta 7 · SCREENS v10.9';
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const IC = {
@@ -50,6 +50,26 @@ const E = Object.assign({ w: 3, h: 2, tipo: 'INDOOR', clase: 'INSTALL', pitch: 0
   (() => { try { return JSON.parse(localStorage.getItem(GUARDA) || '{}'); } catch (e) { return {}; } })());
 let CAT = [], ESTADO = 'cargando', R = null;   /* R: resultado del cálculo en curso */
 const guarda = () => { try { localStorage.setItem(GUARDA, JSON.stringify(E)); } catch (e) {} };
+/* fuentes multimedia de prueba: las mismas de la versión clásica (la primera es fija; las otras cinco se editan y se guardan en este navegador, compartidas con la clásica) */
+const FUENTE_FIJA = 'https://www.youtube.com/playlist?list=PLe5oQrtGOkLA';
+const FUENTES_DEF = ['https://www.youtube.com/watch?v=ROboUHfPUrU', 'https://www.youtube.com/live/b4tE5aKhtlg', 'https://www.youtube.com/live/Qr61waJ6AZg', 'https://www.youtube.com/live/VlcwKEDOgOk', 'https://www.youtube.com/live/ewBqZHS9iG8'];
+let FU = FUENTES_DEF.slice(), FSEL = 0, URLP = '';
+try { const v = JSON.parse(localStorage.getItem('screens_fuentes_v2') || 'null'); if (Array.isArray(v) && v.length === 5) FU = v.map(String); } catch (e) {}
+const YT = '&autoplay=1&mute=1&playsinline=1&rel=0&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&cc_load_policy=0&showinfo=0&loop=1';
+/* de un enlace cualquiera a lo que hay que pintar: imagen, vídeo o reproductor incrustado (YouTube, Vimeo u otra página) */
+function deEnlace(u) {
+  u = String(u || '').trim(); if (!u) return null; if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+  if (/\.(jpe?g|png|gif|webp|avif|svg)(\?|#|$)/i.test(u)) return { url: u, tipo: 'img' };
+  if (/\.(mp4|webm|ogv|mov|m4v)(\?|#|$)/i.test(u)) return { url: u, tipo: 'video' };
+  const li = u.match(/youtube\.com\/(?:playlist|watch)\?[^\s]*list=([A-Za-z0-9_-]+)/), vl = u.match(/[?&]v=([A-Za-z0-9_-]{11})/);
+  if (li && vl) return { url: `https://www.youtube.com/embed/${vl[1]}?list=${li[1]}${YT}`, tipo: 'marco' };
+  if (li) return { url: `https://www.youtube.com/embed/videoseries?list=${li[1]}${YT}`, tipo: 'marco' };
+  const y = u.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|live|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+  if (y) return { url: `https://www.youtube.com/embed/${y[1]}?playlist=${y[1]}${YT}`, tipo: 'marco' };
+  const vm = u.match(/vimeo\.com\/(?:.*\/)?(\d+)/); if (vm) return { url: `https://player.vimeo.com/video/${vm[1]}?autoplay=1&muted=1&loop=1&controls=0&background=1`, tipo: 'marco' };
+  return { url: u, tipo: 'marco' };
+}
+const sueltaCont = () => { if (CONT && /^blob:/.test(CONT.url)) URL.revokeObjectURL(CONT.url); };
 let CONT = null;   /* contenido propio que se simula en la pantalla: { url, tipo: 'img' | 'video' } */
 const SUELO = { hormigon: '#bfe6d8', madera: '#bcd9f2', marmol: '#f2c9d4', 'ladrillo-rojo': '#c7e8c0', 'ladrillo-oscuro': '#f3e3a8', 'ladrillo-claro': '#c9c6f0' };
 const FONDOS = ['hormigon', 'madera', 'marmol', 'ladrillo-rojo', 'ladrillo-oscuro', 'ladrillo-claro'];
@@ -131,7 +151,7 @@ function svgSim() {
     g += `<defs><pattern id="pared" patternUnits="userSpaceOnUse" x="${W / 2}" y="${sueloY - th * (t[2] ? 2 : 1)}" width="${tw * (t[2] ? 2 : 1)}" height="${th * (t[2] ? 2 : 1)}">${t[2] ? im() + im(`translate(${2 * tw},0) scale(-1,1)`) + im(`translate(0,${2 * th}) scale(1,-1)`) + im(`translate(${2 * tw},${2 * th}) scale(-1,-1)`) : im()}</pattern></defs><rect x="-4000" y="-4000" width="9000" height="${4000 + sueloY}" fill="url(#pared)"/>`; }
   /* el suelo es una banda de color pastel que contrasta con la pared, no una continuación de su textura */
   g += `<rect data-suelo x="-4000" y="${sueloY}" width="9000" height="900" fill="${SUELO[E.fondo] || '#bfe6d8'}"/><rect x="-4000" y="${sueloY}" width="9000" height="5" fill="#000" fill-opacity=".28"/>`;
-  g += `<rect x="${px - 5}" y="${py - 5}" width="${pw + 10}" height="${ph + 10}" fill="#050506" rx="3"/>` + (CONT && CONT.tipo === 'video' ? `<foreignObject x="${px}" y="${py}" width="${pw}" height="${ph}"><video src="${CONT.url}" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;background:#000"></video></foreignObject>` : `<image href="${CONT ? CONT.url : '../assets/SCCHART.jpg'}" x="${px}" y="${py}" width="${pw}" height="${ph}" preserveAspectRatio="${CONT ? 'xMidYMid slice' : 'none'}" clip-path="url(#cp)"/>`);
+  g += `<rect x="${px - 5}" y="${py - 5}" width="${pw + 10}" height="${ph + 10}" fill="#050506" rx="3"/>` + (CONT && CONT.tipo === 'marco' ? (() => { const e = Math.max(pw / 16, ph / 9), iw = 16 * e, ih = 9 * e; return `<foreignObject x="${px}" y="${py}" width="${pw}" height="${ph}"><div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;overflow:hidden;position:relative;background:#000"><iframe src="${esc(CONT.url)}" title="Contenido simulado" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;left:${(pw - iw) / 2}px;top:${(ph - ih) / 2}px;width:${iw}px;height:${ih}px;border:0;pointer-events:none"></iframe></div></foreignObject>`; })() : CONT && CONT.tipo === 'video' ? `<foreignObject x="${px}" y="${py}" width="${pw}" height="${ph}"><video src="${CONT.url}" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;background:#000"></video></foreignObject>` : `<image href="${CONT ? CONT.url : '../assets/SCCHART.jpg'}" x="${px}" y="${py}" width="${pw}" height="${ph}" preserveAspectRatio="${CONT ? 'xMidYMid slice' : 'none'}" clip-path="url(#cp)"/>`);
   if (!CONT) for (let c = 1; c < r.cols; c++) g += `<line x1="${px + c * pw / r.cols}" y1="${py}" x2="${px + c * pw / r.cols}" y2="${py + ph}" stroke="#d4ff00" stroke-opacity=".55" stroke-width="1"/>`;
   if (!CONT) for (let f = 1; f < r.rows; f++) g += `<line x1="${px}" y1="${py + f * ph / r.rows}" x2="${px + pw}" y2="${py + f * ph / r.rows}" stroke="#d4ff00" stroke-opacity=".55" stroke-width="1"/>`;
   g += figura(hx, sueloY, k, /marmol|claro/.test(E.fondo) ? 'fill="#3f4149" fill-opacity=".9"' : 'fill="#d5d5db" fill-opacity=".92" stroke="#1c1d22" stroke-opacity=".6" stroke-width="1.5" vector-effect="non-scaling-stroke"') + `<text x="${hx}" y="${sueloY + 32}" text-anchor="middle" font-size="22" fill="#1c1d22" font-family="Share Tech Mono, monospace">1,75 m</text>`;
@@ -192,7 +212,7 @@ function pintaRejilla() {
   h += blk('m2a', 'M2A', 'Pitch', 'var(--violeta)', `<div class="fila"><button type="button" class="ic-bt g" data-pitch="-1" aria-label="Pitch más fino" title="Pitch más fino" ${ip <= 0 ? 'disabled' : ''}>${IC.ant}</button><div class="gran" style="flex:1;text-align:center">${String(R.pitch).replace('.', ',')}<small>mm</small></div><button type="button" class="ic-bt g" data-pitch="1" aria-label="Pitch más grueso" title="Pitch más grueso" ${ip >= R.pitches.length - 1 ? 'disabled' : ''}>${IC.sig}</button></div><div class="fila envuelve"><span class="chip ${ORIG[0]}">${ORIG[1]}</span><span class="chip">${ip + 1} de ${R.pitches.length}</span></div>${num('dist', 'Público a', E.dist || '', 'm', .5)}<div class="nota">Si indicas a qué distancia está el público, se elige el pitch que se ve bien desde ahí.</div>`);
   const foto = m.urlFoto ? `<img src="${esc(m.urlFoto)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<div class="sinfoto">sin foto</div>';
   h += blk('m2b', 'M2B', 'Cabinet', 'var(--violeta)', `<select class="sel" data-crm aria-label="Modelo de cabinet">${R.delPitch.map((x) => `<option value="${esc(x.crm)}"${x.crm === m.crm ? ' selected' : ''}>${esc(x.crm)}${enStock(x) ? ' · stock' : ''}</option>`).join('')}</select><div class="cabmini">${foto}<div style="min-width:0;flex:1">${dato('Cabinet', `${m.cabAncho}×${m.cabAlto} mm`)}${dato('Píxeles', `${m.cabPixAncho}×${m.cabPixAlto}`)}${dato('Brillo', m.nits ? fmt(m.nits) + ' nits' : '—')}</div></div><div class="fila envuelve"><span class="chip ${enStock(m) ? 'ok' : 'no'}">${enStock(m) ? 'En stock' : 'Bajo pedido'}</span><span class="chip">${esc(m.family || '')}</span></div>`, bt('ojo', 'Ver la ficha completa del cabinet', 'data-ver="equipo"'));
-  h += blk('s1a', 'S1A', 'Simulación a escala', 'var(--marca)', `<div class="lienzo">${svgSim()}<div class="fondos" role="group" aria-label="Fondo de la pared">${FONDOS.map((f) => `<button type="button" data-fondo="${f}" aria-pressed="${E.fondo === f}" aria-label="Fondo ${f.replace(/-/g, ' ')}" title="${f.replace(/-/g, ' ')}" style="background-image:url(../assets/sim/${f}-mini.jpg)"></button>`).join('')}</div></div>`, bt('contenido', 'Simular contenido: elige una imagen o un vídeo tuyo', 'data-contenido') + (CONT ? bt('carta', 'Volver a la carta de ajuste', 'data-carta') : '') + bt('copia', 'Copiar una captura de esta pantalla', 'data-copia="S1A"') + bt('ojo', 'Ver en grande', 'data-ver="sim"'), 'pant');
+  h += blk('s1a', 'S1A', 'Simulación a escala', 'var(--marca)', `<div class="lienzo">${svgSim()}<div class="fondos" role="group" aria-label="Fondo de la pared">${FONDOS.map((f) => `<button type="button" data-fondo="${f}" aria-pressed="${E.fondo === f}" aria-label="Fondo ${f.replace(/-/g, ' ')}" title="${f.replace(/-/g, ' ')}" style="background-image:url(../assets/sim/${f}-mini.jpg)"></button>`).join('')}</div></div>`, bt('contenido', 'Simular contenido: fuentes de prueba, un enlace o un archivo tuyo', 'data-ver="contenido"') + (CONT ? bt('carta', 'Volver a la carta de ajuste', 'data-carta') : '') + bt('copia', 'Copiar una captura de esta pantalla', 'data-copia="S1A"') + bt('ojo', 'Ver en grande', 'data-ver="sim"'), 'pant');
   const V = VISTAS[E.vista] || VISTAS[0];
   h += blk('s1b', 'S1B', V[3](), 'var(--azul)', `<div class="lienzo papel">${V[2]()}${V[0] === 'senal' ? cosidoCtl() : ''}</div>`, `<div class="pestanas" role="group" aria-label="Qué se ve en esta pantalla">${VISTAS.map((v, i) => `<button type="button" data-vista="${i}" aria-pressed="${i === E.vista}">${v[1]}</button>`).join('')}</div>` + bt('copia', 'Copiar una captura de esta pantalla', 'data-copia="S1B"') + bt('ojo', 'Ver en grande', 'data-ver="vista"'), 'pant');
   const mcd = (a, b) => (b ? mcd(b, a % b) : a), q = mcd(Math.round(r.ancho * 1000), Math.round(r.alto * 1000)), fa = Math.round(r.ancho * 1000) / q, fb = Math.round(r.alto * 1000) / q, formato = fa <= 32 && fb <= 32 ? fa + ':' + fb : fmt(r.ancho / r.alto, 2) + ':1';
@@ -230,11 +250,21 @@ function abre(que) {
       f('Tema', 'Aspecto de la interfaz', tog(E.tema === 'oscuro', 'data-set="tema" data-v="oscuro"', 'Oscuro') + tog(E.tema === 'claro', 'data-set="tema" data-v="claro"', 'Gris claro')) +
       `</div><div class="fila" style="justify-content:flex-end"><button type="button" class="tog" style="flex:none" data-reset>Restablecer</button></div></div></div>`;
     VENT = { que };
+  } else if (que === 'contenido') {
+    const nom = (u) => { const y = String(u).match(/(?:v=|live\/|youtu\.be\/|shorts\/)([A-Za-z0-9_-]{11})/); return y ? 'YouTube · ' + y[1] : String(u).replace(/^https?:\/\/(www\.)?/, ''); };
+    v.innerHTML = `<div class="vent ajustes" role="dialog" aria-modal="true" aria-label="Contenido de la pantalla"><div class="vent-cab">${IC.contenido.replace('<svg', '<svg style="width:1.2em;height:1.2em"')} Contenido de la pantalla<span class="sep"></span>${bt('x', 'Cerrar', 'data-cierra')}</div><div class="vent-cu">
+      <div class="rot">Fuentes multimedia de prueba</div>
+      <div class="fuentes">${[FUENTE_FIJA].concat(FU).map((u, i) => `<div class="fuente" data-on="${FSEL === i && !URLP}"><button type="button" class="tog" data-fu-sel="${i}" aria-pressed="${FSEL === i && !URLP}" title="Elegir esta fuente">${i + 1}</button>${i === 0 ? '<b>mediaservi.com 24/7</b>' : `<input type="url" class="pide" data-fu="${i - 1}" value="${esc(u)}" placeholder="Vacía · pega aquí un enlace" aria-label="Enlace de la fuente ${i + 1}" title="${esc(nom(u))}">`}</div>`).join('')}</div>
+      <div class="nota">Las fuentes 2 a 6 se pueden editar; la primera es fija. Se guardan en este navegador, las mismas que en la versión clásica.</div>
+      <div class="rot">O usa tu propio contenido</div>
+      <div class="fila"><input type="url" class="pide" id="url-propia" value="${esc(URLP)}" placeholder="Pega un enlace de YouTube, Vimeo, imagen o vídeo" aria-label="Enlace de tu contenido"><button type="button" class="tog" data-sube style="flex:none">${IC.contenido}Subir imagen / vídeo</button></div>
+      <div class="fila"><button type="button" class="calcular" data-cont-aplica style="font-size:calc(var(--u)*15)">APLICAR</button>${tog(false, 'data-cont-reinicia title="Volver a la carta de ajuste inicial"', 'Reiniciar')}${tog(false, 'data-cierra', 'Cerrar')}</div></div></div>`;
+    VENT = { que };
   } else if (que === 'info') {
     v.innerHTML = `<div class="vent ajustes" role="dialog" aria-modal="true" aria-label="Información"><div class="vent-cab">${IC.info.replace('<svg', '<svg style="width:1.2em;height:1.2em"')} SCREENS · una pantalla LED<span class="sep"></span>${bt('x', 'Cerrar', 'data-cierra')}</div><div class="vent-cu" style="font-size:calc(var(--u)*16);line-height:1.5">
       <p style="margin:0"><b>BLOCKS</b> es la nueva interfaz de AVHUB: la pantalla no se desplaza y cada dato tiene siempre su sitio. Esta es una beta de prueba (${esc(VERSION)}).</p>
       <p style="margin:0"><b>Cómo se usa.</b> Escribe o dicta arriba la pantalla que necesitas («3 x 4 para exterior 3.9p a 8 m») y pulsa CALCULAR, o rellena los cuatro bloques de la izquierda: tamaño, entorno y uso, pitch y cabinet. Todo se recalcula al momento.</p>
-      <p style="margin:0"><b>Las dos pantallas.</b> A la izquierda, la simulación a escala: puedes cambiar la pared, poner tu propio contenido (imagen o vídeo), copiar una captura y abrirla en grande con el ojo. A la derecha, el cableado de señal, el eléctrico y la distancia de visionado.</p>
+      <p style="margin:0"><b>Las dos pantallas.</b> A la izquierda, la simulación a escala: puedes cambiar la pared, simular contenido (fuentes de prueba, un enlace de YouTube o Vimeo, o una imagen o vídeo tuyos), copiar una captura y abrirla en grande con el ojo. A la derecha, el cableado de señal, el eléctrico y la distancia de visionado.</p>
       <p style="margin:0"><b>La ruedita</b> guarda lo menos habitual: backup, escalador, conexión, mediaserver, ajuste a la medida, elevación y tema.</p>
       <p style="margin:0" class="nota">El PDF, la sala inmersiva, la proyección, el inglés y el catalán siguen en la versión clásica (botón del documento). Cálculo automático que puede contener errores: verifícalo antes de presupuestar o instalar.</p></div></div>`;
     VENT = { que };
@@ -282,8 +312,11 @@ function monta() {
     else if ((b = q('[data-pm]'))) { const k = b.dataset.pm, paso = k === 'elev' ? 10 : k === 'dist' ? .5 : .1; E[k] = Math.max(k === 'w' || k === 'h' ? .1 : 0, +((+E[k] || 0) + paso * +b.dataset.d).toFixed(2)); if (k === 'dist') { E.pitch = 0; E.crm = ''; } todo(); if (VENT && VENT.que === 'ajustes') abre('ajustes'); }
     else if ((b = q('[data-formato]'))) { E.h = Math.max(.1, +(E.w * +b.dataset.formato).toFixed(2)); todo(); }
     else if ((b = q('[data-copia]'))) captura(b.dataset.copia);
-    else if (q('[data-contenido]')) $('#f-cont').click();
-    else if (q('[data-carta]')) { if (CONT) URL.revokeObjectURL(CONT.url); CONT = null; todo(); }
+    else if (q('[data-sube]')) $('#f-cont').click();
+    else if ((b = q('[data-fu-sel]'))) { FSEL = +b.dataset.fuSel; URLP = ''; abre('contenido'); }
+    else if (q('[data-cont-aplica]')) { const i = $('#url-propia'); if (i) URLP = i.value.trim(); const c = deEnlace(URLP || (FSEL === 0 ? FUENTE_FIJA : FU[FSEL - 1])); sueltaCont(); CONT = c; cierra(); todo(); tostada(c ? 'Contenido aplicado a la pantalla.' : 'Esa fuente está vacía: se queda la carta de ajuste.'); }
+    else if (q('[data-cont-reinicia]')) { sueltaCont(); CONT = null; FSEL = 0; URLP = ''; cierra(); todo(); tostada('Pantalla reiniciada: vuelve la carta de ajuste.'); }
+    else if (q('[data-carta]')) { sueltaCont(); CONT = null; todo(); }
     else if (q('[data-audio]')) $('#f-audio').click();
     else if ((b = q('[data-mic]'))) dicta(b);
     else if (q('[data-idioma]')) tostada('BLOCKS está de momento solo en castellano; el inglés y el catalán llegarán en otra beta.');
@@ -297,10 +330,12 @@ function monta() {
   document.addEventListener('change', (e) => { const t = e.target;
     if (t.dataset.num) { const k = t.dataset.num, v = parseFloat(String(t.value).replace(',', '.')); if (k === 'dist') { E.dist = v > 0 ? v : 0; E.pitch = 0; E.crm = ''; } else if (v >= 0) E[k] = k === 'elev' ? v : Math.max(.1, v); todo(); if (VENT && VENT.que === 'ajustes') abre('ajustes'); }
     else if (t.dataset.crm !== undefined) { E.crm = t.value; todo(); }
-    else if (t.id === 'f-cont' && t.files && t.files[0]) { const f = t.files[0]; if (CONT) URL.revokeObjectURL(CONT.url); CONT = { url: URL.createObjectURL(f), tipo: /^video\//.test(f.type) ? 'video' : 'img' }; t.value = ''; todo(); tostada('Contenido puesto en la pantalla. La flecha circular vuelve a la carta de ajuste.'); }
+    else if (t.dataset.fu !== undefined) { FU[+t.dataset.fu] = t.value.trim(); FSEL = +t.dataset.fu + 1; URLP = ''; try { localStorage.setItem('screens_fuentes_v2', JSON.stringify(FU)); } catch (er) {} abre('contenido'); }
+    else if (t.id === 'url-propia') URLP = t.value.trim();
+    else if (t.id === 'f-cont' && t.files && t.files[0]) { const f = t.files[0]; sueltaCont(); if (VENT) cierra(); CONT = { url: URL.createObjectURL(f), tipo: /^video\//.test(f.type) ? 'video' : 'img' }; t.value = ''; todo(); tostada('Contenido puesto en la pantalla. La flecha circular vuelve a la carta de ajuste.'); }
     else if (t.id === 'f-audio' && t.files && t.files[0]) { const f = t.files[0]; t.value = ''; tostada('Pasando el audio a texto… la primera vez tarda un poco.', 60000);
       globalThis.SC_VOZ.transcribir(f, 'es', () => {}).then((txt) => { if (!txt) { tostada('No se ha entendido nada en ese audio.'); return; } const i = $('#pide'); i.value = (i.value.trim() ? i.value.trim() + ' ' : '') + txt; tostada('Audio pasado a texto: revísalo y pulsa CALCULAR.'); }).catch(() => tostada('No se ha podido leer ese audio.')); } });
-  document.addEventListener('keydown', (e) => { if (!VENT) return; if (e.key === 'Escape') cierra(); else if (VENT.que === 'visor' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { VENT.i = (VENT.i + (e.key === 'ArrowRight' ? 1 : -1) + VENT.LISTA.length) % VENT.LISTA.length; VENT.pinta(); } });
+  document.addEventListener('keydown', (e) => { if (!VENT) return; if (e.key === 'Enter' && e.target.id === 'url-propia') { e.preventDefault(); URLP = e.target.value.trim(); const bta = document.querySelector('[data-cont-aplica]'); if (bta) bta.click(); return; } if (e.key === 'Escape') cierra(); else if (VENT.que === 'visor' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { VENT.i = (VENT.i + (e.key === 'ArrowRight' ? 1 : -1) + VENT.LISTA.length) % VENT.LISTA.length; VENT.pinta(); } });
 }
 /* ---------- avisos, dictado y captura ---------- */
 let relojT = 0;

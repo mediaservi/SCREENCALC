@@ -179,3 +179,11 @@ select.sel { width: 100%; min-width: 0; border: 1px solid var(--verde-txt); back
 .cosidos button:hover { border-color: var(--verde); box-shadow: 0 0 0 calc(var(--u) * 2) var(--verde); }
 .cosidos em { font-style: normal; color: var(--txt); }
 .vent .cosidos { font-size: calc(var(--u) * 15); top: calc(var(--u) * 12); }
+/* contenido de la pantalla: fuentes de prueba, enlace propio y archivo */
+.rot { font-size: calc(var(--u) * 13); font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--tenue); }
+.fuentes { display: flex; flex-direction: column; gap: calc(var(--u) * 6); }
+.fuente { display: flex; align-items: center; gap: calc(var(--u) * 8); }
+.fuente .tog { flex: none; width: calc(var(--u) * 44); min-height: calc(var(--u) * 38); }
+.fuente b { font-size: calc(var(--u) * 16); }
+.fuente .pide, .vent .pide { height: calc(var(--u) * 38); font-size: calc(var(--u) * 15); }
+.fuente[data-on="true"] .pide { border-color: var(--verde-txt); }
