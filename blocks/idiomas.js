@@ -105,6 +105,9 @@ const MAPA = {
   'Da igual que el procesador lleve escalador o no': ['It does not matter whether the processor has a scaler', 'Tant és que el processador porti escalador o no'],
   'Añadir un servidor de contenidos': ['Add a content server', 'Afegeix un servidor de continguts'], 'Ver la electrónica completa': ['See all the electronics', 'Mostra tota l’electrònica'],
   'Sin procesador que cubra este proyecto con estas opciones: cambia el backup, la conexión o el escalador.': ['No processor covers this project with these options: change the backup, the connection or the scaler.', 'Cap processador cobreix aquest projecte amb aquestes opcions: canvia el backup, la connexió o l’escalador.'],
+  // beta 15
+  'Transparente': ['Transparent', 'Transparent'], 'LED transparente: solo las familias HOLO y T·Glass': ['Transparent LED: only the HOLO and T·Glass families', 'LED transparent: només les famílies HOLO i T·Glass'],
+  'No hay LED transparente (HOLO o T·Glass) para este entorno: se muestran los normales.': ['No transparent LED (HOLO or T·Glass) for this environment: showing the standard ones.', 'No hi ha LED transparent (HOLO o T·Glass) per a aquest entorn: es mostren els normals.'],
   // beta 14
   'Sol directo': ['Direct sun', 'Sol directe'], 'Sol indirecto': ['Indirect sun', 'Sol indirecte'],
   'Columnas': ['Columns', 'Columnes'], 'Filas': ['Rows', 'Files'], 'Pitch (mm)': ['Pitch (mm)', 'Pitch (mm)'],
@@ -204,6 +207,7 @@ const REGLAS = [
   [/^No hay cabinets entre (\d+) y (\d+) nits: se muestran los de más brillo\.$/, (m, l) => [`No cabinets between ${m[1]} and ${m[2]} nits: showing the brighter ones.`, `No hi ha cabinets entre ${m[1]} i ${m[2]} nits: es mostren els de més brillantor.`][k(l)]],
   [/^Ningún cabinet de este entorno llega a (\d+) nits: se muestran los que hay\.$/, (m, l) => [`No cabinet for this environment reaches ${m[1]} nits: showing what there is.`, `Cap cabinet d’aquest entorn arriba a ${m[1]} nits: es mostren els que hi ha.`][k(l)]],
   [/^Con cabinets enteros queda en (.+) px\.$/, (m, l) => [`With whole cabinets it comes to ${m[1]} px.`, `Amb cabinets sencers queda en ${m[1]} px.`][k(l)]],
+  [/^HOLO · (una fila de (\d+) mm|dos filas contrapuestas de (\d+) \+ (\d+) mm) · caja de drivers de (\d+) mm(.*)$/, (m, l) => 'HOLO · ' + (m[2] ? [`one row of ${m[2]} mm`, `una fila de ${m[2]} mm`][k(l)] : [`two opposed rows of ${m[3]} + ${m[4]} mm`, `dues files contraposades de ${m[3]} + ${m[4]} mm`][k(l)]) + [` · ${m[5]} mm driver box`, ` · caixa de drivers de ${m[5]} mm`][k(l)] + m[6]],
   [/^(.+) · stock$/, (m, l) => m[1] + [' · stock', ' · estoc'][k(l)]], [/^(.+) · recomendado$/, (m, l) => m[1] + [' · recommended', ' · recomanat'][k(l)]],
   [/^mínima (.+)$/, (m, l) => ['minimum ', 'mínima '][k(l)] + m[1]], [/^óptima desde (.+)$/, (m, l) => ['optimal from ', 'òptima des de '][k(l)] + m[1]], [/^tu público · (.+)$/, (m, l) => ['your audience · ', 'el teu públic · '][k(l)] + m[1]],
   [/^… y (\d+) más$/, (m, l) => [`… and ${m[1]} more`, `… i ${m[1]} més`][k(l)]],

@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.16** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.17** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,14 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.16 · beta)
+## Cambios de la versión actual (v10.17 · beta)
+
+- **BLOCKS beta 15** (`blocks/`):
+  - **Entorno y uso** con botones más grandes y letra mayor: dos por fila, con el icono a la izquierda, y las filas se reparten todo el alto del bloque.
+  - **TRANSPARENTE**, botón nuevo: filtra por las familias `HOLO` y `T·Glass` del catálogo. Sin él, esas familias no se proponen. La petición escrita también lo entiende («transparente», «holo», «t-glass»).
+  - **HOLO con su cálculo y su dibujo propios, como en la clásica:** una fila o dos contrapuestas (la altura se elige entre los cabinets HOLO del mismo ancho), anchos que combinan el cabinet ancho y el estrecho dentro de un ±15 % de la medida, píxeles solo en la malla (alto menos 75 mm de caja de drivers) y, en la simulación, malla semitransparente, cajas de drivers, anillas de colgar y columnas con su ancho real. T·Glass se calcula como un cabinet normal.
+
+### v10.16 (beta)
 
 - **BLOCKS beta 14** (`blocks/`):
   - **Simulación como en la clásica**, todo dentro de la imagen para que salga en la captura: cuadro de resolución (nivel y píxeles), cuadro resumen (rejilla, pitch, ancho, alto y número de cabinets), recuadro de distancia de visionado debajo, «175 cm» junto a los pies y, sobre la carta de ajuste, el número de cada columna y fila y el rótulo «3840 × 2160 · 4K · 16:9». En el suelo queda el resumen corto.
