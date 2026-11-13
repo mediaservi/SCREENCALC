@@ -58,6 +58,12 @@
   function textoGuia(i, l) { if (!i.clientWidth) return ''; var cs = getComputedStyle(i), libre = i.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 2, k = tec() === 'proy' ? 'proy' : 'led';
     ctxG = ctxG || document.createElement('canvas').getContext('2d'); ctxG.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
     var c = [l.ph[k], l.phm[k], l.phc]; for (var j = 0; j < c.length; j++) if (ctxG.measureText(c[j]).width <= libre) return c[j]; return l.phc; }
+  /* desplegables: si el texto elegido no cabe (p. ej. «[2.5p] MODELO · STOCK»), la letra se reduce hasta que cabe entero */
+  var ctxS = null;
+  function ajustaSel() { [].forEach.call(document.querySelectorAll('#app select.sel'), function (s) { if (!s.clientWidth) return; var o = s.options[s.selectedIndex], t = o ? o.text : ''; if (s.getAttribute('data-fit') === t + '|' + s.clientWidth) return; s.style.removeProperty('font-size');
+    var cs = getComputedStyle(s), libre = s.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 22, fs = parseFloat(cs.fontSize), k = 0; ctxS = ctxS || document.createElement('canvas').getContext('2d');
+    var mide = function () { ctxS.font = cs.fontWeight + ' ' + fs + 'px ' + cs.fontFamily; return ctxS.measureText(t).width; };
+    while (mide() > libre && fs > 9 && k++ < 30) fs -= 0.5; if (fs < parseFloat(cs.fontSize)) s.style.fontSize = fs + 'px'; s.setAttribute('data-fit', t + '|' + s.clientWidth); }); }
   function txt(el, s) { if (el && el.textContent !== s) el.textContent = s; }
   function atr(el, k, v) { if (el && el.getAttribute(k) !== v) el.setAttribute(k, v); }
 
@@ -148,7 +154,7 @@
     var dr = $('.cab-der'), pdf = $('#btn-pdf'), idi = $('#btn-idioma');
     if (pdf) { pdf.insertAdjacentHTML('beforebegin', '<button type="button" class="hdr-btn" id="btn-ayuda" data-bk="info"><span class="ic ic-info" aria-hidden="true"></span></button><button type="button" class="hdr-btn" id="btn-proyecto" data-bk="proyecto">' + IC.proyecto + '</button>'); }
     if (idi) idi.insertAdjacentHTML('afterend', '<button type="button" class="hdr-btn" id="btn-tema" data-bk="tema">' + IC.tema + '</button>');
-    var pend = 0, hecho = false; new MutationObserver(function () { if (pend) return; pend = requestAnimationFrame(function () { pend = 0; if (document.body.classList.contains('con-led')) { location.replace('./'); return; } enganchaPdf(); NUEVOS = 0; piezas(); marcos(); coloca(); rellena();
+    var pend = 0, hecho = false; new MutationObserver(function () { if (pend) return; pend = requestAnimationFrame(function () { pend = 0; if (document.body.classList.contains('con-led')) { location.replace('./'); return; } enganchaPdf(); NUEVOS = 0; piezas(); marcos(); coloca(); rellena(); ajustaSel();
       /* las columnas se acaban de pintar: se vuelven a repartir ya con los iconos puestos (la consola pliega lo que no cabe al cambiar de tamaño) */
       if (NUEVOS && de.classList.contains('bk')) requestAnimationFrame(function () { dispatchEvent(new Event('resize')); });
       if (!hecho && $('#consola [data-set]')) { hecho = true; primera(); } }); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'aria-pressed'] });
