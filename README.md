@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.25** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.26** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,16 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.25)
+## Cambios de la versión actual (v10.26)
+
+- **Backup, pensado para el instalador:** en el bloque Señal, los botones dicen **«Con backup»** y **«Sin backup»**. Con backup, cada puerto lleva un segundo cable Cat6 que entra por el **último cabinet de su cadena**, y ahora se ve:
+  - en el **cableado de señal**: el cable principal (círculo, línea continua) en el primer cabinet y el de backup (cuadrado «B», línea discontinua) en el último, cada uno hasta el borde de la pantalla por el que debe salir;
+  - la **manguera** (el tubo o caño que reúne los cables) dibujada por los bordes que hace falta —abajo, arriba y por un lateral según el cosido— hasta el procesador o el conversor de fibra, con el número de cables que lleva («9 + 9 backup = 18 cables Cat6»);
+  - en el **cableado eléctrico**, la misma manguera hasta el cuadro, con el número de líneas de 16 A;
+  - en el **esquema de conexión**, el número de cables principales y de backup en cada tramo («Cat6 ×9 + 9 backup = 18 cables», «Fibra ×2 (1 + 1 backup)»).
+- Todo sale igual en el PDF.
+
+## Cambios de la v10.25
 
 - **Aviso común de las apps de cálculo de AVHUB:** «Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.» Sustituye a los avisos anteriores («Cálculo automático por IA…», «… por IA que puede cometer fallos…», «Los cálculos son orientativos…», «Herramienta experimental con cálculo asistido por IA…») en el pie de la portada, la ventana de Información, los PDF de la portada, de la consola y de la versión clásica, la nota de las propuestas de electrónica, la ventana «Acerca de» de la clásica y la página de configuradores. Ya no se dice «por IA»: el cálculo se hace con reglas fijas a partir del catálogo. En español, inglés y catalán (y en gallego, euskera y portugués en la versión clásica).
 
