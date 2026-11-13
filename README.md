@@ -4,7 +4,7 @@
 
 Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Todo funciona en **una sola pantalla fija**, sin desplazar la página en ordenador ni en TV: cabecera, franja de modo y petición, bloques de mandos, dos vistas grandes, una fila de cifras y pie. En el móvil, las mismas piezas se apilan y se recorren por dentro.
 
-**Versión actual: v10.39** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
+**Versión actual: v10.40** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
 
 - **Una pantalla LED** → la portada (`index.html` + `vista/una-led.js`).
 - **Varias pantallas, sala inmersiva y proyección** → la consola (`vista/consola.html?modo=varias-led | varias-proy | una-proy`, con el cálculo de `screens/app.js`), con el mismo formato.
@@ -68,7 +68,18 @@ Bloques en burbuja sobre gris (tema gris oscuro o gris claro), cabecera oscura c
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.39)
+## Cambios de la versión actual (v10.40)
+
+- **Datos de PIXELHUE revisados con las fichas oficiales** (pixelhue.com y sus fichas técnicas; Charmex para el P10):
+  - **P10:** 6 entradas (4 DP 1.2/HDMI 2.0 + 2 12G-SDI) y **2 salidas HDMI 2.0 + 6 HDMI 1.3 (1080p)**; 1 salida 4K en modo switcher y hasta 8K×2K solo PGM. Antes constaba con 4 salidas 4K y 8 HDMI: ahora solo se propone hasta 2 salidas 4K.
+  - **P20 / P20-DS:** 12 entradas (8 DP 1.2/HDMI 2.0 + 4 12G-SDI), 8 HDMI 2.0, 2 salidas 4K en modo switcher y hasta 8K×4K solo PGM; el P20-DS añade 4 salidas 12G-SDI y Dante 32×32.
+  - **P80:** 12 entradas 4K, 8 HDMI 2.0 (4 × 4K o 8 DL) + 4 flex + 4 12G-SDI y **audio Dante 64×64** (antes constaba sin Dante).
+  - **Q8:** hasta 48 entradas y 16 salidas 4K con sus tarjetas, 32 capas, Dante 64×64 y backup completo (sin cambios de cifras).
+  - **P10, P20, P20-DS, P80 y Q8 son switchers de presentación, no mediaservers:** en LED se siguen ofreciendo en el mismo hueco, pero su ficha y la lista de material dicen «Switcher de presentación».
+  - **Nuevo: PIXELHUE X400 (G1)**, el mediaserver de la marca (hasta 4 salidas 4K o 16 2K, corrección geométrica y edge blending). En proyección, «Mediaserver» ofrece NovaStar ET y X400; los switchers van en «Procesador».
+  - Cada ficha enlaza la página del fabricante y su ficha técnica en PDF (y la de Charmex en el P10).
+
+## Cambios de la v10.39
 
 - **Proyección: electrónica para varios proyectores.** El bloque «Electrónica» (antes «Mediaserver») deja elegir qué reparte la imagen: **Procesador** de blending (PIXELHUE P10, P20, P20-DS, P80 y Q8, que hacen el edge blending de los proyectores por sí mismos, sin mediaserver; la imagen les llega por sus entradas desde un PC o un reproductor), **Mediaserver** (NovaStar ET, que reproduce el contenido y hace el warping y el blending) o **Ninguno**. Solo se proponen los equipos con salidas suficientes para los proyectores y su resolución (Full HD, WUXGA o 4K). El elegido sale en su ficha en los resultados y en el PDF.
 - **Fuera de especificación, a la vista:** el activador pasa al bloque «Material», debajo del proyector (en «Ajuste del equipo» quedaba escondido bajo el desplazamiento del bloque). Ejemplo: una pared de 8 × 2,5 m con EB-815E pasa de 6 proyectores a 2, con el aviso de que la imagen supera los 160″ garantizados.

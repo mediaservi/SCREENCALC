@@ -7,9 +7,9 @@ import { HUMAN_PATH } from '../screens/figura.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.39';
+import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.40';
 idiomaInicial();   /* el idioma guardado de la familia SCREENS o, la primera vez, el del navegador */
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.39';
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.40';
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const SV = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
@@ -103,10 +103,10 @@ function deEnlace(u) {
 const sueltaCont = () => { if (CONT && /^blob:/.test(CONT.url)) URL.revokeObjectURL(CONT.url); };
 let CONT = null;   /* contenido propio que se simula en la pantalla: { url, tipo: 'img' | 'video' } */
 const SUELO = { hormigon: '#bfe6d8', madera: '#bcd9f2', marmol: '#f2c9d4', 'ladrillo-rojo': '#c7e8c0', 'ladrillo-oscuro': '#f3e3a8', 'ladrillo-claro': '#c9c6f0', ninguno: '#cfd3da', propio: '#cfd3da' };
-/* v10.39 · además de las seis paredes: «ninguno» (sin fondo) y «propio» (una imagen subida o un enlace pegado) */
+/* v10.40 · además de las seis paredes: «ninguno» (sin fondo) y «propio» (una imagen subida o un enlace pegado) */
 const FONDOS = ['hormigon', 'madera', 'marmol', 'ladrillo-rojo', 'ladrillo-oscuro', 'ladrillo-claro', 'ninguno', 'propio'];
-const TEXV = '?v=10.39';
-/* v10.39 · candado discreto del pie: abre el panel AVHUB ADMIN (Apps Script), como el de la consola */
+const TEXV = '?v=10.40';
+/* v10.40 · candado discreto del pie: abre el panel AVHUB ADMIN (Apps Script), como el de la consola */
 const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbwkc12y4LODbFe-kQidnR2MbbA6cbW1WbhU3UiqmDmshx-ncAdGYrFRy8PNjm9Wg6Mx3w/exec';   /* rompe la caché del navegador cuando cambia una textura */
 /* fondo propio: la imagen ya reducida (data:) o el enlace, guardado en este navegador */
 const FPROP_K = 'screens-fondo-propio';
@@ -224,7 +224,7 @@ const FIG = (() => { const s = document.createElementNS('http://www.w3.org/2000/
 const figura = (cx, suelo, k, relleno) => { const e = 1.75 * k / FIG.height; return `<g transform="translate(${cx - (FIG.x + FIG.width / 2) * e},${suelo + FIG.y * e}) scale(${e},${-e})" ${relleno}><path d="${HUMAN_PATH}"/></g>`; };
 const COLS = ['#19b5b0', '#c264c8', '#62b85a', '#4b4bc8', '#c2c040', '#e0803a', '#3a9be0', '#d0507a', '#8a8f9a', '#40c090'];
 /* medida real de lo que abarca cada textura de pared (ancho × alto en metros): así los ladrillos, las lamas y las losas salen a la misma escala que la pantalla y la persona, se vea la simulación al tamaño que se vea */
-/* v10.39 · la madera es un friso de tablas de 15 cm (2,40 × 3,00 m por pieza): las lamas finas de antes se veían como palillos a esta escala */
+/* v10.40 · la madera es un friso de tablas de 15 cm (2,40 × 3,00 m por pieza): las lamas finas de antes se veían como palillos a esta escala */
 const PARED = { hormigon: [3.6, 2.39, 1], madera: [2.4, 3.0], marmol: [2.4, 2.4], 'ladrillo-rojo': [1, .64], 'ladrillo-oscuro': [1, .912], 'ladrillo-claro': [1, .64] };
 /* «prop» es ancho / alto del hueco donde se va a ver: el dibujo se hace con esa proporción para llenarlo */
 function svgSim(prop, anchoPx) {
@@ -492,7 +492,7 @@ function fichas() {
     enlace: m.crm ? 'https://traulux.net/buscar/?q=' + encodeURIComponent(m.crm) : '', enlaceTxt: 'Ficha del fabricante' }));
   R.procs.slice(0, 4).forEach((x, i) => f.push(FICHA.fichaHTML({ cat: i ? 'Procesador alternativo' : 'Procesador recomendado', icono: 'elec', marca: x.marca, modelo: x.modelo, foto: x.front, fotoTrasera: x.back, acento: '#d4ff00', stock: x.enStock ? true : null, sel: !i,
     specs: [['Puertos', x.puertos], ['Capacidad', x.capacidad], ['Escalador', x.escalador ? 'Sí' : 'No']], piezas: (x.equipos || []).map((q) => ({ cant: q.cant, ref: q.ref, desc: q.desc })), enlace: x.url, enlaceTxt: 'Ficha del fabricante' })));
-  if (R.media) f.push(FICHA.fichaHTML({ cat: 'Mediaserver', icono: 'media', marca: R.media.marca, modelo: R.media.modelo, foto: R.media.front, fotoTrasera: R.media.back, acento: '#ffb000', specs: [['Salidas 4K', R.media.out4k], ['Necesarias', R.r.salidas4k]], notas: [R.media.resumen], enlace: R.media.url, enlaceTxt: 'Ficha del fabricante' }));
+  if (R.media) f.push(FICHA.fichaHTML({ cat: R.media.tipo === 'switcher' ? 'Switcher de presentación' : 'Mediaserver', icono: 'media', marca: R.media.marca, modelo: R.media.modelo, foto: R.media.front, fotoTrasera: R.media.back, acento: '#ffb000', enlaces: [[R.media.pdf, 'Ficha técnica (PDF)'], R.media.urlFab && R.media.url ? [R.media.url, 'Charmex'] : null].filter((x) => x && x[0]), specs: [['Salidas 4K', R.media.out4k], ['Necesarias', R.r.salidas4k]], notas: [R.media.resumen], enlace: R.media.urlFab || R.media.url, enlaceTxt: 'Ficha del fabricante' }));
   return `<div class="fichas-v">${f.join('')}</div>`;
 }
 
@@ -634,7 +634,7 @@ function material() {
   L.push({ c: d.nF, ref: E.tipoEntrada && E.tipoEntrada !== 'MIXTO' ? E.tipoEntrada : 'HDMI', desc: 'Fuentes de vídeo del cliente' + (E.resEntrada ? ' (' + E.resEntrada + ')' : ''), g: 'video' });
   if (d.conCable) { if (d.cab) L.push({ c: d.nF, ref: d.cab.ref, url: busca(d.cab.ref), desc: 'Cable HDMI PureLink FlexInstall ' + (d.cab.tipo === 'AOC' ? 'AOC' : 'pasivo') + ' 8K ' + String(d.cab.m).replace('.', ',') + ' m (fuente → ' + (me ? 'mediaserver' : 'electrónica') + ')' + (d.cab.estandar ? ' · estándar, distancia no indicada' : ''), g: 'video' });
     else L.push({ c: d.nF, ref: 'HDMI > 20 m', desc: 'Más de 20 m: consultar con Charmex (extensor HDMI sobre fibra / IP)', g: 'video' }); }
-  if (me) L.push({ c: d.backup && !me.backupNativo ? 2 : 1, ref: me.modelo, url: me.url || busca(me.modelo), desc: 'Mediaserver ' + me.marca + (me.backupNativo ? ' (backup nativo)' : ''), g: 'video' });
+  if (me) L.push({ c: d.backup && !me.backupNativo ? 2 : 1, ref: me.modelo, url: me.url || busca(me.modelo), desc: (me.tipo === 'switcher' ? 'Switcher de presentación ' : 'Mediaserver ') + me.marca + (me.backupNativo ? ' (backup nativo)' : ''), g: 'video' });
   if (p) { const eq = (p.equipos || []).filter((q) => q.cant > 0), tit = 'Electrónica ' + p.marca + ' ' + (p.serie || '') + (p.escalador ? ' con escalador' : '');
     if (p.modular) { L.push({ c: '', ref: p.modelo, desc: tit + ', montada por piezas:', g: 'elec', titulo: true }); eq.forEach((q) => L.push({ c: q.cant, ref: q.ref, url: busca(q.ref), desc: q.desc, g: 'elec', pieza: true })); }
     else { L.push({ c: 1, ref: p.modelo, url: p.url || busca(p.modelo), desc: tit, g: 'elec' }); eq.forEach((q) => L.push({ c: q.cant, ref: q.ref, url: busca(q.ref), desc: q.desc, g: 'elec' })); } }
@@ -739,7 +739,7 @@ async function pdf() {
     hoja.innerHTML = `<div class="pdf-p1"><div style="padding:0 0 6px">${p1}</div></div><div style="height:60px"></div><div class="pdf-p2"><div style="padding:0 0 6px">${p2}</div></div>`;
     document.body.appendChild(hoja); await Promise.all([...hoja.querySelectorAll('img')].map((i) => (i.complete ? 0 : new Promise((ok) => { i.onload = i.onerror = ok; })))); await new Promise((ok) => setTimeout(ok, 60));
     const pv = await window.AVPDF.exporta({ previa: true, raiz: hoja, paginas: [['.pdf-p1'], ['.pdf-p2']], margen: 12, claro: false, nombre: window.AVPDF.sello('SCREENS'), titulo: 'SCREENS · ' + (E.proy || m.crm),
-      /* v10.39 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito común */
+      /* v10.40 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito común */
       pieHtml: AV_TRI + tr('Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.') + '\n' + (window.AVCREDITO ? window.AVCREDITO.html('SCREENS', VERSION.split('SCREENS ')[1], idioma(), { sinEnlaces: true }) : VERSION + ' ' + new Date().getFullYear() + ' · mediaservi.com'),
       alClonar: (doc, raiz) => { raiz.style.setProperty('position', 'absolute', 'important'); raiz.style.setProperty('left', '0', 'important'); raiz.style.setProperty('top', '0', 'important'); [...doc.body.children].forEach((e) => { if (e !== raiz && !e.contains(raiz)) e.style.setProperty('display', 'none', 'important'); }); } });
     previa(pv);
