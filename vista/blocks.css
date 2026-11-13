@@ -462,3 +462,36 @@ textarea.pide.obs { height: auto; min-height: calc(var(--u) * 96); padding: calc
 /* cuatro vistas en S1B (señal, eléctrico, distancia y esquema): pestañas algo más prietas para que quepan también en el móvil */
 [data-blk="S1B"] .pestanas { gap: calc(var(--u) * 3); }
 [data-blk="S1B"] .pestanas button { padding-inline: calc(var(--u) * 5.5); letter-spacing: 0; }
+
+/* ---- v10.23 · vista previa del PDF: ventana al 80 % de la pantalla, con pantalla completa, imprimir, guardar y cerrar ---- */
+.velo .vent.previa { width: 80vw; height: 80dvh; max-width: none; }
+.velo .vent.previa.completa { width: 100vw; height: 100dvh; border-radius: 0; border: 0; }
+.vent.previa .vent-cab { gap: calc(var(--u) * 8); flex-wrap: nowrap; min-width: 0; }
+.vent.previa .pv-tit { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; }
+.vent.previa .pv-bt { flex: none; display: inline-flex; align-items: center; gap: calc(var(--u) * 7); white-space: nowrap; padding-inline: calc(var(--u) * 12); min-height: calc(var(--u) * 40); }
+.vent.previa .pv-bt svg { width: calc(var(--u) * 20); height: calc(var(--u) * 20); flex: none; }
+.vent.previa .pv-bt[data-pv="guarda"] { background: var(--marca); color: #1c2200; border-color: transparent; }
+.pv-hojas { align-items: center; background: #3a3b40; gap: calc(var(--u) * 18); padding: calc(var(--u) * 22); }
+.pv-hoja { display: block; width: min(100%, calc((80dvh - var(--u) * 120) * 210 / 297 * 1.6)); height: auto; background: #fff; box-shadow: 0 calc(var(--u) * 6) calc(var(--u) * 24) rgba(0, 0, 0, .5); border-radius: 2px; }
+.vent.previa.completa .pv-hoja { width: min(100%, calc(100dvh * 210 / 297 * 1.4)); }
+@media (max-width: 900px), (max-height: 520px) {
+  .vent.previa .pv-bt span { display: none; }
+  .vent.previa .pv-bt { padding-inline: 10px; min-height: 40px; min-width: 40px; justify-content: center; }
+  .vent.previa .pv-bt svg { width: 20px; height: 20px; }
+  .pv-hoja { width: 100%; }
+}
+/* ---- v10.24 · lista de material con viñetas del color de cada cable (como en la clásica) y datos de las fuentes de vídeo ---- */
+table.mat .mat-v { display: inline-block; width: calc(var(--u) * 11); height: calc(var(--u) * 11); border-radius: 50%; margin-right: calc(var(--u) * 9); vertical-align: 0; }
+table.mat .mat-v.pz { width: calc(var(--u) * 8); height: calc(var(--u) * 8); border-radius: 2px; }
+table.mat tr.pz td { border-bottom-style: dotted; }
+table.mat tr.pz td:nth-child(2) { padding-left: calc(var(--u) * 34); }
+table.mat tr.tit td { font-weight: 800; }
+table.mat a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.pr-op { flex-wrap: nowrap; gap: calc(var(--u) * 6); }
+.pr-op > span { flex: 0 0 calc(var(--u) * 170) !important; }
+.pr-op .tog { flex: 1 1 0; min-width: 0; padding-inline: calc(var(--u) * 3); font-size: calc(var(--u) * 13); letter-spacing: 0; white-space: nowrap; overflow: hidden; }
+@media (max-width: 640px) {
+  .pr-op { flex-wrap: wrap; }
+  .pr-op > span { flex: 0 0 100% !important; }
+  .pr-op .tog { font-size: 12px; min-height: 36px; }
+}

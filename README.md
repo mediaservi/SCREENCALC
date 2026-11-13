@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.22** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.24** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,21 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.22)
+## Cambios de la versión actual (v10.24)
+
+Auditoría de la lista de material y del esquema de conexión de la portada frente a la consola clásica: se recupera todo lo que faltaba.
+
+- **Lista de material**, fila a fila como en la clásica: cabinets (con enlace a la ficha), **fuentes de vídeo del cliente**, **cable HDMI PureLink FlexInstall** con su referencia según la distancia (FI-H100 pasivo hasta 3 m, FI-H150 AOC de 5 a 20 m; de 3 m si no se sabe; «consultar con Charmex» a más de 20 m; sin cable HDMI si la señal es DisplayPort o SDI), mediaserver (dos si hay backup y no lo trae de serie), electrónica con todas sus piezas (las de la H Series, sangradas debajo del equipo), latiguillos de fibra y Cat6 con el backup, distribución eléctrica, **PC de control** y la variante tropicalizada en entorno marino. Cada fila lleva una **viñeta del color de su tipo de cable**, igual que el esquema.
+- **Esquema de conexión** como el de la clásica: **colores por tipo de cable** (vídeo azul, Ethernet verde, fibra naranja, alimentación rojo, control violeta), **backup en línea discontinua**, PC de control con su conexión USB / Ethernet, conversor de fibra, distribución eléctrica a la electrónica y a los cabinets, aviso de entorno marino y **leyenda**. En la pantalla y en el PDF.
+- **Datos del proyecto:** además del número de fuentes, la **señal de entrada** (HDMI, DisplayPort, SDI o varias), su **resolución** y la **distancia de las fuentes**, como en la clásica. Se tienen en cuenta para elegir el cable, las tarjetas de entrada de la electrónica y el mediaserver.
+- La tabla del PDF lleva también las viñetas de color y las piezas sangradas.
+
+## Cambios de la v10.23
+
+- **Vista previa del PDF:** en la portada, el botón PDF (y «Ver el PDF» de Datos del proyecto) ya no descarga directamente. Primero abre una ventana al 80 % de la pantalla con las dos hojas tal cual saldrán, y cuatro botones: **pantalla completa** (y salir de ella), **imprimir** (las mismas hojas, en A4 y sin márgenes), **guardar** (descarga el archivo .pdf) y **cerrar**. En el móvil los botones se quedan solo con su icono.
+- `pdf.js`: opción nueva `previa` que devuelve el PDF y una imagen de cada hoja; sin ella todo funciona como antes (la consola clásica no cambia).
+
+## Cambios de la v10.22
 
 - **Elegir el cabinet a mano:** el desplegable del bloque Cabinet solo ofrecía los modelos del pitch elegido en ese momento (casi siempre uno, así que parecía que no se abría). Ahora ofrece **todos los modelos del entorno**, agrupados por pitch; al elegir uno se ponen su pitch y su resolución, y la etiqueta del pitch pasa a «A mano». Las flechas de pitch siguen funcionando como antes.
 
