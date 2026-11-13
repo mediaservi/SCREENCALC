@@ -4,7 +4,7 @@
 
 Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Todo funciona en **una sola pantalla fija**, sin desplazar la página en ordenador ni en TV: cabecera, franja de modo y petición, bloques de mandos, dos vistas grandes, una fila de cifras y pie. En el móvil, las mismas piezas se apilan y se recorren por dentro.
 
-**Versión actual: v10.35** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
+**Versión actual: v10.37** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
 
 - **Una pantalla LED** → la portada (`index.html` + `vista/una-led.js`).
 - **Varias pantallas, sala inmersiva y proyección** → la consola (`vista/consola.html?modo=varias-led | varias-proy | una-proy`, con el cálculo de `screens/app.js`), con el mismo formato.
@@ -68,7 +68,16 @@ Bloques en burbuja sobre gris (tema gris oscuro o gris claro), cabecera oscura c
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.35)
+## Cambios de la versión actual (v10.37)
+
+- **Datos del proyecto, junto a la petición:** el botón ya no está en la cabecera; va en la franja de la petición, delante de «Pegar», en la portada y en Varias / Proyección (es un dato de entrada, como la petición).
+
+## Cambios de la v10.36
+
+- **Sensor de luz también en escaparate:** la lista de material lleva el NS060 en las pantallas de exterior y de escaparate.
+- **Lista de material en varias pantallas LED y salas inmersivas**, la misma que la de la portada: cabinets, fuentes de vídeo y cable HDMI PureLink (1 fuente y 3 m si no se dice otra cosa), mediaserver, electrónica (por piezas si es modular), fibra y Cat6 (con backup), distribución eléctrica (líneas de 16 A por superficie), PC de control, sensor de luz en exterior y escaparate, y variante tropicalizada con Marino / tropical. Sale en los resultados, en su propia página de la ventana grande y en el PDF.
+
+## Cambios de la v10.35
 
 - **Pantallas de exterior: sensor de luz siempre en la lista de material.** Con una pantalla LED de exterior, la lista de material (en pantalla y en el PDF) lleva siempre **1 × NS060 · sensor de luz 5 m para pantalla LED**, que ajusta solo el brillo a la luz ambiente y se conecta a la electrónica (con enlace a la búsqueda en Charmex).
 
