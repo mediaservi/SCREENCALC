@@ -7,9 +7,9 @@ import { HUMAN_PATH } from '../screens/figura.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.41';
+import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.42';
 idiomaInicial();   /* el idioma guardado de la familia SCREENS o, la primera vez, el del navegador */
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.41';
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.42';
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const SV = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
@@ -103,10 +103,10 @@ function deEnlace(u) {
 const sueltaCont = () => { if (CONT && /^blob:/.test(CONT.url)) URL.revokeObjectURL(CONT.url); };
 let CONT = null;   /* contenido propio que se simula en la pantalla: { url, tipo: 'img' | 'video' } */
 const SUELO = { hormigon: '#bfe6d8', madera: '#bcd9f2', marmol: '#f2c9d4', 'ladrillo-rojo': '#c7e8c0', 'ladrillo-oscuro': '#f3e3a8', 'ladrillo-claro': '#c9c6f0', ninguno: '#cfd3da', propio: '#cfd3da' };
-/* v10.41 · además de las seis paredes: «ninguno» (sin fondo) y «propio» (una imagen subida o un enlace pegado) */
+/* v10.42 · además de las seis paredes: «ninguno» (sin fondo) y «propio» (una imagen subida o un enlace pegado) */
 const FONDOS = ['hormigon', 'madera', 'marmol', 'ladrillo-rojo', 'ladrillo-oscuro', 'ladrillo-claro', 'ninguno', 'propio'];
-const TEXV = '?v=10.41';
-/* v10.41 · candado discreto del pie: abre el panel AVHUB ADMIN (Apps Script), como el de la consola */
+const TEXV = '?v=10.42';
+/* v10.42 · candado discreto del pie: abre el panel AVHUB ADMIN (Apps Script), como el de la consola */
 const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbwkc12y4LODbFe-kQidnR2MbbA6cbW1WbhU3UiqmDmshx-ncAdGYrFRy8PNjm9Wg6Mx3w/exec';   /* rompe la caché del navegador cuando cambia una textura */
 /* fondo propio: la imagen ya reducida (data:) o el enlace, guardado en este navegador */
 const FPROP_K = 'screens-fondo-propio';
@@ -224,7 +224,7 @@ const FIG = (() => { const s = document.createElementNS('http://www.w3.org/2000/
 const figura = (cx, suelo, k, relleno) => { const e = 1.75 * k / FIG.height; return `<g transform="translate(${cx - (FIG.x + FIG.width / 2) * e},${suelo + FIG.y * e}) scale(${e},${-e})" ${relleno}><path d="${HUMAN_PATH}"/></g>`; };
 const COLS = ['#19b5b0', '#c264c8', '#62b85a', '#4b4bc8', '#c2c040', '#e0803a', '#3a9be0', '#d0507a', '#8a8f9a', '#40c090'];
 /* medida real de lo que abarca cada textura de pared (ancho × alto en metros): así los ladrillos, las lamas y las losas salen a la misma escala que la pantalla y la persona, se vea la simulación al tamaño que se vea */
-/* v10.41 · la madera es un friso de tablas de 15 cm (2,40 × 3,00 m por pieza): las lamas finas de antes se veían como palillos a esta escala */
+/* v10.42 · la madera es un friso de tablas de 15 cm (2,40 × 3,00 m por pieza): las lamas finas de antes se veían como palillos a esta escala */
 const PARED = { hormigon: [3.6, 2.39, 1], madera: [2.4, 3.0], marmol: [2.4, 2.4], 'ladrillo-rojo': [1, .64], 'ladrillo-oscuro': [1, .912], 'ladrillo-claro': [1, .64] };
 /* «prop» es ancho / alto del hueco donde se va a ver: el dibujo se hace con esa proporción para llenarlo */
 function svgSim(prop, anchoPx) {
@@ -739,7 +739,7 @@ async function pdf() {
     hoja.innerHTML = `<div class="pdf-p1"><div style="padding:0 0 6px">${p1}</div></div><div style="height:60px"></div><div class="pdf-p2"><div style="padding:0 0 6px">${p2}</div></div>`;
     document.body.appendChild(hoja); await Promise.all([...hoja.querySelectorAll('img')].map((i) => (i.complete ? 0 : new Promise((ok) => { i.onload = i.onerror = ok; })))); await new Promise((ok) => setTimeout(ok, 60));
     const pv = await window.AVPDF.exporta({ previa: true, raiz: hoja, paginas: [['.pdf-p1'], ['.pdf-p2']], margen: 12, claro: false, nombre: window.AVPDF.sello('SCREENS'), titulo: 'SCREENS · ' + (E.proy || m.crm),
-      /* v10.41 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito común */
+      /* v10.42 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito común */
       pieHtml: AV_TRI + tr('Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.') + '\n' + (window.AVCREDITO ? window.AVCREDITO.html('SCREENS', VERSION.split('SCREENS ')[1], idioma(), { sinEnlaces: true }) : VERSION + ' ' + new Date().getFullYear() + ' · mediaservi.com'),
       alClonar: (doc, raiz) => { raiz.style.setProperty('position', 'absolute', 'important'); raiz.style.setProperty('left', '0', 'important'); raiz.style.setProperty('top', '0', 'important'); [...doc.body.children].forEach((e) => { if (e !== raiz && !e.contains(raiz)) e.style.setProperty('display', 'none', 'important'); }); } });
     previa(pv);
@@ -801,6 +801,8 @@ monta(); todo(); vigila(); requestAnimationFrame(ajustaTextos); if (document.fon
 { let vista = false; try { vista = !!localStorage.getItem('screens-blocks-guia'); } catch (e) {} if (!vista) setTimeout(() => guia(0), 600); }
 addEventListener('resize', () => { const g = $('#guia'); if (g) { const n = [...g.querySelectorAll('.guia-pie span i')].findIndex((i) => i.classList.contains('on')); guia(Math.max(0, n)); } });
 /* botones comunes de la familia: instalar y avisar de un fallo (los mismos de la versión clásica) */
-{ const h = $('#hueco-comun'); if (h) { if (window.AVINSTALA) { try { h.appendChild(window.AVINSTALA.boton({ app: 'SCREENS', idioma: () => idioma(), sw: false })); } catch (e) {} } if (window.AVFALLO) { try { h.appendChild(window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() })); } catch (e) {} } } }
+{ const h = $('#hueco-comun'); if (h) { if (window.AVINSTALA) { try { h.appendChild(window.AVINSTALA.boton({ app: 'SCREENS', idioma: () => idioma(), sw: false })); } catch (e) {} } if (window.AVFALLO) { try { h.appendChild(window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() })); } catch (e) {} }
+  /* v10.42 · el candado del panel, el último del grupo de la derecha (pegado a la esquina lo recortaban las ventanas redondeadas) */
+  const ae = document.querySelector('.admin-esq'); if (ae) h.appendChild(ae); } }
 cargarCatalogo((lista, origen) => { if (origen === 'error') { if (!CAT.length) ESTADO = 'error'; } else { CAT = lista; ESTADO = origen; } todo(); });
 window.__blocks = { E, get R() { return R; }, todo };
