@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.2** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.18** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,125 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.2)
+## Cambios de la versión actual (v10.18)
+
+- **Pie nuevo en toda la app** (clásica, consola y BLOCKS): «SCREENS vX.Y AAAA forma parte del proyecto AVHUB ideado por el fundador de mediaservi.com · Aviso legal». Es el texto de fábrica de `credito.js`; si el navegador o el panel traen el texto anterior, se sustituye por este. La portada AVHUB llevará «AVHUB es una idea del fundador de mediaservi.com · Aviso legal».
+- **La dirección `…/#aviso` abre el aviso legal** al cargar la página.
+- **BLOCKS beta 16** (`blocks/`): en el móvil la línea de créditos puede ocupar dos renglones para que se lea. Decisiones confirmadas por Josep: Sol directo = 5000 nits o más y Sol indirecto = de 2500 a 5000; HOLO y T·Glass solo se proponen con Transparente activado.
+- Esta versión pasa a `main` con todo lo acumulado desde la v10.3: PDF directo, petición con pitch «3.9p», orden por stock y prioridad, panel de administración v1.5, idioma del navegador, bocadillo del botón de instalar y BLOCKS en `blocks/`.
+
+### v10.17 (beta)
+
+- **BLOCKS beta 15** (`blocks/`):
+  - **Entorno y uso** con botones más grandes y letra mayor: dos por fila, con el icono a la izquierda, y las filas se reparten todo el alto del bloque.
+  - **TRANSPARENTE**, botón nuevo: filtra por las familias `HOLO` y `T·Glass` del catálogo. Sin él, esas familias no se proponen. La petición escrita también lo entiende («transparente», «holo», «t-glass»).
+  - **HOLO con su cálculo y su dibujo propios, como en la clásica:** una fila o dos contrapuestas (la altura se elige entre los cabinets HOLO del mismo ancho), anchos que combinan el cabinet ancho y el estrecho dentro de un ±15 % de la medida, píxeles solo en la malla (alto menos 75 mm de caja de drivers) y, en la simulación, malla semitransparente, cajas de drivers, anillas de colgar y columnas con su ancho real. T·Glass se calcula como un cabinet normal.
+
+### v10.16 (beta)
+
+- **BLOCKS beta 14** (`blocks/`):
+  - **Simulación como en la clásica**, todo dentro de la imagen para que salga en la captura: cuadro de resolución (nivel y píxeles), cuadro resumen (rejilla, pitch, ancho, alto y número de cabinets), recuadro de distancia de visionado debajo, «175 cm» junto a los pies y, sobre la carta de ajuste, el número de cada columna y fila y el rótulo «3840 × 2160 · 4K · 16:9». En el suelo queda el resumen corto.
+  - **«Elevación desde el suelo»** (antes Altura) y **«Distancia de visionado»** (antes Público a).
+  - **Campos primarios con botones** como en la clásica (rótulo, −, valor en casilla, +): columnas, filas, pitch y nits mínimos.
+  - **Resolución escrita a mano** en píxeles: se ajustan las columnas y las filas; con cabinets enteros puede quedar en la inmediatamente superior y se avisa.
+  - **Entorno y uso:** icono en cada botón y dos botones nuevos, **Sol directo** (5000 nits o más) y **Sol indirecto** (de 2500 a 5000 nits), en exterior y escaparate.
+  - **INSTALACIÓN**, bloque nuevo en M3D: peso total, peso por cabinet, mantenimiento, receiving card y grosor. Sale de Cabinets, que queda con la rejilla, el total y las columnas y filas.
+  - **Tema oscuro:** el fluorescente, atenuado como en el claro.
+  - **Pie sin roturas:** cada texto en una línea, con la letra ajustada para que quepa; en el móvil, dos líneas enteras.
+  - **Texto del pie:** «SCREENS vX.Y 2026 forma parte del proyecto AVHUB ideado por el fundador de mediaservi.com · Aviso legal» (el aviso enlaza a screens.mediaservi.com/#aviso).
+  - **Cabecera de los logos** en una franja más oscura, con degradado de negro al tono del fondo; en el tema claro también es oscura, así los logos se ven con sus colores originales.
+  - **Icono de la simulación:** el elegido por Josep (tabla con ojo).
+  - La simulación se dibuja con la proporción del hueco donde va, para aprovecharlo entero.
+
+### v10.15 (beta)
+
+- **Botón de instalar** (`instalar.js`, común a la clásica y a BLOCKS): al pasar el cursor o enfocarlo enseña un bocadillo como el del botón de fallos, con la flecha de descarga y su ámbar, en lugar del rótulo del navegador.
+- **BLOCKS beta 13** (`blocks/`):
+  - **Colocación:** Cabinet en M1B, Cabinets en M2B, Electrónica en M3B, Mediaserver en M3C, Señal en M3E y Alimentación en M3F. M3D queda libre.
+  - **MEDIASERVER**, bloque nuevo: añadir sí / no, marca (todas, NovaStar, PixelHue), audio Dante y elección del modelo entre los que valen, con sus salidas 4K.
+  - **Cabecera de cada bloque** en una franja propia, con el icono y el título más grandes.
+  - **Tema claro:** los logos conservan sus colores; solo las letras blancas pasan a oscuras para que se lean (`*-logo-claro.svg`).
+
+### v10.14 (beta)
+
+- **Idioma del navegador también en la página clásica de una pantalla LED** (`led.html`): la primera vez se abre en el idioma del navegador si está entre los suyos; después manda el último elegido.
+- **BLOCKS beta 12** (`blocks/`):
+  - **Resultado en la casilla de la petición**, destacado como un botón; al tocarlo vuelve a ser casilla de escribir. Botones de **pegar** y **copiar** (la petición o el resultado, para pasarlo por WhatsApp).
+  - **Pie:** F1C queda para la línea de créditos; desaparece la franja suelta de abajo.
+  - **Simulación:** en la franja del suelo, el resumen corto de la pantalla en negrita y, debajo, la distancia de visionado con un mini icono de ojo («Con 3.9p se ve bien desde 390 cm (óptimo desde 1170 cm).»). La etiqueta «1,75 m» sube junto a la figura.
+  - **Tema claro:** la lima de lo seleccionado es más suave.
+  - **Idiomas:** castellano, inglés y catalán (`blocks/idiomas.js`). La primera vez se usa el del navegador; el botón de idioma cambia entre los tres. La petición escrita también se entiende en inglés y catalán, y el dictado usa el idioma elegido.
+  - **Guía rápida** la primera vez (y desde Información): cuatro pasos con la zona resaltada, flecha, «Siguiente» y «Cerrar guía».
+  - **Versión para móvil** (primera prueba): cabecera, petición y pie fijos; los bloques se recorren por dentro en una columna (dos en tablet y con el móvil tumbado).
+
+### v10.13 (beta)
+
+- **BLOCKS beta 11** (`blocks/`), correcciones de Josep:
+  - **DIMENSIONES** (M2A, icono de la regla) une Tamaño y Dimensiones: ancho y alto en una fila, unidades, formatos, ajuste a la medida, la medida real con cabinets enteros y diagonal, formato, superficie y fondo.
+  - **RESOLUCIÓN** (M3A) une Pitch y Resolución: pitch con sus flechas y el origen de la elección, distancia del público, resolución resultante, resolución mínima (con ✓ en los niveles a los que llega) y píxeles, píxeles por cabinet y refresco.
+  - **Colocación:** Entorno y uso en M1A, Dimensiones en M2A, Resolución en M3A; Cabinet sigue en M2B. M1B y M3B quedan libres.
+  - **Cota de altura sobre el suelo** de la simulación con contraste: etiqueta blanca con borde violeta y línea con reborde blanco, legible sobre cualquier pared.
+
+### v10.12 (beta)
+
+- **BLOCKS beta 10** (`blocks/`): el botón de nuevo cálculo usa el icono de reinicio elegido por Josep, y pulsar el logo de SCREENS hace lo mismo (vuelve a la página de inicio por defecto), como en la clásica.
+
+### v10.11 (beta)
+
+- **BLOCKS beta 9** (`blocks/`). Objetivo: mismas funciones que la clásica, solo mejor ordenadas.
+  - **Iconos originales** de SCREENS (los de la versión clásica) en bloques y botones (`blocks/iconos.css`).
+  - **Sin ruedita de ajustes**: cada opción está en su bloque. Tamaño: unidades m / cm / mm y ajuste a la medida. Entorno: marino / tropical (GOLD), al alcance del público (LED protegido) y nits mínimos. Cabinet: giro de 90°. Simulación: altura sobre el suelo. Resolución: resolución mínima (HD, FHD, 4K). Cabinets: columnas y filas con − y +. Señal: backup y conexión. Electrónica: escalador, mediaserver y elección del procesador entre los que valen.
+  - **Cableado eléctrico dibujado**: recorrido de cada línea de 16 A, con el mismo cosido (auto, vertical, horizontal) que la señal.
+  - **Nuevo cálculo** con icono de reinicio en la cabecera (sustituye a la casa): lo deja todo como al empezar.
+  - **Pie**: a la izquierda el aviso «Cálculo automático por IA: verifícalo antes de presupuestar.» (ya no se muestra «Catálogo en vivo»); a la derecha, instalar y avisar de un fallo, en ese orden.
+  - Pendiente respecto a la clásica: PDF, esquema de conexiones y material, datos del proyecto (fuentes de vídeo, Dante, marca de mediaserver), idiomas, información con descarga para uso sin conexión.
+
+### v10.10 (beta)
+
+- **BLOCKS beta 8** (`blocks/`): el aviso del pie pasa a decir «Cálculo automático por IA: verifícalo antes de presupuestar.»
+
+### v10.9 (beta)
+
+- **BLOCKS beta 7** (`blocks/`): **simular contenido** completo, como en la versión clásica. El botón abre «Contenido de la pantalla» con las **fuentes multimedia de prueba** (la primera fija, mediaservi.com 24/7, y cinco editables que se guardan en el navegador y se comparten con la clásica), un campo para **pegar un enlace** (YouTube, Vimeo, imagen o vídeo), **subir imagen o vídeo**, y los botones **APLICAR**, **REINICIAR** y **CERRAR**. Los reproductores incrustados cubren la pantalla simulada sin deformarse.
+
+### v10.8 (beta)
+
+- **BLOCKS beta 6** (`blocks/`): **cosido de la señal**. La vista de señal dibuja el recorrido del cable de cada puerto (punto de entrada, serpentina y flecha de final) y permite elegir **Auto**, **Vertical** u **Horizontal**, con la misma regla que el configurador clásico (columnas o filas enteras por puerto; automático elige lo que menos líneas pide). El modo elegido cambia el número de líneas y, con él, la electrónica propuesta; si un modo no cabe en un puerto, se avisa y se usa el posible. También en la vista grande y en la captura.
+
+### v10.7 (beta)
+
+- **BLOCKS beta 5** (`blocks/`): la hoja de estilos y el código de BLOCKS se piden con el número de versión (`?v=10.7`) para que el navegador y el enlace de revisión no sirvan una copia antigua. Sin cambios de función respecto a la beta 4.
+
+### v10.6 (beta)
+
+- **BLOCKS beta 4** (`blocks/`): la pared de la simulación se dibuja **a escala real**. Cada textura tiene su medida (ladrillo de 24 cm, lamas de madera de 4 cm, losas de mármol de 120 × 60 cm, hormigón continuo) y se repite a la misma escala que la pantalla y la persona de 1,75 m, sea cual sea el tamaño de la pantalla LED o de la ventana; también en la vista grande y en la captura copiada.
+
+### v10.5 (beta)
+
+- **BLOCKS beta 3** (`blocks/`): cada bloque recupera su relieve de burbuja (fondo propio, esquinas redondas y sombra, sin línea de marco); las franjas de cabecera y de pie siguen sin rectángulos marcados.
+
+### v10.4 (beta)
+
+- **BLOCKS beta 2 · una pantalla LED** (`blocks/`; la versión clásica no cambia):
+  - Los bloques ya no dibujan su marco: la plantilla ordena la pantalla pero no se ve. Cada bloque conserva su icono distintivo y su título.
+  - Temas más grises: el oscuro ya no es negro y el claro ya no es casi blanco.
+  - Simulación: el suelo es una franja de color pastel que contrasta con la pared elegida (ya no la imita); el selector de pared sube arriba.
+  - **Simular contenido**: botón en la simulación para poner una imagen o un vídeo propios en la pantalla (se quedan en el navegador, no se suben a ningún sitio) y otro para volver a la carta de ajuste.
+  - **Copiar captura**: en las dos mini pantallas (S1A y S1B), junto al ojo, un botón copia al portapapeles una imagen de lo que hay en su marco y lo avisa en pantalla; si el navegador no deja copiar imágenes, la descarga.
+  - Cabeceras con sus funciones: información, PDF y versión clásica, AVHUB, instalar, avisar de un fallo, idioma, tema y ajustes; modos Una/Varias y LED/Proyección con icono; dictado por micrófono y nota de voz a texto junto a la petición.
+  - Color de marca: lo seleccionado y los acentos usan la lima oficial del cubo de SCREENS (#d4ff00); el verde flúor queda solo para resaltar (paso del ratón, foco, piloto de estado y avisos).
+  - Sigue solo en castellano, solo para ordenador y sin PDF propio.
+
+### v10.3 (beta)
+
+- **BLOCKS beta 1 · una pantalla LED** (`blocks/`, página aparte; la versión clásica no cambia). Primera adaptación a la interfaz de bloques fijos de AVHUB, según la plantilla de Josep:
+  - Pantalla fija, sin desplazamiento de página, que se readapta sola al tamaño de la ventana: dos franjas de cabecera (H1L·H1C·H1R y HM1·HM2·HM3), rejilla central de 6 × 3 con dos «mini pantallas» (S1A y S1B) y franja de pie (F1L·F1C·F1R).
+  - Entrada de datos a la izquierda (tamaño con formatos rápidos, entorno y uso, pitch con el origen de la elección siempre a la vista, cabinet) o escribiendo la petición arriba; resultados en la fila de abajo (dimensiones, resolución, cabinets, alimentación, señal y electrónica).
+  - Mini pantallas: simulación a escala con persona de 1,75 m y fondos de pared, y una segunda con cableado de señal, cableado eléctrico y distancia de visionado. El ojo de cada bloque lo abre en grande (88 % de la pantalla) con anterior, siguiente y cerrar; también las fichas de los equipos.
+  - Ruedita de ajustes con lo menos habitual (backup, escalador, conexión, mediaserver, ajuste a la medida, elevación, tema) y RESTABLECER. Tema oscuro y tema gris claro.
+  - Mismo catálogo en vivo y mismo motor de cálculo que la consola. De momento solo en castellano, solo para ordenador y sin PDF (el PDF sigue en la versión clásica).
+
+### v10.2
 
 - **PDF sin fondos oscuros**: en el PDF ya no queda ningún fondo negro ni gris oscuro (iconos de dimensiones y de distancia de visionado, rótulo de resolución junto a la simulación, etiquetas…). Se aclaran y sus textos y líneas pasan a un color de contraste. La pantalla de la simulación, las fotos y la vista 3D se dejan como están.
 - **Panel de administrador v1.5 · catálogo**: cabeceras para filtrar por familia, subgama, pitch, tipo y clase (además del buscador); casilla para seleccionar todo lo filtrado o modelo a modelo; y acciones en grupo: aplicar una prioridad (en cada pitch, los seleccionados pasan a ese puesto), mandar al final, usar en los cálculos u ocultar. *El panel vive en Apps Script: hay que pegar allí el `anuncios.html` nuevo y publicar una versión.*

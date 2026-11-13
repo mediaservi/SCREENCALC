@@ -31,6 +31,9 @@
   var CSS = '.avi-btn{position:relative;flex:none;display:inline-grid;place-items:center;width:var(--avi,2.1rem);height:var(--avi,2.1rem);padding:0;margin:0;border:0;border-radius:22%;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;line-height:0}' +
     '.avi-btn .avi-ico{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5))}.avi-btn .avi-fl{transition:transform .1s}.avi-btn:active .avi-fl{transform:translateY(1.5px)}' +
     '.avi-btn:hover .avi-ico,.avi-btn:focus-visible .avi-ico,.avi-btn.tv-focused .avi-ico{filter:drop-shadow(0 1px 1px rgba(0,0,0,.5)) drop-shadow(0 0 5px rgba(255,176,0,.9))}.avi-btn:focus-visible{outline:2px solid #ffb000;outline-offset:2px}' +
+    '.avi-btn:hover .avi-fl,.avi-btn:focus-visible .avi-fl{transform:translateY(1px)}' +
+    '.avi-tip{position:fixed;z-index:2147483000;display:flex;align-items:flex-start;gap:.5rem;max-width:min(18rem,calc(100vw - 16px));box-sizing:border-box;padding:.55rem .7rem;border-radius:.55rem;background:#14110a;border:1px solid #ffb000;box-shadow:0 .5rem 1.4rem rgba(0,0,0,.55);color:#ffe9bd;font:600 .8rem/1.35 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;text-align:left;pointer-events:none;opacity:0;transform:translateY(3px);transition:opacity .14s,transform .14s}' +
+    '.avi-tip.on{opacity:1;transform:none}.avi-tip svg{flex:none;width:1.25rem;height:1.25rem;color:#ffb000;margin-top:.05rem}' +
     '.avi-btn.avi-ok .avi-led{fill:#00ff04;filter:drop-shadow(0 0 2px #00ff04)}.avi-btn.avi-sin .avi-led{fill:#ffb000}' +
     '.avi-ov{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:max(14px,env(safe-area-inset-top,0px)) 14px max(14px,env(safe-area-inset-bottom,0px));background:rgba(6,6,8,.8);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);font:400 15px/1.45 Inter,system-ui,Arial,sans-serif}' +
     '.avi-w{position:relative;box-sizing:border-box;width:min(460px,100%);max-height:100%;overflow-y:auto;padding:20px 20px 16px;border-radius:14px;border:1px solid #4a4a52;background:linear-gradient(180deg,#2b2b2f,#1b1b1e);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 20px 60px rgba(0,0,0,.7);color:#e9ebee;text-align:left}' +
@@ -42,7 +45,15 @@
     '.avi-x{position:absolute;right:12px;top:12px;width:34px;height:34px;border-radius:50%;border:1px solid #55555d;background:#232326;color:#fff;font:400 17px/1 Arial,sans-serif;cursor:pointer}.avi-x:hover{border-color:#ffb000;color:#ffb000}';
   function estilos() { if (document.getElementById('avi-css')) return; var s = document.createElement('style'); s.id = 'avi-css'; s.textContent = CSS; document.head.appendChild(s); }
 
-  function rotula(b) { var o = b._avi || {}, x = tx(o.idioma ? o.idioma() : 'es'); if (b.title !== x.tip) b.title = x.tip; if (b.getAttribute('aria-label') !== x.nom) b.setAttribute('aria-label', x.nom); }
+  /* v10.15 · aviso al pasar el cursor (o al enfocar): mismo bocadillo que el botón de fallos, con la flecha de descarga y el ámbar de este botón. Sustituye al rótulo del navegador. */
+  var tip = null, tipT = 0, FLECHA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>';
+  function ocultarTip() { clearTimeout(tipT); if (tip) { tip.remove(); tip = null; } }
+  function verTip(b) {
+    var o = b._avi || {}, x = tx(o.idioma ? o.idioma() : 'es'); ocultarTip(); tip = document.createElement('div'); tip.className = 'avi-tip'; tip.setAttribute('role', 'tooltip'); tip.innerHTML = FLECHA + '<span></span>'; tip.lastChild.textContent = x.tip; document.body.appendChild(tip);
+    var r = b.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight, px = Math.max(8, Math.min(innerWidth - w - 8, r.left + r.width / 2 - w / 2)), abajo = r.bottom + 8 + h < innerHeight || r.top < h + 16;
+    tip.style.left = Math.round(px) + 'px'; tip.style.top = Math.round(abajo ? r.bottom + 8 : r.top - h - 8) + 'px'; clearTimeout(tipT); tipT = setTimeout(function () { if (tip) tip.classList.add('on'); }, 20);
+  }
+  function rotula(b) { var o = b._avi || {}, x = tx(o.idioma ? o.idioma() : 'es'); if (b.hasAttribute('title')) b.removeAttribute('title'); if (b.getAttribute('aria-label') !== x.nom) b.setAttribute('aria-label', x.nom); }
   /* ---------- service worker y copia sin conexión ---------- */
   function refresca() { botones.forEach(function (b) { rotula(b); b.classList.toggle('avi-ok', estado === 'ok' && navigator.onLine !== false); b.classList.toggle('avi-sin', navigator.onLine === false); b.hidden = false; }); if (dlg) pinta(); }
   function manda(urls) { if (!puedeSW) return; urls = (urls || []).filter(Boolean); if (!urls.length) return; if (!regOk) { pendientes = pendientes.concat(urls); return; }
@@ -79,8 +90,8 @@
       e.stopPropagation(); }); });
     document.addEventListener('keydown', tecla, true); document.body.appendChild(dlg); var f = dlg.querySelector('.avi-go') || dlg.querySelector('.avi-x'); f && f.focus(); }
 
-  function boton(o) { o = o || {}; estilos(); var x = tx(o.idioma ? o.idioma() : 'es'), b = document.createElement('button'); b.type = 'button'; b.className = 'avi-btn' + (o.clase ? ' ' + o.clase : ''); b.innerHTML = ICO; b._avi = o; b.title = x.tip; b.setAttribute('aria-label', x.nom);
-    b.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); rotula(b); abre(o); }); ['pointerenter', 'focus'].forEach(function (ev) { b.addEventListener(ev, function () { rotula(b); }); });
+  function boton(o) { o = o || {}; estilos(); var x = tx(o.idioma ? o.idioma() : 'es'), b = document.createElement('button'); b.type = 'button'; b.className = 'avi-btn' + (o.clase ? ' ' + o.clase : ''); b.innerHTML = ICO; b._avi = o; b.setAttribute('aria-label', x.nom); b.setAttribute('aria-description', x.tip);
+    b.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); rotula(b); abre(o); }); ['pointerenter', 'focus'].forEach(function (ev) { b.addEventListener(ev, function (e) { rotula(b); if (e.pointerType !== 'touch') verTip(b); }); }); ['pointerleave', 'blur', 'pointerdown'].forEach(function (ev) { b.addEventListener(ev, ocultarTip); });
     botones.push(b); if (!boton.hecho) { boton.hecho = true; arranca(o.sw === undefined ? 'sw.js' : o.sw); } refresca(); return b; }
   window.AVINSTALA = { boton: boton, guarda: manda, abre: abre, instalada: enApp };
 })();
