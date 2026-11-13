@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.18** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.19** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,12 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.18)
+## Cambios de la versión actual (v10.19)
+
+- **La portada de SCREENS es ahora la vista en una pantalla (BLOCKS):** al abrir screens.mediaservi.com se entra directamente en ella. La consola clásica (varias pantallas, proyección, PDF y esquema de conexión) sigue disponible con el botón «PDF y versión clásica» de la cabecera y en la dirección `…/?clasica`; los enlaces `…/?led` siguen abriendo la clásica.
+- BLOCKS beta 17: los enlaces a la clásica apuntan a `?clasica`.
+
+## Cambios de la versión anterior (v10.18)
 
 - **Pie nuevo en toda la app** (clásica, consola y BLOCKS): «SCREENS vX.Y AAAA forma parte del proyecto AVHUB ideado por el fundador de mediaservi.com · Aviso legal». Es el texto de fábrica de `credito.js`; si el navegador o el panel traen el texto anterior, se sustituye por este. La portada AVHUB llevará «AVHUB es una idea del fundador de mediaservi.com · Aviso legal».
 - **La dirección `…/#aviso` abre el aviso legal** al cargar la página.

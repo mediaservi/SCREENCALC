@@ -16,6 +16,8 @@
   <link rel="icon" href="assets/screens-icono.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/screens-icono-180.png">
   <link rel="manifest" href="manifest.json">
+  <!-- v10.19 · la portada de SCREENS es la vista en una pantalla (blocks/). La consola clásica se abre con ?clasica, con ?led o con cualquier enlace que ya traiga datos -->
+  <script>(function(){try{var q=new URLSearchParams(location.search),k=[];q.forEach(function(v,n){if(n!=='lang')k.push(n);});if(!k.length)location.replace('blocks/'+location.search+location.hash);}catch(e){}})();</script>
   <!-- v7.2 · preferencias guardadas: pasan una sola vez de las claves antiguas a las nuevas (screens_*) -->
   <script>(function(){try{var L=localStorage,A='screencalc_',m={lang:'idioma',tema:'tema',pared:'pared',fuentes_v2:'fuentes_v2',descarga:'descarga'};Object.keys(m).forEach(function(k){var v=L.getItem(A+k);if(v!==null&&L.getItem('screens_'+m[k])===null)L.setItem('screens_'+m[k],v);L.removeItem(A+k);});['modelos_cache','electronicas_cache','hierros_cache','cache_timestamp'].forEach(function(k){L.removeItem(A+k);});}catch(e){}})();</script>
   <link rel="stylesheet" href="comun/ficha.css">
