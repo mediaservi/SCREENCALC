@@ -15,6 +15,11 @@ export const idioma = () => actual;
 export function fijaIdioma(l) { if (!IDIOMAS.includes(l)) return; actual = l; try { localStorage.setItem('screens_idioma', l); } catch (e) {} document.documentElement.lang = l; }
 
 const MAPA = {
+  'Manguera': ['Cable bundle', 'Mànega'], 'MANGUERA': ['CABLE BUNDLE', 'MÀNEGA'], 'Salida de la manguera': ['Cable bundle exit', 'Sortida de la mànega'],
+  'Al procesador': ['To the processor', 'Al processador'], 'Al conversor de fibra': ['To the fibre converter', 'Al convertidor de fibra'], 'Al cuadro eléctrico': ['To the electrical panel', 'Al quadre elèctric'],
+  'Arriba, izquierda': ['Top left', 'A dalt, a l’esquerra'], 'Arriba, centro': ['Top centre', 'A dalt, al centre'], 'Arriba, derecha': ['Top right', 'A dalt, a la dreta'], 'Izquierda, centro': ['Left, centre', 'Esquerra, al centre'], 'Derecha, centro': ['Right, centre', 'Dreta, al centre'], 'Abajo, izquierda': ['Bottom left', 'A baix, a l’esquerra'], 'Abajo, centro': ['Bottom centre', 'A baix, al centre'], 'Abajo, derecha': ['Bottom right', 'A baix, a la dreta'],
+  'Mover la salida de la manguera arriba': ['Move the cable bundle exit up', 'Moure la sortida de la mànega amunt'], 'Mover la salida de la manguera abajo': ['Move the cable bundle exit down', 'Moure la sortida de la mànega avall'], 'Mover la salida de la manguera a la izquierda': ['Move the cable bundle exit to the left', 'Moure la sortida de la mànega a l’esquerra'], 'Mover la salida de la manguera a la derecha': ['Move the cable bundle exit to the right', 'Moure la sortida de la mànega a la dreta'],
+  'Por defecto': ['Default', 'Per defecte'], 'Volver a la salida por defecto (abajo, centro)': ['Back to the default exit (bottom centre)', 'Tornar a la sortida per defecte (a baix, al centre)'],
   // cabeceras y botones generales
   'Qué es esto y cómo se usa': ['What this is and how to use it', 'Què és això i com es fa servir'],
   'PDF y versión clásica': ['PDF and classic version', 'PDF i versió clàssica'],
@@ -286,6 +291,7 @@ const MAPA = {
 const k = (l) => (l === 'en' ? 0 : 1);
 // textos con cifras o nombres: [expresión, (trozos, idioma) => texto]
 const REGLAS = [
+  [/^(\d+) \+ (\d+) backup$/, (m, l) => `${m[1]} + ${m[2]} backup`],
   [/^MANGUERA · (Al procesador|Al conversor de fibra|Al cuadro eléctrico)$/, (m, l) => [{ 'Al procesador': 'CABLE BUNDLE · To the processor', 'Al conversor de fibra': 'CABLE BUNDLE · To the fibre converter', 'Al cuadro eléctrico': 'CABLE BUNDLE · To the electrical panel' }, { 'Al procesador': 'MÀNEGA · Al processador', 'Al conversor de fibra': 'MÀNEGA · Al convertidor de fibra', 'Al cuadro eléctrico': 'MÀNEGA · Al quadre elèctric' }][k(l)][m[1]]],
   [/^(\d+) \+ (\d+) backup = (\d+) cables Cat6$/, (m, l) => [`${m[1]} + ${m[2]} backup = ${m[3]} Cat6 cables`, `${m[1]} + ${m[2]} backup = ${m[3]} cables Cat6`][k(l)]],
   [/^(\d+) (cable|cables) Cat6$/, (m, l) => m[1] + ' ' + [+m[1] > 1 ? 'Cat6 cables' : 'Cat6 cable', +m[1] > 1 ? 'cables Cat6' : 'cable Cat6'][k(l)]],

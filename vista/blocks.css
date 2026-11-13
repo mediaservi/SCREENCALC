@@ -500,3 +500,14 @@ table.mat a { color: inherit; text-decoration: underline; text-underline-offset:
 
 /* v10.26 · backup: dos botones que dicen lo que hacen, a lo ancho del bloque */
 .fila.bkp { gap: calc(var(--u) * 6); } .fila.bkp .tog { flex: 1 1 0; min-width: 0; min-height: calc(var(--u) * 30); white-space: nowrap; }
+
+/* v10.27 · salida de la manguera: flechas ↑ ↓ ← → bajo el cosido (esquinas y centros de lateral) */
+.mangas { position: absolute; left: 50%; top: calc(var(--u) * 42); transform: translateX(-50%); display: flex; align-items: center; gap: calc(var(--u) * 5); white-space: nowrap; font-size: calc(var(--u) * 12); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--tenue); }
+.mangas button { border: 1px solid var(--linea); background: var(--blk2); color: var(--txt); border-radius: calc(var(--u) * 7); padding: calc(var(--u) * 3) calc(var(--u) * 8); font: inherit; display: inline-flex; align-items: center; }
+.mangas button.fle { width: calc(var(--u) * 30); height: calc(var(--u) * 26); padding: 0; justify-content: center; }
+.mangas button.fle svg { position: static; inset: auto; width: calc(var(--u) * 16); height: calc(var(--u) * 16); }
+.mangas button:disabled { opacity: .3; cursor: default; }
+.mangas button:not(:disabled):hover { border-color: var(--verde); box-shadow: 0 0 0 calc(var(--u) * 2) var(--verde); }
+.mangas em { font-style: normal; color: var(--txt); }
+.vent .mangas { font-size: calc(var(--u) * 15); top: calc(var(--u) * 54); }
+@media (max-width: 900px), (max-height: 520px) { .mangas button.fle { width: calc(var(--u) * 36); height: calc(var(--u) * 32); } .mangas { top: calc(var(--u) * 46); } }
