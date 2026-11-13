@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.21** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.22** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,11 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.21)
+## Cambios de la versión actual (v10.22)
+
+- **Elegir el cabinet a mano:** el desplegable del bloque Cabinet solo ofrecía los modelos del pitch elegido en ese momento (casi siempre uno, así que parecía que no se abría). Ahora ofrece **todos los modelos del entorno**, agrupados por pitch; al elegir uno se ponen su pitch y su resolución, y la etiqueta del pitch pasa a «A mano». Las flechas de pitch siguen funcionando como antes.
+
+## Cambios de la v10.21
 
 - **La portada (una pantalla LED) queda completa:**
   - **PDF propio** en dos hojas (botón PDF de la cabecera): la primera, con el resumen, la simulación a escala y todos los datos (dimensiones, cabinet, resolución, instalación, alimentación, señal y electrónica, observaciones); la segunda, con el esquema de conexión, el cableado de señal y el eléctrico, y la lista de material. En español, inglés y catalán.
