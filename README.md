@@ -4,7 +4,7 @@
 
 Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Todo funciona en **una sola pantalla fija**, sin desplazar la página en ordenador ni en TV: cabecera, franja de modo y petición, bloques de mandos, dos vistas grandes, una fila de cifras y pie. En el móvil, las mismas piezas se apilan y se recorren por dentro.
 
-**Versión actual: v10.37** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
+**Versión actual: v10.38** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
 
 - **Una pantalla LED** → la portada (`index.html` + `vista/una-led.js`).
 - **Varias pantallas, sala inmersiva y proyección** → la consola (`vista/consola.html?modo=varias-led | varias-proy | una-proy`, con el cálculo de `screens/app.js`), con el mismo formato.
@@ -28,7 +28,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 
 **Una pantalla LED (portada)**
 - **Bloques:** entorno y uso, dimensiones, resolución, cabinet (con su ficha y foto), cabinets, electrónica, mediaserver, instalación, señal (con o sin backup, RJ45 o fibra, cosido) y alimentación.
-- **Simulación a escala:** la pantalla en su pared, con figura humana, cotas, fondos y contenido de prueba (fuentes multimedia, enlace propio o archivo).
+- **Simulación a escala:** la pantalla en su pared, con figura humana, cotas y contenido de prueba (fuentes multimedia, enlace propio o archivo). Pared a elegir: hormigón, madera, mármol, tres ladrillos, **sin fondo** o **fondo propio** (una foto subida o un enlace pegado, que se guarda en este navegador).
 - **Cableado:** señal, eléctrico, distancia de visionado y esquema de conexión. Con backup, cada puerto lleva un segundo cable por el último cabinet de su cadena. La **manguera** se dibuja como un solo tubo hasta la salida elegida con las flechas ← ↑ ↓ → (4 esquinas y 4 centros de lateral), con el número de cables.
 - **Lista de material** completa (cabinets, fuentes, cable HDMI PureLink según la distancia, mediaserver, electrónica, fibra, Cat6, distribución eléctrica, PC de control).
 - **PDF de dos hojas:** resumen con simulación y datos; esquema, cableados y material.
@@ -62,13 +62,19 @@ Bloques en burbuja sobre gris (tema gris oscuro o gris claro), cabecera oscura c
 
 ## Aviso
 
-*Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.* Es el mismo en todas las apps de cálculo de AVHUB, en pantalla y en el PDF.
+*Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.* Es el mismo en todas las apps de cálculo de AVHUB, en pantalla y en el PDF. El pie del PDF es el mismo de la pantalla: el aviso con su triángulo y, debajo, «SCREENS vX.Y año forma parte del proyecto AVHUB ideado por el fundador de mediaservi.com».
 
 ## SYSTEMS
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.37)
+## Cambios de la versión actual (v10.38)
+
+- **Pie del PDF igual que el de la pantalla**, en la portada y en Varias / Proyección: primera línea, el triángulo y «Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.»; segunda, «SCREENS v10.38 2026 forma parte del proyecto AVHUB ideado por el fundador de mediaservi.com» (en castellano, inglés y catalán). Sin asterisco ni dirección añadida.
+- **Pared de madera nueva:** las lamas finas se veían como palillos y con un efecto de rayas que no correspondía a su tamaño real; ahora es un friso de tablas de 15 cm con juntas escalonadas, a escala con la pantalla y la persona.
+- **Dos fondos más en la simulación:** **sin fondo** (pared lisa, gris oscuro o gris claro según el tema) y **fondo propio**: sube una imagen o pega un enlace; la foto cubre toda la pared, se guarda en este navegador y sale en capturas y PDF (si la web del enlace no deja copiarla, se ve en pantalla y se avisa de que en capturas y PDF la pared saldrá vacía). Con un fondo propio ya puesto, un toque lo vuelve a elegir; otro toque abre la ventana para cambiarlo o quitarlo.
+
+## Cambios de la v10.37
 
 - **Datos del proyecto, junto a la petición:** el botón ya no está en la cabecera; va en la franja de la petición, delante de «Pegar», en la portada y en Varias / Proyección (es un dato de entrada, como la petición).
 

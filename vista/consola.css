@@ -360,3 +360,8 @@ html.piel :is(#app, #bk-velo) .tabla.mat td:first-child { text-align: right; fon
 .tabla.mat a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .res-sec.mat .ayuda { margin-top: 4px; }
 html.piel .consola .con-ico { border-radius: 50%; }
+/* v10.38 · el candado del panel va a la misma esquina que en la portada: abajo a la izquierda del pie, pequeño y apagado */
+html.piel .f-f1 { position: relative; }
+html.piel .f-f1 .pie .admin-btn { position: absolute; left: 3px; right: auto; bottom: 2px; margin: 0; width: 12px; height: 12px; line-height: 0; opacity: .3; color: var(--tenue); }
+html.piel .f-f1 .pie .admin-btn .ic { width: 12px; height: 12px; vertical-align: top; }
+html.piel .f-f1 .pie .admin-btn:hover, html.piel .f-f1 .pie .admin-btn:focus-visible { opacity: 1; color: var(--marca); }
