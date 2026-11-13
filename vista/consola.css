@@ -173,10 +173,13 @@ html.piel #app .tar .s { padding: 0 14px; font-size: 14.5px; line-height: 1.3; c
 
 /* ---------- pie (F1): aviso · créditos · instalar y avisar de un fallo ---------- */
 html.piel .fam-pie { display: none !important; }
-html.piel .f-f1 { flex: none; display: grid; grid-template-columns: 398fr 1120fr 402fr; min-height: 58px; background: var(--fondo); }
+html.piel .f-f1 { flex: none; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; min-height: 58px; background: var(--fondo); }
 html.piel .f-f1 > * { display: flex; align-items: center; min-width: 0; padding: 0 14px; gap: 10px; }
 html.piel #pie-l { overflow: hidden; }
-html.piel #pie-l .nota { flex: 1 1 0; min-width: 0; font-size: 13px; line-height: 1.3; color: var(--tenue); white-space: nowrap; overflow: hidden; }
+/* v10.30 · el aviso, al mismo tamaño que los créditos y con su triangulito (monocromo, filete del color del texto) */
+html.piel #pie-l .nota { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font-size: 13.5px; line-height: 1.3; color: var(--tenue); }
+html.piel #pie-l .nota > span { white-space: nowrap; overflow: hidden; min-width: 0; }
+html.piel .av-ic { flex: none; width: 1.15em; height: 1.15em; }
 html.piel .f-f1 .pie { justify-content: center; gap: 5px; padding: 0 14px; font-size: 13.5px; color: var(--tenue); background: none; border: 0; white-space: nowrap; overflow: hidden; text-align: center; }
 html.piel .f-f1 .pie a { flex: none; }
 html.piel .f1r { justify-content: flex-end; gap: 10px; }
@@ -282,6 +285,7 @@ html.bk-grande:not(.bk) #escena { position: fixed !important; left: 6px; top: 52
   html.piel .f-f1 > #pie-l { flex: 1 1 0; order: 1; } html.piel .f-f1 > .f1r { flex: 0 0 auto; order: 2; }
   html.piel .f-f1 > .pie { order: 3; flex: 1 1 100%; font-size: 11px; }
   html.piel #pie-l .nota { font-size: 11.5px; }
+  html.piel .f-f1 > .pie { font-size: 11.5px; }
 }
 @media (max-width: 559px) {
   html.piel .cab { padding: 8px 0 4px; row-gap: 6px; }
@@ -298,6 +302,6 @@ html.bk-grande:not(.bk) #escena { position: fixed !important; left: 6px; top: 52
   html.piel .con-ico { order: 2; width: 40px; height: 40px; }
   html.piel .con-calc { order: 3; flex: 1 1 0; margin-left: 2px; height: 42px; font-size: 15px; }
   html.piel .f-f1 > .pie { white-space: normal; text-align: center; line-height: 1.3; font-size: 10.8px; display: block; overflow: visible; }
-  html.piel #pie-l .nota { white-space: normal; line-height: 1.25; font-size: 11px; }
+  html.piel #pie-l .nota { line-height: 1.25; font-size: 10.8px; } html.piel #pie-l .nota > span { white-space: normal; }
 }
 @media print { html.piel .f-f1, html.piel .bk-marco, .bk-velo, .bk-tostada { display: none !important; } }

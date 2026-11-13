@@ -511,3 +511,10 @@ table.mat a { color: inherit; text-decoration: underline; text-underline-offset:
 .mangas em { font-style: normal; color: var(--txt); }
 .vent .mangas { font-size: calc(var(--u) * 15); top: calc(var(--u) * 54); }
 @media (max-width: 900px), (max-height: 520px) { .mangas button.fle { width: calc(var(--u) * 36); height: calc(var(--u) * 32); } .mangas { top: calc(var(--u) * 46); } }
+
+/* v10.30 · aviso del pie: al mismo tamaño que los créditos, con su triangulito de aviso (monocromo, filete del color del texto), en una columna que se estira lo que haga falta */
+.f-f1 { grid-template-columns: auto minmax(0, 1fr) auto; }
+#pie-l .nota { display: inline-flex; align-items: center; gap: calc(var(--u) * 6); font-size: calc(var(--u) * 13.5); line-height: 1.25; flex: none; overflow: visible; }
+.av-ic { flex: none; width: 1.15em; height: 1.15em; vertical-align: -0.2em; }
+@media (max-width: 900px), (max-height: 520px) { #pie-l .nota { flex: 1 1 0; min-width: 0; font-size: calc(var(--u) * 10.5); } }
+@media (max-width: 559px) { #pie-l .nota { display: flex; white-space: normal; font-size: calc(var(--u) * 10.8) !important; } }

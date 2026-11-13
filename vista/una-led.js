@@ -7,9 +7,9 @@ import { HUMAN_PATH } from '../screens/figura.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.29';
+import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.30';
 idiomaInicial();   /* el idioma guardado de la familia SCREENS o, la primera vez, el del navegador */
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.29';
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.30';
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const SV = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
@@ -400,7 +400,7 @@ function pintaPie() {
   const ver = !!(R && R.r) && !EDITA && USADO;
   res.hidden = !ver; inp.style.visibility = ver ? 'hidden' : '';
   if (ver) res.innerHTML = `<span>PANTALLA LED ${esc(R.m.crm)} · ${fmt(R.r.ancho * 100)} × ${fmt(R.r.alto * 100)} cm · ${fmt(R.diag / .0254)}″ · ${R.r.cols}×${R.r.rows} = ${R.r.cab} cabinets</span><span> · ${R.r.resW}×${R.r.resH} px · ${fmt(R.r.peso)} kg · ${fmt(R.r.kw, 2)} kW · ${R.r.lineas} línea${R.r.lineas > 1 ? 's' : ''}</span>`;
-  $('#pie-l').innerHTML = '<span class="nota">Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.</span>';
+  $('#pie-l').innerHTML = '<span class="nota"><svg class="av-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.6 2.4 20.2h19.2z"/><path d="M12 9.6v5"/><path d="M12 17.6h.01"/></svg><span>Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.</span></span>';
 }
 /* ningún texto de una línea se parte ni se corta: si no cabe, se le va bajando la letra hasta que quepa */
 function encoge(el, min = 7) { if (!el || !el.clientWidth) return; el.style.fontSize = ''; let f = parseFloat(getComputedStyle(el).fontSize); for (let i = 0; i < 40 && el.scrollWidth > el.clientWidth + 1 && f > min; i++) { f *= .96; el.style.fontSize = f + 'px'; } }

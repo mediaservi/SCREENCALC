@@ -9,7 +9,7 @@ import { interpretar } from './peticion.js';
 import { vistasTecnicas, activarVistas } from './vistas.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v10.29';
+const VERSION = 'v10.30';
 // v8.9 · crédito común de AVHUB (credito.js) y seta de aviso de fallos (fallo.js), los mismos en toda la familia
 if (window.AVCREDITO) window.AVCREDITO.alCambiar(() => { try { pintarCabecera(); } catch (e) {} });
 if (window.AVFALLO) { const bi = document.querySelector('#btn-idioma'); if (bi) { const bf = window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() }); bf.id = 'btn-fallo'; bi.before(bf);
@@ -538,7 +538,7 @@ function pintarConsola() {
   // de beta en la caja de la petición, en ámbar tipo LCD. Para quitarlo cuando estén probadas: EN_PRUEBAS = () => false
   const i = $('#nl-texto'), beta = EN_PRUEBAS(); if (i && i.classList.contains('beta') !== beta) { i.classList.toggle('beta', beta); ajustarPh(); }
 }
-const EN_PRUEBAS = () => !unaLed() && !globalThis.SC_SIN_AVISO_BETA;   // v10.28 · la consola con el formato de la portada (vista/consola.html) usa el texto guía de la portada
+const EN_PRUEBAS = () => !unaLed();   // v10.30 · se mantiene: los cálculos de varias LED y de proyección aún no están verificados
 // el texto guía más largo que quepa entero en la caja (nunca cortado)
 let ctxPh = null;
 function ajustarPh() {
