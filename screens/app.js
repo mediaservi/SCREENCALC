@@ -9,7 +9,7 @@ import { interpretar } from './peticion.js';
 import { vistasTecnicas, activarVistas } from './vistas.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v10.35';
+const VERSION = 'v10.37';
 // v8.9 · crédito común de AVHUB (credito.js) y seta de aviso de fallos (fallo.js), los mismos en toda la familia
 if (window.AVCREDITO) window.AVCREDITO.alCambiar(() => { try { pintarCabecera(); } catch (e) {} });
 if (window.AVFALLO) { const bi = document.querySelector('#btn-idioma'); if (bi) { const bf = window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() }); bf.id = 'btn-fallo'; bi.before(bf);
@@ -482,6 +482,7 @@ function vistaResultados(c) {
     h += vistaSombras(c);
   }
   h += vistaElec(c);
+  h += vistaMaterial(c);   // v10.36 · lista de material (varias LED), la misma que la de la portada
   return h;
 }
 
@@ -499,6 +500,38 @@ function vistaPosicion(c) {
   </tbody></table></div>${fs.some(pasa) ? `<p class="aviso">${t('shiftFuera', { s: fs.filter(pasa).map(f => f.nombre).join(' · ') })}</p>` : ''}<p class="ayuda">${t('posAyuda', { lx: fmt(c.lx, 0), g: fmt(c.gan, 1) })}</p></section>`;
 }
 // electrónica y mediaserver elegidos, con el mismo componente de ficha
+// v10.36 · lista de material de varias pantallas LED y salas inmersivas, fila a fila como en la portada: cabinets, fuentes y cable HDMI
+// (1 fuente y cable de 3 m si no se dice otra cosa), mediaserver, electrónica (por piezas si es modular), fibra y Cat6, distribución
+// eléctrica (líneas de 16 A por superficie), PC de control, sensor de luz en exterior y escaparate, y la variante tropicalizada
+const COL_MAT = { pantalla: '#9aa3b2', video: '#2f7fe0', elec: '#14a38b', fibra: '#f07020', eth: '#3fae4f', power: '#e5404f', ctrl: '#8b55e8', extra: '#d08a00' };
+function materialLed(c) {
+  const x = c.elec || {}, p = x.proc, me = x.media, m = c.modelo, T = c.tot, e = E.elec, L = [], busca = ELEC.charmexBusca || (() => '');
+  const backup = !!e.backup, mult = backup ? 2 : 1, rack = e.conexion === 'fibra';
+  L.push({ c: T.cab, ref: m.crm, url: m.urlProd || busca(m.crm), desc: t('matCab', { p: m.pitch, w: m.cabAncho, h: m.cabAlto }), g: 'pantalla' });
+  L.push({ c: 1, ref: 'HDMI', desc: t('matFuentes'), g: 'video' });
+  L.push({ c: 1, ref: 'FI-H100-030', url: busca('FI-H100-030'), desc: t('matCable', { a: me ? 'mediaserver' : t('matAElec') }) + t('matEstandar'), g: 'video' });
+  if (me) L.push({ c: backup && !me.backupNativo ? 2 : 1, ref: me.modelo, url: me.url || busca(me.modelo), desc: t('matMedia', { m: me.marca }) + (me.backupNativo ? t('matBkNat') : ''), g: 'video' });
+  if (p) { const eq = (p.equipos || []).filter(q => q.cant > 0), tit = t('matElec', { m: p.marca, s: p.serie || '' }) + (p.escalador ? t('matEsc') : '');
+    if (p.modular) { L.push({ c: '', ref: p.modelo, desc: tit + t('matPiezas'), g: 'elec', titulo: true }); eq.forEach(q => L.push({ c: q.cant, ref: q.ref, url: busca(q.ref), desc: trMotor(q.desc), g: 'elec', pieza: true })); }
+    else { L.push({ c: 1, ref: p.modelo, url: p.url || busca(p.modelo), desc: tit, g: 'elec' }); eq.forEach(q => L.push({ c: q.cant, ref: q.ref, url: busca(q.ref), desc: trMotor(q.desc), g: 'elec' })); } }
+  else L.push({ c: '', ref: t('matSinEq'), desc: t('matSinEqD'), g: 'elec' });
+  const cvt = p ? (p.equipos || []).filter(q => q.ref === (ELEC.ELEC_CVT || {}).ref || q.ref === (ELEC.ELEC_MX_CVT || {}).ref).reduce((a, q) => a + q.cant, 0) : 0, bk = backup ? t('matMasBk') : '';
+  if (rack) { L.push({ c: cvt * mult, ref: t('matFibra'), desc: t('matFibraD') + bk, g: 'fibra' }); L.push({ c: T.lineas * mult, ref: 'Cat6 (RJ45)', desc: t('matCat6Cvt') + bk, g: 'eth' }); }
+  else L.push({ c: T.lineas * mult, ref: 'Cat6 (RJ45)', desc: t('matCat6') + bk, g: 'eth' });
+  const ampCab = Number(m.cabAmp) || (m.wMax ? m.wMax / 230 : 0), cabLinea = ampCab > 0 ? Math.max(1, Math.floor(16 / ampCab)) : 0;
+  const nLin = c.filas.reduce((a, f) => a + (f.r && f.r.cab ? (cabLinea ? Math.ceil(f.r.cab / cabLinea) : 1) : 0), 0);
+  L.push({ c: 1, ref: t('matDist'), desc: t('matDistD', { a: fmt(T.amp, 1), k: fmt(T.kw, 2), n: nLin }), g: 'power' });
+  L.push({ c: 1, ref: t('matPc'), desc: t('matPcD'), g: 'ctrl' });
+  if (E.led.tipo === 'OUTDOOR' || E.led.tipo === 'ESCAPARATE') L.push({ c: 1, ref: 'NS060', url: busca('NS060'), desc: t('matSensor'), g: 'ctrl' });
+  if (E.led.gold) L.push({ c: '', ref: t('matGold'), desc: t('matGoldD'), g: 'extra' });
+  return L;
+}
+function vistaMaterial(c) {
+  if (E.tecnologia !== 'led' || !c.modelo || !c.tot || !c.filas.length) return '';
+  const esc2 = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+  return `<section class="res-sec mat"><div class="res-tit">${ICO_MAT}${t('matTit')}</div><div class="tabla-caja"><table class="tabla mat"><thead><tr><th>${t('matCant')}</th><th>${t('matRef')}</th><th>${t('matDesc')}</th></tr></thead><tbody>${materialLed(c).map(x => `<tr class="${x.titulo ? 'tit' : x.pieza ? 'pz' : ''}"><td>${x.c === '' ? '' : fmtPx(x.c) + (x.pieza ? '×' : '')}</td><td><i class="mat-v${x.pieza ? ' pz' : ''}" style="background:${COL_MAT[x.g] || '#999'}"></i>${x.url ? `<a href="${esc2(x.url)}" target="_blank" rel="noopener">${esc2(x.ref)}</a>` : esc2(x.ref)}</td><td>${esc2(x.desc)}</td></tr>`).join('')}</tbody></table></div><p class="ayuda">${t('matNota')}</p></section>`;
+}
+const ICO_MAT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6v3H9z"/><path d="M15 5h3v16H6V5h3"/><path d="M9 11h6M9 15h6"/></svg>';
 function vistaElec(c) {
   const x = c.elec; if (!x) return '';
   const led = E.tecnologia === 'led', fichas = [];

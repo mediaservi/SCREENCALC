@@ -75,7 +75,7 @@
     [].forEach.call(document.querySelectorAll('#consola [data-set="cantidad"], #consola [data-set="tecnologia"]'), function (b5) { var v = b5.getAttribute('data-v'), ic = ({ una: IC.una, varias: IC.varias, led: IC.led, proy: IC.proy })[v]; if (ic && b5.getAttribute('data-ic') !== v) { var sv = b5.querySelector('svg'); if (sv) sv.outerHTML = ic; else b5.insertAdjacentHTML('afterbegin', ic); b5.setAttribute('data-ic', v); } });
     /* el aviso de beta de la casilla (lo pone screens/app.js: estos cálculos aún no están verificados) manda sobre el texto guía */
     var ip = $('#nl-texto'); if (ip && !ip.classList.contains('beta')) { var ph = textoGuia(ip, l); if (ph && ip.placeholder !== ph) ip.placeholder = ph; }
-    var nl = $('#consola .con-nl'); if (nl && !nl.querySelector('[data-bk="pega"]')) { var inp = $('#nl-texto'); inp.insertAdjacentHTML('beforebegin', '<button type="button" class="sec-btn con-ico" data-bk="pega">' + IC.pega + '</button>'); inp.insertAdjacentHTML('afterend', '<button type="button" class="sec-btn con-ico" data-bk="copia">' + IC.copia + '</button>'); }
+    var nl = $('#consola .con-nl'); if (nl && !nl.querySelector('[data-bk="pega"]')) { var inp = $('#nl-texto'); inp.insertAdjacentHTML('beforebegin', '<button type="button" class="sec-btn con-ico" id="btn-proyecto" data-bk="proyecto">' + IC.proyecto + '</button><button type="button" class="sec-btn con-ico" data-bk="pega">' + IC.pega + '</button>'); inp.insertAdjacentHTML('afterend', '<button type="button" class="sec-btn con-ico" data-bk="copia">' + IC.copia + '</button>'); }
     [['nl-mic', 'mic'], ['nl-audio', 'audio']].forEach(function (q) { var b4 = $('#consola [data-accion="' + q[0] + '"]'); if (b4 && !b4.querySelector('.ic')) b4.innerHTML = '<span class="ic ic-' + q[1] + '" aria-hidden="true"></span>'; });
     [['pega', l.pega], ['copia', l.copia]].forEach(function (q) { var b2 = $('#consola [data-bk="' + q[0] + '"]'); atr(b2, 'title', q[1]); atr(b2, 'aria-label', q[1]); });
     var bi = $('#btn-idioma'); if (bi && !bi.querySelector('.cod')) { var cod = bi.textContent.trim() || 'ES'; bi.innerHTML = '<span class="ic ic-lang" aria-hidden="true"></span><small class="cod">' + esc(cod) + '</small>'; }
@@ -167,8 +167,8 @@
     [].forEach.call(r.children, function (x) { if (x.classList.contains('res-tot') || x.classList.contains('bk-marco')) return;
       if (x.classList.contains('tabla-caja') || x.classList.contains('avisos') || (x.classList.contains('mod') && !x.classList.contains('res-sec'))) { sup.nodos.push(x); return; }
       var t = x.querySelector('.res-tit'), sp = t && [].filter.call(t.querySelectorAll(':scope > span'), function (z) { return z.textContent.trim(); })[0], tt = ((sp || t || {}).textContent || '').trim();
-      var k = x.id === 'det-equipo' ? 'equipo' : x.classList.contains('vt') ? 'vt' : (x.nextElementSibling && x.nextElementSibling.id === 'det-equipo') ? 'elec' : 'r' + otros.length;
-      otros.push({ k: k, tit: tt, ic: k === 'equipo' ? (tec() === 'led' ? '<span class="ic ic-cabinet"></span>' : IC.proy) : k === 'elec' ? IC.chip : IC.lista, nodos: [x] }); });
+      var k = x.id === 'det-equipo' ? 'equipo' : x.classList.contains('vt') ? 'vt' : x.classList.contains('mat') ? 'mat' : x.querySelector('.fichas') ? 'elec' : 'r' + otros.length;
+      otros.push({ k: k, tit: tt, ic: k === 'equipo' ? (tec() === 'led' ? '<span class="ic ic-cabinet"></span>' : IC.proy) : k === 'elec' ? IC.chip : k === 'mat' ? IC.proyecto : IC.lista, nodos: [x] }); });
     if (sup.nodos.length) P.push(sup); return P.concat(otros); }
   function devuelveEscena() { if (!VIS || !VIS.esc) return; var es = $('#bk-velo #escena'), o = VIS.esc; VIS.esc = null; if (!es) return;
     var otra = [].filter.call(document.querySelectorAll('#escena'), function (x) { return x !== es; })[0];
@@ -206,7 +206,7 @@
   document.addEventListener('DOMContentLoaded', function () { escala(); enganchaPdf();
     addEventListener('resize', function () { escala(); var gn = guiaActual(); requestAnimationFrame(function () { encoge($('#pie-l .nota > span'), 7); var ip = $('#nl-texto'); if (ip && !ip.classList.contains('beta')) { var ph = textoGuia(ip, L()); if (ph) ip.placeholder = ph; } if (gn >= 0) guia(gn); }); });
     var dr = $('.cab-der'), pdf = $('#btn-pdf'), idi = $('#btn-idioma');
-    if (pdf) { pdf.insertAdjacentHTML('beforebegin', '<button type="button" class="hdr-btn" id="btn-ayuda" data-bk="info"><span class="ic ic-info" aria-hidden="true"></span></button><button type="button" class="hdr-btn" id="btn-proyecto" data-bk="proyecto">' + IC.proyecto + '</button>'); }
+    if (pdf) { pdf.insertAdjacentHTML('beforebegin', '<button type="button" class="hdr-btn" id="btn-ayuda" data-bk="info"><span class="ic ic-info" aria-hidden="true"></span></button>'); }
     if (idi) idi.insertAdjacentHTML('afterend', '<button type="button" class="hdr-btn" id="btn-tema" data-bk="tema">' + IC.tema + '</button>');
     var pend = 0, hecho = false; new MutationObserver(function () { if (pend) return; pend = requestAnimationFrame(function () { pend = 0; if (document.body.classList.contains('con-led')) { location.replace('./'); return; } enganchaPdf(); NUEVOS = 0; piezas(); marcos(); coloca(); rellena(); ajustaSel(); refrescaVisor();
       /* las columnas se acaban de pintar: se vuelven a repartir ya con los iconos puestos (la consola pliega lo que no cabe al cambiar de tamaño) */

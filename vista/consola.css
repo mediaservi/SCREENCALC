@@ -350,3 +350,13 @@ html.piel .fila.nits { display: flex; align-items: center; gap: 6px; }
 html.piel .fila.nits .etq { flex: 1 1 auto; }
 html.piel .fila.nits .sec-btn { flex: none; width: 36px; min-height: 32px; padding: 0; font-size: 18px; color: var(--verde-txt); }
 html.piel .fila.nits b { flex: 0 0 76px; text-align: center; font: 400 18px 'Share Tech Mono', ui-monospace, monospace; color: var(--verde-txt); border: 1px solid var(--linea); border-radius: 8px; background: var(--campo); padding: 3px 0; }
+/* v10.36 · lista de material de varias LED (como la de la portada): viñeta del color de cada tipo de cable, piezas sangradas */
+html.piel :is(#app, #bk-velo) .tabla.mat td:nth-child(3) { font-family: Inter, system-ui, sans-serif; white-space: normal; color: var(--txt); }
+html.piel :is(#app, #bk-velo) .tabla.mat td:first-child { text-align: right; font-family: 'Share Tech Mono', ui-monospace, monospace; }
+.tabla.mat .mat-v { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: 0; }
+.tabla.mat .mat-v.pz { width: 7px; height: 7px; border-radius: 2px; }
+.tabla.mat tr.pz td:nth-child(2) { padding-left: 26px; }
+.tabla.mat tr.tit td { font-weight: 800; }
+.tabla.mat a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.res-sec.mat .ayuda { margin-top: 4px; }
+html.piel .consola .con-ico { border-radius: 50%; }
