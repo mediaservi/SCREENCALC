@@ -450,3 +450,15 @@ select.sel { width: 100%; min-width: 0; border: 1px solid var(--verde-txt); back
 @media (max-width: 900px), (max-height: 520px) { .fila.ico .tog { font-size: calc(var(--u) * 13.5); padding: 0 calc(var(--u) * 8); gap: calc(var(--u) * 7); } }
 /* beta 16 · en el móvil los créditos pueden ir en dos renglones legibles */
 @media (max-width: 559px) { .f-f1 > .f-cred { display: block; white-space: normal; text-align: center; text-wrap: balance; line-height: 1.3; font-size: calc(var(--u) * 10.8) !important; overflow: visible; } }
+
+/* ---- v10.21 · lista de material, datos del proyecto y observaciones ---- */
+.mat-caja { display: flex; flex-direction: column; gap: calc(var(--u) * 10); padding: calc(var(--u) * 16); overflow: auto; color: var(--txt); }
+table.mat { width: 100%; border-collapse: collapse; font-size: calc(var(--u) * 16); }
+table.mat th { text-align: left; font-size: calc(var(--u) * 12); letter-spacing: .1em; text-transform: uppercase; color: var(--tenue); padding: calc(var(--u) * 6) calc(var(--u) * 10); border-bottom: 2px solid var(--linea); }
+table.mat td { padding: calc(var(--u) * 7) calc(var(--u) * 10); border-bottom: 1px solid var(--linea); }
+table.mat td:first-child, table.mat th:first-child { text-align: right; font-family: 'Share Tech Mono', monospace; white-space: nowrap; }
+table.mat td:nth-child(2) { font-family: 'Share Tech Mono', monospace; white-space: nowrap; }
+textarea.pide.obs { height: auto; min-height: calc(var(--u) * 96); padding: calc(var(--u) * 10) calc(var(--u) * 14); line-height: 1.4; resize: vertical; font-family: inherit; white-space: pre-wrap; }
+/* cuatro vistas en S1B (señal, eléctrico, distancia y esquema): pestañas algo más prietas para que quepan también en el móvil */
+[data-blk="S1B"] .pestanas { gap: calc(var(--u) * 3); }
+[data-blk="S1B"] .pestanas button { padding-inline: calc(var(--u) * 5.5); letter-spacing: 0; }
