@@ -4,7 +4,7 @@
 
 Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Todo funciona en **una sola pantalla fija**, sin desplazar la página en ordenador ni en TV: cabecera, franja de modo y petición, bloques de mandos, dos vistas grandes, una fila de cifras y pie. En el móvil, las mismas piezas se apilan y se recorren por dentro.
 
-**Versión actual: v10.44** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
+**Versión actual: v10.45** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
 
 - **Una pantalla LED** → la portada (`index.html` + `vista/una-led.js`).
 - **Varias pantallas, sala inmersiva y proyección** → la consola (`vista/consola.html?modo=varias-led | varias-proy | una-proy`, con el cálculo de `screens/app.js`), con el mismo formato.
@@ -39,7 +39,7 @@ Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que 
 - **Resultados:** tabla por superficie, vistas técnicas de proyección (lateral, frontal y cenital, con el proyector arrastrable), posición, sombras, electrónica y equipo elegido; y las **seis cifras clave** en su fila.
 - **PDF** con la captura 3D, los resultados, la electrónica y los equipos.
 
-**Fichas y motor común:** cabinets, proyectores, electrónicas y mediaservers se muestran con la misma ficha (`comun/ficha.js`, `comun/ficha.css`); el motor de electrónica es común (`comun/electronica.js`: NovaStar MCTRL, VX Pro, NovaPro, COEX MX y H Series, con tarjetas de salida y de entrada, backup, escalador y fibra con CVT10 Pro).
+**Fichas y motor común:** cabinets, proyectores, electrónicas y mediaservers se muestran con la misma ficha (`comun/ficha.js`, `comun/ficha.css`); el motor de electrónica es común (`comun/electronica.js`: NovaStar MCTRL, VX Pro, NovaPro, COEX MX, MBOX, reproductores Taurus TB y TU y H Series, con tarjetas de salida y de entrada, backup, escalador y fibra con CVT10 Pro; mediaservers NovaStar ET y PIXELHUE X400; switchers PIXELHUE). Los equipos salen de **una lista por marca** (`comun/equipos.js` de fábrica) que se gestiona desde el panel AVHUB ADMIN (EQUIPOS): lo guardado allí sustituye a la de fábrica sin publicar la app.
 
 **Otras páginas:** `admin/anuncios.html` (AVHUB ADMIN: firmas, newsletter y catálogo) y `configuradores/` (compara SCREENS con el configurador oficial de TRAULUX).
 
@@ -68,7 +68,16 @@ Bloques en burbuja sobre gris (tema gris oscuro o gris claro), cabecera oscura c
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.44)
+## Cambios de la versión actual (v10.45)
+
+- **Equipos en listas por marca, gestionables desde el panel admin.** La electrónica ya no depende de la hoja: cada marca (NOVASTAR, PIXELHUE…) tiene su lista con sus modelos, tipo (controladora, reproductor con controladora, chasis H, mediaserver o switcher) y sus datos de cálculo (puertos, capacidad, ancho y alto máximos, escalador, salidas…), además del resumen y los enlaces oficiales de su ficha. En el panel AVHUB ADMIN → EQUIPOS se activan o desactivan modelos, se editan, se ordenan y se añaden modelos o marcas; al guardar, la app lo aplica en la siguiente carga. Sin lista guardada, la app usa la de fábrica (`comun/equipos.js`).
+- **Catálogo NovaStar completo, solo de las fuentes oficiales** (novastar.show y novastar.tech): MCTRL 300, 600, 660, 660 PRO, 700, 700 Pro, R5 y 4K; VX400, VX600, VX1000 y VX2000 Pro; NovaPro UHD Jr; COEX KU20, MX20, MX30, MX40 Pro, MX2000 Pro y MX6000 Pro; MBOX600 Pro; reproductores Taurus TB10 Plus, TB20 Plus, TB30, TB50, TB60 y TCC160 y TU15 Pro, TU20 Pro y TU4K Pro; H Series H2, H5, H9, H15 y H20; mediaservers ET1S-G a ET16S-G.
+- **Reproductores multimedia con controladora (Taurus):** ya se ofrecen como electrónica cuando la pantalla cabe en su capacidad, ancho y alto (por ejemplo, un TB50 para una pantalla de 1024 × 512). Su ficha dice que llevan la controladora dentro y no hace falta otro procesador, y en la lista de material salen como «Reproductor multimedia … (controladora incluida)».
+- **Escalador «Igual»** ya admite todos los equipos (antes dejaba fuera los que llevan escalador).
+- Cada ficha de equipo enlaza la página del fabricante y su ficha técnica en PDF.
+- **Portada en inglés y catalán:** los resúmenes de los equipos se traducen como en la consola (las reglas pasan a `comun/motor-i18n.js`, compartido). Un dato largo, como los puertos con backup, se reduce en vez de partirse en dos líneas.
+
+## Cambios de la v10.44
 
 - **Imagen de otra web en el PDF:** una imagen puesta en la pantalla (o en la pared) con un enlace de una web que no deja copiarla se pide a través de **wsrv.nl**, que la devuelve igual con permiso de copia; así sale en el PDF y en las capturas. wsrv.nl solo recibe la dirección pública de la imagen. Un vídeo de YouTube sale en el PDF con su miniatura. Si aun así no se puede, se avisa.
 - **Foto del cabinet:** si en el catálogo la foto es un enlace para compartir (SharePoint / OneDrive de empresa, Google Drive o Dropbox) se usa su dirección directa de imagen; y si no carga, se ve «sin foto» en vez de una imagen rota.

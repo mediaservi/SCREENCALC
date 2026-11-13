@@ -1,15 +1,18 @@
 /* SCREENS · una pantalla LED en BLOCKS (beta) · mediaservi.com · GPL-3.0
    Misma lógica de cálculo que la consola (screens/led.js, comun/electronica.js) y el mismo catálogo en vivo (screens/catalogo.js);
    aquí solo cambia cómo se presenta: cada dato tiene su bloque fijo y no hay desplazamiento de página. */
-import { cargarCatalogo, ordenar, enStock } from '../screens/catalogo.js';
+import { cargarCatalogo, cargarEquipos, ordenar, enStock } from '../screens/catalogo.js';
 import { calcularLed, lineasCosido, PX_PUERTO } from '../screens/led.js';
 import { HUMAN_PATH } from '../screens/figura.js';
+import '../comun/equipos.js';   /* v10.45 · listas de equipos de fábrica: antes que el motor */
+import '../comun/motor-i18n.js';   /* v10.45 · traducción de los textos del motor (resúmenes de los equipos), la misma de la consola */
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.44';
+import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.45';
 idiomaInicial();   /* el idioma guardado de la familia SCREENS o, la primera vez, el del navegador */
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.44';
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.45';
+const trM = (txt) => globalThis.SC_TR_MOTOR(txt, idioma());
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const SV = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
@@ -103,10 +106,10 @@ function deEnlace(u) {
 const sueltaCont = () => { if (CONT && /^blob:/.test(CONT.url)) URL.revokeObjectURL(CONT.url); };
 let CONT = null;   /* contenido propio que se simula en la pantalla: { url, tipo: 'img' | 'video' } */
 const SUELO = { hormigon: '#bfe6d8', madera: '#bcd9f2', marmol: '#f2c9d4', 'ladrillo-rojo': '#c7e8c0', 'ladrillo-oscuro': '#f3e3a8', 'ladrillo-claro': '#c9c6f0', ninguno: '#cfd3da', propio: '#cfd3da' };
-/* v10.44 · además de las seis paredes: «ninguno» (sin fondo) y «propio» (una imagen subida o un enlace pegado) */
+/* v10.38 · además de las seis paredes: «ninguno» (sin fondo) y «propio» (una imagen subida o un enlace pegado) */
 const FONDOS = ['hormigon', 'madera', 'marmol', 'ladrillo-rojo', 'ladrillo-oscuro', 'ladrillo-claro', 'ninguno', 'propio'];
-const TEXV = '?v=10.44';
-/* v10.44 · candado discreto del pie: abre el panel AVHUB ADMIN (Apps Script), como el de la consola */
+const TEXV = '?v=10.45';
+/* v10.38 · candado discreto del pie: abre el panel AVHUB ADMIN (Apps Script), como el de la consola */
 const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbwkc12y4LODbFe-kQidnR2MbbA6cbW1WbhU3UiqmDmshx-ncAdGYrFRy8PNjm9Wg6Mx3w/exec';   /* rompe la caché del navegador cuando cambia una textura */
 /* fondo propio: la imagen ya reducida (data:) o el enlace, guardado en este navegador */
 const FPROP_K = 'screens-fondo-propio';
@@ -201,7 +204,7 @@ function calcula() {
   else if (cosido === 'horizontal') for (let f = 0; f < r.rows; f++) { const j = f % filasPP; for (let q = 0; q < r.cols; q++) rutas[Math.floor(f / filasPP)].push([j % 2 ? r.cols - 1 - q : q, f]); }
   else for (let f = 0, n = 0; f < r.rows; f++) for (let q = 0; q < r.cols; q++, n++) rutas[Math.floor(n / cabPuerto)].push([f % 2 ? r.cols - 1 - q : q, f]);
   const dePuerto = {}; rutas.forEach((ru, i) => ru.forEach(([c, f]) => { dePuerto[c + '_' + f] = i; }));
-  const procs = ELEC.calcularElectronicas({ lines: r.lineas, totalPix: r.pix, porSup: null }, { backup: E.backup, escalador: E.escalador, conexion: E.conexion, entradas: Math.max(1, +E.entradas || 1), tipoEntrada: E.tipoEntrada === 'MIXTO' ? '' : E.tipoEntrada, resEntrada: E.resEntrada }, []);
+  const procs = ELEC.calcularElectronicas({ lines: r.lineas, totalPix: r.pix, porSup: null, resW: r.resW, resH: r.resH }, { backup: E.backup, escalador: E.escalador, conexion: E.conexion, entradas: Math.max(1, +E.entradas || 1), tipoEntrada: E.tipoEntrada === 'MIXTO' ? '' : E.tipoEntrada, resEntrada: E.resEntrada }, []);
   const medias = E.marca === 'ninguno' ? [] : ELEC.calcularMediaservers({ totalPix: Math.max(1, r.salidas4k) * ELEC.ELEC_PX_4K, resW: r.resW, resH: r.resH }, { marca: E.marca, dante: !!E.dante, entradas: Math.max(1, +E.entradas || 1) });
   const vert = cosido === 'vertical', puerto = (c, f) => dePuerto[c + '_' + f] || 0;
   const ampCab = holo && r.amp ? r.amp / r.cab : Number(m.cabAmp) || (m.wMax ? m.wMax / 230 : 0), cabLinea = ampCab > 0 ? Math.max(1, Math.floor(16 / ampCab)) : r.cab;
@@ -224,11 +227,11 @@ const FIG = (() => { const s = document.createElementNS('http://www.w3.org/2000/
 const figura = (cx, suelo, k, relleno) => { const e = 1.75 * k / FIG.height; return `<g transform="translate(${cx - (FIG.x + FIG.width / 2) * e},${suelo + FIG.y * e}) scale(${e},${-e})" ${relleno}><path d="${HUMAN_PATH}"/></g>`; };
 const COLS = ['#19b5b0', '#c264c8', '#62b85a', '#4b4bc8', '#c2c040', '#e0803a', '#3a9be0', '#d0507a', '#8a8f9a', '#40c090'];
 /* medida real de lo que abarca cada textura de pared (ancho × alto en metros): así los ladrillos, las lamas y las losas salen a la misma escala que la pantalla y la persona, se vea la simulación al tamaño que se vea */
-/* v10.44 · la madera es un friso de tablas de 15 cm (2,40 × 3,00 m por pieza): las lamas finas de antes se veían como palillos a esta escala */
+/* v10.38 · la madera es un friso de tablas de 15 cm (2,40 × 3,00 m por pieza): las lamas finas de antes se veían como palillos a esta escala */
 const PARED = { hormigon: [3.6, 2.39, 1], madera: [2.4, 3.0], marmol: [2.4, 2.4], 'ladrillo-rojo': [1, .64], 'ladrillo-oscuro': [1, .912], 'ladrillo-claro': [1, .64] };
 /* «prop» es ancho / alto del hueco donde se va a ver: el dibujo se hace con esa proporción para llenarlo */
 function svgSim(prop, anchoPx, o) {
-  /* v10.44 · las líneas de los cabinets se ven siempre (también sobre un contenido propio): normales en pantalla, más suaves en el PDF */
+  /* v10.43 · las líneas de los cabinets se ven siempre (también sobre un contenido propio): normales en pantalla, más suaves en el PDF */
   const cabOp = o && o.pdf ? .3 : .55, cabLin = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#000" stroke-opacity="${(cabOp * .6).toFixed(2)}" stroke-width="2.4" pointer-events="none"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#d4ff00" stroke-opacity="${cabOp}" stroke-width="1.1" pointer-events="none"/>`;
   if (!prop) { const c = document.querySelector('[data-blk="S1A"] .blk-cu'); prop = c && c.clientHeight > 40 ? c.clientWidth / c.clientHeight : 1.6; anchoPx = c ? c.clientWidth : 0; }
   /* hueco que hay que dejar arriba para los dos controles que van encima (elevación y pared), que no cambian de tamaño con el dibujo */
@@ -404,7 +407,7 @@ function pintaRejilla() {
   h += blk('m3f', 'M3F', 'Alimentación', 'var(--rojo)', `<div class="gran">${fmt(r.kw, 2)}<small>kW máx.</small></div>${dato('Corriente', fmt(r.cab * R.ampCab, 1) + ' A · 230 V')}${dato('Líneas de 16 A', R.nLin)}${dato('Por cabinet', (m.wMax ? fmt(m.wMax) + ' W' : '—') + (R.ampCab ? ' · ' + fmt(R.ampCab, 2) + ' A' : ''))}`, bt('ojo', 'Ver el reparto eléctrico', 'data-ver="elec"'));
   h += blk('m3e', 'M3E', 'Señal', 'var(--ambar)', `<div class="gran">${r.lineas}<small>línea${r.lineas > 1 ? 's' : ''} Ethernet</small></div><div class="fila dos bkp">${tog(E.backup, 'data-set="backup" data-v="1" title="Un segundo cable por puerto, que entra por el último cabinet de cada cadena: + ' + r.lineas + ' cables Cat6"', 'Con backup')}${tog(!E.backup, 'data-set="backup" data-v=""', 'Sin backup')}</div><div class="fila tres op"><span>Conexión</span>${tog(E.conexion === 'directo', 'data-set="conexion" data-v="directo" title="Del procesador a los cabinets por cable de red"', 'RJ45')}${tog(E.conexion === 'fibra', 'data-set="conexion" data-v="fibra" title="Del procesador a los cabinets por fibra óptica"', 'Fibra')}</div>${dato('Cosido', R.cosido + (E.cosido === 'auto' ? ' (auto)' : ''))}${dato('Salidas 4K', r.salidas4k)}`, bt('ojo', 'Ver el cableado de señal', 'data-ver="senal"'));
   const p = R.proc, me = R.media;
-  h += blk('m3b', 'M3B', 'Electrónica', 'var(--marca)', (p ? `<div style="font-weight:800;font-size:calc(var(--u)*19);line-height:1.15">${R.procs.length > 1 ? `<select class="sel" data-proc aria-label="Procesador" title="Elegir otro procesador de los que valen para este proyecto">${R.procs.map((x, i) => `<option value="${esc(x.modelo)}"${x === p ? ' selected' : ''}>${esc(x.modelo)}${i ? '' : ' · recomendado'}</option>`).join('')}</select>` : esc(p.modelo)}<div class="nota">${esc(p.marca)} · ${p.escalador ? 'con escalador' : 'sin escalador'}</div></div>${dato('Puertos', esc(p.puertos))}` : '<div class="nota">Sin procesador que cubra este proyecto con estas opciones: cambia el backup, la conexión o el escalador.</div>') + `<div class="fila tres op"><span>Escalador</span>${tog(E.escalador === 'con', 'data-set="escalador" data-v="con"', 'Con')}${tog(E.escalador === 'sin', 'data-set="escalador" data-v="sin"', 'Sin')}${tog(E.escalador === 'indiferente', 'data-set="escalador" data-v="indiferente" title="Da igual que el procesador lleve escalador o no"', 'Igual')}</div>`, bt('ojo', 'Ver la electrónica completa', 'data-ver="equipo"'));
+  h += blk('m3b', 'M3B', 'Electrónica', 'var(--marca)', (p ? `<div style="font-weight:800;font-size:calc(var(--u)*19);line-height:1.15">${R.procs.length > 1 ? `<select class="sel" data-proc aria-label="Procesador" title="Elegir otro procesador de los que valen para este proyecto">${R.procs.map((x, i) => `<option value="${esc(x.modelo)}"${x === p ? ' selected' : ''}>${esc(x.modelo)}${i ? '' : ' · recomendado'}</option>`).join('')}</select>` : esc(p.modelo)}<div class="nota">${esc(p.marca)} · ${p.reproductor ? 'reproductor con controladora' : p.escalador ? 'con escalador' : 'sin escalador'}</div></div>${dato('Puertos', esc(p.puertos))}` : '<div class="nota">Sin procesador que cubra este proyecto con estas opciones: cambia el backup, la conexión o el escalador.</div>') + `<div class="fila tres op"><span>Escalador</span>${tog(E.escalador === 'con', 'data-set="escalador" data-v="con"', 'Con')}${tog(E.escalador === 'sin', 'data-set="escalador" data-v="sin"', 'Sin')}${tog(E.escalador === 'indiferente', 'data-set="escalador" data-v="indiferente" title="Da igual que el procesador lleve escalador o no"', 'Igual')}</div>`, bt('ojo', 'Ver la electrónica completa', 'data-ver="equipo"'));
   /* MEDIASERVER (M3C): bloque propio, con marca, Dante y elección del modelo, como en la clásica */
   const conMs = E.marca !== 'ninguno';
   h += blk('m3c', 'M3C', 'Mediaserver', 'var(--azul)', `<div class="fila tres op"><span>Añadir</span>${tog(conMs, 'data-set="marca" data-v="todos" title="Añadir un servidor de contenidos"', 'Sí')}${tog(!conMs, 'data-set="marca" data-v="ninguno"', 'No')}</div>` + (conMs ? `<div class="fila tres op"><span>Marca</span>${tog(E.marca === 'todos', 'data-set="marca" data-v="todos"', 'Todas')}${tog(E.marca === 'novastar', 'data-set="marca" data-v="novastar"', 'Nova')}${tog(E.marca === 'pixelhue', 'data-set="marca" data-v="pixelhue"', 'Pixel')}</div><div class="fila tres op"><span>Audio Dante</span>${tog(E.dante, 'data-set="dante" data-v="1" title="Solo servidores con audio por red Dante"', 'Sí')}${tog(!E.dante, 'data-set="dante" data-v=""', 'No')}</div>` + (me ? `<select class="sel" data-media aria-label="Mediaserver" title="Elegir otro mediaserver de los que valen para este proyecto">${R.medias.map((x, i) => `<option value="${esc(x.modelo)}"${x === me ? ' selected' : ''}>${esc(x.modelo)}${i ? '' : ' · recomendado'}</option>`).join('')}</select><div class="nota">${esc(me.marca)} · ${me.out4k} salida${me.out4k > 1 ? 's' : ''} 4K (hacen falta ${me.need})</div>` : '<div class="nota" style="color:var(--ambar)">Ningún mediaserver cubre este proyecto con esta marca y estas opciones.</div>') : '<div class="nota">Servidor de contenidos para la pantalla. Actívalo si el proyecto lo lleva.</div>'), conMs && me ? bt('ojo', 'Ver la ficha del mediaserver', 'data-ver="equipo"') : '');
@@ -420,8 +423,8 @@ function pintaPie() {
 }
 /* ningún texto de una línea se parte ni se corta: si no cabe, se le va bajando la letra hasta que quepa */
 function encoge(el, min = 7) { if (!el || !el.clientWidth) return; el.style.fontSize = ''; let f = parseFloat(getComputedStyle(el).fontSize); for (let i = 0; i < 40 && el.scrollWidth > el.clientWidth + 1 && f > min; i++) { f *= .96; el.style.fontSize = f + 'px'; } }
-function ajustaTextos() { const r = $('#pide-res'); if (r && !r.hidden) { const tr = [...r.querySelectorAll('span')]; if (tr.length && getComputedStyle(tr[0]).display === 'block') tr.forEach((x) => encoge(x)); else encoge(r); } document.querySelectorAll('#pie-l .nota, #pie-c, .elev > span').forEach((e) => encoge(e, 6)); }
-function todo() { if (document.activeElement !== $('#pide')) EDITA = false; calcula(); pintaRejilla(); pintaPie(); guarda(); ajustaTextos(); }
+function ajustaTextos() { const r = $('#pide-res'); if (r && !r.hidden) { const tr = [...r.querySelectorAll('span')]; if (tr.length && getComputedStyle(tr[0]).display === 'block') tr.forEach((x) => encoge(x)); else encoge(r); } document.querySelectorAll('#pie-l .nota, #pie-c, .elev > span').forEach((e) => encoge(e, 6)); document.querySelectorAll('.dato b').forEach((e) => encoge(e)); }
+function todo() { if (document.activeElement !== $('#pide')) EDITA = false; calcula(); pintaRejilla(); pintaPie(); guarda(); ajustaTextos(); requestAnimationFrame(ajustaTextos); }   /* v10.45 · y otra vez cuando ya está traducido */
 
 /* ---------- ventana grande (el ojo) y ajustes (la ruedita) ---------- */
 let VENT = null;
@@ -494,9 +497,9 @@ function fichas() {
   f.push(FICHA.fichaHTML({ cat: 'Cabinet LED', icono: 'led', marca: m.family || '', modelo: m.crm, foto: m.urlFoto, fotoTrasera: m.urlFotoTrasera || m.urlTrasera || m.urlFoto2, vistas: m.fotos, acento: '#b566ff', stock: enStock(m),
     specs: [['Pitch', m.pitch + ' mm'], ['Cabinet', `${m.cabAncho}×${m.cabAlto}${m.thick ? '×' + m.thick : ''} mm`], ['Píxeles', `${m.cabPixAncho}×${m.cabPixAlto}`], ['Brillo', m.nits ? m.nits + ' nits' : ''], ['Refresco', m.hz ? m.hz + ' Hz' : ''], ['Peso', m.cabKg ? fmt(m.cabKg, 1) + ' kg' : ''], ['Consumo máx.', m.wMax ? fmt(m.wMax) + ' W' : ''], ['Tarjeta', m.card || ''], ['Tecnología', m.tech || '']],
     enlace: m.crm ? 'https://traulux.net/buscar/?q=' + encodeURIComponent(m.crm) : '', enlaceTxt: 'Ficha del fabricante' }));
-  R.procs.slice(0, 4).forEach((x, i) => f.push(FICHA.fichaHTML({ cat: i ? 'Procesador alternativo' : 'Procesador recomendado', icono: 'elec', marca: x.marca, modelo: x.modelo, foto: x.front, fotoTrasera: x.back, acento: '#d4ff00', stock: x.enStock ? true : null, sel: !i,
-    specs: [['Puertos', x.puertos], ['Capacidad', x.capacidad], ['Escalador', x.escalador ? 'Sí' : 'No']], piezas: (x.equipos || []).map((q) => ({ cant: q.cant, ref: q.ref, desc: q.desc })), enlace: x.url, enlaceTxt: 'Ficha del fabricante' })));
-  if (R.media) f.push(FICHA.fichaHTML({ cat: R.media.tipo === 'switcher' ? 'Switcher de presentación' : 'Mediaserver', icono: 'media', marca: R.media.marca, modelo: R.media.modelo, foto: R.media.front, fotoTrasera: R.media.back, acento: '#ffb000', enlaces: [[R.media.pdf, 'Ficha técnica (PDF)'], R.media.urlFab && R.media.url ? [R.media.url, 'Charmex'] : null].filter((x) => x && x[0]), specs: [['Salidas 4K', R.media.out4k], ['Necesarias', R.r.salidas4k]], notas: [R.media.resumen], enlace: R.media.urlFab || R.media.url, enlaceTxt: 'Ficha del fabricante' }));
+  R.procs.filter((x, i) => i < 4 || x === R.proc).forEach((x, i) => f.push(FICHA.fichaHTML({ cat: x.reproductor ? 'Reproductor multimedia con controladora' : i ? 'Procesador alternativo' : 'Procesador recomendado', icono: 'elec', marca: x.marca, modelo: x.modelo, foto: x.front, fotoTrasera: x.back, acento: '#d4ff00', stock: x.enStock ? true : null, sel: !i,
+    specs: [['Puertos', x.puertos], ['Capacidad', x.capacidad], ['Escalador', x.escalador ? 'Sí' : 'No']], notas: [trM(x.resumen), x.reproductor ? 'Lleva la controladora dentro: no hace falta otro procesador.' : ''].filter(Boolean), enlaces: [[x.pdf, 'Ficha técnica (PDF)'], x.urlFab && x.url ? [x.url, 'Charmex'] : null].filter((z) => z && z[0]), piezas: (x.equipos || []).map((q) => ({ cant: q.cant, ref: q.ref, desc: trM(q.desc) })), enlace: x.urlFab || x.url, enlaceTxt: 'Ficha del fabricante' })));
+  if (R.media) f.push(FICHA.fichaHTML({ cat: R.media.tipo === 'switcher' ? 'Switcher de presentación' : 'Mediaserver', icono: 'media', marca: R.media.marca, modelo: R.media.modelo, foto: R.media.front, fotoTrasera: R.media.back, acento: '#ffb000', enlaces: [[R.media.pdf, 'Ficha técnica (PDF)'], R.media.urlFab && R.media.url ? [R.media.url, 'Charmex'] : null].filter((x) => x && x[0]), specs: [['Salidas 4K', R.media.out4k], ['Necesarias', R.r.salidas4k]], notas: [trM(R.media.resumen)], enlace: R.media.urlFab || R.media.url, enlaceTxt: 'Ficha del fabricante' }));
   return `<div class="fichas-v">${f.join('')}</div>`;
 }
 
@@ -644,7 +647,7 @@ function material() {
   if (d.conCable) { if (d.cab) L.push({ c: d.nF, ref: d.cab.ref, url: busca(d.cab.ref), desc: 'Cable HDMI PureLink FlexInstall ' + (d.cab.tipo === 'AOC' ? 'AOC' : 'pasivo') + ' 8K ' + String(d.cab.m).replace('.', ',') + ' m (fuente → ' + (me ? 'mediaserver' : 'electrónica') + ')' + (d.cab.estandar ? ' · estándar, distancia no indicada' : ''), g: 'video' });
     else L.push({ c: d.nF, ref: 'HDMI > 20 m', desc: 'Más de 20 m: consultar con Charmex (extensor HDMI sobre fibra / IP)', g: 'video' }); }
   if (me) L.push({ c: d.backup && !me.backupNativo ? 2 : 1, ref: me.modelo, url: me.url || busca(me.modelo), desc: (me.tipo === 'switcher' ? 'Switcher de presentación ' : 'Mediaserver ') + me.marca + (me.backupNativo ? ' (backup nativo)' : ''), g: 'video' });
-  if (p) { const eq = (p.equipos || []).filter((q) => q.cant > 0), tit = 'Electrónica ' + p.marca + ' ' + (p.serie || '') + (p.escalador ? ' con escalador' : '');
+  if (p) { const eq = (p.equipos || []).filter((q) => q.cant > 0), tit = p.reproductor ? 'Reproductor multimedia ' + p.marca + ' ' + (p.serie || '') + ' (controladora incluida)' : 'Electrónica ' + p.marca + ' ' + (p.serie || '') + (p.escalador ? ' con escalador' : '');
     if (p.modular) { L.push({ c: '', ref: p.modelo, desc: tit + ', montada por piezas:', g: 'elec', titulo: true }); eq.forEach((q) => L.push({ c: q.cant, ref: q.ref, url: busca(q.ref), desc: q.desc, g: 'elec', pieza: true })); }
     else { L.push({ c: 1, ref: p.modelo, url: p.url || busca(p.modelo), desc: tit, g: 'elec' }); eq.forEach((q) => L.push({ c: q.cant, ref: q.ref, url: busca(q.ref), desc: q.desc, g: 'elec' })); } }
   else L.push({ c: '', ref: 'Sin equipo adecuado', desc: 'Cambia backup, escalador o conexión', g: 'elec' });
@@ -715,7 +718,7 @@ async function svgImg(svgTxt, w, h, fondo, tinta) {
     const yt = CONT && CONT.tipo === 'marco' && (String(CONT.url).match(/youtube(?:-nocookie)?\.com\/embed\/([A-Za-z0-9_-]{11})/) || [])[1];
     if (yt) { const im = document.createElementNS('http://www.w3.org/2000/svg', 'image'); ['x', 'y', 'width', 'height'].forEach((a) => im.setAttribute(a, fo.getAttribute(a))); im.setAttribute('preserveAspectRatio', 'xMidYMid slice'); im.setAttribute('href', 'https://i.ytimg.com/vi/' + yt + '/hqdefault.jpg'); fo.replaceWith(im); }
     else { if (CONT) SIN_CONT_PDF = true; fo.remove(); } } }
-  /* v10.44 · cada imagen va dentro del SVG ya reducida (una foto de móvil entera no se dibujaba en el PDF); la que no se deja copiar se avisa */
+  /* v10.43 · cada imagen va dentro del SVG ya reducida (una foto de móvil entera no se dibujaba en el PDF); la que no se deja copiar se avisa */
   for (const im of c.querySelectorAll('image')) { const hr = im.getAttribute('href'); if (!hr) continue; try { let d = /^data:/.test(hr) ? hr : await aDatosCors(new URL(hr, document.baseURI).href); if (d.length > 1500000 || /^data:image\/(heic|heif|webp|avif|tiff)/i.test(d)) d = await reduceImg(d); im.setAttribute('href', d); } catch (e) { if (CONT && (hr === CONT.url || /ytimg\.com/.test(hr))) SIN_CONT_PDF = true; im.remove(); } }
   const st = document.createElementNS('http://www.w3.org/2000/svg', 'style'); st.textContent = await letras(); c.insertBefore(st, c.firstChild);
   const im = await aImagen('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(c))), cv = document.createElement('canvas'), k = 2; cv.width = w * k; cv.height = h * k; const x = cv.getContext('2d');
@@ -757,7 +760,7 @@ async function pdf() {
     hoja.innerHTML = `<div class="pdf-p1"><div style="padding:0 0 6px">${p1}</div></div><div style="height:60px"></div><div class="pdf-p2"><div style="padding:0 0 6px">${p2}</div></div>`;
     document.body.appendChild(hoja); await Promise.all([...hoja.querySelectorAll('img')].map((i) => (i.complete ? 0 : new Promise((ok) => { i.onload = i.onerror = ok; })))); await new Promise((ok) => setTimeout(ok, 60));
     const pv = await window.AVPDF.exporta({ previa: true, raiz: hoja, paginas: [['.pdf-p1'], ['.pdf-p2']], margen: 12, claro: false, nombre: window.AVPDF.sello('SCREENS'), titulo: 'SCREENS · ' + (E.proy || m.crm),
-      /* v10.44 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito común */
+      /* v10.38 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito común */
       pieHtml: AV_TRI + tr('Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.') + '\n' + (window.AVCREDITO ? window.AVCREDITO.html('SCREENS', VERSION.split('SCREENS ')[1], idioma(), { sinEnlaces: true }) : VERSION + ' ' + new Date().getFullYear() + ' · mediaservi.com'),
       alClonar: (doc, raiz) => { raiz.style.setProperty('position', 'absolute', 'important'); raiz.style.setProperty('left', '0', 'important'); raiz.style.setProperty('top', '0', 'important'); [...doc.body.children].forEach((e) => { if (e !== raiz && !e.contains(raiz)) e.style.setProperty('display', 'none', 'important'); }); } });
     previa(pv);
@@ -821,7 +824,8 @@ monta(); todo(); vigila(); requestAnimationFrame(ajustaTextos); if (document.fon
 addEventListener('resize', () => { const g = $('#guia'); if (g) { const n = [...g.querySelectorAll('.guia-pie span i')].findIndex((i) => i.classList.contains('on')); guia(Math.max(0, n)); } });
 /* botones comunes de la familia: instalar y avisar de un fallo (los mismos de la versión clásica) */
 { const h = $('#hueco-comun'); if (h) { if (window.AVINSTALA) { try { h.appendChild(window.AVINSTALA.boton({ app: 'SCREENS', idioma: () => idioma(), sw: false })); } catch (e) {} } if (window.AVFALLO) { try { h.appendChild(window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() })); } catch (e) {} }
-  /* v10.44 · el candado del panel, el último del grupo de la derecha (pegado a la esquina lo recortaban las ventanas redondeadas) */
+  /* v10.42 · el candado del panel, el último del grupo de la derecha (pegado a la esquina lo recortaban las ventanas redondeadas) */
   const ae = document.querySelector('.admin-esq'); if (ae) h.appendChild(ae); } }
+cargarEquipos(() => { if (R) todo(); });
 cargarCatalogo((lista, origen) => { if (origen === 'error') { if (!CAT.length) ESTADO = 'error'; } else { CAT = lista; ESTADO = origen; } todo(); });
 window.__blocks = { E, get R() { return R; }, todo };

@@ -14,22 +14,32 @@
   // Búsqueda en Charmex por modelo: sirve de enlace cuando no hay URL directa de producto
   const charmexBusca = (modelo) => 'https://charmex.net/productos-search/' + encodeURIComponent(String(modelo).replace(/\s*\(.*\)\s*$/, '').trim());
 
-  // rj = salidas RJ45 · opt = salidas ópticas 10G (espejo de los RJ45 salvo equipos solo fibra)
-  // ppo = puertos Ethernet que transporta cada salida óptica · capPx = capacidad total en píxeles
-  const ELEC_DEVICES = [
-    { id: 'MCTRL660PRO', marca: 'NOVASTAR', serie: 'MCTRL',        modelo: 'MCTRL660 PRO', rj: 6,  opt: 2,  ppo: 6,  capPx: 2304000,   escalador: false, url: null },
-    { id: 'MCTRL4K',     marca: 'NOVASTAR', serie: 'MCTRL',        modelo: 'MCTRL 4K',     rj: 16, opt: 4,  ppo: 8,  capPx: 8800000,   escalador: false, url: 'https://www.novastar.tech/product/detail.html?catid=2&id=24' },
-    { id: 'VX400PRO',    marca: 'NOVASTAR', serie: 'VX Pro',       modelo: 'VX400 Pro',    rj: 4,  opt: 2,  ppo: 10, capPx: 2600000,   escalador: true,  url: 'https://charmex.net/novastar-serie-vx--vx400-pro/44270' },
-    { id: 'VX600PRO',    marca: 'NOVASTAR', serie: 'VX Pro',       modelo: 'VX600 Pro',    rj: 6,  opt: 2,  ppo: 10, capPx: 3900000,   escalador: true,  url: null },
-    { id: 'VX1000PRO',   marca: 'NOVASTAR', serie: 'VX Pro',       modelo: 'VX1000 Pro',   rj: 10, opt: 2,  ppo: 10, capPx: 6500000,   escalador: true,  url: CHARMEX_NOVASTAR + 'serie-vx--vx1000-pro' },
-    { id: 'VX2000PRO',   marca: 'NOVASTAR', serie: 'VX Pro',       modelo: 'VX2000 Pro',   rj: 20, opt: 4,  ppo: 10, capPx: 13000000,  escalador: true,  url: null },
-    { id: 'NOVAPROJR',   marca: 'NOVASTAR', serie: 'NovaPro',      modelo: 'NovaPro UHD Jr', rj: 16, opt: 4, ppo: 8, capPx: 10400000,  escalador: true,  url: null },
-    { id: 'MX20',        marca: 'COEX',     serie: 'MX',      modelo: 'MX20',         rj: 6,  opt: 2,  ppo: 10, capPx: 3900000,   escalador: true,  url: null },
-    { id: 'MX30',        marca: 'COEX',     serie: 'MX',      modelo: 'MX30',         rj: 10, opt: 2,  ppo: 10, capPx: 6500000,   escalador: true,  url: null },
-    { id: 'MX40PRO',     marca: 'COEX',     serie: 'MX Pro',     modelo: 'MX40 Pro',     rj: 20, opt: 4,  ppo: 10, capPx: 9000000,   escalador: true,  url: CHARMEX_NOVASTAR + 'serie-mx-electronica--mx40-pro' },
-    { id: 'MX2000PRO',   marca: 'COEX',     serie: 'MX Pro',     modelo: 'MX2000 Pro',   rj: 0,  opt: 8,  ppo: 10, capPx: 35380000,  escalador: true,  url: null, soloFibra: true, chasis: 'MX2000' },
-    { id: 'MX6000PRO',   marca: 'COEX',     serie: 'MX Pro',     modelo: 'MX6000 Pro',   rj: 0,  opt: 24, ppo: 10, capPx: 141000000, escalador: true,  url: null, soloFibra: true, chasis: 'MX6000' }
-  ];
+  /* v10.45 · las tablas de equipos salen de las listas por fabricante: comun/equipos.js (de fábrica) o las del panel AVHUB ADMIN
+     (aplicaListas). rj = salidas RJ45 · opt = salidas ópticas 10G · ppo = puertos que lleva cada fibra · capPx = capacidad total en píxeles ·
+     maxW/maxH = ancho y alto máximos · escalador true / false · reproductor = lleva la controladora dentro. */
+  const ELEC_DEVICES = [], ELEC_H_CHASIS = [], ELEC_MEDIASERVERS = [], ELEC_BLEND = [];
+  let LISTAS = null;
+  const numE = (v) => { const n = Number(v); return isFinite(n) ? n : 0; };
+  const siE = (v) => v === true || v === 1 || /^(si|sí|true|1)$/i.test(String(v == null ? '' : v).trim());
+  function aplicaListas(listas) {
+    const marcas = listas && listas.marcas ? listas.marcas : listas;
+    if (!marcas || typeof marcas !== 'object') return false;
+    const dev = [], hc = [], ms = [], bl = [];
+    Object.keys(marcas).forEach((fab) => (Array.isArray(marcas[fab]) ? marcas[fab] : []).forEach((x) => {
+      if (!x || x.activo === false || !x.modelo) return;
+      const base = { id: String(x.id || x.modelo), marca: String(x.marca || fab).toUpperCase(), serie: x.serie || '', modelo: String(x.modelo), resumen: x.resumen || '', url: x.url || null, urlFab: x.urlFab || null, pdf: x.pdf || null, nota: x.nota || '', front: x.front || null, back: x.back || null };
+      if (x.tipo === 'controladora' || x.tipo === 'reproductor') {
+        if (siE(x.cincoG)) return;   // las controladoras 5G piden tarjetas receptoras 5G: no entran en el cálculo
+        dev.push({ ...base, rj: numE(x.rj), opt: numE(x.opt), ppo: numE(x.ppo), capPx: numE(x.capPx), maxW: numE(x.maxW), maxH: numE(x.maxH), escalador: x.escalador === 'reduce' ? 'reduce' : siE(x.escalador), reproductor: x.tipo === 'reproductor', soloFibra: siE(x.soloFibra), chasis: x.chasis || undefined });
+      } else if (x.tipo === 'chasis-h') hc.push({ id: base.id, ref: x.ref || base.modelo + '-MAINFRAME', maxTarj: numE(x.maxTarj), maxIn: numE(x.maxIn) });
+      else if (x.tipo === 'mediaserver' || x.tipo === 'switcher') ms.push({ ...base, tipo: x.tipo === 'switcher' ? 'switcher' : 'media', out4k: numE(x.out4k), dante: siE(x.dante), inp: x.inp == null || x.inp === '' ? null : numE(x.inp), backupNativo: siE(x.backupNativo) });
+      if (numE(x.fhd) || numE(x.wuxga) || numE(x.k4)) bl.push({ ...base, fhd: numE(x.fhd), wuxga: numE(x.wuxga), k4: numE(x.k4), inp: numE(x.inp), dante: siE(x.dante) });
+    }));
+    if (!dev.length) return false;   // una lista sin controladoras no sustituye a la que ya hay
+    [[ELEC_DEVICES, dev], [ELEC_H_CHASIS, hc.sort((a, b) => a.maxTarj - b.maxTarj)], [ELEC_MEDIASERVERS, ms], [ELEC_BLEND, bl]].forEach(([a, b]) => { a.length = 0; b.forEach((z) => a.push(z)); });
+    LISTAS = marcas; return true;
+  }
+  aplicaListas(globalThis.SC_EQUIPOS || {});
   // COEX MX Pro modulares (solo chasis): hay que añadir tarjetas de salida, módulos ópticos y tarjetas de entrada.
   // Fichas del fabricante: MX2000 Pro = 2 ranuras de entrada + 2 de salida; MX6000 Pro = 8 + 8.
   // Salida 1G: MX_4x10G_Fiber (4 puertos ópticos SFP+, módulos aparte) + conversor CVT10 estándar
@@ -46,10 +56,7 @@
   // H Series: equipo modular (se monta por piezas como un PC): chasis + tarjetas de salida + tarjetas de entrada / previo.
   // maxTarj = nº máximo de tarjetas de salida; maxIn = posiciones para tarjetas de entrada o de previo (fichas NovaStar).
   // ref = referencia comercial del chasis en Charmex.
-  const ELEC_H_CHASIS = [
-    { id: 'H2', ref: 'H2-MAINFRAME', maxTarj: 2, maxIn: 4 }, { id: 'H5', ref: 'H5-MAINFRAME', maxTarj: 3, maxIn: 10 }, { id: 'H9', ref: 'H9-MAINFRAME', maxTarj: 5, maxIn: 15 },
-    { id: 'H15', ref: 'H15-MAINFRAME', maxTarj: 10, maxIn: 30 }, { id: 'H20', ref: 'H20-MAINFRAME', maxTarj: 20, maxIn: 40 }
-  ];
+  /* ELEC_H_CHASIS sale de las listas (tipo «chasis-h»): id, ref, maxTarj, maxIn */
   // Tarjeta de entrada mínima (si no se indicó tipo ni número de entradas) y tarjeta base de previo y salidas, recomendada en todos los proyectos
   const ELEC_H_IN_BASE = { ref: 'H-INPC-1XHDMI2.0', desc: 'Tarjeta de entrada 1×HDMI 2.0 (mínima del equipo)' };
   const ELEC_H_PREVIO = { ref: 'H-OUT2RJ45-1HDMI-MVR', desc: 'Tarjeta base 2×RJ45 + 1×HDMI de previo / monitorización (recomendada)' };
@@ -64,26 +71,7 @@
     SDI:  { ref: 'H-INPC-4X3GSDI',   n: 4, desc: 'Tarjeta entrada 4×3G-SDI' }
   };
 
-  // Mediaservers. out4k = salidas 4K simultáneas. dante = audio Dante declarado por el fabricante.
-  const ELEC_MEDIASERVERS = [
-    { id: 'ET1S',   marca: 'NOVASTAR', modelo: 'ET1S-G',        out4k: 1,  dante: false, backupNativo: false, resumen: '1 salida 4K60 · 1 capa 4K o 4 capas 2K · hasta 4 capas + audio', url: 'https://charmex.net/novastar-media-server--et1s-g' },
-    { id: 'ET2S',   marca: 'NOVASTAR', modelo: 'ET2S-G',        out4k: 2,  dante: false, backupNativo: false, resumen: '2 salidas 4K60 · 2 capas 4K o 1 capa 8K30 · hasta 8 capas + audio', url: null },
-    { id: 'ET4S',   marca: 'NOVASTAR', modelo: 'ET4S-G (A4)',   out4k: 4,  dante: false, backupNativo: false, resumen: '4 salidas 4K60 · 4 capas 4K o 1 capa 8K60 · hasta 12 capas + audio', url: null },
-    { id: 'ET16S2', marca: 'NOVASTAR', modelo: 'ET16S-G (2A4)', out4k: 8,  dante: false, backupNativo: true,  resumen: '8 salidas 4K · 8 capas 4K · sincronismo, cascada y backup entre equipos', url: null },
-    { id: 'ET16S3', marca: 'NOVASTAR', modelo: 'ET16S-G (3A4)', out4k: 12, dante: false, backupNativo: true,  resumen: '12 salidas 4K · 12 capas 4K · sincronismo, cascada y backup entre equipos', url: null },
-    /* v10.40 · PIXELHUE revisado con las fichas oficiales (ver PH_FUENTES). P10, P20, P20-DS, P80 y Q8 son switchers de presentación (tipo 'switcher'),
-       no mediaservers: en LED se ofrecen en el mismo hueco, con su categoría correcta; el mediaserver de PIXELHUE es el X400 (G1). */
-    { id: 'PHP10',  marca: 'PIXELHUE', modelo: 'P10',           tipo: 'switcher', out4k: 2,  dante: false, inp: 6,  backupNativo: false,  resumen: '6 entradas (4 DP 1.2/HDMI 2.0 + 2 12G-SDI) · 2 salidas HDMI 2.0 + 6 HDMI 1.3 (1080p) · 1 salida 4K en modo switcher, hasta 8K×2K solo PGM · 6 capas', url: 'https://charmex.net/pixelhue-procesador-p10--p10?lang=es', urlFab: 'https://pixelhue.com/index.php/Content/products_detail/catid/76/id/20.html', pdf: 'https://en-pixelhue001.oss-us-east-1.aliyuncs.com/Specifications/P%20Series%204K%20Presentation%20Switchers%20Datasheet-V1.6.0.pdf' },
-    { id: 'PHP20',  marca: 'PIXELHUE', modelo: 'P20',           tipo: 'switcher', out4k: 4,  dante: false, inp: 12, backupNativo: false,  resumen: '12 entradas (8 DP 1.2/HDMI 2.0 + 4 12G-SDI) · 8 salidas HDMI 2.0 + 8 fibra 10G (copia) · 2 salidas 4K en modo switcher, hasta 8K×4K solo PGM · 12 capas', url: 'https://pixelhue.com/index.php/Content/products_detail/catid/76/id/20.html', pdf: 'https://en-pixelhue001.oss-us-east-1.aliyuncs.com/Specifications/P%20Series%204K%20Presentation%20Switchers%20Datasheet-V1.6.0.pdf' },
-    { id: 'PHP20D', marca: 'PIXELHUE', modelo: 'P20-DS',        tipo: 'switcher', out4k: 4,  dante: true,  inp: 12, backupNativo: false,  resumen: 'Como P20 + 4 salidas 12G-SDI (copia de HDMI) y audio Dante 32×32', url: 'https://pixelhue.com/index.php/Content/products_detail/catid/76/id/20.html', pdf: 'https://en-pixelhue001.oss-us-east-1.aliyuncs.com/Specifications/P%20Series%204K%20Presentation%20Switchers%20Datasheet-V1.6.0.pdf' },
-    { id: 'PHP80',  marca: 'PIXELHUE', modelo: 'P80',           tipo: 'switcher', out4k: 4,  dante: true,  inp: 12, backupNativo: false, resumen: '12 entradas 4K (4 HDMI 2.0 + 4 HDMI 2.0/DP 1.2 + 4 12G-SDI) · 8 salidas HDMI 2.0 (4 × 4K o 8 DL) + 4 flex + 4 12G-SDI · 8 capas 4K + 4 PIP · Dante 64×64', url: 'https://pixelhue.com/index.php/Content/products_detail/catid/64/id/29.html' },
-    { id: 'PHQ8',   marca: 'PIXELHUE', modelo: 'Q8',            tipo: 'switcher', out4k: 16, dante: true,  inp: 48, backupNativo: true,  resumen: 'Modular: hasta 48 entradas y 16 salidas 4K con sus tarjetas · 32 capas 4K · Dante 64×64 · backup de equipo, entradas y alimentación', url: 'https://pixelhue.com/index.php/Content/products_detail/catid/63/id/24.html', pdf: 'https://en-pixelhue001.oss-us-east-1.aliyuncs.com/Specifications/Q8%20Seamless%20Switcher%20Specifications-V2.0.0.pdf' },
-    { id: 'PHX400', marca: 'PIXELHUE', modelo: 'X400 (G1)',     tipo: 'media',    out4k: 4,  dante: false, inp: 8,  backupNativo: false,  resumen: 'Mediaserver modular: hasta 4 salidas 4K o 16 2K con sus tarjetas · 2 ranuras de entrada (4 HDMI 2.0 o 4 12G-SDI) + NDI · capas ilimitadas · corrección geométrica y edge blending · backup de equipo', url: 'https://pixelhue.com/index.php/Content/products_detail/catid/75/id/30.html', pdf: 'https://oss.pixelhue.com/Specifications/X400%20(G1)%20Professional%20Media%20Server%20Datasheet%20V1.0.pdf' }
-  ];
-  /* Fuentes oficiales de PIXELHUE (comprobadas el 13-11-2026):
-     P10 / P20 / P20-DS: https://pixelhue.com/index.php/Content/products_detail/catid/76/id/20.html y su ficha «P Series 4K Presentation Switchers Datasheet» (V1.6.0; V1.7.1 en distribuidores)
-     P80: https://pixelhue.com/index.php/Content/products_detail/catid/64/id/29.html · Q8: https://pixelhue.com/index.php/Content/products_detail/catid/63/id/24.html (ficha V2.0.0)
-     X400 (G1): https://pixelhue.com/index.php/Content/products_detail/catid/75/id/30.html (ficha V1.0) · Charmex P10: https://charmex.net/pixelhue-procesador-p10--p10?lang=es */
+  /* ELEC_MEDIASERVERS sale de las listas (tipos «mediaserver» y «switcher»): out4k = salidas 4K simultáneas, dante, inp = entradas, backupNativo */
 
   const elecNorm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const elecMpx = (n) => (n / 1000000).toFixed(1).replace('.0', '');
@@ -117,10 +105,13 @@
     let res = [];
     let hItem = null;
 
-    const porSerie = {};
+    const porSerie = {}, reps = [];
     ELEC_DEVICES.forEach((d, idx) => {
-      if (o.escalador === 'con' ? !d.escalador : d.escalador) return;
+      // escalador: «con» pide uno que escale y «sin» uno que no; «indiferente» (Igual) admite los dos
+      if (o.escalador === 'con' && !d.escalador) return;
+      if (o.escalador === 'sin' && d.escalador === true) return;
       if (totalPix > d.capPx) return;
+      if ((d.maxW && stats.resW > d.maxW) || (d.maxH && stats.resH > d.maxH)) return;
       let det;
       if (directo) {
         if (d.rj === 0 || lines * mult > d.rj) return;
@@ -155,17 +146,22 @@
         };
       }
       const cand = { d, idx, det };
+      // v10.45 · de las controladoras, la menor de cada serie; de los reproductores (llevan la controladora dentro), todos los que llegan
+      if (d.reproductor) { reps.push(cand); return; }
       if (!porSerie[d.serie] || porSerie[d.serie].idx > idx) porSerie[d.serie] = cand;
     });
-    Object.values(porSerie).sort((a, b) => a.idx - b.idx).forEach(c => {
+    const aRes = (c) => {
       const h = elecDeHoja(c.d.modelo, hoja);
-      res.push({
-        key: c.d.id, marca: c.d.marca, serie: c.d.serie, modelo: c.d.modelo, escalador: c.d.escalador,
+      return {
+        key: c.d.id, marca: c.d.marca, serie: c.d.serie, modelo: c.d.modelo, escalador: c.d.escalador === true, reproductor: !!c.d.reproductor,
         puertos: c.det.puertos, capacidad: elecMpx(c.d.capPx) + ' Mpx (proyecto ' + elecMpx(totalPix) + ' Mpx)',
         equipos: c.det.equipos, url: h.url || c.d.url || charmexBusca(c.d.modelo), enStock: h.enStock, nota: (o.entradas ? o.entradas + '× ' + (o.tipoEntrada || 'HDMI') + (o.resEntrada ? ' ' + o.resEntrada : '') + ' (verificar entradas en ficha)' : ''),
-        front: c.d.front || h.front, back: c.d.back || h.back, logo: c.d.logo || h.logo
-      });
-    });
+        front: c.d.front || h.front, back: c.d.back || h.back, logo: c.d.logo || h.logo, resumen: c.d.resumen || '', urlFab: c.d.urlFab || null, pdf: c.d.pdf || null
+      };
+    };
+    Object.values(porSerie).sort((a, b) => a.idx - b.idx).forEach(c => res.push(aRes(c)));
+    // todos los reproductores que llegan, en el orden de la lista, detrás de las controladoras
+    const resRep = reps.sort((a, b) => a.idx - b.idx).map(aRes);
 
     // H Series (solo con escalador): chasis + tarjetas de salida
     if (o.escalador === 'con' && (lines >= 8 || res.length === 0)) {
@@ -208,21 +204,12 @@
         }
       }
     }
-    // Máximo 4 burbujas (una fila en el PDF): si hay H Series, se reserva un hueco para ella
-    return hItem ? res.slice(0, 3).concat([hItem]) : res.slice(0, 4);
+    // Máximo 4 controladoras (una fila en el PDF): si hay H Series, se reserva un hueco para ella; los reproductores van detrás
+    return (hItem ? res.slice(0, 3).concat([hItem]) : res.slice(0, 4)).concat(resRep);
   };
 
-  /* v10.39 · procesadores con edge blending de proyectores por hardware (para varios proyectores sin mediaserver): no reproducen
-     contenido, les llega por sus entradas desde un PC o un reproductor. Salidas que pueden alimentar proyectores según su resolución
-     (fichas PIXELHUE, datasheet P20 / P20-DS / P10 V1.7.1 y comparativas P80 y Q8): fhd = hasta 1920×1080, wuxga = hasta 2560×1600, k4 = 4K.
-     P10: 2 HDMI 2.0 + 6 HDMI 1.3 (1080p) · P20: 8 HDMI 2.0, en PGM hasta 8K×4K · P80: 8 HDMI 2.0, 4×4K o 8 DL · Q8: hasta 16 salidas 4K con sus tarjetas. */
-  const ELEC_BLEND = [
-    { id: 'PHP10',  marca: 'PIXELHUE', modelo: 'P10',    fhd: 8,  wuxga: 2,  k4: 2,  inp: 6,  dante: false, resumen: '6 entradas · 2 salidas HDMI 2.0 + 6 HDMI 1.3 (1080p) · hasta 8K×2K solo PGM · edge blending de proyectores' },
-    { id: 'PHP20',  marca: 'PIXELHUE', modelo: 'P20',    fhd: 8,  wuxga: 8,  k4: 4,  inp: 12, dante: false, resumen: '12 entradas · 8 salidas HDMI 2.0 · hasta 8K×4K solo PGM · edge blending de proyectores' },
-    { id: 'PHP20D', marca: 'PIXELHUE', modelo: 'P20-DS', fhd: 8,  wuxga: 8,  k4: 4,  inp: 12, dante: true,  resumen: 'Como P20 + 4 salidas 12G-SDI y audio Dante 32×32 · edge blending de proyectores' },
-    { id: 'PHP80',  marca: 'PIXELHUE', modelo: 'P80',    fhd: 8,  wuxga: 8,  k4: 4,  inp: 12, dante: true,  resumen: '12 entradas 4K · 8 salidas HDMI 2.0 (4 × 4K o 8 DL) + 4 flex · Dante 64×64 · edge blending de proyectores' },
-    { id: 'PHQ8',   marca: 'PIXELHUE', modelo: 'Q8',     fhd: 16, wuxga: 16, k4: 16, inp: 48, dante: true,  resumen: 'Modular: hasta 48 entradas y 16 salidas 4K con sus tarjetas · Dante 64×64 · edge blending de proyectores' }
-  ].map((m) => { const s = ELEC_MEDIASERVERS.find((x) => x.id === m.id) || {}; return { ...m, url: s.url || null, urlFab: s.urlFab || null, pdf: s.pdf || null }; });
+  /* v10.39 · procesadores con edge blending de proyectores por hardware (varios proyectores sin mediaserver): salen de las listas, de los equipos
+     con salidas para proyectores (fhd = hasta 1920×1080, wuxga = hasta 2560×1600, k4 = 4K). No reproducen contenido: les llega por sus entradas. */
   /* calcularBlending(n, clase): los procesadores que llegan a n proyectores de esa clase de resolución ('fhd' | 'wuxga' | 'k4'), de menos a más salidas */
   const calcularBlending = (n, clase) => {
     const k = clase === 'k4' || clase === 'wuxga' ? clase : 'fhd', need = Math.max(1, n || 0);
@@ -240,10 +227,10 @@
       (!o.dante || m.dante) && (!o.soloMedia || m.tipo !== 'switcher')
     );
     const out = [];
-    ['NOVASTAR', 'PIXELHUE'].forEach(marca => {
+    [...new Set(ELEC_MEDIASERVERS.map(m => m.marca))].forEach(marca => {
       lista.filter(m => m.marca === marca).sort((a, b) => a.out4k - b.out4k).slice(0, 2).forEach(m => out.push({ ...m, need }));
     });
     return out;
   };
-  globalThis.SC_ELEC = { ELEC_BLEND, calcularBlending, ELEC_PX_PUERTO, ELEC_PX_4K, ELEC_CVT, CHARMEX_NOVASTAR, charmexBusca, ELEC_DEVICES, ELEC_MX_CHASIS, ELEC_MX_TARJ_OUT, ELEC_MX_SFP, ELEC_MX_CVT, ELEC_H_CHASIS, ELEC_H_IN_BASE, ELEC_H_PREVIO, ELEC_H_TARJ_RJ, ELEC_H_TARJ_FIB, ELEC_H_TARJ_IN, ELEC_MEDIASERVERS, elecNorm, elecMpx, elecDeHoja, calcularElectronicas, calcularMediaservers };
+  globalThis.SC_ELEC = { aplicaListas, listas: () => LISTAS, ELEC_BLEND, calcularBlending, ELEC_PX_PUERTO, ELEC_PX_4K, ELEC_CVT, CHARMEX_NOVASTAR, charmexBusca, ELEC_DEVICES, ELEC_MX_CHASIS, ELEC_MX_TARJ_OUT, ELEC_MX_SFP, ELEC_MX_CVT, ELEC_H_CHASIS, ELEC_H_IN_BASE, ELEC_H_PREVIO, ELEC_H_TARJ_RJ, ELEC_H_TARJ_FIB, ELEC_H_TARJ_IN, ELEC_MEDIASERVERS, elecNorm, elecMpx, elecDeHoja, calcularElectronicas, calcularMediaservers };
 })();
