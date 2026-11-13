@@ -15,6 +15,7 @@ export const idioma = () => actual;
 export function fijaIdioma(l) { if (!IDIOMAS.includes(l)) return; actual = l; try { localStorage.setItem('screens_idioma', l); } catch (e) {} document.documentElement.lang = l; }
 
 const MAPA = {
+  'Sensor de luz 5 m para pantalla LED (brillo automático según la luz ambiente; se conecta a la electrónica)': ['5 m light sensor for LED screen (automatic brightness from the ambient light; connects to the electronics)', 'Sensor de llum de 5 m per a pantalla LED (brillantor automàtica segons la llum ambient; es connecta a l’electrònica)'],
   'Manguera': ['Cable bundle', 'Mànega'], 'MANGUERA': ['CABLE BUNDLE', 'MÀNEGA'], 'Salida de la manguera': ['Cable bundle exit', 'Sortida de la mànega'],
   'Al procesador': ['To the processor', 'Al processador'], 'Al conversor de fibra': ['To the fibre converter', 'Al convertidor de fibra'], 'Al cuadro eléctrico': ['To the electrical panel', 'Al quadre elèctric'],
   'Arriba, izquierda': ['Top left', 'A dalt, a l’esquerra'], 'Arriba, centro': ['Top centre', 'A dalt, al centre'], 'Arriba, derecha': ['Top right', 'A dalt, a la dreta'], 'Izquierda, centro': ['Left, centre', 'Esquerra, al centre'], 'Derecha, centro': ['Right, centre', 'Dreta, al centre'], 'Abajo, izquierda': ['Bottom left', 'A baix, a l’esquerra'], 'Abajo, centro': ['Bottom centre', 'A baix, al centre'], 'Abajo, derecha': ['Bottom right', 'A baix, a la dreta'],

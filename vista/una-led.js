@@ -7,9 +7,9 @@ import { HUMAN_PATH } from '../screens/figura.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.34';
+import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.35';
 idiomaInicial();   /* el idioma guardado de la familia SCREENS o, la primera vez, el del navegador */
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.34';
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.35';
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const SV = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
@@ -603,6 +603,8 @@ function material() {
   else L.push({ c: d.lines * d.mult, ref: 'Cat6 (RJ45)', desc: 'Electrónica → pantalla' + (d.backup ? ' (+ backup)' : ''), g: 'eth' });
   L.push({ c: 1, ref: 'Distribución eléctrica', desc: d.amps + ' A · ' + d.kw + ' kW máx. · ' + R.nLin + ' × 16 A + cableado de alimentación', g: 'power' });
   L.push({ c: 1, ref: 'PC de control', desc: 'Con el software del fabricante y cable USB / Ethernet', g: 'ctrl' });
+  /* v10.35 · pantalla de exterior: siempre el sensor de luz, que ajusta solo el brillo a la luz ambiente (se conecta a la electrónica) */
+  if (E.tipo === 'OUTDOOR') L.push({ c: 1, ref: 'NS060', url: busca('NS060'), desc: 'Sensor de luz 5 m para pantalla LED (brillo automático según la luz ambiente; se conecta a la electrónica)', g: 'ctrl' });
   if (E.gold) L.push({ c: '', ref: 'Variante tropicalizada', desc: 'Entorno marino / húmedo: contactos chapados en oro y protección anticorrosión en cabinets, tarjetas y electrónica (consultar disponibilidad por fabricante)', g: 'extra' });
   return L;
 }
