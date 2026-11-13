@@ -63,6 +63,8 @@ button { cursor: pointer; }
 .num:focus-within { border-color: var(--verde-txt); }
 .dato { display: flex; align-items: baseline; justify-content: space-between; gap: calc(var(--u) * 8); border-bottom: 1px dotted var(--linea); padding: calc(var(--u) * 2) 0; font-size: calc(var(--u) * 14.5); color: var(--tenue); }
 .dato b { color: var(--txt); font-family: 'Share Tech Mono', monospace; font-weight: 400; font-size: calc(var(--u) * 16.5); text-align: right; }
+.dato span { flex: none; }
+.dato b { white-space: nowrap; min-width: 0; overflow: hidden; }   /* v10.45 · sin saltos de línea: si no cabe, se reduce (ajustaTextos) */
 .gran { font-family: 'Share Tech Mono', monospace; font-size: calc(var(--u) * 38); line-height: 1.05; letter-spacing: -.01em; white-space: nowrap; }
 .gran small { font-family: Inter, sans-serif; font-size: calc(var(--u) * 15); font-weight: 700; color: var(--tenue); margin-left: calc(var(--u) * 5); letter-spacing: 0; }
 .nota { font-size: calc(var(--u) * 13); color: var(--tenue); line-height: 1.3; }

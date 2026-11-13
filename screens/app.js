@@ -1,7 +1,9 @@
 // SCREENS · interfaz (consola fija con petición en lenguaje natural, panel de rack, simulación 3D y resultados)
-import { cargarCatalogo, ordenar, enStock } from './catalogo.js';
+import { cargarCatalogo, cargarEquipos, ordenar, enStock } from './catalogo.js';
 import { superficies, distanciaPublico, elegirModelo, calcularLed, totales, aplicarPuertas, obstaculoMundo, puertaMundo } from './led.js';
 import { PROYECTORES, CUERPOS, calcularPared, calcularSuelo, SOLAPE_MAX, analizarSombras, obstaculosEnHaces } from './proyeccion.js';
+import '../comun/equipos.js';   // v10.45 · listas de equipos de fábrica: antes que el motor
+import '../comun/motor-i18n.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
@@ -9,7 +11,7 @@ import { interpretar } from './peticion.js';
 import { vistasTecnicas, activarVistas } from './vistas.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v10.44';
+const VERSION = 'v10.45';
 // v8.9 · crédito común de AVHUB (credito.js) y seta de aviso de fallos (fallo.js), los mismos en toda la familia
 if (window.AVCREDITO) window.AVCREDITO.alCambiar(() => { try { pintarCabecera(); } catch (e) {} });
 if (window.AVFALLO) { const bi = document.querySelector('#btn-idioma'); if (bi) { const bf = window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() }); bf.id = 'btn-fallo'; bi.before(bf);
@@ -189,11 +191,11 @@ function electronica(c) {
   if (E.tecnologia === 'led' && c.tot) {
     let L = 1; c.filas.forEach(f => { if (f.r) { f.lin = [L, L + f.r.lineas - 1]; L += f.r.lineas; } });
     const porSup = c.esp.tipo === 'sueltas' ? c.filas.map(f => (f.r ? f.r.lineas : 0)) : null;   // v7.9 · pantallas separadas: conversores por pantalla
-    out.procesadores = ELEC.calcularElectronicas({ lines: c.tot.lineas, totalPix: c.tot.pix, porSup }, { backup: e.backup, escalador: e.escalador, conexion: e.conexion, entradas: 0 }, []);
+    out.procesadores = ELEC.calcularElectronicas({ lines: c.tot.lineas, totalPix: c.tot.pix, porSup, resW: c.tot.resW, resH: c.tot.resH }, { backup: e.backup, escalador: e.escalador, conexion: e.conexion, entradas: 0 }, []);
     out.proc = out.procesadores.find(x => x.key === e.sel) || out.procesadores[0] || null;
     out.need = Math.max(1, c.tot.salidas4k);
   } else if (c.tot) out.need = Math.max(1, c.tot.n);
-  // v10.44 · proyección: procesador con edge blending propio (PIXELHUE, sin mediaserver), mediaserver NovaStar (warping y blending) o nada
+  // v10.39 · proyección: procesador con edge blending propio (PIXELHUE, sin mediaserver), mediaserver NovaStar (warping y blending) o nada
   if (E.tecnologia !== 'led') {
     const eq = e.proyEq || 'media';
     if (eq === 'blend' && out.need) {
@@ -227,21 +229,8 @@ const numIn = (k, val, uni, paso = 0.1, min = 0, max = 60) => `<div class="num">
 const campo = (lab, html) => `<div class="campo"><label>${lab}</label>${html}</div>`;
 
 // ---------- fichas de equipo (componente común comun/ficha.js) ----------
-// los textos del motor común de electrónica están en castellano: aquí se pasan a inglés o catalán
-const MOTOR = {
-  en: [[/solo PGM/g, 'PGM only'], [/en modo switcher/g, 'in switcher mode'], [/Mediaserver modular/g, 'Modular media server'], [/ranuras de entrada/g, 'input slots'], [/capas ilimitadas/g, 'unlimited layers'], [/corrección geométrica/g, 'geometric correction'], [/copia de HDMI/g, 'HDMI copy'], [/\(copia\)/g, '(copy)'], [/backup de equipo/g, 'unit backup'], [/alimentación/g, 'power'], [/edge blending de proyectores/g, 'projector edge blending'], [/con sus tarjetas/g, 'with its cards'], [/audio Dante/g, 'Dante audio'], [/conv\. por pantalla/g, 'conv. per screen'], [/Chasis \(mainframe\)/g, 'Chassis (mainframe)'], [/Tarjeta de salida/g, 'Output card'], [/Tarjeta salida/g, 'Output card'], [/Tarjeta de entrada/g, 'Input card'], [/Tarjeta entrada/g, 'Input card'], [/Tarjeta base/g, 'Base card'],
-    [/de previo \/ monitorización \(recomendada\)/g, 'preview / monitoring (recommended)'], [/\(mínima del equipo\)/g, '(minimum for the unit)'], [/Conv\. fibra→10 RJ45 multimodo \(incluye sus módulos SFP\+\)/g, 'Fibre→10 RJ45 multimode converter (SFP+ modules included)'],
-    [/Conv\. fibra→10 RJ45 \(pantalla\)/g, 'Fibre→10 RJ45 converter (screen)'], [/Módulo SFP\+ 10G multimodo \(puertos de la tarjeta de salida\)/g, '10G SFP+ multimode module (output card ports)'], [/serie MX/g, 'MX series'], [/multimodo/g, 'multimode'],
-    [/no disponible en este chasis: verificar con el fabricante/g, 'not available for this chassis: check with the manufacturer'], [/líneas?/g, m => m === 'línea' ? 'line' : 'lines'], [/fibras?/g, m => m === 'fibra' ? 'fibre' : 'fibres'], [/\(de /g, '(of '], [/proyecto/g, 'project'],
-    [/salidas?/g, m => m === 'salida' ? 'output' : 'outputs'], [/entradas?/g, m => m === 'entrada' ? 'input' : 'inputs'], [/capas?/g, m => m === 'capa' ? 'layer' : 'layers'], [/hasta/g, 'up to'], [/ o /g, ' or '], [/ y /g, ' and '], [/Como /g, 'Like '],
-    [/sincronismo, cascada y backup entre equipos/g, 'sync, cascade and backup between units'], [/backup de equipo/g, 'unit backup'], [/ranura/g, 'slot'], [/con escalador/g, 'with scaler']],
-  ca: [[/solo PGM/g, 'només PGM'], [/en modo switcher/g, 'en mode switcher'], [/Mediaserver modular/g, 'Mediaserver modular'], [/ranuras de entrada/g, 'ranures d’entrada'], [/capas ilimitadas/g, 'capes il·limitades'], [/corrección geométrica/g, 'correcció geomètrica'], [/copia de HDMI/g, 'còpia d’HDMI'], [/\(copia\)/g, '(còpia)'], [/backup de equipo/g, 'backup d’equip'], [/alimentación/g, 'alimentació'], [/edge blending de proyectores/g, 'edge blending de projectors'], [/con sus tarjetas/g, 'amb les seves targetes'], [/audio Dante/g, 'àudio Dante'], [/conv\. por pantalla/g, 'conv. per pantalla'], [/fibras/g, 'fibres'], [/Chasis \(mainframe\)/g, 'Xassís (mainframe)'], [/Tarjeta de salida/g, 'Targeta de sortida'], [/Tarjeta salida/g, 'Targeta sortida'], [/Tarjeta de entrada/g, "Targeta d'entrada"], [/Tarjeta entrada/g, 'Targeta entrada'], [/Tarjeta base/g, 'Targeta base'],
-    [/de previo \/ monitorización \(recomendada\)/g, 'de previ / monitoratge (recomanada)'], [/\(mínima del equipo\)/g, "(mínima de l'equip)"], [/Conv\. fibra→10 RJ45 multimodo \(incluye sus módulos SFP\+\)/g, 'Conv. fibra→10 RJ45 multimode (inclou els mòduls SFP+)'],
-    [/Conv\. fibra→10 RJ45 \(pantalla\)/g, 'Conv. fibra→10 RJ45 (pantalla)'], [/Módulo SFP\+ 10G multimodo \(puertos de la tarjeta de salida\)/g, 'Mòdul SFP+ 10G multimode (ports de la targeta de sortida)'], [/multimodo/g, 'multimode'],
-    [/no disponible en este chasis: verificar con el fabricante/g, 'no disponible en aquest xassís: verificar amb el fabricant'], [/líneas?/g, m => m === 'línea' ? 'línia' : 'línies'], [/proyecto/g, 'projecte'],
-    [/salidas?/g, m => m === 'salida' ? 'sortida' : 'sortides'], [/entradas?/g, m => m === 'entrada' ? 'entrada' : 'entrades'], [/capas?/g, m => m === 'capa' ? 'capa' : 'capes'], [/hasta/g, 'fins a'], [/ y /g, ' i '], [/Como /g, 'Com '],
-    [/sincronismo, cascada y backup entre equipos/g, 'sincronisme, cascada i backup entre equips'], [/backup de equipo/g, "backup d'equip"], [/ranura/g, 'ranura'], [/con escalador/g, 'amb escalador']]
-};
+// los textos del motor común de electrónica están en castellano: aquí se pasan a inglés o catalán (reglas en comun/motor-i18n.js, compartidas con la portada)
+const MOTOR = globalThis.SC_MOTOR;
 const trMotor = (txt) => { let r = String(txt || ''); (MOTOR[idioma()] || []).forEach(([a, b]) => { r = r.replace(a, b); }); return r; };
 function fichaCab(m) {
   return fichaHTML({ cat: t('fCab'), icono: 'led', marca: m.family || '', modelo: m.crm, foto: m.urlFoto, fotoTrasera: m.urlFotoTrasera || m.urlTrasera || m.urlFoto2, vistas: m.fotos, acento: '#b566ff', stock: enStock(m),
@@ -262,11 +251,11 @@ function fichaProy(q, cat) {
       [t('kShift'), q.shiftV ? `${q.shiftSube ? '+' : '±'}${q.shiftV} % / ±${q.shiftH} %` : '']] });
 }
 function fichaProc(x) {
-  return fichaHTML({ cat: t('procesador'), icono: 'elec', marca: x.marca, modelo: x.modelo, foto: x.front, fotoTrasera: x.back, acento: '#00ff04', stock: x.enStock ? true : null,
-    specs: [[t('puertos'), trMotor(x.puertos)], [t('capacidad'), trMotor(x.capacidad)], [t('kEsc'), x.escalador ? t('si') : t('no')]],
-    piezas: (x.equipos || []).map(q => ({ cant: q.cant, ref: q.ref, desc: trMotor(q.desc) })), enlace: x.url, enlaceTxt: t('fichaFab') });
+  return fichaHTML({ cat: x.reproductor ? t('reproCat') : t('procesador'), icono: 'elec', marca: x.marca, modelo: x.modelo, foto: x.front, fotoTrasera: x.back, acento: '#00ff04', stock: x.enStock ? true : null,
+    specs: [[t('puertos'), trMotor(x.puertos)], [t('capacidad'), trMotor(x.capacidad)], [t('kEsc'), x.escalador ? t('si') : t('no')]], notas: [trMotor(x.resumen || ''), x.reproductor ? t('reproNota') : ''].filter(Boolean), enlaces: enlacesEq(x),
+    piezas: (x.equipos || []).map(q => ({ cant: q.cant, ref: q.ref, desc: trMotor(q.desc) })), enlace: x.urlFab || x.url, enlaceTxt: t('fichaFab') });
 }
-// v10.44 · enlaces de cada equipo: página del fabricante, ficha técnica en PDF y, si la hay, la de Charmex
+// v10.40 · enlaces de cada equipo: página del fabricante, ficha técnica en PDF y, si la hay, la de Charmex
 const enlacesEq = (m) => [[m.pdf, t('fichaPdf')], m.urlFab && m.url ? [m.url, 'Charmex'] : null].filter(x => x && x[0]);
 function fichaBlend(m) {
   return fichaHTML({ cat: t('procBlend'), icono: 'elec', marca: m.marca, modelo: m.modelo, acento: '#ffb000',
@@ -373,7 +362,7 @@ function partesProy(c) {
   const uso = (USOS_LUZ.find(u => u[1] === Number(p.lux)) || [''])[0];
   luz += campo(t('luzUso'), `<select class="sel" data-uso="1"><option value=""${uso ? '' : ' selected'}>${t('uso_personal')}</option>${USOS_LUZ.map(u => `<option value="${u[1]}"${u[0] === uso ? ' selected' : ''}>${t('uso_' + u[0])} · ${u[1]} lx</option>`).join('')}</select>`);
   luz += `<div class="fila c2">${campo(t('luzSala'), numIn('proy.lux', p.lux, 'lx', 10, 0, 5000))}${campo(t('ganancia'), numIn('proy.ganancia', p.ganancia, '×', 0.1, 0.1, 5))}</div>`;
-  // 6) avanzado: modo fuera de especificación (v10.44: en el bloque Material, junto al proyector; en «Ajuste del equipo» quedaba escondido) (imágenes más grandes que las garantizadas), con aviso, cálculo y recomendación
+  // 6) avanzado: modo fuera de especificación (v10.39: en el bloque Material, junto al proyector; en «Ajuste del equipo» quedaba escondido) (imágenes más grandes que las garantizadas), con aviso, cálculo y recomendación
   // v8.4 · fuera de especificación: el botón activo se resalta en ámbar (no es un ajuste normal)
   mat += `<div class="etq">${t('avanzado')}</div><div class="fila c1"><button type="button" class="tog ambar${p.oos ? ' on' : ''}" aria-pressed="${!!p.oos}" data-accion="proy-oos" title="${t('oosTit')}">⚠ ${t('oos')}</button></div>`;
   if (sel) {
@@ -444,7 +433,7 @@ function modElec(c) {
     if (c.tot) h += (x.procesadores || []).length ? campo(t('procesador'), `<select class="sel" data-sel="elec.sel">${x.procesadores.map(q => `<option value="${q.key}"${x.proc && q.key === x.proc.key ? ' selected' : ''}>${q.marca} ${q.modelo}</option>`).join('')}</select>`) : `<p class="aviso">${t('sinProc')}</p>`;
   }
   if (!led) {
-    // v10.44 · proyección: qué equipo reparte la imagen entre los proyectores
+    // v10.39 · proyección: qué equipo reparte la imagen entre los proyectores
     const eq = e.proyEq || 'media';
     const op = ([k, l, ti]) => tog(eq === k, `data-set="elec.proyEq" data-v="${k}" title="${ti}"`, l);
     h += `<div class="fila c2">${[['blend', t('eqBlend'), t('procBlend')], ['media', t('mediaserver'), t('mediaserver')]].map(op).join('')}</div><div class="fila c1">${op(['ninguno', t('mNinguno'), t('mNinguno')])}</div>`;
@@ -478,7 +467,7 @@ function modSuperficies(c) {
 // sin filas: o falta el catálogo LED (cargando / sin conexión) o no hay ninguna superficie activa
 function sinFilas(c) { if (E.tecnologia === 'led' && !c.modelo) return estadoCat === 'cargando' ? t('cargando') : t('sinCat'); return t('nada'); }
 function tarjeta(t1, v, uni, sub, ac) { return `<div class="tar" style="--ac:${ac}"><div class="t">${t1}</div><div class="v">${v}<small>${uni || ''}</small></div>${sub ? `<div class="s">${sub}</div>` : ''}</div>`; }
-// v10.44 · fuera de especificación: el aviso también en la simulación 3D, en los resultados (y su ventana grande) y en el PDF
+// v10.41 · fuera de especificación: el aviso también en la simulación 3D, en los resultados (y su ventana grande) y en el PDF
 function oosDatos(c) {
   if (E.tecnologia === 'led' || !E.proy.oos || !c || !c.proyector || !c.filas) return null;
   const sel = c.proyector, usada = Math.max(0, ...c.filas.filter(f => f.s.tipo !== 'suelo' && f.p && f.p.imgW).map(f => Math.hypot(f.p.imgW, f.p.imgH) / 0.0254));
@@ -561,7 +550,7 @@ function materialLed(c) {
   L.push({ c: 1, ref: 'HDMI', desc: t('matFuentes'), g: 'video' });
   L.push({ c: 1, ref: 'FI-H100-030', url: busca('FI-H100-030'), desc: t('matCable', { a: me ? 'mediaserver' : t('matAElec') }) + t('matEstandar'), g: 'video' });
   if (me) L.push({ c: backup && !me.backupNativo ? 2 : 1, ref: me.modelo, url: me.url || busca(me.modelo), desc: t(me.tipo === 'switcher' ? 'matSwitch' : 'matMedia', { m: me.marca }) + (me.backupNativo ? t('matBkNat') : ''), g: 'video' });
-  if (p) { const eq = (p.equipos || []).filter(q => q.cant > 0), tit = t('matElec', { m: p.marca, s: p.serie || '' }) + (p.escalador ? t('matEsc') : '');
+  if (p) { const eq = (p.equipos || []).filter(q => q.cant > 0), tit = p.reproductor ? t('matRepro', { m: p.marca, s: p.serie || '' }) : t('matElec', { m: p.marca, s: p.serie || '' }) + (p.escalador ? t('matEsc') : '');
     if (p.modular) { L.push({ c: '', ref: p.modelo, desc: tit + t('matPiezas'), g: 'elec', titulo: true }); eq.forEach(q => L.push({ c: q.cant, ref: q.ref, url: busca(q.ref), desc: trMotor(q.desc), g: 'elec', pieza: true })); }
     else { L.push({ c: 1, ref: p.modelo, url: p.url || busca(p.modelo), desc: tit, g: 'elec' }); eq.forEach(q => L.push({ c: q.cant, ref: q.ref, url: busca(q.ref), desc: trMotor(q.desc), g: 'elec' })); } }
   else L.push({ c: '', ref: t('matSinEq'), desc: t('matSinEqD'), g: 'elec' });
@@ -976,7 +965,7 @@ function imprimir() {
   const hoy = new Date(), fecha = hoy.toLocaleDateString(idioma() === 'en' ? 'en-GB' : 'es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' · ' + hoy.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
   // v8.9 · la línea de crédito es la común de AVHUB (credito.js): el texto se edita en AVHUB ADMIN y es el mismo en todas las apps
   const cr = window.AVCREDITO ? window.AVCREDITO.plano('SCREENS', VERSION, idioma()) : null;
-  // v10.44 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito tal cual
+  // v10.38 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito tal cual
   const pie = cr ? cr[0].trim() : `SCREENS ${VERSION} ${hoy.getFullYear()} ${t('pie')}`, web = cr ? cr[1].trim() : 'by mediaservi.com';
   const cred = window.AVCREDITO ? window.AVCREDITO.html('SCREENS', VERSION, idioma(), { sinEnlaces: true }) : `${pie} <i class="ic ic-footer" aria-hidden="true"></i> ${web}`;
   let h = `<header class="im-cab"><img class="im-logo" src="assets/screens-logo-negro.svg" alt="SCREENS"><div class="im-url"><b>avhub.mediaservi.com</b><span>${fecha}</span></div><img class="im-avhub" src="assets/avhub-logo.svg" alt="AVHUB"></header>`;
@@ -1081,4 +1070,5 @@ pintarCabecera();
 actualizar();
 // uso sin conexión: el mismo service worker de la raíz (red primero, copia guardada si no hay red)
 try { if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
+cargarEquipos(() => { if (!unaLed()) actualizar(); });
 cargarCatalogo((lista, estado) => { catalogo = lista; estadoCat = estado; if (!unaLed()) actualizar(); });

@@ -125,3 +125,16 @@ export function ordenar(lista) {
   const pm = (m) => { const p = parseFloat(m.prioridad); return isNaN(p) ? 999 : p; };
   return [...lista].sort((a, b) => (a.pitch - b.pitch) || ((enStock(a) ? 0 : 1) - (enStock(b) ? 0 : 1)) || (pm(a) - pm(b)) || (rank(a) - rank(b)) || (a.nits - b.nits));
 }
+
+/* v10.45 · listas de equipos por fabricante (controladoras, reproductores, chasis H, mediaservers y switchers): las del panel AVHUB ADMIN
+   (?accion=equipos) sustituyen a las de fábrica (comun/equipos.js). Primero la copia guardada en este navegador y luego la del panel. */
+const CLAVE_EQ = 'sc_eq1';
+export async function cargarEquipos(alActualizar) {
+  const E = globalThis.SC_ELEC; if (!E || !E.aplicaListas) return;
+  try { const c = JSON.parse(localStorage.getItem(CLAVE_EQ) || 'null'); if (c && c.marcas && E.aplicaListas(c)) alActualizar('cache'); } catch (e) {}
+  try {
+    const r = await fetch(ADMIN_URL + '?accion=equipos', { cache: 'no-store' }); if (!r.ok) return;
+    const j = await r.json(); if (!j || !j.marcas) return;
+    if (E.aplicaListas(j)) { try { localStorage.setItem(CLAVE_EQ, JSON.stringify(j)); } catch (e) {} alActualizar('vivo'); }
+  } catch (e) { /* sin panel (o sin listas guardadas en él): se quedan las de fábrica */ }
+}
