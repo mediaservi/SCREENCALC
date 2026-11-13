@@ -1,35 +1,307 @@
-/* SCREENS · BLOCKS beta · varias pantallas y proyección · mediaservi.com · GPL-3.0
-   Coloca la consola clásica (screens/estilo.css) en la plantilla de bloques fijos de AVHUB. Solo en escritorio y TV (html.bk, lo pone
-   consola.js, que además escala la plantilla de 1920 × 1080 a la ventana); en el móvil se usa tal cual la consola apilada.
-   Reparto: A (espacio y pantallas) y B (tecnología y electrónica) en las dos columnas de la izquierda; en los dos bloques grandes, dos
-   vistas distintas: la simulación 3D (S1A) y las tablas del resultado (S1B); abajo, las seis cifras, una por bloque. */
-.bk-chip { display: none; }
-html.bk { overflow: hidden; --bg: #0e0e11; --chasis: #1b1b20; --hundido: #101013; --borde: #34343c; }
+/* SCREENS · varias pantallas, sala inmersiva y proyección con el formato de la portada · mediaservi.com · GPL-3.0
+   La consola de siempre (screens/estilo.css + screens/app.js: mismo cálculo y mismas funciones) vestida como la portada (vista/blocks.css): mismos colores
+   (gris oscuro y gris claro), misma cabecera, franja de modo y petición, bloques en burbuja con su icono, dos vistas grandes con su
+   cabecera, una fila de seis cifras y el pie con el aviso, los créditos y los botones comunes.
+   html.piel la pone consola.js en todos los tamaños; html.bk, solo en escritorio y TV, donde la plantilla de 1920 × 1080 se escala a la
+   ventana (por eso aquí las medidas van en píxeles de esa plantilla). En el móvil, los bloques se apilan y se recorren por dentro. */
+
+/* ---------- colores: los de la portada; las variables de la clásica pasan a tomarlos ---------- */
+html.piel { color-scheme: dark;
+  --fondo: #2b2c31; --blk: #313238; --blk2: #3a3c43; --linea: #53555e; --txt: #eeeef1; --tenue: #abadb7; --campo: #1f2024;
+  --marca: #c6e04a; --verde-txt: #c6e04a; --verde: #4fdc62; --violeta: #a033ff; --azul: #00b4ff; --ambar: #ffb000; --rojo: #ff4d5e; --magenta: #e24bf0;
+  --relieve: inset 0 1px 0 rgba(255, 255, 255, .09), inset 0 -1px 0 rgba(0, 0, 0, .28), 0 7px 18px rgba(0, 0, 0, .34);
+  --banda: color-mix(in srgb, var(--blk2) 78%, #000 22%);
+  --bg: var(--fondo); --chasis: transparent; --panel: var(--blk); --panel-2: var(--blk2); --hundido: var(--campo); --borde: var(--linea);
+  --txt-2: var(--txt); --tenue-2: var(--tenue); --verde-borde: color-mix(in srgb, var(--verde-txt) 60%, transparent); --violeta-txt: #c58bff;
+  --metal: var(--blk2); --metal-hi: color-mix(in srgb, var(--blk2) 85%, #fff 15%); }
+html.piel[data-tema="claro"] { color-scheme: light;
+  --fondo: #a6a9b0; --blk: #b3b6bc; --blk2: #babdc3; --linea: #83868f; --txt: #141519; --tenue: #3c3f47; --campo: #ced1d6;
+  --marca: #c6d77a; --verde-txt: #3d4a00; --verde: #2f9e44; --violeta: #5a0aa8; --azul: #004f85; --ambar: #6b4300; --rojo: #9a0f20; --magenta: #a012b3; --violeta-txt: #5a0aa8;
+  --relieve: inset 0 1px 0 rgba(255, 255, 255, .55), inset 0 -1px 0 rgba(0, 0, 0, .12), 0 6px 16px rgba(30, 34, 46, .26);
+  --banda: color-mix(in srgb, var(--blk2) 80%, #000 20%); }
+html.piel, html.piel body { background: var(--fondo); color: var(--txt); }
+html.piel * { scrollbar-color: color-mix(in srgb, var(--linea) 80%, transparent) transparent; }
+html.piel ::selection { background: color-mix(in srgb, var(--marca) 55%, transparent); color: inherit; }
+
+/* ---------- cabecera (H1): logo · familia AVHUB · botones redondos. Oscura también en el tema claro, como en la portada ---------- */
+html.piel .cab { display: grid; grid-template-columns: 400fr 1120fr 400fr; gap: 0; padding: 0; min-height: 62px; border: 0; box-shadow: none;
+  background: linear-gradient(180deg, #050506 0%, #17181b 55%, var(--fondo) 100%);
+  --txt: #eeeef1; --tenue: #abadb7; --linea: #53555e; --blk2: #3a3c43; --verde-txt: #c6e04a; --marca: #c6e04a; --verde: #4fdc62; color: #eeeef1; }
+html.piel[data-tema="claro"] .cab { background: linear-gradient(180deg, #050506 0%, #1b1c20 60%, #34363c 100%); box-shadow: 0 3px 8px rgba(0, 0, 0, .25); }
+html.piel .cab > * { display: flex; align-items: center; min-width: 0; padding: 0 14px; gap: 10px; }
+html.piel .marca img { height: 38px; width: auto; filter: none; }
+html.piel .cab .fam { display: flex; flex: 1; justify-content: space-evenly; gap: 12px; }
+html.piel .fam a { display: flex; align-items: center; opacity: .75; line-height: 0; }
+html.piel .fam a:hover, html.piel .fam a:focus-visible { opacity: 1; }
+html.piel .fam img { height: 26px; width: auto; opacity: 1; filter: none; }
+html.piel .fam .av img { height: 44px; }
+html.piel .cab-der { justify-content: flex-end; gap: 7px; }
+html.piel .hdr-btn, html.piel .ic-bt { flex: none; position: relative; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; border-radius: 50%;
+  border: 1px solid var(--linea); background: var(--blk2); color: var(--txt); box-shadow: none; text-shadow: none; cursor: pointer; text-decoration: none; }
+html.piel .hdr-btn svg, html.piel .ic-bt svg { width: 58%; height: 58%; }
+html.piel .hdr-btn:hover, html.piel .hdr-btn:focus-visible, html.piel .ic-bt:hover, html.piel .ic-bt:focus-visible { color: inherit; border-color: var(--verde); outline: none;
+  box-shadow: 0 0 0 2px var(--verde), 0 0 12px color-mix(in srgb, var(--verde) 60%, transparent); }
+html.piel #btn-idioma .ic, html.piel .hdr-btn > .ic { width: 62%; height: 62%; vertical-align: 0; }
+html.piel #btn-idioma .cod { position: absolute; right: -4px; bottom: -4px; font-size: 9.5px; font-weight: 900; line-height: 1; padding: 2px 3px; border-radius: 4px; background: var(--marca); color: #1a2000; letter-spacing: 0; }
+
+/* ---------- franja de modo y petición (HM): Una/Varias · LED/Proyección · pegar, casilla, copiar, dictar, audio · CALCULAR ---------- */
+html.piel .consola { display: grid; grid-template-columns: 282fr 352fr 1286fr; gap: 0 8px; align-items: center; min-height: 62px; padding: 0 14px; background: var(--fondo); border: 0; box-shadow: none; }
+html.piel .con-grupo { display: flex; gap: 5px; padding: 0; min-width: 0; background: none; border: 0; border-radius: 0; box-shadow: none; }
+html.piel .con-grupo .tog { flex: 1 1 0; min-width: 0; min-height: 40px; padding: 0 10px; gap: 6px; font-size: 14.5px; letter-spacing: .06em; }
+html.piel .con-grupo .tog svg { width: 1.3em; height: 1.3em; }
+html.piel .con-nl { display: flex; align-items: center; gap: 10px; min-width: 0; padding-left: 6px; }
+html.piel .con-nl input[type="text"] { flex: 1 1 0; min-width: 0; height: 42px; border: 1px solid var(--linea); border-radius: 10px; background: var(--campo); color: var(--txt); padding: 0 14px; font-size: 18px; box-shadow: none; }
+html.piel .con-nl input[type="text"]::placeholder { color: var(--tenue); }
+html.piel .con-nl input[type="text"]:focus { border-color: var(--verde-txt); box-shadow: none; }
+html.piel .con-nl input[type="text"].beta { border-color: color-mix(in srgb, var(--ambar) 55%, transparent); }
+html.piel .con-nl input[type="text"].beta::placeholder { color: var(--ambar); text-shadow: none; }
+html.piel .con-ico { flex: none; width: 42px; height: 42px; min-height: 0; padding: 0; border-radius: 50%; border: 1px solid var(--linea); background: var(--blk2); color: var(--txt); box-shadow: none; text-shadow: none; }
+html.piel .con-ico svg { width: 22px; height: 22px; }
+html.piel .con-ico .ic { width: 24px; height: 24px; vertical-align: 0; }
+html.piel .con-ico.activo { color: #fff; background: linear-gradient(180deg, #ff4d5e 0%, #c8102e 100%); border-color: #5a0010; }
+html.piel .con-calc { flex: 0 0 254px; height: 44px; min-height: 0; margin-left: 18px; border: 0; border-radius: 10px; background: linear-gradient(180deg, #b03cff, #7a00e0); color: #fff; font-weight: 900; letter-spacing: .12em; font-size: 17px; box-shadow: 0 3px 0 #4a0090; text-shadow: none; }
+html.piel .con-calc:active { transform: translateY(2px); box-shadow: 0 1px 0 #4a0090; }
+html.piel .con-estado { background: #16171b; color: #e8f6b0; border-color: #c6e04a; font-family: Inter, system-ui, sans-serif; font-size: 14px; }
+
+/* ---------- botones y casillas de la portada ---------- */
+html.piel .tog, html.piel .sec-btn { min-height: 36px; padding: 6px 10px; border-radius: 9px; border: 1px solid var(--linea); background: var(--blk2); color: var(--tenue); box-shadow: none; text-shadow: none; font: 800 13px/1.15 Inter, system-ui, sans-serif; letter-spacing: .05em; }
+html.piel .sec-btn { color: var(--txt); }
+html.piel .tog, html.piel .sec-btn, html.piel .pri, html.piel .blq-nom, html.piel .zona .campo label, html.piel .campo label { white-space: nowrap; }
+html.piel .tog:not(.on):hover, html.piel .sec-btn:hover { background: var(--blk2); color: var(--txt); }
+html.piel .tog.on, html.piel .tog[aria-pressed="true"] { border-color: var(--verde-txt); color: var(--verde-txt); background: color-mix(in srgb, var(--marca) 14%, var(--blk)); box-shadow: inset 0 0 0 1px var(--verde-txt); text-shadow: none; }
+html.piel[data-tema="claro"] .tog.on, html.piel[data-tema="claro"] .tog[aria-pressed="true"] { background: var(--marca); color: #1c2200; border-color: #3d4a00; }
+html.piel .tog:hover, html.piel .tog:focus-visible, html.piel .sec-btn:hover, html.piel .sec-btn:focus-visible, html.piel .candado:hover { border-color: var(--verde); outline: none; box-shadow: 0 0 0 2px var(--verde), 0 0 12px color-mix(in srgb, var(--verde) 60%, transparent); }
+html.piel .tog.ambar.on { background: color-mix(in srgb, var(--ambar) 16%, var(--blk)); color: var(--ambar); border-color: var(--ambar); box-shadow: inset 0 0 0 1px var(--ambar); }
+html.piel .tog:disabled, html.piel .sec-btn:disabled { opacity: .4; box-shadow: none; }
+html.piel .pri { min-height: 44px; border: 0; border-radius: 10px; background: linear-gradient(180deg, #b03cff, #7a00e0); color: #fff; font: 900 15px Inter, system-ui, sans-serif; letter-spacing: .12em; box-shadow: 0 3px 0 #4a0090; text-shadow: none; }
+html.piel .pri:active { transform: translateY(2px); box-shadow: 0 1px 0 #4a0090; }
+html.piel .pri:disabled { background: var(--blk2); color: var(--tenue); box-shadow: none; }
+html.piel .campo label, html.piel .etq, html.piel .campo-cab .lab { font-size: 12px; font-weight: 800; letter-spacing: .08em; color: var(--tenue); }
+html.piel .num { border: 1px solid var(--linea); border-radius: 9px; background: var(--campo); box-shadow: none; }
+html.piel .num:focus-within { border-color: var(--verde-txt); }
+html.piel .num input, html.piel .fila.c3 .num input { font: 400 20px 'Share Tech Mono', ui-monospace, monospace; color: var(--txt); text-align: right; padding: 6px 4px 6px 8px; }
+html.piel .num input:focus { box-shadow: none; }
+html.piel .num span { background: none; border: 0; color: var(--tenue); font: 700 13px Inter, system-ui, sans-serif; padding: 0 6px 0 2px; letter-spacing: 0; }
+html.piel .num .flechas { border-left: 1px solid var(--linea); }
+html.piel .num .flecha { background: var(--blk2); color: var(--txt); width: 24px; }
+html.piel .num .flecha + .flecha { border-top: 1px solid var(--linea); }
+html.piel .num .flecha svg { filter: none; }
+html.piel .num .flecha:hover { background: var(--metal-hi); }
+html.piel select.sel { border: 1px solid var(--verde-txt); border-radius: 9px; background: var(--campo); color: var(--verde-txt); font: 800 14.5px Inter, system-ui, sans-serif; box-shadow: none; padding: 7px 8px; }
+html.piel #app .ayuda { font-size: 13px; line-height: 1.32; color: var(--tenue); }
+html.piel #app .aviso { font-size: 13px; color: var(--ambar); }
+html.piel #app .tenue { color: var(--tenue); }
+html.piel #app .avisos { background: var(--campo); border: 1px solid var(--linea); color: var(--txt); font-size: 13px; }
+html.piel #app .avisos li.ok { color: var(--verde-txt); } html.piel #app .avisos li.ok::marker { color: var(--verde); }
+html.piel #app .avisos li.mal { color: var(--ambar); }
+html.piel #app .sup, html.piel #app .obst, html.piel .tabla-caja, html.piel .vt-fig { background: var(--campo); border: 1px solid var(--linea); border-radius: 10px; }
+html.piel .sup-dat b, html.piel .obst-cab b { color: var(--txt); }
+html.piel .candado { border: 1px solid var(--linea); background: var(--blk2); color: var(--tenue); box-shadow: none; }
+html.piel .candado.on { color: var(--verde-txt); border-color: var(--verde-txt); box-shadow: inset 0 0 0 1px var(--verde-txt); }
+html.piel .campo-cab .lab i.auto { border-color: var(--linea); color: var(--tenue); }
+html.piel .campo-cab .lab i.fijo { background: var(--marca); border-color: var(--marca); color: #1a2000; }
+html.piel .rango input[type="range"], html.piel .vt-shift input[type="range"] { accent-color: var(--marca); }
+html.piel .rango-et, html.piel .vt-shift { color: var(--tenue); }
+html.piel #app .res-tit { color: var(--txt); font-size: 13px; letter-spacing: .12em; text-shadow: none; }
+html.piel #app .res-tit svg { color: var(--verde-txt); }
+html.piel #app .tabla { font-size: 13px; }
+html.piel #app .tabla th { color: var(--tenue); border-bottom-color: var(--violeta); }
+html.piel #app .tabla td { color: var(--txt); border-bottom-color: color-mix(in srgb, var(--linea) 70%, transparent); }
+html.piel #app .tabla td:first-child { color: var(--txt); }
+html.piel .vt-fig figcaption { color: var(--tenue); }
+html.piel #app .ficha { background: var(--blk2); color: var(--txt); border-color: var(--linea); box-shadow: none; }
+html.piel .fi-marca, html.piel .fi-desc, html.piel .fi-nota, html.piel .fi-specs dt { color: var(--tenue); }
+html.piel .fi-specs dd, html.piel .fi-modelo { color: var(--txt); }
+html.piel .fi-aviso { color: var(--ambar); }
+html.piel[data-tema="claro"] .fi-cat, html.piel[data-tema="claro"] .fi-piezas b, html.piel[data-tema="claro"] .fi-enlace, html.piel[data-tema="claro"] .fi-stock { filter: brightness(.42) saturate(1.6); }
+
+/* ---------- bloques en burbuja con su cabecera (icono + título) ---------- */
+html.piel .zona-cab { display: none; }
+html.piel .panel { background: none; border: 0; }
+html.piel .mod.blq, html.piel .zona-pie, html.piel .bk-marco, html.piel #app .tar { position: relative; border: 0; border-radius: 18px; box-shadow: var(--relieve); overflow: hidden;
+  background: linear-gradient(180deg, var(--blk), color-mix(in srgb, var(--blk) 86%, var(--fondo))); }
+html.piel .mod.blq { padding: 0 0 12px; gap: 8px; }
+html.piel .mod.blq::before, html.piel #app .tar::before { display: none; }
+html.piel .blq .mod-tit, html.piel .bk-cab, html.piel #app .tar .t { display: flex; align-items: center; gap: 8px; min-height: 46px; margin: 0; padding: 6px 12px; background: var(--banda);
+  border-bottom: 1px solid color-mix(in srgb, var(--linea) 60%, transparent); text-shadow: none; }
+html.piel .blq-cab { gap: 8px; font-size: 15px; font-weight: 900; letter-spacing: .11em; color: var(--txt); text-transform: uppercase; }
+html.piel .blq-led { display: none; }
+html.piel .blk-ic { flex: none; display: inline-flex; width: 28px; height: 28px; color: var(--ac, var(--marca)); }
+html.piel .blk-ic svg, html.piel .blk-ic .ic { width: 100%; height: 100%; vertical-align: 0; }
+html.piel[data-tema="claro"] .blk-ic { filter: brightness(.55) saturate(1.4); }
+html.piel #panelB { --ac: #b566ff; }
+html.piel .blq-res { font: 400 14px/1.2 'Share Tech Mono', ui-monospace, monospace; color: var(--verde-txt); }
+html.piel .blq-cuerpo { padding: 0 14px; gap: 9px; }
+html.piel .blq.pleg { padding-bottom: 0; }
+html.piel .blq.pleg .mod-tit { border-bottom: 0; }
+html.piel .blq.pleg .blk-ic { opacity: .6; }
+html.piel .blq.pleg .blq-cab:hover .blq-nom { color: var(--txt); }
+html.piel .blq.pleg .blq-cab:hover .blk-ic { opacity: 1; }
+/* RESTABLECER de cada bloque: el botón redondo de la portada (mismo icono que «nuevo cálculo») */
+html.piel .mod-tit .reset { flex: none; width: 34px; height: 34px; min-height: 0; padding: 0; border-radius: 50%; font-size: 0; letter-spacing: 0; color: var(--txt); }
+html.piel .mod-tit .reset::before { content: ''; width: 58%; height: 58%; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,14q-0.82,0-1.41-0.59T10,12t0.59-1.41T12,10t1.41,0.59Q14,11.18 14,12t-0.59,1.41T12,14Zm0,7q-3.47,0-6.03-2.29Q3.43,16.43 3.05,13H5.1q0.35,2.6 2.31,4.3T12,19q2.93,0 4.96-2.04Q19,14.93 19,12q0-2.93-2.04-4.96T12,5Q10.28,5 8.78,5.8T6.25,8H9v2H3V4H5V6.35q1.28-1.6 3.11-2.47T12,3q1.88,0 3.51,0.71t2.85,1.93t1.93,2.85T21,12t-0.71,3.51t-1.93,2.85t-2.85,1.93T12,21Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,14q-0.82,0-1.41-0.59T10,12t0.59-1.41T12,10t1.41,0.59Q14,11.18 14,12t-0.59,1.41T12,14Zm0,7q-3.47,0-6.03-2.29Q3.43,16.43 3.05,13H5.1q0.35,2.6 2.31,4.3T12,19q2.93,0 4.96-2.04Q19,14.93 19,12q0-2.93-2.04-4.96T12,5Q10.28,5 8.78,5.8T6.25,8H9v2H3V4H5V6.35q1.28-1.6 3.11-2.47T12,3q1.88,0 3.51,0.71t2.85,1.93t1.93,2.85T21,12t-0.71,3.51t-1.93,2.85t-2.85,1.93T12,21Z'/%3E%3C/svg%3E") center / contain no-repeat; }
+html.piel .zona-pie { padding: 12px 14px; margin-top: 0; border-top: 0; gap: 10px; }
+html.piel .zona-pie .pri, html.piel .zona-pie .sec-btn { min-height: 44px; }
+html.piel .eleg-txt small { font-size: 12px; font-weight: 800; letter-spacing: .1em; color: var(--tenue); }
+html.piel .eleg-txt b { font: 400 16px/1.2 'Share Tech Mono', ui-monospace, monospace; color: var(--verde-txt); }
+html.piel .eleg-txt span { font: 400 13px/1.3 'Share Tech Mono', ui-monospace, monospace; color: var(--txt); }
+
+/* ---------- las dos vistas grandes: simulación 3D (S1A) y resultados (S1B) ---------- */
+html.piel .bk-cab { font-size: 15px; font-weight: 900; letter-spacing: .11em; text-transform: uppercase; color: var(--txt); white-space: nowrap; }
+html.piel .bk-cab b { font-weight: 900; overflow: hidden; text-overflow: ellipsis; }
+html.piel .bk-cab .sep { flex: 1; }
+html.piel .bk-marco { --ac: var(--azul); min-width: 0; min-height: 0; }
+html.piel .bk-cab .ic-bt { width: 34px; height: 34px; }
+html.piel .escena { background: radial-gradient(120% 90% at 60% 40%, #1d1d21 0%, #121214 70%); }
+html.piel[data-tema="claro"] .escena { background: #c9ccd2; }
+html.piel .esc-barra .tog { min-height: 28px; padding: 3px 9px; font-size: 11.5px; border-radius: 7px; background: rgba(20, 21, 24, .8); color: #d7d8de; border-color: rgba(255, 255, 255, .2); backdrop-filter: blur(6px); }
+html.piel .esc-barra .tog.on { color: #c6e04a; border-color: #c6e04a; background: rgba(32, 38, 12, .85); box-shadow: inset 0 0 0 1px #c6e04a; }
+html.piel .esc-barra .tog:hover { box-shadow: 0 0 0 2px #4fdc62; border-color: #4fdc62; }
+html.piel .esc-medio .sec-btn, html.piel .esc-medio .sel { background: rgba(20, 21, 24, .85); color: #eeeef1; border-color: rgba(255, 255, 255, .25); }
+html.piel .esc-info { font: 400 12.5px/1.4 'Share Tech Mono', ui-monospace, monospace; color: #c9cad0; background: rgba(10, 10, 12, .72); border: 0; border-radius: 8px; }
+html.piel .res { background: none; border: 0; grid-auto-rows: max-content; }
+
+/* ---------- las seis cifras: bloques como los de la portada ---------- */
+html.piel #app .tar { padding: 0 0 12px; display: flex; flex-direction: column; gap: 4px; }
+html.piel #app .tar .t { font-size: 13px; font-weight: 900; letter-spacing: .08em; color: var(--txt); white-space: nowrap; overflow: hidden; }
+html.piel #app .tar .t .blk-ic { width: 26px; height: 26px; }
+html.piel #app .tar .v { padding: 8px 14px 2px; font: 400 48px/1.05 'Share Tech Mono', ui-monospace, monospace; color: var(--txt); white-space: nowrap; text-shadow: none; }
+html.piel #app .tar .v small { font: 700 15px Inter, system-ui, sans-serif; color: var(--tenue); margin-left: 5px; letter-spacing: 0; }
+html.piel #app .tar .s { padding: 0 14px; font-size: 14.5px; line-height: 1.3; color: var(--tenue); }
+
+/* ---------- pie (F1): aviso · créditos · instalar y avisar de un fallo ---------- */
+html.piel .fam-pie { display: none !important; }
+html.piel .f-f1 { flex: none; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; min-height: 58px; background: var(--fondo); }
+html.piel .f-f1 > * { display: flex; align-items: center; min-width: 0; padding: 0 14px; gap: 10px; }
+html.piel #pie-l { overflow: hidden; }
+/* v10.30 · el aviso, al mismo tamaño que los créditos y con su triangulito (monocromo, filete del color del texto) */
+html.piel #pie-l .nota { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font-size: 13.5px; line-height: 1.3; color: var(--tenue); }
+html.piel #pie-l .nota > span { white-space: nowrap; overflow: hidden; min-width: 0; }
+html.piel .av-ic { flex: none; width: 1.15em; height: 1.15em; }
+html.piel .f-f1 .pie { justify-content: center; gap: 5px; padding: 0 14px; font-size: 13.5px; color: var(--tenue); background: none; border: 0; white-space: nowrap; overflow: hidden; text-align: center; }
+html.piel .f-f1 .pie a { flex: none; }
+html.piel .f1r { justify-content: flex-end; gap: 10px; }
+
+/* ---------- ventana (datos del proyecto y vista previa del PDF) y avisos breves: fuera del cuerpo escalado ---------- */
+.bk-velo { position: fixed; inset: 0; z-index: 9000; display: none; align-items: center; justify-content: center; background: rgba(4, 4, 8, .72); backdrop-filter: blur(3px); font-family: Inter, system-ui, sans-serif; }
+.bk-velo.on { display: flex; }
+.bk-vent { display: flex; flex-direction: column; width: 80vw; height: 80dvh; background: var(--blk); color: var(--txt); border: 1px solid var(--linea); border-radius: 18px; box-shadow: 0 20px 60px rgba(0, 0, 0, .6); overflow: hidden; }
+.bk-vent.ajustes { width: min(760px, 94vw); height: auto; max-height: 88dvh; }
+.bk-vent-cab { flex: none; display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--linea); background: var(--banda); font-weight: 800; letter-spacing: .1em; text-transform: uppercase; font-size: 16px; min-width: 0; }
+.bk-vent-cab > svg { flex: none; width: 1.3em; height: 1.3em; }
+.bk-vent-cab .sep { flex: 1; }
+.bk-vent-cu { flex: 1; min-height: 0; overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.bk-vent .rot { font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--tenue); }
+.bk-vent .fila { display: flex; gap: 10px; min-width: 0; }
+.bk-vent .fila.fin { justify-content: flex-end; }
+.bk-vent .fila.fin .pri { min-width: 160px; padding: 0 22px; }
+.bk-vent .pide { flex: 1 1 0; min-width: 0; height: 42px; border: 1px solid var(--linea); border-radius: 10px; background: var(--campo); color: var(--txt); padding: 0 14px; font: 400 16px Inter, system-ui, sans-serif; outline: none; }
+.bk-vent .pide:focus { border-color: var(--verde-txt); }
+.bk-vent textarea.pide.obs { height: auto; min-height: 110px; padding: 10px 14px; line-height: 1.4; resize: vertical; }
+.bk-vent .nota { margin: 0; font-size: 13px; color: var(--tenue); line-height: 1.35; }
+.bk-vent .tog { font: 800 13px Inter, system-ui, sans-serif; letter-spacing: .05em; text-transform: uppercase; border-radius: 9px; border: 1px solid var(--linea); background: var(--blk2); color: var(--txt); cursor: pointer; }
+.bk-vent .pri { cursor: pointer; }
+.bk-vent-cab > .ic { flex: none; width: 1.3em; height: 1.3em; vertical-align: 0; }
+.bk-vent-cu.info p { margin: 0; font-size: 15px; line-height: 1.45; }
+.bk-vent-cu.info b { color: var(--txt); }
+.bk-vent .fila.fin { flex-wrap: wrap; gap: 10px; }
+.bk-vent .fila.fin a.tog { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; text-decoration: none; }
+.bk-vent.previa .pv-tit { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; }
+.bk-vent.previa .pv-bt { flex: none; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; padding: 0 12px; min-height: 40px; }
+.bk-vent.previa .pv-bt svg { width: 20px; height: 20px; flex: none; }
+.bk-vent.previa .pv-bt[data-pv="guarda"] { background: var(--marca); color: #1c2200; border-color: transparent; }
+.bk-vent.previa .pv-bt:hover { border-color: var(--verde); box-shadow: 0 0 0 2px var(--verde); }
+.bk-vent.previa.completa { width: 100vw; height: 100dvh; border-radius: 0; border: 0; }
+.pv-hojas { align-items: center; background: #3a3b40; gap: 18px; padding: 22px; }
+.pv-hoja { display: block; width: min(100%, calc((80dvh - 120px) * 210 / 297 * 1.6)); height: auto; background: #fff; box-shadow: 0 6px 24px rgba(0, 0, 0, .5); border-radius: 2px; }
+.bk-vent.previa.completa .pv-hoja { width: min(100%, calc(100dvh * 210 / 297 * 1.4)); }
+.bk-tostada { position: fixed; left: 50%; bottom: 90px; z-index: 9500; transform: translate(-50%, 14px); max-width: 80vw; padding: 12px 22px; border-radius: 12px; background: #101114; color: #fff; border: 1px solid #4fdc62;
+  font: 700 16px/1.35 Inter, system-ui, sans-serif; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, .5); opacity: 0; pointer-events: none; transition: opacity .18s, transform .18s; }
+.bk-tostada.on { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- escritorio y TV (html.bk): la plantilla fija de la portada, escalada a la ventana ---------- */
+html.bk { overflow: hidden; }
 html.bk body { overflow: hidden; min-height: 0; transform-origin: 0 0; }
-html.bk .bk-chip { display: inline-block; font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #9a9aa5; border: 1px solid #34343c; border-radius: 99px; padding: 3px 9px; white-space: nowrap; }
-html.bk .cab { min-height: 62px; background: linear-gradient(180deg, #101014, #1b1b21); border-bottom: 1px solid #34343c; }
-html.bk .consola { min-height: 62px; background: #1c1c21; border-bottom: 1px solid #34343c; }
-html.bk .fam-pie { display: none; }
-html.bk .pie { font-size: 12.5px; padding: 5px 10px 6px; }
-html.bk .trabajo.z3 { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 12px 16px; background: var(--bg);
-  grid-template-areas: "za zb s1a s1a s1b s1b" "za zb s1a s1a s1b s1b" "za zb tot tot tot tot"; }
+html.bk .trabajo.z3, html.bk .trabajo:not(.z3) { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 12px; padding: 12px 16px; background: var(--fondo); }
+/* mismas posiciones que la portada: los mandos en las dos primeras columnas, las dos vistas grandes y, abajo, una fila de seis bloques */
+html.bk .trabajo.z3 { grid-template-areas: "za zb s1a s1a s1b s1b" "za zb s1a s1a s1b s1b" "tot tot tot tot tot tot"; }
+html.bk .trabajo:not(.z3) { grid-template-areas: "za za s1a s1a s1b s1b" "za za s1a s1a s1b s1b" "tot tot tot tot tot tot"; }
 html.bk #panelA { grid-area: za; } html.bk #panelB { grid-area: zb; }
-html.bk .zona { padding: 0; gap: 10px; background: none; border: 0; overflow-y: auto; scrollbar-width: thin; }
-html.bk .zona-cab { display: none; }
-html.bk .mod.blq, html.bk #bk-tot .tar, html.bk .zona-pie { background: #1b1b20; border: 1px solid #34343c; border-radius: 16px; box-shadow: 0 6px 18px rgba(0, 0, 0, .45); position: relative; overflow: hidden; }
-html.bk .mod.blq { padding: 14px 13px 12px; }
-html.bk .mod.blq::before, html.bk #bk-tot .tar::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--ac, #c6e04a); opacity: .9; }
-html.bk #panelB .mod.blq::before { background: #b566ff; }
-html.bk .zona-pie { padding: 10px 12px; margin-top: 0; }
-html.bk .trabajo.z3 .vista, html.bk .trabajo .vista { display: contents; }
-html.bk #escena { grid-area: s1a; height: auto !important; min-height: 0; border: 1px solid #34343c; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 18px rgba(0, 0, 0, .45); }
-html.bk #res { grid-area: s1b; max-height: none !important; min-height: 0; overflow-y: auto !important; scrollbar-width: thin; border: 1px solid #34343c; border-radius: 16px; background: #1b1b20; box-shadow: 0 6px 18px rgba(0, 0, 0, .45); padding: 12px; align-content: start; }
+html.bk .trabajo:not(.z3) > .panel { grid-area: za; overflow-y: auto; }
+html.bk .zona { padding: 0; gap: 12px; background: none; border: 0; overflow-y: auto; overflow-x: hidden; }
+html.bk .zona-pie { margin-top: auto; flex: none; }
+html.bk .zona > .blq:not(.pleg):not(.act) { flex: 1 0 auto; }
+html.bk .zona > .blq.act { flex: 1 1 0; min-height: 0; }
+html.bk .zona:has(> .blq.act) > .blq:not(.act), html.bk .zona.mide > .blq { flex: none !important; }
+html.bk .zona.mide > .zona-pie { margin-top: 0; }
+html.piel .mod.blq { align-content: start; }
+html.piel .blq.pleg .blq-nom { flex: 1 1 0; min-width: 0; overflow: hidden; }
+html.piel .blq.pleg .blq-res { flex: 1 1 100%; }
+html.bk .trabajo .vista { display: contents; }
+html.bk .bk-marco[data-area="s1a"] { grid-area: s1a; } html.bk .bk-marco[data-area="s1b"] { grid-area: s1b; }
+html.bk #escena { grid-area: s1a; height: auto !important; min-height: 0; margin: 54px 8px 8px; border: 0; border-radius: 10px; overflow: hidden; box-shadow: none; }
+html.bk #res { position: relative; grid-area: s1b; grid-auto-rows: max-content; margin-top: 46px; min-height: 0; max-height: none !important; overflow-y: auto !important; padding: 12px 14px 14px; align-content: start; border-radius: 0 0 18px 18px; }
 html.bk #bk-tot { grid-area: tot; min-width: 0; min-height: 0; display: grid; }
-html.bk #bk-tot .res-tot { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)) !important; gap: 10px; min-height: 0; }
-html.bk #bk-tot .tar { display: flex; flex-direction: column; justify-content: center; padding: 16px 14px 12px; min-width: 0; }
-html.bk #bk-tot .tar .v { font-size: 34px; }
-html.bk #bk-tot .tar .t { font-size: 12px; }
-/* una sola zona de datos (proyección de una pantalla, etc.): la plantilla no deja huecos */
-html.bk .trabajo:not(.z3) { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 12px 16px; background: var(--bg);
-  grid-template-areas: "za za s1a s1a s1b s1b" "za za s1a s1a s1b s1b" "za za tot tot tot tot"; }
-html.bk .trabajo:not(.z3) > .panel { grid-area: za; overflow-y: auto; scrollbar-width: thin; }
+html.bk #bk-tot .res-tot { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)) !important; gap: 12px; min-height: 0; }
+html.bk #bk-tot .tar { min-width: 0; min-height: 0; }
+/* la simulación en grande (el ojo de su cabecera) */
+html.bk-grande .bk-marco[data-area="s1a"] { position: fixed; left: 0; top: 0; width: var(--bk-w, 100vw); height: var(--bk-h, 100dvh); z-index: 60; border-radius: 0; }
+html.bk-grande #escena { position: fixed !important; left: 8px; top: 54px; width: calc(var(--bk-w, 100vw) - 16px); height: calc(var(--bk-h, 100dvh) - 62px) !important; margin: 0 !important; z-index: 61; border-radius: 10px; }
+
+/* ---------- móvil y tableta (sin html.bk): las mismas piezas apiladas; cabecera, petición y pie fijos, los bloques se recorren por dentro ---------- */
+html.piel:not(.bk) body { height: 100dvh; min-height: 0; overflow: hidden; }
+html.piel:not(.bk) #app { overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+html.piel:not(.bk) #app > .trabajo { flex: none; }
+html.piel:not(.bk) .trabajo { gap: 10px; padding: 8px 10px 14px; }
+html.piel:not(.bk) .zona { padding: 0; gap: 10px; overflow: visible; }
+html.piel:not(.bk) .zona + .zona { padding-top: 0; }
+html.piel:not(.bk) .vista { display: flex; flex-direction: column; gap: 0; overflow: visible; }
+html.piel:not(.bk) .bk-marco { border-radius: 18px 18px 0 0; box-shadow: none; }
+html.piel:not(.bk) .bk-marco[data-area="s1b"] { margin-top: 10px; }
+html.piel:not(.bk) #escena { border-radius: 0 0 18px 18px; overflow: hidden; }
+html.piel:not(.bk) #res { border-radius: 0 0 18px 18px; padding: 10px; background: linear-gradient(180deg, var(--blk), color-mix(in srgb, var(--blk) 86%, var(--fondo))); }
+html.piel:not(.bk) .res-tot { gap: 10px; }
+html.piel:not(.bk) .tar .v { font-size: 28px; }
+html.piel:not(.bk) .tar .t { min-height: 40px; font-size: 12px; }
+html.bk-grande:not(.bk) .bk-marco[data-area="s1a"] { position: fixed; left: 0; top: 0; width: 100vw; height: 100dvh; z-index: 60; border-radius: 0; }
+html.bk-grande:not(.bk) #escena { position: fixed !important; left: 6px; top: 52px; width: calc(100vw - 12px); height: calc(100dvh - 58px) !important; z-index: 61; border-radius: 10px; }
+@media (max-width: 1023px) {
+  html.piel .cab { display: flex; flex-wrap: wrap; align-items: center; padding: 6px 0; row-gap: 4px; }
+  html.piel .cab-izq { flex: 0 0 auto; }
+  html.piel .cab .fam { display: flex; order: 0; flex: 1 1 0; min-width: 0; }
+  html.piel .cab-der { flex: 0 0 auto; }
+  html.piel .marca img { height: 30px; }
+  html.piel .fam img { height: 18px; } html.piel .fam .av img { height: 28px; }
+  html.piel .consola { display: flex; flex-wrap: wrap; gap: 7px; padding: 4px 10px 8px; }
+  html.piel .con-grupo { flex: 1 1 0; }
+  html.piel .con-grupo .tog { flex-direction: row; min-height: 38px; padding: 0 6px; gap: 5px; font-size: 12.5px; letter-spacing: .02em; }
+  html.piel .con-grupo .tog svg { width: 18px; height: 18px; }
+  html.piel .con-nl { flex: 1 1 100%; padding-left: 0; gap: 7px; }
+  html.piel .con-calc { flex: 0 0 200px; margin-left: 4px; padding: 0 12px; }
+  html.piel .con-calc span { display: inline; }
+  html.piel .f-f1 { display: flex; flex-wrap: wrap; padding: 5px 0; row-gap: 2px; min-height: 0; }
+  html.piel .f-f1 > #pie-l { flex: 1 1 0; order: 1; } html.piel .f-f1 > .f1r { flex: 0 0 auto; order: 2; }
+  html.piel .f-f1 > .pie { order: 3; flex: 1 1 100%; font-size: 11px; }
+  html.piel #pie-l .nota { font-size: 11.5px; }
+  html.piel .f-f1 > .pie { font-size: 11.5px; }
+}
+@media (max-width: 559px) {
+  html.piel .cab { padding: 8px 0 4px; row-gap: 6px; }
+  html.piel .cab-izq { flex: 0 1 auto; padding: 0 0 0 10px; }
+  html.piel .cab-der { flex: 1 1 auto; padding: 0 10px 0 6px; gap: 4px; }
+  html.piel .cab .fam { order: 3; flex: 1 1 100%; padding: 0 10px; }
+  html.piel .marca img { height: 26px; }
+  html.piel .fam img { height: 16px; } html.piel .fam .av img { height: 24px; }
+  html.piel .hdr-btn { width: 34px; height: 34px; }
+  html.piel .consola { padding: 2px 10px 8px; }
+  html.piel .con-grupo .tog { font-size: 11.5px; padding: 0 4px; gap: 4px; }
+  html.piel .con-nl { display: contents; }
+  html.piel .con-nl input[type="text"] { order: 1; flex: 1 1 100%; height: 44px; font-size: 16px; padding: 0 10px; }
+  html.piel .con-ico { order: 2; width: 40px; height: 40px; }
+  html.piel .con-calc { order: 3; flex: 1 1 0; margin-left: 2px; height: 42px; font-size: 15px; }
+  html.piel .f-f1 > .pie { white-space: normal; text-align: center; line-height: 1.3; font-size: 10.8px; display: block; overflow: visible; }
+  html.piel #pie-l .nota { line-height: 1.25; font-size: 10.8px; } html.piel #pie-l .nota > span { white-space: normal; }
+}
+@media print { html.piel .f-f1, html.piel .bk-marco, .bk-velo, .bk-tostada { display: none !important; } }

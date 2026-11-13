@@ -7,9 +7,9 @@ import { HUMAN_PATH } from '../screens/figura.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.27';
+import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.30';
 idiomaInicial();   /* el idioma guardado de la familia SCREENS o, la primera vez, el del navegador */
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.27';
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.30';
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const SV = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
@@ -400,7 +400,7 @@ function pintaPie() {
   const ver = !!(R && R.r) && !EDITA && USADO;
   res.hidden = !ver; inp.style.visibility = ver ? 'hidden' : '';
   if (ver) res.innerHTML = `<span>PANTALLA LED ${esc(R.m.crm)} · ${fmt(R.r.ancho * 100)} × ${fmt(R.r.alto * 100)} cm · ${fmt(R.diag / .0254)}″ · ${R.r.cols}×${R.r.rows} = ${R.r.cab} cabinets</span><span> · ${R.r.resW}×${R.r.resH} px · ${fmt(R.r.peso)} kg · ${fmt(R.r.kw, 2)} kW · ${R.r.lineas} línea${R.r.lineas > 1 ? 's' : ''}</span>`;
-  $('#pie-l').innerHTML = '<span class="nota">Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.</span>';
+  $('#pie-l').innerHTML = '<span class="nota"><svg class="av-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.6 2.4 20.2h19.2z"/><path d="M12 9.6v5"/><path d="M12 17.6h.01"/></svg><span>Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.</span></span>';
 }
 /* ningún texto de una línea se parte ni se corta: si no cabe, se le va bajando la letra hasta que quepa */
 function encoge(el, min = 7) { if (!el || !el.clientWidth) return; el.style.fontSize = ''; let f = parseFloat(getComputedStyle(el).fontSize); for (let i = 0; i < 40 && el.scrollWidth > el.clientWidth + 1 && f > min; i++) { f *= .96; el.style.fontSize = f + 'px'; } }
@@ -428,14 +428,14 @@ function abre(que) {
     v.innerHTML = `<div class="vent ajustes" role="dialog" aria-modal="true" aria-label="Contenido de la pantalla"><div class="vent-cab">${IC.contenido.replace('<svg', '<svg style="width:1.2em;height:1.2em"')} Contenido de la pantalla<span class="sep"></span>${bt('x', 'Cerrar', 'data-cierra')}</div><div class="vent-cu">
       <div class="rot">Fuentes multimedia de prueba</div>
       <div class="fuentes">${[FUENTE_FIJA].concat(FU).map((u, i) => `<div class="fuente" data-on="${FSEL === i && !URLP}"><button type="button" class="tog" data-fu-sel="${i}" aria-pressed="${FSEL === i && !URLP}" title="Elegir esta fuente">${i + 1}</button>${i === 0 ? '<b>mediaservi.com 24/7</b>' : `<input type="url" class="pide" data-fu="${i - 1}" value="${esc(u)}" placeholder="Vacía · pega aquí un enlace" aria-label="Enlace de la fuente ${i + 1}" title="${esc(nom(u))}">`}</div>`).join('')}</div>
-      <div class="nota">Las fuentes 2 a 6 se pueden editar; la primera es fija. Se guardan en este navegador, las mismas que en la versión clásica.</div>
+      <div class="nota">Las fuentes 2 a 6 se pueden editar; la primera es fija. Se guardan en este navegador.</div>
       <div class="rot">O usa tu propio contenido</div>
       <div class="fila"><input type="url" class="pide" id="url-propia" value="${esc(URLP)}" placeholder="Pega un enlace de YouTube, Vimeo, imagen o vídeo" aria-label="Enlace de tu contenido"><button type="button" class="tog" data-sube style="flex:none">${IC.contenido}Subir imagen / vídeo</button></div>
       <div class="fila"><button type="button" class="calcular" data-cont-aplica style="font-size:calc(var(--u)*15)">APLICAR</button>${tog(false, 'data-cont-reinicia title="Volver a la carta de ajuste inicial"', 'Reiniciar')}${tog(false, 'data-cierra', 'Cerrar')}</div></div></div>`;
     VENT = { que };
   } else if (que === 'info') {
     v.innerHTML = `<div class="vent ajustes" role="dialog" aria-modal="true" aria-label="Información"><div class="vent-cab">${IC.info.replace('<svg', '<svg style="width:1.2em;height:1.2em"')} SCREENS · una pantalla LED<span class="sep"></span>${bt('x', 'Cerrar', 'data-cierra')}</div><div class="vent-cu" style="font-size:calc(var(--u)*16);line-height:1.5">
-      <div class="fila"><button type="button" class="tog" data-guia style="flex:none">Ver la guía rápida</button><a class="tog" style="flex:none;text-decoration:none" href="https://github.com/mediaservi/SCREENS#readme" target="_blank" rel="noopener">Manual completo</a><a class="tog" style="flex:none;text-decoration:none" href="../?clasica">Versión anterior</a></div>
+      <div class="fila"><button type="button" class="tog" data-guia style="flex:none">Ver la guía rápida</button><a class="tog" style="flex:none;text-decoration:none" href="https://github.com/mediaservi/SCREENS#readme" target="_blank" rel="noopener">Manual completo</a></div>
       <p style="margin:0"><b>Cómo se usa.</b> Escribe o dicta arriba la pantalla que necesitas («3 x 4 para exterior 3.9p a 8 m») y pulsa CALCULAR, o rellena los bloques de la izquierda: entorno y uso, dimensiones, cabinet y resolución. Todo se recalcula al momento.</p>
       <p style="margin:0"><b>Las dos pantallas.</b> A la izquierda, la simulación a escala: puedes cambiar la pared, simular contenido (fuentes de prueba, un enlace de YouTube o Vimeo, o una imagen o vídeo tuyos), copiar una captura y abrirla en grande con el ojo. A la derecha, el cableado de señal, el eléctrico, la distancia de visionado y el esquema de conexión.</p>
       <p style="margin:0"><b>Cada opción en su bloque.</b> Las unidades, los formatos y el ajuste a la medida están en Dimensiones; marino, alcance del público y nits mínimos en Entorno; el pitch, la distancia del público y la resolución mínima en Resolución; columnas y filas en Cabinets; el giro de 90° en Cabinet; la altura sobre el suelo en la simulación; el cosido en el cableado; backup y conexión en Señal; el escalador y el procesador en Electrónica; marca, Dante y modelo en Mediaserver. El icono de reinicio de arriba, o un toque en el logo de SCREENS, empieza un cálculo nuevo.</p>
