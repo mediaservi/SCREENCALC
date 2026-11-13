@@ -55,9 +55,22 @@ export const normTipo = (v) => {
   return t;
 };
 const num = (v, ent) => { const n = ent ? parseInt(String(v || 0).replace(',', '.')) : parseFloat(String(v || 0).replace(',', '.')); return isNaN(n) ? 0 : n; };
+/* v10.44 · una foto del catálogo puesta como enlace para compartir (SharePoint / OneDrive de empresa, Google Drive o Dropbox)
+   se pasa a su dirección directa de imagen; si aun así no carga, la interfaz enseña «sin foto» en vez de una imagen rota */
+export const imgDirecta = (u) => {
+  u = String(u || '').trim(); if (!/^https?:\/\//i.test(u)) return u;
+  try {
+    const x = new URL(u);
+    if (/\.sharepoint\.com$/i.test(x.hostname) && /^\/:[a-z]:\//i.test(x.pathname)) { x.searchParams.set('download', '1'); return x.href; }
+    if (/^(drive|docs)\.google\.com$/i.test(x.hostname)) { const id = (x.pathname.match(/\/d\/([\w-]{10,})/) || [])[1] || x.searchParams.get('id'); if (id) return 'https://drive.google.com/thumbnail?id=' + id + '&sz=w1600'; }
+    if (/(^|\.)dropbox\.com$/i.test(x.hostname)) { x.searchParams.delete('dl'); x.searchParams.set('raw', '1'); return x.href; }
+  } catch (e) {}
+  return u;
+};
 function normalizar(data) {
   return data.map(it => ({
     ...it,
+    urlFoto: imgDirecta(it.urlFoto), urlFotoTrasera: imgDirecta(it.urlFotoTrasera), urlTrasera: imgDirecta(it.urlTrasera), urlFoto2: imgDirecta(it.urlFoto2),
     tipo: normTipo(it.tipo), class: String(it.class || '').trim().toUpperCase(),
     cabAmp: num(it.cabAmp || it.Amp || it.amp), cabKg: num(it.cabKg || it.Kg || it.kg || it.peso),
     cabAncho: num(it.cabAncho), cabAlto: num(it.cabAlto), cabPixAncho: num(it.cabPixAncho, 1), cabPixAlto: num(it.cabPixAlto, 1),
