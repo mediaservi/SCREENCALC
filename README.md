@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.27** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.28** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,19 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.27)
+## Cambios de la versión actual (v10.28) · en beta
+
+- **Varias pantallas, sala inmersiva y proyección con el formato de la portada** (`vista/consola.html?modo=varias-led | varias-proy | una-proy`). El cálculo y las funciones son los de siempre (`screens/app.js`); cambia cómo se presentan, igual que en la portada de una pantalla LED:
+  - **cabecera** con el logo, la familia AVHUB y los mismos botones redondos en el mismo orden: información, datos del proyecto, PDF, nuevo cálculo, idioma y tema;
+  - **franja de modo y petición**: Una / Varias · LED / Proyección con los iconos de la portada, pegar, casilla con su texto guía («Escríbela: …», siempre entero), copiar, dictar, audio y CALCULAR;
+  - **bloques en burbuja** con su icono y su color, en las mismas posiciones: los mandos en las dos primeras columnas, la **simulación a escala** (3D, con el ojo para verla en grande) y los **resultados** en las dos vistas grandes, y una fila de **seis bloques** con las cifras clave. El RESTABLECER de cada bloque es el botón redondo de la portada. Si en una columna sobra sitio, el bloque plegado se abre y se recorre por dentro;
+  - **pie** con el aviso de cálculo automático, los créditos y los botones de instalar y de avisar de un fallo.
+- **Tema gris oscuro / gris claro compartido con la portada:** el que se elige en una se mantiene al pasar a la otra.
+- **Datos del proyecto** (nombre, cliente y observaciones, los mismos de la portada) y **vista previa del PDF** antes de guardar o imprimir, como en la portada. Los datos del proyecto salen en la primera hoja.
+- **PDF de la consola corregido:** con la plantilla escalada, las letras del PDF se montaban unas sobre otras; ahora la hoja se copia sin la escala y sale limpia.
+- Móvil y tableta: las mismas piezas apiladas, con la cabecera, la petición y el pie fijos y los bloques recorriéndose por dentro.
+
+## Cambios de la v10.27
 
 - **Salida de la manguera, a elegir:** en el cableado de señal y en el eléctrico, debajo del cosido, unas flechas **← ↑ ↓ →** llevan la salida de la manguera a cualquiera de las **8 posiciones** donde se puede pasar: las **4 esquinas** y los **4 centros de lateral** (por defecto, abajo en el centro; el botón «Por defecto» vuelve a ella). El nombre de la posición se ve junto a las flechas.
 - La manguera se dibuja como **un solo tubo** que rodea la pantalla por el tramo más corto que recoge todas las entradas de cable (principales y de backup) y llega a la salida elegida. La caja de destino («Al procesador», «Al conversor de fibra» o «Al cuadro eléctrico», con el número de cables) va por fuera, junto a la salida: arriba, abajo o en el lateral.

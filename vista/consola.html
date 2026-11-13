@@ -21,9 +21,10 @@
   <script>(function(){try{var L=localStorage,A='screencalc_',m={lang:'idioma',tema:'tema',pared:'pared',fuentes_v2:'fuentes_v2',descarga:'descarga'};Object.keys(m).forEach(function(k){var v=L.getItem(A+k);if(v!==null&&L.getItem('screens_'+m[k])===null)L.setItem('screens_'+m[k],v);L.removeItem(A+k);});['modelos_cache','electronicas_cache','hierros_cache','cache_timestamp'].forEach(function(k){L.removeItem(A+k);});}catch(e){}})();</script>
   <link rel="stylesheet" href="comun/ficha.css">
   <link rel="stylesheet" href="screens/estilo.css">
-  <!-- BLOCKS beta · la misma consola de siempre (screens/app.js, sin tocar) colocada en la plantilla de bloques fijos: ver vista/consola.css y vista/consola.js -->
-  <link rel="stylesheet" href="vista/consola.css?v=10.21">
-  <script src="vista/consola.js?v=10.21"></script>
+  <!-- v10.27 · la misma consola de siempre (screens/app.js: mismo cálculo, mismas funciones) con el formato de la portada: vista/consola.css y vista/consola.js -->
+  <link rel="stylesheet" href="vista/iconos.css?v=10.28">
+  <link rel="stylesheet" href="vista/consola.css?v=10.28">
+  <script src="vista/consola.js?v=10.28"></script>
   <script type="importmap">
   { "imports": {
       "three": "./assets/lib/three/three.module.min.js",
@@ -33,21 +34,19 @@
 </head>
 <body>
   <header class="cab">
-    <div class="cab-izq">
-      <a class="marca" href="vista/consola.html" data-accion="inicio" aria-label="SCREENS"><img src="assets/screens-logo.svg" alt="SCREENS" width="420" height="120"></a><nav class="fam fam-l" aria-label="Apps de AVHUB"><a href="https://systems.mediaservi.com/" target="_blank" rel="noopener" aria-label="SYSTEMS"><img src="assets/fam/systems-logo.svg" alt="SYSTEMS"></a><a href="https://adposter.mediaservi.com/" target="_blank" rel="noopener" aria-label="ADPOSTER"><img src="assets/fam/adposter-logo.svg" alt="ADPOSTER"></a></nav>
-    </div>
-    <div class="cab-centro"><a href="https://avhub.mediaservi.com/" target="_blank" rel="noopener" aria-label="AVHUB"><img src="assets/avhub-logo.svg" alt="AVHUB"></a></div>
-    <div class="cab-der"><nav class="fam fam-r" aria-label="Apps de AVHUB"><a href="https://vjshow.mediaservi.com/" target="_blank" rel="noopener" aria-label="VJSHOW"><img src="assets/fam/vjshow-logo.svg" alt="VJSHOW"></a><a href="https://msgame.mediaservi.com/" target="_blank" rel="noopener" aria-label="MSGAME"><img src="assets/fam/msgame-logo.svg?v=3" alt="MSGAME"></a></nav>
+    <div class="cab-izq"><a class="marca" href="vista/consola.html" data-accion="inicio" aria-label="SCREENS"><img src="assets/screens-logo.svg" alt="SCREENS" width="420" height="120"></a></div>
+    <nav class="fam cab-centro" aria-label="Apps de AVHUB"><a href="https://systems.mediaservi.com/" target="_blank" rel="noopener" aria-label="SYSTEMS"><img src="assets/fam/systems-logo.svg" alt="SYSTEMS"></a><a href="https://adposter.mediaservi.com/" target="_blank" rel="noopener" aria-label="ADPOSTER"><img src="assets/fam/adposter-logo.svg" alt="ADPOSTER"></a><a class="av" href="https://avhub.mediaservi.com/" target="_blank" rel="noopener" aria-label="AVHUB"><img src="assets/avhub-logo.svg" alt="AVHUB"></a><a href="https://vjshow.mediaservi.com/" target="_blank" rel="noopener" aria-label="VJSHOW"><img src="assets/fam/vjshow-logo.svg" alt="VJSHOW"></a><a href="https://msgame.mediaservi.com/" target="_blank" rel="noopener" aria-label="MSGAME"><img src="assets/fam/msgame-logo.svg?v=3" alt="MSGAME"></a></nav>
+    <div class="cab-der">
       <button type="button" class="hdr-btn" id="btn-info" data-accion="info" aria-label="Información" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button>
-      <button type="button" class="hdr-btn" id="btn-pdf" data-accion="pdf" aria-label="PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></button>
-      <button type="button" class="hdr-btn" id="btn-inicio" data-accion="inicio" aria-label="Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></button>
+      <button type="button" class="hdr-btn" id="btn-pdf" data-accion="pdf" aria-label="PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4"/><path d="M12 11v6M9 14.5l3 3 3-3"/></svg></button>
+      <button type="button" class="hdr-btn" id="btn-inicio" data-accion="inicio" aria-label="Inicio"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12,14q-0.82,0-1.41-0.59T10,12t0.59-1.41T12,10t1.41,0.59Q14,11.18 14,12t-0.59,1.41T12,14Zm0,7q-3.47,0-6.03-2.29Q3.43,16.43 3.05,13H5.1q0.35,2.6 2.31,4.3T12,19q2.93,0 4.96-2.04Q19,14.93 19,12q0-2.93-2.04-4.96T12,5Q10.28,5 8.78,5.8T6.25,8H9v2H3V4H5V6.35q1.28-1.6 3.11-2.47T12,3q1.88,0 3.51,0.71t2.85,1.93t1.93,2.85T21,12t-0.71,3.51t-1.93,2.85t-2.85,1.93T12,21Z"/></svg></button>
       <button type="button" class="hdr-btn" id="btn-idioma" data-accion="idioma">ES</button>
     </div>
   </header>
   <div class="consola" id="consola"></div>
   <div id="app" style="flex:1; display:flex; flex-direction:column; min-height:0"></div>
   <nav class="fam fam-pie" aria-label="Apps de AVHUB"><a href="https://systems.mediaservi.com/" target="_blank" rel="noopener" aria-label="SYSTEMS"><img src="assets/fam/systems-logo.svg" alt="SYSTEMS"></a><a href="https://adposter.mediaservi.com/" target="_blank" rel="noopener" aria-label="ADPOSTER"><img src="assets/fam/adposter-logo.svg" alt="ADPOSTER"></a><a href="https://vjshow.mediaservi.com/" target="_blank" rel="noopener" aria-label="VJSHOW"><img src="assets/fam/vjshow-logo.svg" alt="VJSHOW"></a><a href="https://msgame.mediaservi.com/" target="_blank" rel="noopener" aria-label="MSGAME"><img src="assets/fam/msgame-logo.svg?v=3" alt="MSGAME"></a></nav>
-  <footer class="pie" id="pie"></footer>
+  <footer class="f-f1"><div id="pie-l" class="f1l"></div><div class="pie" id="pie"></div><div id="pie-r" class="f1r"></div></footer>
   <div id="impresion" class="impresion" aria-hidden="true"></div>
   <script src="credito.js"></script>
   <script src="fallo.js"></script>
