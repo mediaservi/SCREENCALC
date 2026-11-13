@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.26** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.27** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,13 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.26)
+## Cambios de la versión actual (v10.27)
+
+- **Salida de la manguera, a elegir:** en el cableado de señal y en el eléctrico, debajo del cosido, unas flechas **← ↑ ↓ →** llevan la salida de la manguera a cualquiera de las **8 posiciones** donde se puede pasar: las **4 esquinas** y los **4 centros de lateral** (por defecto, abajo en el centro; el botón «Por defecto» vuelve a ella). El nombre de la posición se ve junto a las flechas.
+- La manguera se dibuja como **un solo tubo** que rodea la pantalla por el tramo más corto que recoge todas las entradas de cable (principales y de backup) y llega a la salida elegida. La caja de destino («Al procesador», «Al conversor de fibra» o «Al cuadro eléctrico», con el número de cables) va por fuera, junto a la salida: arriba, abajo o en el lateral.
+- La posición se guarda en este navegador, vale para los dos cableados y sale igual en el PDF.
+
+## Cambios de la v10.26
 
 - **Backup, pensado para el instalador:** en el bloque Señal, los botones dicen **«Con backup»** y **«Sin backup»**. Con backup, cada puerto lleva un segundo cable Cat6 que entra por el **último cabinet de su cadena**, y ahora se ve:
   - en el **cableado de señal**: el cable principal (círculo, línea continua) en el primer cabinet y el de backup (cuadrado «B», línea discontinua) en el último, cada uno hasta el borde de la pantalla por el que debe salir;

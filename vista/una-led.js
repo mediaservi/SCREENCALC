@@ -7,9 +7,9 @@ import { HUMAN_PATH } from '../screens/figura.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.26';
+import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.27';
 idiomaInicial();   /* el idioma guardado de la familia SCREENS o, la primera vez, el del navegador */
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.26';
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.27';
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const SV = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
@@ -267,7 +267,10 @@ function svgSim(prop, anchoPx) {
    el ÚLTIMO cabinet de su cadena, así que la manguera tiene que llegar también a ese lado. */
 function svgRejilla(tipo) {
   const { r } = R, sen = tipo === 'senal', bk = sen && !!E.backup, W = 1000, H = 620, n = sen ? r.lineas : R.nLin, de = sen ? R.puerto : R.linea, rutas = sen ? R.rutas : R.rutasE;
-  const filasLey = Math.ceil(Math.min(n, 12) / 4), pyTop = 84, bajo = 112 + filasLey * 44, k = Math.min(840 / r.ancho, (H - pyTop - bajo) / r.alto), pw = r.ancho * k, ph = r.alto * k, px = (W - pw) / 2, py = pyTop, cw = pw / r.cols, chh = ph / r.rows;
+  /* salida de la manguera: una de las 4 esquinas o de los 4 centros de lateral (E.mang; por defecto, abajo en el centro). La caja va por fuera, junto a la salida */
+  const MG = MANG.includes(E.mang) ? E.mang : 'bc', mV = MG[0], mH = MG[1], lado = mV === 'm' ? (mH === 'l' ? 'l' : 'r') : '';
+  const filasLey = Math.ceil(Math.min(n, 12) / 4), pyTop = 124 + (mV === 't' ? 74 : 0), bajo = 38 + (mV === 'b' ? 74 : 0) + filasLey * 44 + (n > 12 ? 18 : 0), anchoU = lado ? 690 : 840;
+  const k = Math.min(anchoU / r.ancho, (H - pyTop - bajo) / r.alto), pw = r.ancho * k, ph = r.alto * k, px = lado === 'l' ? 240 + (W - 240 - pw) / 2 : lado === 'r' ? (W - 240 - pw) / 2 : (W - pw) / 2, py = pyTop, cw = pw / r.cols, chh = ph / r.rows;
   const tf = Math.max(9, Math.min(22, Math.min(cw, chh) * .42)), cx = (c) => px + c * cw + cw / 2, cy = (f) => py + (r.rows - 1 - f) * chh + chh / 2, CAB = sen ? COL_SENAL.eth : COL_SENAL.power, tc = 'currentColor';
   let g = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="color:var(--txt)" role="img" aria-label="${sen ? 'Reparto de cabinets por puerto de datos' : 'Reparto de cabinets por línea eléctrica'}">`;
   g += `<defs><marker id="fl" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#0b0b10"/></marker></defs>`;
@@ -280,25 +283,36 @@ function svgRejilla(tipo) {
   /* cada entrada sale por el borde que sigue el cosido: con cosido vertical, por abajo o por arriba; con horizontal, por la izquierda o por la derecha */
   const cos = sen ? R.cosido : R.cosE, borde = (e) => cos === 'vertical' ? (e.f <= (r.rows - 1) / 2 ? 'b' : 't') : cos === 'horizontal' ? (e.c <= (r.cols - 1) / 2 ? 'l' : 'r') : [['b', e.f], ['l', e.c], ['r', r.cols - 1 - e.c], ['t', r.rows - 1 - e.f]].reduce((a, b) => (b[1] < a[1] ? b : a))[0];
   const yB = py + ph + 22, yT = py - 20, xL = px - 24, xR = px + pw + 24, usa = { b: [], t: [], l: [], r: [] }; E2.forEach((e) => { e.b = borde(e); usa[e.b].push(e); });
-  /* la manguera: tubo gris por los bordes que hace falta y, por abajo, hasta el procesador o el cuadro */
-  const tubo = (d) => `<path d="${d}" fill="none" stroke="${tc}" stroke-opacity=".2" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>`;
-  const lado = usa.r.length > usa.l.length ? 'r' : 'l', izq = usa.l.length || (usa.t.length && lado === 'l'), der = usa.r.length || (usa.t.length && lado === 'r');
-  const xsB = usa.b.map((e) => cx(e.c)).concat([W / 2], izq ? [xL] : [], der ? [xR] : []); g += tubo(`M${Math.min(...xsB)} ${yB}H${Math.max(...xsB)}`);
-  if (usa.t.length) { const xsT = usa.t.map((e) => cx(e.c)); g += tubo(`M${lado === 'l' ? Math.max(...xsT) : Math.min(...xsT)} ${yT}H${lado === 'l' ? xL : xR}`); }
-  if (izq) g += tubo(`M${xL} ${usa.t.length && lado === 'l' ? yT : Math.min(...usa.l.map((e) => cy(e.f)))}V${yB}`);
-  if (der) g += tubo(`M${xR} ${usa.t.length && lado === 'r' ? yT : Math.min(...usa.r.map((e) => cy(e.f)))}V${yB}`);
-  const yP = yB + 30; g += tubo(`M${W / 2} ${yB}V${yP - 4}`);
+  /* la manguera: un solo tubo gris que rodea la pantalla por el tramo más corto que recoge todas las entradas y llega a la salida elegida */
+  const wR = xR - xL, hR = yB - yT, Lp = 2 * (wR + hR), xC = px + pw / 2, yM = (yT + yB) / 2;
+  const tDe = (b, x, y) => b === 't' ? x - xL : b === 'r' ? wR + (y - yT) : b === 'b' ? wR + hR + (xR - x) : 2 * wR + hR + (yB - y);
+  const enT = (t) => { t = ((t % Lp) + Lp) % Lp; if (t <= wR) return [xL + t, yT]; t -= wR; if (t <= hR) return [xR, yT + t]; t -= hR; if (t <= wR) return [xR - t, yB]; t -= wR; return [xL, yB - t]; };
+  const P = { tl: [xL, yT], tc: [xC, yT], tr: [xR, yT], ml: [xL, yM], mr: [xR, yM], bl: [xL, yB], bc: [xC, yB], br: [xR, yB] }[MG], tP = tDe(mV === 'm' ? mH : mV, P[0], P[1]);
+  const ts = [tP].concat(E2.map((e) => { const x = cx(e.c), y = cy(e.f); return tDe(e.b, e.b === 'l' ? xL : e.b === 'r' ? xR : x, e.b === 't' ? yT : e.b === 'b' ? yB : y); })).map((t) => ((t % Lp) + Lp) % Lp).sort((p, q) => p - q);
+  let hueco = -1, gi = 0; ts.forEach((t, i) => { const h = (i === ts.length - 1 ? ts[0] + Lp : ts[i + 1]) - t; if (h > hueco) { hueco = h; gi = i; } });
+  const t0 = ts[(gi + 1) % ts.length], largo = Lp - hueco, pts = [enT(t0)];
+  [0, wR, wR + hR, 2 * wR + hR].map((c) => ((c - t0) % Lp + Lp) % Lp).filter((o) => o > .01 && o < largo - .01).sort((p, q) => p - q).forEach((o) => pts.push(enT(t0 + o))); pts.push(enT(t0 + largo));
+  let tubos = largo > .5 ? `<path d="M${pts.map((q) => q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join('L')}"/>` : '';
+  /* caja de destino: arriba o abajo (esquinas y centros de arriba y abajo) o a un lado (centros de los laterales) */
+  const nC = sen ? r.lineas * (bk ? 2 : 1) : R.nLin, dest = sen ? (E.conexion === 'fibra' ? 'Al conversor de fibra' : 'Al procesador') : 'Al cuadro eléctrico';
+  const cuenta = sen ? (bk ? `${r.lineas} + ${r.lineas} backup = ${nC} cables Cat6` : `${nC} ${nC > 1 ? 'cables' : 'cable'} Cat6`) : `${nC} ${nC > 1 ? 'líneas' : 'línea'} de 16 A`;
+  let caja = '', yP = yB + 30;
+  if (lado) { const bw = 200, bh = 96, xb = lado === 'r' ? xR + 30 : xL - 30 - bw, yb = Math.max(8, Math.min(H - bajo - bh, yM - bh / 2)), xt = xb + bw / 2;
+    tubos += `<path d="M${P[0]} ${yM}H${lado === 'r' ? xb + 4 : xb + bw - 4}"/>`;
+    const tx = (y, s, f, w) => `<text x="${xt}" y="${y}" text-anchor="middle" font-size="${f}" font-weight="${w}" fill="${tc}" font-family="${w > 400 ? 'Inter' : 'Share Tech Mono'}, sans-serif">${s}</text>`;
+    caja = `<rect x="${xb}" y="${yb}" width="${bw}" height="${bh}" rx="10" fill="${CAB}" fill-opacity=".14" stroke="${CAB}" stroke-width="2"/>` + tx(yb + 22, 'MANGUERA', 16, 800) + tx(yb + 42, dest, 14, 700) + (sen && bk ? tx(yb + 64, `${nC} cables Cat6`, 15, 400) + tx(yb + 84, `${r.lineas} + ${r.lineas} backup`, 14, 400) : tx(yb + 70, cuenta, 15, 400));
+  } else { const bw = 430, xb = Math.max(6, Math.min(W - bw - 6, P[0] - bw / 2)), yb = mV === 't' ? yT - 30 - 44 : yB + 30; yP = yb;
+    tubos += `<path d="M${P[0]} ${P[1]}V${mV === 't' ? yb + 40 : yb + 4}"/>`;
+    caja = `<rect x="${xb}" y="${yb}" width="${bw}" height="44" rx="10" fill="${CAB}" fill-opacity=".14" stroke="${CAB}" stroke-width="2"/><text x="${xb + bw / 2}" y="${yb + 19}" text-anchor="middle" font-size="16" font-weight="800" fill="${tc}" font-family="Inter, sans-serif">MANGUERA · ${dest}</text><text x="${xb + bw / 2}" y="${yb + 37}" text-anchor="middle" font-size="15" fill="${tc}" font-family="Share Tech Mono, monospace">${cuenta}</text>`; }
+  g += `<g fill="none" stroke="${tc}" stroke-opacity=".2" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">${tubos}</g>`;
   /* cada cable, de su cabinet al tubo: continuo el principal y discontinuo el de backup */
   E2.forEach((e) => { const x = cx(e.c), y = cy(e.f), col = COLS[e.i % COLS.length], est = ` stroke="${CAB}" stroke-width="2.6" fill="none"${e.bk ? ' stroke-dasharray="6 4"' : ''}`;
     const d = e.b === 'b' ? `M${x} ${y}V${yB}` : e.b === 't' ? `M${x} ${y}V${yT}` : e.b === 'l' ? `M${x} ${y}H${xL}` : `M${x} ${y}H${xR}`; g += `<path d="${d}"${est}/>`;
     g += e.bk ? `<rect x="${x - gr * 2.3}" y="${y - gr * 2.3}" width="${gr * 4.6}" height="${gr * 4.6}" fill="#fff" stroke="${CAB}" stroke-width="${gr * .8}" stroke-dasharray="3 2"/>` : `<circle cx="${x}" cy="${y}" r="${gr * 2.1}" fill="#fff" stroke="#0b0b10" stroke-width="${gr * .7}"/>`;
     if (e.bk && cw > 26 && chh > 22) g += `<text x="${x}" y="${y + gr * .9}" text-anchor="middle" font-size="${gr * 2.6}" font-weight="900" fill="${col}" font-family="Inter, sans-serif">B</text>`; });
-  /* destino de la manguera y cuántos cables lleva */
-  const nC = sen ? r.lineas * (bk ? 2 : 1) : R.nLin, dest = sen ? (E.conexion === 'fibra' ? 'Al conversor de fibra' : 'Al procesador') : 'Al cuadro eléctrico';
-  const cuenta = sen ? (bk ? `${r.lineas} + ${r.lineas} backup = ${nC} cables Cat6` : `${nC} ${nC > 1 ? 'cables' : 'cable'} Cat6`) : `${nC} ${nC > 1 ? 'líneas' : 'línea'} de 16 A`;
-  const bw = 430; g += `<rect x="${W / 2 - bw / 2}" y="${yP}" width="${bw}" height="44" rx="10" fill="${CAB}" fill-opacity=".14" stroke="${CAB}" stroke-width="2"/><text x="${W / 2}" y="${yP + 19}" text-anchor="middle" font-size="16" font-weight="800" fill="${tc}" font-family="Inter, sans-serif">MANGUERA · ${dest}</text><text x="${W / 2}" y="${yP + 37}" text-anchor="middle" font-size="15" fill="${tc}" font-family="Share Tech Mono, monospace">${cuenta}</text>`;
+  g += caja;
   /* leyenda de puertos o líneas */
-  const cols = Math.min(n, 4), lw = Math.min(236, 960 / cols), y0 = yP + 58;
+  const cols = Math.min(n, 4), lw = Math.min(236, 960 / cols), y0 = mV === 'b' ? yP + 58 : yB + 36;
   for (let i = 0; i < n && i < 12; i++) { const X = W / 2 - cols * lw / 2 + (i % cols) * lw, Y = y0 + Math.floor(i / cols) * 44, cabs = [...Array(r.cab).keys()].filter((q) => de(q % r.cols, Math.floor(q / r.cols)) === i).length;
     g += `<rect x="${X + 4}" y="${Y}" width="${lw - 8}" height="36" rx="7" fill="${COLS[i % COLS.length]}"/><text x="${X + lw / 2}" y="${Y + 25}" text-anchor="middle" font-size="21" font-weight="700" fill="#0b0b10" font-family="Share Tech Mono, monospace">${sen ? 'P' : 'L'}${i + 1} · ${cabs} cab${sen ? (bk ? ' · +B' : '') : ' · ' + fmt(cabs * R.ampCab, 1) + ' A'}</text>`; }
   if (n > 12) g += `<text x="${W / 2}" y="${H - 6}" text-anchor="middle" font-size="19" fill="currentColor" font-family="Inter, sans-serif">… y ${n - 12} más</text>`;
@@ -324,7 +338,13 @@ const VISTAS = [['senal', 'Señal', () => svgRejilla('senal'), () => 'Cableado d
 /* ---------- bloques ---------- */
 const ICB = { M1A: 'entorno', M1B: 'cabinet', M2A: 'dims', M2B: 'cabs', M3A: 'res', M3B: 'chip', M3C: 'media', M3D: 'inst', M3E: 'red', M3F: 'rayo', S1A: 'sim', S1B: 'cable' };
 const COSN = { auto: 'Auto', vertical: 'Vertical', horizontal: 'Horizontal' };
-const cosidoCtl = (v = 'senal') => `<div class="cosidos" role="group" aria-label="Cosido del cableado"><span>Cosido</span>${['auto', 'vertical', 'horizontal'].map((v) => `<button type="button" data-set="cosido" data-v="${v}" aria-pressed="${E.cosido === v}">${COSN[v]}</button>`).join('')}<em>${(() => { const c = v === 'elec' ? R.cosE : R.cosido, no = E.cosido !== 'auto' && E.cosido !== c; return (no ? 'No cabe así: ' : E.cosido === 'auto' ? '→ ' : '') + (no || E.cosido === 'auto' ? c : ''); })()}</em></div>`;
+/* salida de la manguera: esquinas (tl, tr, bl, br) y centros de lateral (tc, ml, mr, bc). Cada flecha lleva a la siguiente posición en esa dirección */
+const MANG = ['tl', 'tc', 'tr', 'ml', 'mr', 'bl', 'bc', 'br'], MANGN = { tl: 'Arriba, izquierda', tc: 'Arriba, centro', tr: 'Arriba, derecha', ml: 'Izquierda, centro', mr: 'Derecha, centro', bl: 'Abajo, izquierda', bc: 'Abajo, centro', br: 'Abajo, derecha' };
+const mueveMang = (p, d) => { const Y = 'tmb', X = 'lcr'; let y = Y.indexOf(p[0]), x = X.indexOf(p[1]); const dy = d === 'u' ? -1 : d === 'd' ? 1 : 0, dx = d === 'l' ? -1 : d === 'r' ? 1 : 0;
+  for (let i = 0; i < 2; i++) { y += dy; x += dx; if (y < 0 || y > 2 || x < 0 || x > 2) return ''; if (!(y === 1 && x === 1)) return Y[y] + X[x]; } return ''; };
+const FLE = { u: 'M12 19V5M5 12l7-7 7 7', d: 'M12 5v14M5 12l7 7 7-7', l: 'M19 12H5M12 5l-7 7 7 7', r: 'M5 12h14M12 5l7 7-7 7' }, FLEN = { u: 'arriba', d: 'abajo', l: 'a la izquierda', r: 'a la derecha' };
+const mangCtl = () => { const p = MANG.includes(E.mang) ? E.mang : 'bc'; return `<div class="mangas" role="group" aria-label="Salida de la manguera"><span>Manguera</span>${['l', 'u', 'd', 'r'].map((d) => { const a = mueveMang(p, d); return `<button type="button" class="fle" data-set="mang" data-v="${a}" title="Mover la salida de la manguera ${FLEN[d]}" aria-label="Mover la salida de la manguera ${FLEN[d]}"${a ? '' : ' disabled'}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="${FLE[d]}"/></svg></button>`; }).join('')}<em>${MANGN[p]}</em>${p !== 'bc' ? '<button type="button" data-set="mang" data-v="bc" title="Volver a la salida por defecto (abajo, centro)">Por defecto</button>' : ''}</div>`; };
+const cosidoCtl = (v = 'senal') => `<div class="cosidos" role="group" aria-label="Cosido del cableado"><span>Cosido</span>${['auto', 'vertical', 'horizontal'].map((v) => `<button type="button" data-set="cosido" data-v="${v}" aria-pressed="${E.cosido === v}">${COSN[v]}</button>`).join('')}<em>${(() => { const c = v === 'elec' ? R.cosE : R.cosido, no = E.cosido !== 'auto' && E.cosido !== c; return (no ? 'No cabe así: ' : E.cosido === 'auto' ? '→ ' : '') + (no || E.cosido === 'auto' ? c : ''); })()}</em></div>` + mangCtl();
 const blk = (area, id, tit, ac, cuerpo, extra = '', cls = '', ic = ICB[id]) => `<section class="blk ${cls}" style="grid-area:${area};--ac:${ac}" data-blk="${id}"><header class="blk-cab">${ic ? `<i class="blk-ic" aria-hidden="true">${IC[ic]}</i>` : ''}<b>${tit}</b><span class="sep"></span>${extra}<span class="id">${id}</span></header><div class="blk-cu">${cuerpo}</div></section>`;
 const UNI = { m: 1, cm: 100, mm: 1000 };
 /* campo primario con botones, como en la clásica: rótulo, − , valor en casilla de display y + */
