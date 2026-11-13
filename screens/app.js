@@ -9,7 +9,7 @@ import { interpretar } from './peticion.js';
 import { vistasTecnicas, activarVistas } from './vistas.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v10.39';
+const VERSION = 'v10.40';
 // v8.9 · crédito común de AVHUB (credito.js) y seta de aviso de fallos (fallo.js), los mismos en toda la familia
 if (window.AVCREDITO) window.AVCREDITO.alCambiar(() => { try { pintarCabecera(); } catch (e) {} });
 if (window.AVFALLO) { const bi = document.querySelector('#btn-idioma'); if (bi) { const bf = window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() }); bf.id = 'btn-fallo'; bi.before(bf);
@@ -193,7 +193,7 @@ function electronica(c) {
     out.proc = out.procesadores.find(x => x.key === e.sel) || out.procesadores[0] || null;
     out.need = Math.max(1, c.tot.salidas4k);
   } else if (c.tot) out.need = Math.max(1, c.tot.n);
-  // v10.39 · proyección: procesador con edge blending propio (PIXELHUE, sin mediaserver), mediaserver NovaStar (warping y blending) o nada
+  // v10.40 · proyección: procesador con edge blending propio (PIXELHUE, sin mediaserver), mediaserver NovaStar (warping y blending) o nada
   if (E.tecnologia !== 'led') {
     const eq = e.proyEq || 'media';
     if (eq === 'blend' && out.need) {
@@ -201,7 +201,7 @@ function electronica(c) {
       out.clase = px > 2560 * 1600 ? 'k4' : px > 1920 * 1080 ? 'wuxga' : 'fhd';
       out.blends = ELEC.calcularBlending(out.need, out.clase); out.blend = out.blends.find(x => x.id === e.selBlend) || out.blends[0] || null;
     } else if (eq === 'media' && out.need) {
-      out.medias = ELEC.calcularMediaservers({ totalPix: out.need * ELEC.ELEC_PX_4K }, { marca: 'novastar', dante: e.dante });
+      out.medias = ELEC.calcularMediaservers({ totalPix: out.need * ELEC.ELEC_PX_4K }, { marca: 'todos', dante: e.dante, soloMedia: true });
       out.media = out.medias.find(x => x.id === e.selMedia) || out.medias[0] || null;
     }
     return out;
@@ -229,13 +229,13 @@ const campo = (lab, html) => `<div class="campo"><label>${lab}</label>${html}</d
 // ---------- fichas de equipo (componente común comun/ficha.js) ----------
 // los textos del motor común de electrónica están en castellano: aquí se pasan a inglés o catalán
 const MOTOR = {
-  en: [[/edge blending de proyectores/g, 'projector edge blending'], [/con sus tarjetas/g, 'with its cards'], [/audio Dante/g, 'Dante audio'], [/conv\. por pantalla/g, 'conv. per screen'], [/Chasis \(mainframe\)/g, 'Chassis (mainframe)'], [/Tarjeta de salida/g, 'Output card'], [/Tarjeta salida/g, 'Output card'], [/Tarjeta de entrada/g, 'Input card'], [/Tarjeta entrada/g, 'Input card'], [/Tarjeta base/g, 'Base card'],
+  en: [[/solo PGM/g, 'PGM only'], [/en modo switcher/g, 'in switcher mode'], [/Mediaserver modular/g, 'Modular media server'], [/ranuras de entrada/g, 'input slots'], [/capas ilimitadas/g, 'unlimited layers'], [/corrección geométrica/g, 'geometric correction'], [/copia de HDMI/g, 'HDMI copy'], [/\(copia\)/g, '(copy)'], [/backup de equipo/g, 'unit backup'], [/alimentación/g, 'power'], [/edge blending de proyectores/g, 'projector edge blending'], [/con sus tarjetas/g, 'with its cards'], [/audio Dante/g, 'Dante audio'], [/conv\. por pantalla/g, 'conv. per screen'], [/Chasis \(mainframe\)/g, 'Chassis (mainframe)'], [/Tarjeta de salida/g, 'Output card'], [/Tarjeta salida/g, 'Output card'], [/Tarjeta de entrada/g, 'Input card'], [/Tarjeta entrada/g, 'Input card'], [/Tarjeta base/g, 'Base card'],
     [/de previo \/ monitorización \(recomendada\)/g, 'preview / monitoring (recommended)'], [/\(mínima del equipo\)/g, '(minimum for the unit)'], [/Conv\. fibra→10 RJ45 multimodo \(incluye sus módulos SFP\+\)/g, 'Fibre→10 RJ45 multimode converter (SFP+ modules included)'],
     [/Conv\. fibra→10 RJ45 \(pantalla\)/g, 'Fibre→10 RJ45 converter (screen)'], [/Módulo SFP\+ 10G multimodo \(puertos de la tarjeta de salida\)/g, '10G SFP+ multimode module (output card ports)'], [/serie MX/g, 'MX series'], [/multimodo/g, 'multimode'],
     [/no disponible en este chasis: verificar con el fabricante/g, 'not available for this chassis: check with the manufacturer'], [/líneas?/g, m => m === 'línea' ? 'line' : 'lines'], [/fibras?/g, m => m === 'fibra' ? 'fibre' : 'fibres'], [/\(de /g, '(of '], [/proyecto/g, 'project'],
     [/salidas?/g, m => m === 'salida' ? 'output' : 'outputs'], [/entradas?/g, m => m === 'entrada' ? 'input' : 'inputs'], [/capas?/g, m => m === 'capa' ? 'layer' : 'layers'], [/hasta/g, 'up to'], [/ o /g, ' or '], [/ y /g, ' and '], [/Como /g, 'Like '],
     [/sincronismo, cascada y backup entre equipos/g, 'sync, cascade and backup between units'], [/backup de equipo/g, 'unit backup'], [/ranura/g, 'slot'], [/con escalador/g, 'with scaler']],
-  ca: [[/edge blending de proyectores/g, 'edge blending de projectors'], [/con sus tarjetas/g, 'amb les seves targetes'], [/audio Dante/g, 'àudio Dante'], [/conv\. por pantalla/g, 'conv. per pantalla'], [/fibras/g, 'fibres'], [/Chasis \(mainframe\)/g, 'Xassís (mainframe)'], [/Tarjeta de salida/g, 'Targeta de sortida'], [/Tarjeta salida/g, 'Targeta sortida'], [/Tarjeta de entrada/g, "Targeta d'entrada"], [/Tarjeta entrada/g, 'Targeta entrada'], [/Tarjeta base/g, 'Targeta base'],
+  ca: [[/solo PGM/g, 'només PGM'], [/en modo switcher/g, 'en mode switcher'], [/Mediaserver modular/g, 'Mediaserver modular'], [/ranuras de entrada/g, 'ranures d’entrada'], [/capas ilimitadas/g, 'capes il·limitades'], [/corrección geométrica/g, 'correcció geomètrica'], [/copia de HDMI/g, 'còpia d’HDMI'], [/\(copia\)/g, '(còpia)'], [/backup de equipo/g, 'backup d’equip'], [/alimentación/g, 'alimentació'], [/edge blending de proyectores/g, 'edge blending de projectors'], [/con sus tarjetas/g, 'amb les seves targetes'], [/audio Dante/g, 'àudio Dante'], [/conv\. por pantalla/g, 'conv. per pantalla'], [/fibras/g, 'fibres'], [/Chasis \(mainframe\)/g, 'Xassís (mainframe)'], [/Tarjeta de salida/g, 'Targeta de sortida'], [/Tarjeta salida/g, 'Targeta sortida'], [/Tarjeta de entrada/g, "Targeta d'entrada"], [/Tarjeta entrada/g, 'Targeta entrada'], [/Tarjeta base/g, 'Targeta base'],
     [/de previo \/ monitorización \(recomendada\)/g, 'de previ / monitoratge (recomanada)'], [/\(mínima del equipo\)/g, "(mínima de l'equip)"], [/Conv\. fibra→10 RJ45 multimodo \(incluye sus módulos SFP\+\)/g, 'Conv. fibra→10 RJ45 multimode (inclou els mòduls SFP+)'],
     [/Conv\. fibra→10 RJ45 \(pantalla\)/g, 'Conv. fibra→10 RJ45 (pantalla)'], [/Módulo SFP\+ 10G multimodo \(puertos de la tarjeta de salida\)/g, 'Mòdul SFP+ 10G multimode (ports de la targeta de sortida)'], [/multimodo/g, 'multimode'],
     [/no disponible en este chasis: verificar con el fabricante/g, 'no disponible en aquest xassís: verificar amb el fabricant'], [/líneas?/g, m => m === 'línea' ? 'línia' : 'línies'], [/proyecto/g, 'projecte'],
@@ -266,13 +266,15 @@ function fichaProc(x) {
     specs: [[t('puertos'), trMotor(x.puertos)], [t('capacidad'), trMotor(x.capacidad)], [t('kEsc'), x.escalador ? t('si') : t('no')]],
     piezas: (x.equipos || []).map(q => ({ cant: q.cant, ref: q.ref, desc: trMotor(q.desc) })), enlace: x.url, enlaceTxt: t('fichaFab') });
 }
+// v10.40 · enlaces de cada equipo: página del fabricante, ficha técnica en PDF y, si la hay, la de Charmex
+const enlacesEq = (m) => [[m.pdf, t('fichaPdf')], m.urlFab && m.url ? [m.url, 'Charmex'] : null].filter(x => x && x[0]);
 function fichaBlend(m) {
   return fichaHTML({ cat: t('procBlend'), icono: 'elec', marca: m.marca, modelo: m.modelo, acento: '#ffb000',
-    specs: [[t('salProyK'), m.cap], [t('necesita'), m.need], [t('entradasK'), m.inp], [t('dante'), m.dante ? t('si') : t('no')]], notas: [trMotor(m.resumen), t('blendNota')], enlace: m.url, enlaceTxt: t('fichaFab') });
+    specs: [[t('salProyK'), m.cap], [t('necesita'), m.need], [t('entradasK'), m.inp], [t('dante'), m.dante ? t('si') : t('no')]], notas: [trMotor(m.resumen), t('blendNota')], enlace: m.urlFab || m.url, enlaceTxt: t('fichaFab'), enlaces: enlacesEq(m) });
 }
 function fichaMedia(m, need, led) {
-  return fichaHTML({ cat: t('mediaserver'), icono: 'media', marca: m.marca, modelo: m.modelo, foto: m.front, fotoTrasera: m.back, acento: '#ffb000',
-    specs: [[t('salidas4kK'), m.out4k], [t('necesita'), need], [t('dante'), m.dante ? t('si') : t('no')]], notas: [trMotor(m.resumen), led ? t('mediaNotaLed') : t('mediaNotaProy')], enlace: m.url, enlaceTxt: t('fichaFab') });
+  return fichaHTML({ cat: m.tipo === 'switcher' ? t('switcherCat') : t('mediaserver'), icono: 'media', marca: m.marca, modelo: m.modelo, foto: m.front, fotoTrasera: m.back, acento: '#ffb000',
+    specs: [[t('salidas4kK'), m.out4k], [t('necesita'), need], [t('dante'), m.dante ? t('si') : t('no')]], notas: [trMotor(m.resumen), led ? t('mediaNotaLed') : t('mediaNotaProy')], enlace: m.urlFab || m.url, enlaceTxt: t('fichaFab'), enlaces: enlacesEq(m) });
 }
 
 // v8.5 · consola de 3 zonas: dos columnas de menú que no se mueven («la pantalla» y «el equipo») y el centro, que se desplaza.
@@ -371,7 +373,7 @@ function partesProy(c) {
   const uso = (USOS_LUZ.find(u => u[1] === Number(p.lux)) || [''])[0];
   luz += campo(t('luzUso'), `<select class="sel" data-uso="1"><option value=""${uso ? '' : ' selected'}>${t('uso_personal')}</option>${USOS_LUZ.map(u => `<option value="${u[1]}"${u[0] === uso ? ' selected' : ''}>${t('uso_' + u[0])} · ${u[1]} lx</option>`).join('')}</select>`);
   luz += `<div class="fila c2">${campo(t('luzSala'), numIn('proy.lux', p.lux, 'lx', 10, 0, 5000))}${campo(t('ganancia'), numIn('proy.ganancia', p.ganancia, '×', 0.1, 0.1, 5))}</div>`;
-  // 6) avanzado: modo fuera de especificación (v10.39: en el bloque Material, junto al proyector; en «Ajuste del equipo» quedaba escondido) (imágenes más grandes que las garantizadas), con aviso, cálculo y recomendación
+  // 6) avanzado: modo fuera de especificación (v10.40: en el bloque Material, junto al proyector; en «Ajuste del equipo» quedaba escondido) (imágenes más grandes que las garantizadas), con aviso, cálculo y recomendación
   // v8.4 · fuera de especificación: el botón activo se resalta en ámbar (no es un ajuste normal)
   mat += `<div class="etq">${t('avanzado')}</div><div class="fila c1"><button type="button" class="tog ambar${p.oos ? ' on' : ''}" aria-pressed="${!!p.oos}" data-accion="proy-oos" title="${t('oosTit')}">⚠ ${t('oos')}</button></div>`;
   if (sel) {
@@ -442,7 +444,7 @@ function modElec(c) {
     if (c.tot) h += (x.procesadores || []).length ? campo(t('procesador'), `<select class="sel" data-sel="elec.sel">${x.procesadores.map(q => `<option value="${q.key}"${x.proc && q.key === x.proc.key ? ' selected' : ''}>${q.marca} ${q.modelo}</option>`).join('')}</select>`) : `<p class="aviso">${t('sinProc')}</p>`;
   }
   if (!led) {
-    // v10.39 · proyección: qué equipo reparte la imagen entre los proyectores
+    // v10.40 · proyección: qué equipo reparte la imagen entre los proyectores
     const eq = e.proyEq || 'media';
     const op = ([k, l, ti]) => tog(eq === k, `data-set="elec.proyEq" data-v="${k}" title="${ti}"`, l);
     h += `<div class="fila c2">${[['blend', t('eqBlend'), t('procBlend')], ['media', t('mediaserver'), t('mediaserver')]].map(op).join('')}</div><div class="fila c1">${op(['ninguno', t('mNinguno'), t('mNinguno')])}</div>`;
@@ -541,7 +543,7 @@ function materialLed(c) {
   L.push({ c: T.cab, ref: m.crm, url: m.urlProd || busca(m.crm), desc: t('matCab', { p: m.pitch, w: m.cabAncho, h: m.cabAlto }), g: 'pantalla' });
   L.push({ c: 1, ref: 'HDMI', desc: t('matFuentes'), g: 'video' });
   L.push({ c: 1, ref: 'FI-H100-030', url: busca('FI-H100-030'), desc: t('matCable', { a: me ? 'mediaserver' : t('matAElec') }) + t('matEstandar'), g: 'video' });
-  if (me) L.push({ c: backup && !me.backupNativo ? 2 : 1, ref: me.modelo, url: me.url || busca(me.modelo), desc: t('matMedia', { m: me.marca }) + (me.backupNativo ? t('matBkNat') : ''), g: 'video' });
+  if (me) L.push({ c: backup && !me.backupNativo ? 2 : 1, ref: me.modelo, url: me.url || busca(me.modelo), desc: t(me.tipo === 'switcher' ? 'matSwitch' : 'matMedia', { m: me.marca }) + (me.backupNativo ? t('matBkNat') : ''), g: 'video' });
   if (p) { const eq = (p.equipos || []).filter(q => q.cant > 0), tit = t('matElec', { m: p.marca, s: p.serie || '' }) + (p.escalador ? t('matEsc') : '');
     if (p.modular) { L.push({ c: '', ref: p.modelo, desc: tit + t('matPiezas'), g: 'elec', titulo: true }); eq.forEach(q => L.push({ c: q.cant, ref: q.ref, url: busca(q.ref), desc: trMotor(q.desc), g: 'elec', pieza: true })); }
     else { L.push({ c: 1, ref: p.modelo, url: p.url || busca(p.modelo), desc: tit, g: 'elec' }); eq.forEach(q => L.push({ c: q.cant, ref: q.ref, url: busca(q.ref), desc: trMotor(q.desc), g: 'elec' })); } }
@@ -957,7 +959,7 @@ function imprimir() {
   const hoy = new Date(), fecha = hoy.toLocaleDateString(idioma() === 'en' ? 'en-GB' : 'es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' · ' + hoy.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
   // v8.9 · la línea de crédito es la común de AVHUB (credito.js): el texto se edita en AVHUB ADMIN y es el mismo en todas las apps
   const cr = window.AVCREDITO ? window.AVCREDITO.plano('SCREENS', VERSION, idioma()) : null;
-  // v10.39 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito tal cual
+  // v10.40 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito tal cual
   const pie = cr ? cr[0].trim() : `SCREENS ${VERSION} ${hoy.getFullYear()} ${t('pie')}`, web = cr ? cr[1].trim() : 'by mediaservi.com';
   const cred = window.AVCREDITO ? window.AVCREDITO.html('SCREENS', VERSION, idioma(), { sinEnlaces: true }) : `${pie} <i class="ic ic-footer" aria-hidden="true"></i> ${web}`;
   let h = `<header class="im-cab"><img class="im-logo" src="assets/screens-logo-negro.svg" alt="SCREENS"><div class="im-url"><b>avhub.mediaservi.com</b><span>${fecha}</span></div><img class="im-avhub" src="assets/avhub-logo.svg" alt="AVHUB"></header>`;

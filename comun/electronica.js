@@ -71,29 +71,19 @@
     { id: 'ET4S',   marca: 'NOVASTAR', modelo: 'ET4S-G (A4)',   out4k: 4,  dante: false, backupNativo: false, resumen: '4 salidas 4K60 · 4 capas 4K o 1 capa 8K60 · hasta 12 capas + audio', url: null },
     { id: 'ET16S2', marca: 'NOVASTAR', modelo: 'ET16S-G (2A4)', out4k: 8,  dante: false, backupNativo: true,  resumen: '8 salidas 4K · 8 capas 4K · sincronismo, cascada y backup entre equipos', url: null },
     { id: 'ET16S3', marca: 'NOVASTAR', modelo: 'ET16S-G (3A4)', out4k: 12, dante: false, backupNativo: true,  resumen: '12 salidas 4K · 12 capas 4K · sincronismo, cascada y backup entre equipos', url: null },
-    { id: 'PHP10',  marca: 'PIXELHUE', modelo: 'P10',           out4k: 4,  dante: false, inp: 6, backupNativo: false, resumen: '6 entradas (4 DP/HDMI + 2 12G-SDI) · 8 salidas HDMI · switcher 4K60', url: null },
-    { id: 'PHP20',  marca: 'PIXELHUE', modelo: 'P20',           out4k: 4,  dante: false, inp: 12, backupNativo: false, resumen: '8 entradas + 4 SDI · 8 salidas HDMI 2.0 · 4 capas 4K60 · 8 salidas fibra 10G', url: null },
-    { id: 'PHP20D', marca: 'PIXELHUE', modelo: 'P20-DS',        out4k: 4,  dante: true,  inp: 12, backupNativo: false, resumen: 'Como P20 + salida 12G-SDI y audio Dante 32×32', url: null },
-    { id: 'PHP80',  marca: 'PIXELHUE', modelo: 'P80',           out4k: 4,  dante: false, inp: 12, backupNativo: false, resumen: '12 entradas 4K + ranura · 8 capas 4K + 4 PIP · 8 HDMI + 4 SDI + fibra 10G', url: null },
-    { id: 'PHQ8',   marca: 'PIXELHUE', modelo: 'Q8',            out4k: 16, dante: true,  inp: 48, backupNativo: true,  resumen: 'Hasta 48 entradas / 16 salidas 4K · 32 capas 4K · Dante 64×64 · backup de equipo y entradas', url: null }
+    /* v10.40 · PIXELHUE revisado con las fichas oficiales (ver PH_FUENTES). P10, P20, P20-DS, P80 y Q8 son switchers de presentación (tipo 'switcher'),
+       no mediaservers: en LED se ofrecen en el mismo hueco, con su categoría correcta; el mediaserver de PIXELHUE es el X400 (G1). */
+    { id: 'PHP10',  marca: 'PIXELHUE', modelo: 'P10',           tipo: 'switcher', out4k: 2,  dante: false, inp: 6,  backupNativo: false,  resumen: '6 entradas (4 DP 1.2/HDMI 2.0 + 2 12G-SDI) · 2 salidas HDMI 2.0 + 6 HDMI 1.3 (1080p) · 1 salida 4K en modo switcher, hasta 8K×2K solo PGM · 6 capas', url: 'https://charmex.net/pixelhue-procesador-p10--p10?lang=es', urlFab: 'https://pixelhue.com/index.php/Content/products_detail/catid/76/id/20.html', pdf: 'https://en-pixelhue001.oss-us-east-1.aliyuncs.com/Specifications/P%20Series%204K%20Presentation%20Switchers%20Datasheet-V1.6.0.pdf' },
+    { id: 'PHP20',  marca: 'PIXELHUE', modelo: 'P20',           tipo: 'switcher', out4k: 4,  dante: false, inp: 12, backupNativo: false,  resumen: '12 entradas (8 DP 1.2/HDMI 2.0 + 4 12G-SDI) · 8 salidas HDMI 2.0 + 8 fibra 10G (copia) · 2 salidas 4K en modo switcher, hasta 8K×4K solo PGM · 12 capas', url: 'https://pixelhue.com/index.php/Content/products_detail/catid/76/id/20.html', pdf: 'https://en-pixelhue001.oss-us-east-1.aliyuncs.com/Specifications/P%20Series%204K%20Presentation%20Switchers%20Datasheet-V1.6.0.pdf' },
+    { id: 'PHP20D', marca: 'PIXELHUE', modelo: 'P20-DS',        tipo: 'switcher', out4k: 4,  dante: true,  inp: 12, backupNativo: false,  resumen: 'Como P20 + 4 salidas 12G-SDI (copia de HDMI) y audio Dante 32×32', url: 'https://pixelhue.com/index.php/Content/products_detail/catid/76/id/20.html', pdf: 'https://en-pixelhue001.oss-us-east-1.aliyuncs.com/Specifications/P%20Series%204K%20Presentation%20Switchers%20Datasheet-V1.6.0.pdf' },
+    { id: 'PHP80',  marca: 'PIXELHUE', modelo: 'P80',           tipo: 'switcher', out4k: 4,  dante: true,  inp: 12, backupNativo: false, resumen: '12 entradas 4K (4 HDMI 2.0 + 4 HDMI 2.0/DP 1.2 + 4 12G-SDI) · 8 salidas HDMI 2.0 (4 × 4K o 8 DL) + 4 flex + 4 12G-SDI · 8 capas 4K + 4 PIP · Dante 64×64', url: 'https://pixelhue.com/index.php/Content/products_detail/catid/64/id/29.html' },
+    { id: 'PHQ8',   marca: 'PIXELHUE', modelo: 'Q8',            tipo: 'switcher', out4k: 16, dante: true,  inp: 48, backupNativo: true,  resumen: 'Modular: hasta 48 entradas y 16 salidas 4K con sus tarjetas · 32 capas 4K · Dante 64×64 · backup de equipo, entradas y alimentación', url: 'https://pixelhue.com/index.php/Content/products_detail/catid/63/id/24.html', pdf: 'https://en-pixelhue001.oss-us-east-1.aliyuncs.com/Specifications/Q8%20Seamless%20Switcher%20Specifications-V2.0.0.pdf' },
+    { id: 'PHX400', marca: 'PIXELHUE', modelo: 'X400 (G1)',     tipo: 'media',    out4k: 4,  dante: false, inp: 8,  backupNativo: false,  resumen: 'Mediaserver modular: hasta 4 salidas 4K o 16 2K con sus tarjetas · 2 ranuras de entrada (4 HDMI 2.0 o 4 12G-SDI) + NDI · capas ilimitadas · corrección geométrica y edge blending · backup de equipo', url: 'https://pixelhue.com/index.php/Content/products_detail/catid/75/id/30.html', pdf: 'https://oss.pixelhue.com/Specifications/X400%20(G1)%20Professional%20Media%20Server%20Datasheet%20V1.0.pdf' }
   ];
-
-  /* v10.39 · procesadores con edge blending de proyectores por hardware (para varios proyectores sin mediaserver): no reproducen
-     contenido, les llega por sus entradas desde un PC o un reproductor. Salidas que pueden alimentar proyectores según su resolución
-     (fichas PIXELHUE, datasheet P20 / P20-DS / P10 V1.7.1 y comparativas P80 y Q8): fhd = hasta 1920×1080, wuxga = hasta 2560×1600, k4 = 4K.
-     P10: 2 HDMI 2.0 + 6 HDMI 1.3 (1080p) · P20: 8 HDMI 2.0, en PGM hasta 8K×4K · P80: 8 HDMI 2.0, 4×4K o 8 DL · Q8: hasta 16 salidas 4K con sus tarjetas. */
-  const ELEC_BLEND = [
-    { id: 'PHP10',  marca: 'PIXELHUE', modelo: 'P10',    fhd: 8,  wuxga: 2,  k4: 2,  inp: 6,  dante: false, resumen: '6 entradas · 2 salidas HDMI 2.0 + 6 HDMI 1.3 (1080p) · edge blending de proyectores', url: null },
-    { id: 'PHP20',  marca: 'PIXELHUE', modelo: 'P20',    fhd: 8,  wuxga: 8,  k4: 4,  inp: 12, dante: false, resumen: '12 entradas · 8 salidas HDMI 2.0 (4K60) · hasta 8K×4K · edge blending de proyectores', url: null },
-    { id: 'PHP20D', marca: 'PIXELHUE', modelo: 'P20-DS', fhd: 8,  wuxga: 8,  k4: 4,  inp: 12, dante: true,  resumen: 'Como P20 + salidas 12G-SDI y audio Dante 32×32 · edge blending de proyectores', url: null },
-    { id: 'PHP80',  marca: 'PIXELHUE', modelo: 'P80',    fhd: 8,  wuxga: 8,  k4: 4,  inp: 12, dante: false, resumen: '12 entradas 4K · 8 salidas HDMI 2.0 (4 × 4K o 8 DL) + 4 flex · edge blending de proyectores', url: null },
-    { id: 'PHQ8',   marca: 'PIXELHUE', modelo: 'Q8',     fhd: 16, wuxga: 16, k4: 16, inp: 48, dante: true,  resumen: 'Modular: hasta 48 entradas y 16 salidas 4K con sus tarjetas · edge blending de proyectores', url: null }
-  ];
-  /* calcularBlending(n, clase): los procesadores que llegan a n proyectores de esa clase de resolución ('fhd' | 'wuxga' | 'k4'), de menos a más salidas */
-  const calcularBlending = (n, clase) => {
-    const k = clase === 'k4' || clase === 'wuxga' ? clase : 'fhd', need = Math.max(1, n || 0);
-    return ELEC_BLEND.filter((m) => m[k] >= need).sort((a, b) => a[k] - b[k]).map((m) => ({ ...m, need, cap: m[k], clase: k }));
-  };
+  /* Fuentes oficiales de PIXELHUE (comprobadas el 13-11-2026):
+     P10 / P20 / P20-DS: https://pixelhue.com/index.php/Content/products_detail/catid/76/id/20.html y su ficha «P Series 4K Presentation Switchers Datasheet» (V1.6.0; V1.7.1 en distribuidores)
+     P80: https://pixelhue.com/index.php/Content/products_detail/catid/64/id/29.html · Q8: https://pixelhue.com/index.php/Content/products_detail/catid/63/id/24.html (ficha V2.0.0)
+     X400 (G1): https://pixelhue.com/index.php/Content/products_detail/catid/75/id/30.html (ficha V1.0) · Charmex P10: https://charmex.net/pixelhue-procesador-p10--p10?lang=es */
 
   const elecNorm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const elecMpx = (n) => (n / 1000000).toFixed(1).replace('.0', '');
@@ -222,7 +212,24 @@
     return hItem ? res.slice(0, 3).concat([hItem]) : res.slice(0, 4);
   };
 
-  // Mediaservers adecuados (marca: todos|novastar|pixelhue; dante: exige audio Dante)
+  /* v10.39 · procesadores con edge blending de proyectores por hardware (para varios proyectores sin mediaserver): no reproducen
+     contenido, les llega por sus entradas desde un PC o un reproductor. Salidas que pueden alimentar proyectores según su resolución
+     (fichas PIXELHUE, datasheet P20 / P20-DS / P10 V1.7.1 y comparativas P80 y Q8): fhd = hasta 1920×1080, wuxga = hasta 2560×1600, k4 = 4K.
+     P10: 2 HDMI 2.0 + 6 HDMI 1.3 (1080p) · P20: 8 HDMI 2.0, en PGM hasta 8K×4K · P80: 8 HDMI 2.0, 4×4K o 8 DL · Q8: hasta 16 salidas 4K con sus tarjetas. */
+  const ELEC_BLEND = [
+    { id: 'PHP10',  marca: 'PIXELHUE', modelo: 'P10',    fhd: 8,  wuxga: 2,  k4: 2,  inp: 6,  dante: false, resumen: '6 entradas · 2 salidas HDMI 2.0 + 6 HDMI 1.3 (1080p) · hasta 8K×2K solo PGM · edge blending de proyectores' },
+    { id: 'PHP20',  marca: 'PIXELHUE', modelo: 'P20',    fhd: 8,  wuxga: 8,  k4: 4,  inp: 12, dante: false, resumen: '12 entradas · 8 salidas HDMI 2.0 · hasta 8K×4K solo PGM · edge blending de proyectores' },
+    { id: 'PHP20D', marca: 'PIXELHUE', modelo: 'P20-DS', fhd: 8,  wuxga: 8,  k4: 4,  inp: 12, dante: true,  resumen: 'Como P20 + 4 salidas 12G-SDI y audio Dante 32×32 · edge blending de proyectores' },
+    { id: 'PHP80',  marca: 'PIXELHUE', modelo: 'P80',    fhd: 8,  wuxga: 8,  k4: 4,  inp: 12, dante: true,  resumen: '12 entradas 4K · 8 salidas HDMI 2.0 (4 × 4K o 8 DL) + 4 flex · Dante 64×64 · edge blending de proyectores' },
+    { id: 'PHQ8',   marca: 'PIXELHUE', modelo: 'Q8',     fhd: 16, wuxga: 16, k4: 16, inp: 48, dante: true,  resumen: 'Modular: hasta 48 entradas y 16 salidas 4K con sus tarjetas · Dante 64×64 · edge blending de proyectores' }
+  ].map((m) => { const s = ELEC_MEDIASERVERS.find((x) => x.id === m.id) || {}; return { ...m, url: s.url || null, urlFab: s.urlFab || null, pdf: s.pdf || null }; });
+  /* calcularBlending(n, clase): los procesadores que llegan a n proyectores de esa clase de resolución ('fhd' | 'wuxga' | 'k4'), de menos a más salidas */
+  const calcularBlending = (n, clase) => {
+    const k = clase === 'k4' || clase === 'wuxga' ? clase : 'fhd', need = Math.max(1, n || 0);
+    return ELEC_BLEND.filter((m) => m[k] >= need).sort((a, b) => a[k] - b[k]).map((m) => ({ ...m, need, cap: m[k], clase: k }));
+  };
+
+  // Mediaservers adecuados (marca: todos|novastar|pixelhue; dante: exige audio Dante; soloMedia: sin los switchers de presentación)
   const calcularMediaservers = (stats, o) => {
     if (!stats) return [];
     /* v9.7 · salidas 4K por rejilla (ancho y alto del lienzo entre 3840 × 2160), como la consola: una tira de 6144 px de ancho no cabe en una sola salida aunque tenga pocos píxeles */
@@ -230,7 +237,7 @@
     const lista = ELEC_MEDIASERVERS.filter(m =>
       m.out4k >= need && (!o.entradas || m.inp == null || m.inp >= o.entradas) &&
       (o.marca === 'todos' || m.marca.toLowerCase() === o.marca) &&
-      (!o.dante || m.dante)
+      (!o.dante || m.dante) && (!o.soloMedia || m.tipo !== 'switcher')
     );
     const out = [];
     ['NOVASTAR', 'PIXELHUE'].forEach(marca => {
