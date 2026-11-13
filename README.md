@@ -4,7 +4,7 @@
 
 Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Todo funciona en **una sola pantalla fija**, sin desplazar la página en ordenador ni en TV: cabecera, franja de modo y petición, bloques de mandos, dos vistas grandes, una fila de cifras y pie. En el móvil, las mismas piezas se apilan y se recorren por dentro.
 
-**Versión actual: v10.34** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
+**Versión actual: v10.35** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
 
 - **Una pantalla LED** → la portada (`index.html` + `vista/una-led.js`).
 - **Varias pantallas, sala inmersiva y proyección** → la consola (`vista/consola.html?modo=varias-led | varias-proy | una-proy`, con el cálculo de `screens/app.js`), con el mismo formato.
@@ -68,7 +68,11 @@ Bloques en burbuja sobre gris (tema gris oscuro o gris claro), cabecera oscura c
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.34)
+## Cambios de la versión actual (v10.35)
+
+- **Pantallas de exterior: sensor de luz siempre en la lista de material.** Con una pantalla LED de exterior, la lista de material (en pantalla y en el PDF) lleva siempre **1 × NS060 · sensor de luz 5 m para pantalla LED**, que ajusta solo el brillo a la luz ambiente y se conecta a la electrónica (con enlace a la búsqueda en Charmex).
+
+## Cambios de la v10.34
 
 - **Entorno y uso también en varias pantallas LED**, con los mismos botones e iconos que la portada: Interior, Exterior, Escaparate, Transparente, Fija, Alquiler, Sol directo / Sol indirecto (fuera de interior), Marino / tropical, Alcance público y Nits mín. (− / +). Sirve para varias pantallas sueltas (por ejemplo, el hall de un hotel) y para salas inmersivas.
 - **Sala inmersiva: siempre LED al alcance del público.** El público llega a las paredes, así que «Alcance público» va siempre activo (fijo) y se proponen solo los LED protegidos contra golpes y contacto (UfixAvant HOB y UfixCOB). En pantallas sueltas se activa con su botón. Si en el entorno elegido no hay modelos que cumplan, se muestran los normales con un aviso.
