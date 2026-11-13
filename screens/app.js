@@ -9,7 +9,7 @@ import { interpretar } from './peticion.js';
 import { vistasTecnicas, activarVistas } from './vistas.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v10.28';
+const VERSION = 'v10.29';
 // v8.9 · crédito común de AVHUB (credito.js) y seta de aviso de fallos (fallo.js), los mismos en toda la familia
 if (window.AVCREDITO) window.AVCREDITO.alCambiar(() => { try { pintarCabecera(); } catch (e) {} });
 if (window.AVFALLO) { const bi = document.querySelector('#btn-idioma'); if (bi) { const bf = window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() }); bf.id = 'btn-fallo'; bi.before(bf);
@@ -657,14 +657,8 @@ function actualizar(sinEscena) {
   pintarConsola();
   document.body.classList.toggle('con-led', led1);
   $('#btn-info').hidden = !led1;
-  // una pantalla LED: el cálculo completo de una pantalla (la app de la raíz), dentro de la misma consola
-  if (led1) {
-    if (!$('#sc-led')) { soltarEscena(); calculo = null; ledListo = false; colaLed = [];
-      app.innerHTML = `<div class="embebido"><p class="emb-carga">${t('cargandoLed')}</p><iframe id="sc-led" src="led.html?embed=1&lang=${idioma()}" title="SCREENS · ${t('una')} LED"></iframe></div>`;
-      // se muestra cuando avisa de que está listo (o, por si acaso, 4 s después de cargar)
-      const f = $('#sc-led'); f.addEventListener('load', () => setTimeout(() => f.classList.add('listo'), 4000), { once: true }); }
-    return;
-  }
+  // v10.29 · una pantalla LED es la portada (index.html, mismo formato): la consola lleva allí. La versión clásica (led.html) se ha retirado
+  if (led1) { location.replace('./'); return; }
   if ($('#sc-led')) app.innerHTML = '';
   if (!$('#panelA')) { soltarEscena(); app.innerHTML = vistaTrabajo(); crearEscena(); }
   calculo = calcular();

@@ -1,13 +1,14 @@
 <!doctype html>
 <!--
   SCREENS · portada: cálculo de una pantalla LED en una sola pantalla (módulos en vista/). «Varias» y «Proyección» abren la consola
-  (vista/consola.html). La consola clásica sigue en clasica.html: se abre con ?clasica, con ?led o con cualquier enlace antiguo que traiga datos.
+  (vista/consola.html), con el mismo formato. v10.29 · la versión clásica se ha retirado: ?modo=… lleva a la consola y cualquier otro
+  parámetro de los enlaces antiguos (?led, ?clasica, datos) se quita y se queda en la portada.
   Licencia GPL-3.0 · mediaservi.com
 -->
 <html lang="es" data-tema="oscuro">
 <head>
 <meta charset="utf-8">
-<script>(function(){try{var q=new URLSearchParams(location.search),k=[];q.forEach(function(v,n){if(n!=='lang')k.push(n);});if(k.length)location.replace('clasica.html'+location.search+location.hash);}catch(e){}})();</script>
+<script>(function(){try{var q=new URLSearchParams(location.search),m=q.get('modo');if(m){location.replace('vista/consola.html?modo='+encodeURIComponent(m)+location.hash);return;}var k=[];q.forEach(function(v,n){if(n!=='lang')k.push(n);});if(k.length){var l=q.get('lang');history.replaceState(null,'',location.pathname+(l?'?lang='+encodeURIComponent(l):'')+location.hash);}}catch(e){}})();</script>
 <base href="vista/">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SCREENS</title>
@@ -17,16 +18,16 @@
 <link rel="apple-touch-icon" href="../assets/screens-icono-180.png">
 <link rel="manifest" href="../manifest.json">
 <link rel="stylesheet" href="../comun/ficha.css">
-<link rel="stylesheet" href="iconos.css?v=10.28">
-<link rel="stylesheet" href="blocks.css?v=10.28">
+<link rel="stylesheet" href="iconos.css?v=10.29">
+<link rel="stylesheet" href="blocks.css?v=10.29">
 </head>
 <body>
 <div id="app"></div>
 <noscript>SCREENS necesita JavaScript.</noscript>
-<script src="../credito.js?v=10.28"></script>
-<script src="../fallo.js?v=10.28"></script>
-<script src="../instalar.js?v=10.28"></script>
-<script src="../pdf.js?v=10.28"></script>
-<script type="module" src="una-led.js?v=10.28"></script>
+<script src="../credito.js?v=10.29"></script>
+<script src="../fallo.js?v=10.29"></script>
+<script src="../instalar.js?v=10.29"></script>
+<script src="../pdf.js?v=10.29"></script>
+<script type="module" src="una-led.js?v=10.29"></script>
 </body>
 </html>

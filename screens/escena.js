@@ -23,7 +23,10 @@ export class Escena {
     r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
     RectAreaLightUniformsLib.init();
     const esc = this.scene = new THREE.Scene();
-    esc.background = new THREE.Color(0x0d0d0f);
+    // v10.29 · con el tema gris claro de SCREENS el fondo de la simulación también es claro (y cambia al momento si se cambia el tema)
+    esc.background = new THREE.Color(fondoTema());
+    this._mo = new MutationObserver(() => { const c = fondoTema(), b = this.scene.background; if (b && b.isColor && b.getHex() !== c) { b.setHex(c); this.render(); } });
+    this._mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-tema'] });
     const pm = new THREE.PMREMGenerator(r);
     esc.environment = pm.fromScene(new RoomEnvironment(r), 0.04).texture;
     esc.environmentIntensity = 0.18;
@@ -57,6 +60,7 @@ export class Escena {
   destruir() {
     this._animando = false; this._vivos = [];
     try { this._ro.disconnect(); } catch (e) {}
+    try { this._mo.disconnect(); } catch (e) {}
     try { this.ctrl.dispose(); } catch (e) {}
     try { this._limpiar(); } catch (e) {}
     try { this.renderer.dispose(); this.renderer.forceContextLoss(); } catch (e) {}
@@ -540,5 +544,6 @@ export class Escena {
   }
 }
 
+function fondoTema() { const h = document.documentElement; return h.getAttribute('data-tema') === 'claro' && h.classList.contains('piel') ? 0xc9ccd2 : 0x0d0d0f; }
 function mMetal() { return new THREE.MeshStandardMaterial({ color: 0x1b1b1e, roughness: 0.55, metalness: 0.65 }); }
 export const fmt = (v, d = 2) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: d });

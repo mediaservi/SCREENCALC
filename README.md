@@ -2,97 +2,81 @@
 
 # SCREENS
 
-Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Se entra directamente a la **consola de SCREENS**, un cuadro de mandos fijo:
+Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Todo funciona en **una sola pantalla fija**, sin desplazar la página en ordenador ni en TV: cabecera, franja de modo y petición, bloques de mandos, dos vistas grandes, una fila de cifras y pie. En el móvil, las mismas piezas se apilan y se recorren por dentro.
 
-- **Arriba, siempre a mano:** el modo (**una o varias** superficies · **LED o proyección**) y la **petición en lenguaje natural** por texto, voz o audio, que sirve para todas las combinaciones.
-- **Debajo, la zona de trabajo,** que se adapta a la combinación elegida:
-  - **una pantalla LED** → el cálculo de una pantalla (`led.html`, descrito en este README), dentro de la misma consola;
-  - **una pantalla de proyección, varias pantallas o salas inmersivas** → `screens/`, con simulación 3D renderizada.
+**Versión actual: v10.29** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
 
-Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREENS es uno de los apartados de AVHUB, cada uno con su subdominio definitivo: screens.mediaservi.com (con SYSTEMS, antes HARDWARE, en systems.mediaservi.com), news, vjshow y msgame; avhub.mediaservi.com es la máquina que los reúne. Sin redirecciones: la consola es la propia página de inicio (`index.html`).
+- **Una pantalla LED** → la portada (`index.html` + `vista/una-led.js`).
+- **Varias pantallas, sala inmersiva y proyección** → la consola (`vista/consola.html?modo=varias-led | varias-proy | una-proy`, con el cálculo de `screens/app.js`), con el mismo formato.
 
-## Una pantalla LED
+Desde la v10.29 **no hay versión clásica**: `led.html` y `clasica.html` solo llevan los enlaces antiguos a la portada, y cualquier parámetro antiguo (`?led`, `?clasica`, datos) se quita al entrar.
 
-Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
-
-**Versión actual: v10.28** (estética AVHUB · consola fija de SCREENS)
-
-Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
+SCREENS es uno de los apartados de AVHUB, cada uno con su subdominio: screens, systems, adposter, vjshow y msgame (`*.mediaservi.com`); avhub.mediaservi.com los reúne.
 
 ## Para qué sirve
 
-Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que se lea bien a 4 m"* a una propuesta técnica verificable: modelo de cabinet, número de cabinets, resolución, peso, consumo, líneas de señal, electrónica y mediaserver recomendados, todo exportable a PDF en una hoja A4.
+Para pasar de una petición como *"pantalla led para exterior de 6x2 metros que se lea bien a 4 m"* a una propuesta técnica verificable: modelo de cabinet o proyector, número de equipos, resolución, peso, consumo, líneas de señal y eléctricas, electrónica y mediaserver, esquema de conexión, lista de material y PDF.
 
 ## Funciones
 
-- **Petición en lenguaje natural:** se escribe, se dicta o se sube un audio en la barra de la consola y la app propone una pantalla. Abre un solo popup «Datos del proyecto» con todos los datos en botones: lo que viene en el texto sale marcado con ✓, lo que falta lleva un valor por defecto que se cambia con un toque, y un único botón CALCULAR. Solo es obligatoria la medida (en metros), salvo si se pide una resolución. Entiende números dictados en palabras. El dictado no se corta con las pausas: sigue escuchando hasta que se pulsa otra vez el micrófono (o tras 10 s sin oír nada). Se interpreta con reglas locales, sin servicios externos de IA.
-- **Preguntas de proyecto llave en mano:** uso (interior, exterior, escaparate), instalación o alquiler, distancia del público, ¿cerca del mar o mucha humedad? (variante tropicalizada con contactos de oro), electrónica sí/no (con o sin backup, con o sin escalador, conexión RJ45 o rack con fibra), mediaserver (marca, Dante), número, tipo y resolución de las fuentes de vídeo y distancia de las fuentes.
-- **Panel de entrada manual:** INSTALL / RENTAL, INDOOR / OUTDOOR / ESCAPARATE, pitch y nits (valores de la tabla con flechas ▲▼), COLUMNAS y FILAS, ancho y alto con selector de unidad m / cm / mm (por defecto cm; el PDF sigue la unidad elegida), resolución mínima (HD / FHD / UHD 4K) y altura sobre el suelo. Muestra en vivo medidas, cabinets y resolución.
-- **Modo resumen:** si la petición se hizo en texto, el panel solo muestra lo elegido. Con "Editar a mano" se vuelve al panel completo. En móvil, el botón flotante ⚙ PANEL vuelve al panel desde los resultados.
-- **Resultados:** características de la pantalla en tarjetas (dimensiones, resolución con niveles HD / FHD / 4K / 8K, distancia de visión mínima y óptima, cabinets, instalación, señal y alimentación), en hasta 3 columnas en PC y apiladas en móvil.
-- **Simulación a escala:** figura humana, cotas, cuadros de resolución y resumen, con layout dinámico que aprovecha el espacio sin desbordes en PC y móvil. El vídeo por defecto es https://youtu.be/vKN4AcGz7zs.
-- **Electrónica de control:** motor propio basado en especificaciones del fabricante (NovaStar MCTRL, VX Pro, NovaPro, COEX MX y H Series, con tarjetas de salida y de entrada). Admite con o sin backup y conexión directa por RJ45 o rack con fibra y convertidores CVT10 Pro.
-- **Mediaserver:** NovaStar (ET) y PixelHue, con filtro por marca, audio Dante y número de entradas, y un resumen de características en cada opción.
-- **Elección manual de equipos:** clic en una burbuja de electrónica o de mediaserver para elegirla; otro clic la quita.
-- **Esquema de conexiones y material (llave en mano):** diagrama con símbolos AV y colores por señal (vídeo, Ethernet, fibra, alimentación, control, backup) y listado de material, que incluye el cable HDMI PureLink FlexInstall más adecuado a la distancia de las fuentes. Se muestra en resultados y es la página 2 de ambos PDF.
-- **Enlaces y fotos de producto:** icono de enlace (a la ficha o a la búsqueda de Charmex por modelo) y la foto real del frontal de cada equipo (electrónica, mediaserver, cabinet y proyector), también en el PDF. Las fotos las busca el propio motor en la sincronización de cada noche y llegan con el catálogo; si un equipo aún no tiene foto, sale un dibujo de su tipo. Al pulsar una foto se abre el visor: la trasera, otras vistas y el frontal en grande, con paginación (flechas, puntos, teclado o deslizando el dedo) y botón de cerrar.
-- **Contenido de la pantalla (🖼):** el icono de imagen abre un popup centrado con FUENTES MULTIMEDIA DE PRUEBA (la primera es fija y va preseleccionada; las otras 5 son editables y se guardan en el navegador), URL propia (YouTube normal, /live/, /shorts/, listas, Vimeo, imagen o vídeo) y subida de archivo.
-- **Esquemas de cableado:** propuesta de cableado de señal y eléctrico.
-- **PDF:** un único PDF de 2 páginas desde el icono de la cabecera, en claro sobre papel blanco y con los mismos bloques que la pantalla (tarjetas con filete de color, icono y título; datos en Share Tech Mono y textos en Inter). Sigue la misma línea de diseño que el PDF de la consola: cabecera en una fila (logo de SCREENS, avhub.mediaservi.com con la fecha debajo y logo de AVHUB), línea de cabecera en violeta suave con la descripción de la pantalla, y en todas las hojas el aviso y el eslogan abajo al centro con el número de hoja abajo a la derecha. La simulación, los displays, el esquema y los cableados salen con menos densidad de tinta. Página 1: título, características de la pantalla en tarjetas, observaciones, características del cabinet en fichas y simulación ajustada al hueco de la hoja. Página 2: electrónica y mediaserver elegidos para el proyecto (en una fila, con la foto de su frontal), esquema de conexiones con su material, propuestas de cableado de señal y eléctrico, y el aviso de cálculo por IA. Si no cabe, el esquema se reduce para mantener las 2 páginas. Los anuncios no salen en el PDF.
-- **Información (ⓘ):** el icono de la cabecera (con una pantalla LED) ofrece 2 opciones: **INFORMACIÓN** (este README en una ventana al 80 % que se puede desplazar y cerrar) y **DESCARGAR APP** (uso sin conexión).
-- **Logo:** sin enlace; al pulsarlo se reinicia la app para un nuevo cálculo (igual que RESET).
-- **Ficha de equipo común:** cabinets, proyectores, electrónicas y mediaservers se muestran con la misma ficha en el cálculo de una pantalla y en el de varias (`comun/ficha.js` y `comun/ficha.css`): foto del fabricante, marca y modelo, especificaciones clave, piezas de los equipos montados por módulos, stock y enlace a la ficha. El motor de electrónica también es común (`comun/electronica.js`).
-- **Consola de SCREENS:** la web abre directamente el cuadro de mandos, sin página de selector. El modo se cambia con un toque en la barra de la consola; el botón NUEVO CÁLCULO (casa) y el logo vuelven a los valores por defecto sin salir del modo. El idioma, el PDF y la petición son los mismos para todas las combinaciones. La raíz sin parámetros abre la consola; `?led` abre el cálculo de una pantalla LED solo.
-- **Tres zonas en todos los modos (v8.5):** dos columnas de menú fijas —«La pantalla» (Tipo, Tamaño, Luz y Entorno, con CALCULAR al pie) y «El equipo» (Material, Ajuste del equipo y Electrónica, con lo elegido y su FICHA al pie)— y el centro desplazable con la vista, las cifras y el detalle. Los mismos bloques están en el mismo sitio en LED y en proyección, con una o varias pantallas; si falta altura se pliegan solos y en el móvil se apilan.
-- **PDF de la consola** (una pantalla de proyección, varias pantallas y salas inmersivas): en claro sobre papel blanco. Cabecera en una fila con tres piezas del mismo alto (logo de SCREENS a la izquierda, avhub.mediaservi.com con la fecha debajo al centro y logo de AVHUB a la derecha) y, debajo, una línea en violeta suave con el tipo de proyecto y sus datos. Siguen la captura 3D (con menos densidad de tinta, para que no quede oscura), los resultados, la electrónica y los equipos, cada uno con su foto. En todas las hojas, el aviso y el eslogan van abajo al centro y el número de hoja (1/2) abajo a la derecha. Todos los PDF de SCREENS siguen esta misma línea de diseño.
-- **Folleto del modelo:** desde la tarjeta del cabinet se abre en una pestaña nueva la ficha del modelo en la web del fabricante, buscada por su referencia.
-- **Administrador:** acceso solo para el propietario con su cuenta de Google (la comprobación se hace en el servidor). Desde ahí se mantiene el catálogo y la documentación interna. La app no lleva publicidad ni anuncios de ningún tipo.
-- **AVHUB ADMIN (`admin/anuncios.html`):** panel interno con 4 pestañas (la cuarta, **CATÁLOGO**, prepara el catálogo maestro de modelos y el informe de incoherencias de la web para marketing): **ANUNCIOS** (gestor visual con arrastrar y soltar y previo), **FIRMAS** (firmas de correo visuales con banners estáticos, animados en GIF o en mosaico y contador de clics, listas para pegar en Gmail, Outlook o Apple Mail) y **NEWSLETTER** (editor por bloques con vista escritorio y móvil, exportación HTML y envío desde el panel).
-- **Página de configuradores (`configuradores/`):** compara SCREENS y el configurador oficial de TRAULUX y lleva a cada uno (es / en / ca).
-- **Adaptada a PC y móvil:** el panel lateral de entrada va en 2 columnas sin scroll en PC y se ve en grande en móvil.
+**Comunes a todas las vistas**
+- **Cabecera:** logo (nuevo cálculo), familia AVHUB y botones redondos: información, datos del proyecto, PDF, nuevo cálculo, idioma (castellano, inglés y catalán) y tema (gris oscuro / gris claro, el mismo en todas las vistas).
+- **Modo y petición:** Una / Varias · LED / Proyección; la petición se escribe, se pega, se dicta o se pasa desde una nota de voz, y se calcula con CALCULAR. Se interpreta con reglas locales, sin servicios externos de IA.
+- **Datos del proyecto:** nombre, cliente y observaciones (en una pantalla LED, también las fuentes de vídeo: número, tipo, resolución y distancia). Salen en el PDF.
+- **PDF con vista previa:** primero se ve en una ventana al 80 % con pantalla completa, imprimir, guardar y cerrar.
+- **Pie:** el aviso de cálculo automático, los créditos de AVHUB y los botones de instalar la app (uso sin conexión) y de avisar de un fallo.
 
-- **AVHUB:** el logo de AVHUB en la cabecera (entre el logo de SCREENS y los iconos) lleva a https://avhub.mediaservi.com/. AVHUB es la nueva app en preparación que reunirá en un solo sitio SCREENS, el hardware de proyectos AV, novedades y VJSHOW, con el mismo idioma en todas las secciones.
+**Una pantalla LED (portada)**
+- **Bloques:** entorno y uso, dimensiones, resolución, cabinet (con su ficha y foto), cabinets, electrónica, mediaserver, instalación, señal (con o sin backup, RJ45 o fibra, cosido) y alimentación.
+- **Simulación a escala:** la pantalla en su pared, con figura humana, cotas, fondos y contenido de prueba (fuentes multimedia, enlace propio o archivo).
+- **Cableado:** señal, eléctrico, distancia de visionado y esquema de conexión. Con backup, cada puerto lleva un segundo cable por el último cabinet de su cadena. La **manguera** se dibuja como un solo tubo hasta la salida elegida con las flechas ← ↑ ↓ → (4 esquinas y 4 centros de lateral), con el número de cables.
+- **Lista de material** completa (cabinets, fuentes, cable HDMI PureLink según la distancia, mediaserver, electrónica, fibra, Cat6, distribución eléctrica, PC de control).
+- **PDF de dos hojas:** resumen con simulación y datos; esquema, cableados y material.
+
+**Varias pantallas, sala inmersiva y proyección (consola)**
+- **Mandos** en las dos primeras columnas: tipo, tamaño, luz y superficie, entorno (puertas y obstáculos), material, ajuste del equipo y electrónica o mediaserver; cada bloque con su RESTABLECER. Si no caben, los que no se usan se pliegan con su resumen.
+- **Simulación a escala en 3D** (three.js): exterior, dentro y planta; carta de ajuste, panorámica, ascensor, contenido propio; rótulos y safety zone; se puede ver en grande.
+- **Resultados:** tabla por superficie, vistas técnicas de proyección (lateral, frontal y cenital, con el proyector arrastrable), posición, sombras, electrónica y equipo elegido; y las **seis cifras clave** en su fila.
+- **PDF** con la captura 3D, los resultados, la electrónica y los equipos.
+
+**Fichas y motor común:** cabinets, proyectores, electrónicas y mediaservers se muestran con la misma ficha (`comun/ficha.js`, `comun/ficha.css`); el motor de electrónica es común (`comun/electronica.js`: NovaStar MCTRL, VX Pro, NovaPro, COEX MX y H Series, con tarjetas de salida y de entrada, backup, escalador y fibra con CVT10 Pro).
+
+**Otras páginas:** `admin/anuncios.html` (AVHUB ADMIN: firmas, newsletter y catálogo) y `configuradores/` (compara SCREENS con el configurador oficial de TRAULUX).
 
 ## Datos
 
-La app obtiene el catálogo en vivo y lo guarda cifrado en el dispositivo; no se expone como tabla ni se puede exportar. Nunca usa datos de muestra: sin conexión y sin copia guardada, avisa de que no se ha podido cargar el catálogo. El catálogo de electrónica y mediaservers está en `comun/electronica.js` (constantes `ELEC_DEVICES` y `ELEC_MEDIASERVERS`), común a SCREENS y SCREENS.
+La app obtiene el catálogo en vivo de la hoja de Google Sheets y lo guarda cifrado en el dispositivo; no se expone como tabla ni se puede exportar. Nunca usa datos de muestra: sin conexión y sin copia guardada, avisa de que no se ha podido cargar el catálogo.
 
 ## Tecnología y despliegue
 
-Consola (`index.html` + módulos de `screens/`, JavaScript sin compilación y three.js r160). Cálculo de una pantalla LED: archivo único `led.html` con React 18, Babel Standalone 7.29.0 y Tailwind. No necesita compilación. Los recursos gráficos están en `assets/` y se referencian con rutas relativas, por lo que funciona igual en Netlify y en GitHub Pages.
+JavaScript sin compilación: módulos en `vista/` (portada y consola), `screens/` (cálculo de la consola, three.js r160 en `assets/lib/three/`) y `comun/`; PDF con html2canvas-pro y jsPDF (`pdf.js`, `assets/lib/pdf/`). Fuentes Inter y Share Tech Mono incluidas. Rutas relativas: funciona igual en GitHub Pages y en Netlify. `sw.js` guarda una copia para usarla sin conexión.
 
 ## Ramas
 
 - `main`: versión oficial y pública, aprobada.
 - `beta`: última entrega para pruebas; `beta-anterior`: la entrega previa. Solo pasan a `main` cuando se aprueban.
 
-## Estética y paleta corporativa (AVHUB)
+## Estética (AVHUB)
 
-Desde la v6.1 la app usa la estética AVHUB: rack digital oscuro en pantalla y la misma composición en claro en el PDF.
+Bloques en burbuja sobre gris (tema gris oscuro o gris claro), cabecera oscura con los logos en sus colores, lima de SCREENS (`#c6e04a`) para lo seleccionado, violeta (`#b03cff` → `#7a00e0`) para CALCULAR, y un color de acento por bloque (azul, lima, violeta, ámbar, magenta, rojo). Tipografía **Inter** para textos y botones y **Share Tech Mono** para datos y medidas. Ningún texto se parte ni se corta: si no cabe, se reduce. El PDF sale en claro sobre papel blanco.
 
-| Nombre | Código | Uso |
-|---|---|---|
-| VERDE ELÉCTRICO | `#00ff04` | lo activado, displays y rejilla de cabinets |
-| VIOLETA NEÓN | `#9900ff` | marca, acción principal (PROPONER PANTALLA, CALCULAR) y cabeceras de bloque |
-| GRIS NEUTRÓN | `#1a1a1c` · `#262629` | chasis y módulos del rack |
-| Acentos | `#00b4ff` azul · `#ffb000` ámbar · `#e100ff` magenta · `#9dff00` lima · `#ff4d5e` rojo | filete de cada bloque de resultados |
+## Aviso
 
-Tipografía corporativa, incluida en la app (sin servicios externos): **Inter** (Regular, Bold y ExtraBold) para textos y botones, y **Share Tech Mono** para datos, medidas y displays. Ningún texto toca el filo de su botón o caja: si no cabe, se reduce con un margen de seguridad.
-
-En el PDF las cabeceras de bloque van en violeta claro con texto violeta oscuro, para que se lean bien impresas y no gasten tinta.
-
-La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`) queda solo como reserva con `?tema=clasico`.
-
-## Avisos
-
-- ⚠️ APP experimental con motor IA que puede cometer errores. Verifique los resultados con su método de cálculo habitual.
-- *Estas propuestas se calculan automáticamente por IA que puede cometer fallos. Verifique estos cálculos mediante su método habitual o contrastando con un técnico. Algunas electrónicas menos recientes pueden tener limitaciones entre columnas que invalidarían esta propuesta de conectividad.
+*Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.* Es el mismo en todas las apps de cálculo de AVHUB, en pantalla y en el PDF.
 
 ## SYSTEMS
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.28) · en beta
+## Cambios de la versión actual (v10.29) · en beta
+
+- **Se retira la versión clásica:** SCREENS es solo la portada (una pantalla LED) y la consola (varias pantallas, sala inmersiva y proyección), con el mismo formato. `led.html` y `clasica.html` quedan como simples enlaces a la portada para no romper los enlaces antiguos, y la portada quita los parámetros antiguos (`?led`, `?clasica`, datos); `?modo=…` lleva a la consola.
+- Fuera los enlaces «Versión anterior» (Información de la portada) y «Abrir la versión clásica» (Información de la consola). Al elegir «Una + LED» en la consola se va directamente a la portada (ya no se carga la clásica dentro).
+- Se quitan los recursos que solo usaba la clásica (`assets/tailwind.css` y `tools/`).
+- **Tema gris claro: la simulación 3D también se aclara** (fondo gris claro en vez de negro) y cambia al momento al cambiar de tema. El PDF sigue con su fondo claro de siempre.
+- README reescrito para la app actual.
+
+## Cambios de la v10.28 · en beta
 
 - **Varias pantallas, sala inmersiva y proyección con el formato de la portada** (`vista/consola.html?modo=varias-led | varias-proy | una-proy`). El cálculo y las funciones son los de siempre (`screens/app.js`); cambia cómo se presentan, igual que en la portada de una pantalla LED:
   - **cabecera** con el logo, la familia AVHUB y los mismos botones redondos en el mismo orden: información, datos del proyecto, PDF, nuevo cálculo, idioma y tema;

@@ -141,7 +141,7 @@ const MAPA = {
   // contenido de la pantalla
   'Contenido de la pantalla': ['Screen content', 'Contingut de la pantalla'], 'Fuentes multimedia de prueba': ['Test media sources', 'Fonts multimèdia de prova'], 'Elegir esta fuente': ['Choose this source', 'Tria aquesta font'],
   'Vacía · pega aquí un enlace': ['Empty · paste a link here', 'Buida · enganxa aquí un enllaç'],
-  'Las fuentes 2 a 6 se pueden editar; la primera es fija. Se guardan en este navegador, las mismas que en la versión clásica.': ['Sources 2 to 6 can be edited; the first one is fixed. They are saved in this browser, the same as in the classic version.', 'Les fonts 2 a 6 es poden editar; la primera és fixa. Es desen en aquest navegador, les mateixes que a la versió clàssica.'],
+  'Las fuentes 2 a 6 se pueden editar; la primera es fija. Se guardan en este navegador.': ['Sources 2 to 6 can be edited; the first one is fixed. They are saved in this browser.', 'Les fonts 2 a 6 es poden editar; la primera és fixa. Es desen en aquest navegador.'],
   'O usa tu propio contenido': ['Or use your own content', 'O fes servir el teu contingut'], 'Pega un enlace de YouTube, Vimeo, imagen o vídeo': ['Paste a YouTube, Vimeo, image or video link', 'Enganxa un enllaç de YouTube, Vimeo, imatge o vídeo'],
   'Enlace de tu contenido': ['Link to your content', 'Enllaç del teu contingut'], 'Subir imagen / vídeo': ['Upload image / video', 'Puja imatge / vídeo'], 'APLICAR': ['APPLY', 'APLICA'], 'Reiniciar': ['Reset', 'Reinicia'],
   'Volver a la carta de ajuste inicial': ['Back to the initial test chart', 'Torna a la carta d’ajust inicial'],
