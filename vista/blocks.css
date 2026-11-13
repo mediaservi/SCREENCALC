@@ -518,3 +518,18 @@ table.mat a { color: inherit; text-decoration: underline; text-underline-offset:
 .av-ic { flex: none; width: 1.15em; height: 1.15em; vertical-align: -0.2em; }
 @media (max-width: 900px), (max-height: 520px) { #pie-l .nota { flex: 1 1 0; min-width: 0; font-size: calc(var(--u) * 10.5); } }
 @media (max-width: 559px) { #pie-l .nota { display: flex; white-space: normal; font-size: calc(var(--u) * 10.8) !important; } }
+
+/* v10.38 · pared: botones «sin fondo» y «fondo propio» (icono sobre gris; el propio enseña su foto cuando ya hay una) */
+.fondos button.fo-ico { display: grid; place-items: center; background-color: #2b2c31; color: #e6e7ea; }
+.fondos button.fo-ico svg { position: static; inset: auto; width: 72%; height: 72%; display: block; }
+.fondos button.fo-ico[style] { background-color: #2b2c31; background-size: cover; background-position: center; }
+/* sin fondo, en tema claro la pared queda gris claro */
+:root[data-tema="claro"] .lienzo:not(.papel) { background-color: #d6d9df; }
+/* con ocho muestras (sin fondo y fondo propio) la fila no debe pisar los cuadros de datos de la izquierda en pantallas estrechas */
+@media (max-width: 900px), (max-height: 520px) { .fondos { gap: calc(var(--u) * 4); padding: calc(var(--u) * 3); } .fondos button { width: calc(var(--u) * 27); height: calc(var(--u) * 27); } }
+/* v10.38 · candado del panel de administración: pequeño y apagado, en la esquina inferior izquierda del pie (a la derecha choca con la seta) */
+.f-f1 { position: relative; }
+.admin-esq { position: absolute; left: calc(var(--u) * 3); bottom: calc(var(--u) * 2); width: max(9px, calc(var(--u) * 12)); height: max(9px, calc(var(--u) * 12)); padding: 0; display: block; line-height: 0; color: var(--tenue); opacity: .3; }
+.admin-esq svg { width: 100%; height: 100%; display: block; }
+.admin-esq:hover, .admin-esq:focus-visible { opacity: 1; color: var(--marca); }
+:root[data-tema="claro"] .admin-esq:hover, :root[data-tema="claro"] .admin-esq:focus-visible { color: #3d4a00; }

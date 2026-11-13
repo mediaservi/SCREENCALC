@@ -9,7 +9,7 @@ import { interpretar } from './peticion.js';
 import { vistasTecnicas, activarVistas } from './vistas.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v10.37';
+const VERSION = 'v10.38';
 // v8.9 · crédito común de AVHUB (credito.js) y seta de aviso de fallos (fallo.js), los mismos en toda la familia
 if (window.AVCREDITO) window.AVCREDITO.alCambiar(() => { try { pintarCabecera(); } catch (e) {} });
 if (window.AVFALLO) { const bi = document.querySelector('#btn-idioma'); if (bi) { const bf = window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() }); bf.id = 'btn-fallo'; bi.before(bf);
@@ -925,7 +925,9 @@ function imprimir() {
   const hoy = new Date(), fecha = hoy.toLocaleDateString(idioma() === 'en' ? 'en-GB' : 'es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' · ' + hoy.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
   // v8.9 · la línea de crédito es la común de AVHUB (credito.js): el texto se edita en AVHUB ADMIN y es el mismo en todas las apps
   const cr = window.AVCREDITO ? window.AVCREDITO.plano('SCREENS', VERSION, idioma()) : null;
-  const pie = cr ? cr[0].trim() : `SCREENS ${VERSION} ${hoy.getFullYear()} ${t('pie')}`, web = (cr ? cr[1].trim() : 'by mediaservi.com') + ' · screens.mediaservi.com';
+  // v10.38 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito tal cual
+  const pie = cr ? cr[0].trim() : `SCREENS ${VERSION} ${hoy.getFullYear()} ${t('pie')}`, web = cr ? cr[1].trim() : 'by mediaservi.com';
+  const cred = window.AVCREDITO ? window.AVCREDITO.html('SCREENS', VERSION, idioma(), { sinEnlaces: true }) : `${pie} <i class="ic ic-footer" aria-hidden="true"></i> ${web}`;
   let h = `<header class="im-cab"><img class="im-logo" src="assets/screens-logo-negro.svg" alt="SCREENS"><div class="im-url"><b>avhub.mediaservi.com</b><span>${fecha}</span></div><img class="im-avhub" src="assets/avhub-logo.svg" alt="AVHUB"></header>`;
   h += `<div class="im-titulo">${tituloPdf(c)}</div>`;
   if (escena) h += `<figure class="im-captura"><img src="${escena.captura(true)}" alt=""></figure>`;
@@ -934,8 +936,8 @@ function imprimir() {
   if (fichas.length) h += `<section class="res-sec"><div class="res-tit">${t('equipos')}</div><div class="fichas">${fichas.join('')}</div></section>`;
   // pie en el margen inferior de cada hoja; si el navegador no dibuja esos márgenes (Safari, Firefox), va al final del documento.
   // Las cajas vacías de arriba y de abajo a la izquierda evitan que el navegador añada su fecha, título y dirección a la hoja
-  if (cajasMargen()) h += `<style>@page { margin-bottom: 18mm; @top-left { content: "" } @top-center { content: "" } @top-right { content: "" } @bottom-left { content: "" } @bottom-center { content: ${cssTxt(t('avisoPdf'))} "\\A" ${cssTxt(pie + ' ')} ${icoPie()} ${cssTxt(' ' + web)}; } @bottom-right { content: counter(page) "/" counter(pages); } }</style>`;
-  else h += `<p class="im-aviso">${t('avisoPdf')}</p><footer class="im-pie">${pie} <i class="ic ic-footer" aria-hidden="true"></i> ${web}</footer>`;
+  if (cajasMargen()) h += `<style>@page { margin-bottom: 18mm; @top-left { content: "" } @top-center { content: "" } @top-right { content: "" } @bottom-left { content: "" } @bottom-center { content: url("data:image/svg+xml,${encodeURIComponent(AV_TRI_PDF.replace(/ style="[^"]*"/, ''))}") ${cssTxt(' ' + t('avisoPdf'))} "\\A" ${cssTxt(pie + (web ? ' ' : ''))} ${web ? icoPie() + ' ' + cssTxt(' ' + web) : ''}; } @bottom-right { content: counter(page) "/" counter(pages); } }</style>`;
+  else h += `<p class="im-aviso">${AV_TRI_PDF}${t('avisoPdf')}</p><footer class="im-pie">${cred}</footer>`;
   const d = $('#impresion'); d.innerHTML = h;
   // fotos sin carga diferida (el bloque está oculto en pantalla) y, como mucho, 3 s de espera
   const imgs = [...d.querySelectorAll('img')]; imgs.forEach(i => { i.loading = 'eager'; });
@@ -943,7 +945,7 @@ function imprimir() {
   // v9.8 · el PDF se descarga directamente (pdf.js); el diálogo de impresión del navegador queda solo como recurso si falla
   Promise.race([espera, new Promise(r => setTimeout(r, 3000))]).then(() => setTimeout(() => {
     if (!window.AVPDF) return window.print();
-    window.AVPDF.exporta({ raiz: d, pieHtml: `${t('avisoPdf')}\n${pie} <i class="ic ic-footer" aria-hidden="true"></i> ${web}`, ocultar: '#impresion .im-aviso, #impresion .im-pie', nombre: window.AVPDF.sello('SCREENS'), titulo: 'SCREENS · ' + fecha })
+    window.AVPDF.exporta({ raiz: d, pieHtml: `${AV_TRI_PDF}${t('avisoPdf')}\n${cred}`, ocultar: '#impresion .im-aviso, #impresion .im-pie', nombre: window.AVPDF.sello('SCREENS'), titulo: 'SCREENS · ' + fecha })
       .then(() => { d.innerHTML = ''; }).catch(e => { console.warn('PDF directo:', e); window.print(); });
   }, 60));
 }
@@ -973,6 +975,8 @@ function tituloPdf(c) {
 }
 // ¿dibuja el navegador las cajas de margen de @page (pie y número en cada hoja)? Chrome, Edge y Samsung Internet sí
 function cajasMargen() { try { const s = new CSSStyleSheet(); s.replaceSync('@page { @bottom-center { content: "x" } }'); const r = s.cssRules[0]; return !!(r && r.cssRules && r.cssRules.length); } catch (e) { return false; } }
+// triángulo de aviso del pie del PDF, el mismo de la pantalla (html2canvas solo lee atributos y estilos en línea del <svg>)
+const AV_TRI_PDF = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;width:1.2em;height:1.2em;vertical-align:-.25em;margin-right:.35em"><path d="M12 3.6 2.4 20.2h19.2z"/><path d="M12 9.6v5"/><path d="M12 17.6h.01"/></svg>';
 function cssTxt(s) { return '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, ' ') + '"'; }
 // icono del pie (engranaje con corazón) en violeta para el margen de la hoja, a partir de la misma máscara de la interfaz
 function icoPie() {
