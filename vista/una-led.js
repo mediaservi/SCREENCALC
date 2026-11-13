@@ -7,9 +7,9 @@ import { HUMAN_PATH } from '../screens/figura.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.24';
+import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.25';
 idiomaInicial();   /* el idioma guardado de la familia SCREENS o, la primera vez, el del navegador */
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.24';
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.25';
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const SV = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
@@ -352,7 +352,7 @@ function pintaPie() {
   const ver = !!(R && R.r) && !EDITA && USADO;
   res.hidden = !ver; inp.style.visibility = ver ? 'hidden' : '';
   if (ver) res.innerHTML = `<span>PANTALLA LED ${esc(R.m.crm)} · ${fmt(R.r.ancho * 100)} × ${fmt(R.r.alto * 100)} cm · ${fmt(R.diag / .0254)}″ · ${R.r.cols}×${R.r.rows} = ${R.r.cab} cabinets</span><span> · ${R.r.resW}×${R.r.resH} px · ${fmt(R.r.peso)} kg · ${fmt(R.r.kw, 2)} kW · ${R.r.lineas} línea${R.r.lineas > 1 ? 's' : ''}</span>`;
-  $('#pie-l').innerHTML = '<span class="nota">Cálculo automático por IA: verifícalo antes de presupuestar.</span>';
+  $('#pie-l').innerHTML = '<span class="nota">Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.</span>';
 }
 /* ningún texto de una línea se parte ni se corta: si no cabe, se le va bajando la letra hasta que quepa */
 function encoge(el, min = 7) { if (!el || !el.clientWidth) return; el.style.fontSize = ''; let f = parseFloat(getComputedStyle(el).fontSize); for (let i = 0; i < 40 && el.scrollWidth > el.clientWidth + 1 && f > min; i++) { f *= .96; el.style.fontSize = f + 'px'; } }
@@ -393,7 +393,7 @@ function abre(que) {
       <p style="margin:0"><b>Cada opción en su bloque.</b> Las unidades, los formatos y el ajuste a la medida están en Dimensiones; marino, alcance del público y nits mínimos en Entorno; el pitch, la distancia del público y la resolución mínima en Resolución; columnas y filas en Cabinets; el giro de 90° en Cabinet; la altura sobre el suelo en la simulación; el cosido en el cableado; backup y conexión en Señal; el escalador y el procesador en Electrónica; marca, Dante y modelo en Mediaserver. El icono de reinicio de arriba, o un toque en el logo de SCREENS, empieza un cálculo nuevo.</p>
       <p style="margin:0"><b>Proyecto y PDF.</b> En «Datos del proyecto» se ponen el nombre, el cliente, las fuentes de vídeo y las observaciones. El botón PDF enseña antes una vista previa de las dos hojas (la pantalla con sus datos y, detrás, el esquema de conexión, el cableado y la lista de material), desde la que se puede ver a pantalla completa, imprimir o guardar. El ojo de cualquier bloque abre también la lista de material y los equipos.</p>
       <p style="margin:0"><b>Sin conexión.</b> El botón de descarga del pie instala SCREENS en el aparato y guarda una copia para usarlo sin red.</p>
-      <p style="margin:0" class="nota">Cálculo automático que puede contener errores: verifícalo antes de presupuestar o instalar.</p></div></div>`;
+      <p style="margin:0" class="nota">Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.</p></div></div>`;
     VENT = { que };
   } else if (que === 'proyecto') {
     v.innerHTML = `<div class="vent ajustes" role="dialog" aria-modal="true" aria-label="Datos del proyecto"><div class="vent-cab">${IC.proyecto.replace('<svg', '<svg style="width:1.2em;height:1.2em"')} Datos del proyecto<span class="sep"></span>${bt('x', 'Cerrar', 'data-cierra')}</div><div class="vent-cu">
@@ -647,7 +647,7 @@ async function pdf() {
     hoja.innerHTML = `<div class="pdf-p1"><div style="padding:0 0 6px">${p1}</div></div><div style="height:60px"></div><div class="pdf-p2"><div style="padding:0 0 6px">${p2}</div></div>`;
     document.body.appendChild(hoja); await Promise.all([...hoja.querySelectorAll('img')].map((i) => (i.complete ? 0 : new Promise((ok) => { i.onload = i.onerror = ok; })))); await new Promise((ok) => setTimeout(ok, 60));
     const pv = await window.AVPDF.exporta({ previa: true, raiz: hoja, paginas: [['.pdf-p1'], ['.pdf-p2']], margen: 12, claro: false, nombre: window.AVPDF.sello('SCREENS'), titulo: 'SCREENS · ' + (E.proy || m.crm),
-      pieHtml: VERSION + ' · mediaservi.com · ' + tr('Cálculo automático que puede contener errores: verifícalo antes de presupuestar o instalar.'),
+      pieHtml: VERSION + ' · mediaservi.com · ' + tr('Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.'),
       alClonar: (doc, raiz) => { raiz.style.setProperty('position', 'absolute', 'important'); raiz.style.setProperty('left', '0', 'important'); raiz.style.setProperty('top', '0', 'important'); [...doc.body.children].forEach((e) => { if (e !== raiz && !e.contains(raiz)) e.style.setProperty('display', 'none', 'important'); }); } });
     previa(pv);
   } catch (e) { console.warn('pdf', e); tostada('No se ha podido generar el PDF.', 5000); }

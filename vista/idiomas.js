@@ -177,6 +177,8 @@ const MAPA = {
   'Resultado copiado: pégalo en WhatsApp o donde quieras.': ['Result copied: paste it into WhatsApp or anywhere.', 'Resultat copiat: enganxa’l a WhatsApp o on vulguis.'],
   'Te escucho: di la pantalla que necesitas y pulsa otra vez el micrófono al acabar.': ['Listening: say the screen you need and press the microphone again when done.', 'T’escolto: digues la pantalla que necessites i torna a prémer el micròfon en acabar.'],
   'SCREENS necesita JavaScript.': ['SCREENS needs JavaScript.', 'SCREENS necessita JavaScript.'],
+  /* v10.25 · aviso común de las apps de cálculo */
+  'Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.': ['Automatic calculation that may contain errors: check it before quoting or installing.', 'Càlcul automàtic que pot contenir errors: revisa’l abans de pressupostar o instal·lar.'],
   /* v10.24 · lista de material y esquema de conexión como en la clásica */
   'Señal de entrada': ['Input signal', 'Senyal d\'entrada'],
   'Resolución de entrada': ['Input resolution', 'Resolució d\'entrada'],

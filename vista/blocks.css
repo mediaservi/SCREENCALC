@@ -495,3 +495,5 @@ table.mat a { color: inherit; text-decoration: underline; text-underline-offset:
   .pr-op > span { flex: 0 0 100% !important; }
   .pr-op .tog { font-size: 12px; min-height: 36px; }
 }
+/* v10.25 · en el teléfono el aviso del pie va en dos renglones (como los créditos), sin reducir la letra hasta no poder leerse */
+@media (max-width: 559px) { #pie-l .nota { white-space: normal; line-height: 1.25; font-size: calc(var(--u) * 11) !important; display: block; } }
