@@ -4,7 +4,7 @@
 
 Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Todo funciona en **una sola pantalla fija**, sin desplazar la página en ordenador ni en TV: cabecera, franja de modo y petición, bloques de mandos, dos vistas grandes, una fila de cifras y pie. En el móvil, las mismas piezas se apilan y se recorren por dentro.
 
-**Versión actual: v10.38** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
+**Versión actual: v10.39** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
 
 - **Una pantalla LED** → la portada (`index.html` + `vista/una-led.js`).
 - **Varias pantallas, sala inmersiva y proyección** → la consola (`vista/consola.html?modo=varias-led | varias-proy | una-proy`, con el cálculo de `screens/app.js`), con el mismo formato.
@@ -68,7 +68,12 @@ Bloques en burbuja sobre gris (tema gris oscuro o gris claro), cabecera oscura c
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.38)
+## Cambios de la versión actual (v10.39)
+
+- **Proyección: electrónica para varios proyectores.** El bloque «Electrónica» (antes «Mediaserver») deja elegir qué reparte la imagen: **Procesador** de blending (PIXELHUE P10, P20, P20-DS, P80 y Q8, que hacen el edge blending de los proyectores por sí mismos, sin mediaserver; la imagen les llega por sus entradas desde un PC o un reproductor), **Mediaserver** (NovaStar ET, que reproduce el contenido y hace el warping y el blending) o **Ninguno**. Solo se proponen los equipos con salidas suficientes para los proyectores y su resolución (Full HD, WUXGA o 4K). El elegido sale en su ficha en los resultados y en el PDF.
+- **Fuera de especificación, a la vista:** el activador pasa al bloque «Material», debajo del proyector (en «Ajuste del equipo» quedaba escondido bajo el desplazamiento del bloque). Ejemplo: una pared de 8 × 2,5 m con EB-815E pasa de 6 proyectores a 2, con el aviso de que la imagen supera los 160″ garantizados.
+
+## Cambios de la v10.38
 
 - **Pie del PDF igual que el de la pantalla**, en la portada y en Varias / Proyección: primera línea, el triángulo y «Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.»; segunda, «SCREENS v10.38 2026 forma parte del proyecto AVHUB ideado por el fundador de mediaservi.com» (en castellano, inglés y catalán). Sin asterisco ni dirección añadida.
 - **Pared de madera nueva:** las lamas finas se veían como palillos y con un efecto de rayas que no correspondía a su tamaño real; ahora es un friso de tablas de 15 cm con juntas escalonadas, a escala con la pantalla y la persona.

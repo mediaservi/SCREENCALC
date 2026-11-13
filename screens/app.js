@@ -9,7 +9,7 @@ import { interpretar } from './peticion.js';
 import { vistasTecnicas, activarVistas } from './vistas.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v10.38';
+const VERSION = 'v10.39';
 // v8.9 · crédito común de AVHUB (credito.js) y seta de aviso de fallos (fallo.js), los mismos en toda la familia
 if (window.AVCREDITO) window.AVCREDITO.alCambiar(() => { try { pintarCabecera(); } catch (e) {} });
 if (window.AVFALLO) { const bi = document.querySelector('#btn-idioma'); if (bi) { const bf = window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() }); bf.id = 'btn-fallo'; bi.before(bf);
@@ -26,7 +26,7 @@ const DEF = () => ({
     obst: [] },
   led: { clase: 'INSTALL', tipo: 'INDOOR', crm: '', ajuste: 'dentro', transp: false, gold: false, protegido: false, sol: '', nitsMin: 0 },
   proy: { tipo: 'pared', cuerpo: '', optica: '', idSuelo: '', solape: 15, lux: 140, ganancia: 1, dist: 0, orient: 'auto', montaje: 'auto', altura: 0, oos: false },
-  elec: { backup: false, escalador: 'con', conexion: 'directo', sel: '', marca: 'todos', dante: false, selMedia: '' },
+  elec: { backup: false, escalador: 'con', conexion: 'directo', sel: '', marca: 'todos', dante: false, selMedia: '', proyEq: 'media', selBlend: '' },
   vista: { contenido: 'carta', etiquetas: true, camara: 'exterior', zona: true, modo: 'continuo', tec: 'todas', vtSup: 0 }
 });
 let E = DEF();
@@ -193,6 +193,19 @@ function electronica(c) {
     out.proc = out.procesadores.find(x => x.key === e.sel) || out.procesadores[0] || null;
     out.need = Math.max(1, c.tot.salidas4k);
   } else if (c.tot) out.need = Math.max(1, c.tot.n);
+  // v10.39 · proyección: procesador con edge blending propio (PIXELHUE, sin mediaserver), mediaserver NovaStar (warping y blending) o nada
+  if (E.tecnologia !== 'led') {
+    const eq = e.proyEq || 'media';
+    if (eq === 'blend' && out.need) {
+      const px = Math.max(0, ...[c.proyector, c.prSuelo].filter(Boolean).map(q => (q.resX || 0) * (q.resY || 0)));
+      out.clase = px > 2560 * 1600 ? 'k4' : px > 1920 * 1080 ? 'wuxga' : 'fhd';
+      out.blends = ELEC.calcularBlending(out.need, out.clase); out.blend = out.blends.find(x => x.id === e.selBlend) || out.blends[0] || null;
+    } else if (eq === 'media' && out.need) {
+      out.medias = ELEC.calcularMediaservers({ totalPix: out.need * ELEC.ELEC_PX_4K }, { marca: 'novastar', dante: e.dante });
+      out.media = out.medias.find(x => x.id === e.selMedia) || out.medias[0] || null;
+    }
+    return out;
+  }
   if (e.marca !== 'ninguno' && out.need) {
     out.medias = ELEC.calcularMediaservers({ totalPix: out.need * ELEC.ELEC_PX_4K }, { marca: e.marca, dante: e.dante });
     out.media = out.medias.find(x => x.id === e.selMedia) || out.medias[0] || null;
@@ -216,13 +229,13 @@ const campo = (lab, html) => `<div class="campo"><label>${lab}</label>${html}</d
 // ---------- fichas de equipo (componente común comun/ficha.js) ----------
 // los textos del motor común de electrónica están en castellano: aquí se pasan a inglés o catalán
 const MOTOR = {
-  en: [[/conv\. por pantalla/g, 'conv. per screen'], [/Chasis \(mainframe\)/g, 'Chassis (mainframe)'], [/Tarjeta de salida/g, 'Output card'], [/Tarjeta salida/g, 'Output card'], [/Tarjeta de entrada/g, 'Input card'], [/Tarjeta entrada/g, 'Input card'], [/Tarjeta base/g, 'Base card'],
+  en: [[/edge blending de proyectores/g, 'projector edge blending'], [/con sus tarjetas/g, 'with its cards'], [/audio Dante/g, 'Dante audio'], [/conv\. por pantalla/g, 'conv. per screen'], [/Chasis \(mainframe\)/g, 'Chassis (mainframe)'], [/Tarjeta de salida/g, 'Output card'], [/Tarjeta salida/g, 'Output card'], [/Tarjeta de entrada/g, 'Input card'], [/Tarjeta entrada/g, 'Input card'], [/Tarjeta base/g, 'Base card'],
     [/de previo \/ monitorización \(recomendada\)/g, 'preview / monitoring (recommended)'], [/\(mínima del equipo\)/g, '(minimum for the unit)'], [/Conv\. fibra→10 RJ45 multimodo \(incluye sus módulos SFP\+\)/g, 'Fibre→10 RJ45 multimode converter (SFP+ modules included)'],
     [/Conv\. fibra→10 RJ45 \(pantalla\)/g, 'Fibre→10 RJ45 converter (screen)'], [/Módulo SFP\+ 10G multimodo \(puertos de la tarjeta de salida\)/g, '10G SFP+ multimode module (output card ports)'], [/serie MX/g, 'MX series'], [/multimodo/g, 'multimode'],
     [/no disponible en este chasis: verificar con el fabricante/g, 'not available for this chassis: check with the manufacturer'], [/líneas?/g, m => m === 'línea' ? 'line' : 'lines'], [/fibras?/g, m => m === 'fibra' ? 'fibre' : 'fibres'], [/\(de /g, '(of '], [/proyecto/g, 'project'],
     [/salidas?/g, m => m === 'salida' ? 'output' : 'outputs'], [/entradas?/g, m => m === 'entrada' ? 'input' : 'inputs'], [/capas?/g, m => m === 'capa' ? 'layer' : 'layers'], [/hasta/g, 'up to'], [/ o /g, ' or '], [/ y /g, ' and '], [/Como /g, 'Like '],
     [/sincronismo, cascada y backup entre equipos/g, 'sync, cascade and backup between units'], [/backup de equipo/g, 'unit backup'], [/ranura/g, 'slot'], [/con escalador/g, 'with scaler']],
-  ca: [[/conv\. por pantalla/g, 'conv. per pantalla'], [/fibras/g, 'fibres'], [/Chasis \(mainframe\)/g, 'Xassís (mainframe)'], [/Tarjeta de salida/g, 'Targeta de sortida'], [/Tarjeta salida/g, 'Targeta sortida'], [/Tarjeta de entrada/g, "Targeta d'entrada"], [/Tarjeta entrada/g, 'Targeta entrada'], [/Tarjeta base/g, 'Targeta base'],
+  ca: [[/edge blending de proyectores/g, 'edge blending de projectors'], [/con sus tarjetas/g, 'amb les seves targetes'], [/audio Dante/g, 'àudio Dante'], [/conv\. por pantalla/g, 'conv. per pantalla'], [/fibras/g, 'fibres'], [/Chasis \(mainframe\)/g, 'Xassís (mainframe)'], [/Tarjeta de salida/g, 'Targeta de sortida'], [/Tarjeta salida/g, 'Targeta sortida'], [/Tarjeta de entrada/g, "Targeta d'entrada"], [/Tarjeta entrada/g, 'Targeta entrada'], [/Tarjeta base/g, 'Targeta base'],
     [/de previo \/ monitorización \(recomendada\)/g, 'de previ / monitoratge (recomanada)'], [/\(mínima del equipo\)/g, "(mínima de l'equip)"], [/Conv\. fibra→10 RJ45 multimodo \(incluye sus módulos SFP\+\)/g, 'Conv. fibra→10 RJ45 multimode (inclou els mòduls SFP+)'],
     [/Conv\. fibra→10 RJ45 \(pantalla\)/g, 'Conv. fibra→10 RJ45 (pantalla)'], [/Módulo SFP\+ 10G multimodo \(puertos de la tarjeta de salida\)/g, 'Mòdul SFP+ 10G multimode (ports de la targeta de sortida)'], [/multimodo/g, 'multimode'],
     [/no disponible en este chasis: verificar con el fabricante/g, 'no disponible en aquest xassís: verificar amb el fabricant'], [/líneas?/g, m => m === 'línea' ? 'línia' : 'línies'], [/proyecto/g, 'projecte'],
@@ -252,6 +265,10 @@ function fichaProc(x) {
   return fichaHTML({ cat: t('procesador'), icono: 'elec', marca: x.marca, modelo: x.modelo, foto: x.front, fotoTrasera: x.back, acento: '#00ff04', stock: x.enStock ? true : null,
     specs: [[t('puertos'), trMotor(x.puertos)], [t('capacidad'), trMotor(x.capacidad)], [t('kEsc'), x.escalador ? t('si') : t('no')]],
     piezas: (x.equipos || []).map(q => ({ cant: q.cant, ref: q.ref, desc: trMotor(q.desc) })), enlace: x.url, enlaceTxt: t('fichaFab') });
+}
+function fichaBlend(m) {
+  return fichaHTML({ cat: t('procBlend'), icono: 'elec', marca: m.marca, modelo: m.modelo, acento: '#ffb000',
+    specs: [[t('salProyK'), m.cap], [t('necesita'), m.need], [t('entradasK'), m.inp], [t('dante'), m.dante ? t('si') : t('no')]], notas: [trMotor(m.resumen), t('blendNota')], enlace: m.url, enlaceTxt: t('fichaFab') });
 }
 function fichaMedia(m, need, led) {
   return fichaHTML({ cat: t('mediaserver'), icono: 'media', marca: m.marca, modelo: m.modelo, foto: m.front, fotoTrasera: m.back, acento: '#ffb000',
@@ -354,18 +371,18 @@ function partesProy(c) {
   const uso = (USOS_LUZ.find(u => u[1] === Number(p.lux)) || [''])[0];
   luz += campo(t('luzUso'), `<select class="sel" data-uso="1"><option value=""${uso ? '' : ' selected'}>${t('uso_personal')}</option>${USOS_LUZ.map(u => `<option value="${u[1]}"${u[0] === uso ? ' selected' : ''}>${t('uso_' + u[0])} · ${u[1]} lx</option>`).join('')}</select>`);
   luz += `<div class="fila c2">${campo(t('luzSala'), numIn('proy.lux', p.lux, 'lx', 10, 0, 5000))}${campo(t('ganancia'), numIn('proy.ganancia', p.ganancia, '×', 0.1, 0.1, 5))}</div>`;
-  // 6) avanzado: modo fuera de especificación (imágenes más grandes que las garantizadas), con aviso, cálculo y recomendación
+  // 6) avanzado: modo fuera de especificación (v10.39: en el bloque Material, junto al proyector; en «Ajuste del equipo» quedaba escondido) (imágenes más grandes que las garantizadas), con aviso, cálculo y recomendación
   // v8.4 · fuera de especificación: el botón activo se resalta en ámbar (no es un ajuste normal)
-  aj += `<div class="etq">${t('avanzado')}</div><div class="fila c1"><button type="button" class="tog ambar${p.oos ? ' on' : ''}" aria-pressed="${!!p.oos}" data-accion="proy-oos" title="${t('oosTit')}">⚠ ${t('oos')}</button></div>`;
+  mat += `<div class="etq">${t('avanzado')}</div><div class="fila c1"><button type="button" class="tog ambar${p.oos ? ' on' : ''}" aria-pressed="${!!p.oos}" data-accion="proy-oos" title="${t('oosTit')}">⚠ ${t('oos')}</button></div>`;
   if (sel) {
     const med = (d) => { const w = d * 0.0254 * sel.ar / Math.sqrt(1 + sel.ar * sel.ar); return fmt(w, 1) + ' × ' + fmt(w / sel.ar, 1); };
     const usada = Math.max(0, ...paredes.map(f => Math.hypot(f.p.imgW, f.p.imgH) / 0.0254));
     if (p.oos) {
-      aj += `<p class="aviso">${t('oosAviso')}</p>`;
-      aj += `<p class="ayuda">${sel.maxDiagPulgOOS > sel.maxDiagPulg ? t('oosCalc', { p: sel.nombre, g: fmtPx(sel.maxDiagPulg), gm: med(sel.maxDiagPulg), o: fmtPx(sel.maxDiagPulgOOS), om: med(sel.maxDiagPulgOOS) }) : t('oosNoGana', { p: sel.nombre, g: fmtPx(sel.maxDiagPulg) })}</p>`;
-      if (usada > sel.maxDiagPulg + 0.5) aj += `<p class="aviso">${t('oosUsa', { d: fmtPx(Math.round(usada)), g: fmtPx(sel.maxDiagPulg) })}</p>`;
-      aj += `<p class="ayuda">${t('oosReco')}</p>`;
-    } else if (paredes.some(f => f.p.limite) && sel.maxDiagPulgOOS > sel.maxDiagPulg) aj += `<p class="ayuda">${t('oosSugerir', { g: fmtPx(sel.maxDiagPulg), o: fmtPx(sel.maxDiagPulgOOS) })}</p>`;
+      mat += `<p class="aviso">${t('oosAviso')}</p>`;
+      mat += `<p class="ayuda">${sel.maxDiagPulgOOS > sel.maxDiagPulg ? t('oosCalc', { p: sel.nombre, g: fmtPx(sel.maxDiagPulg), gm: med(sel.maxDiagPulg), o: fmtPx(sel.maxDiagPulgOOS), om: med(sel.maxDiagPulgOOS) }) : t('oosNoGana', { p: sel.nombre, g: fmtPx(sel.maxDiagPulg) })}</p>`;
+      if (usada > sel.maxDiagPulg + 0.5) mat += `<p class="aviso">${t('oosUsa', { d: fmtPx(Math.round(usada)), g: fmtPx(sel.maxDiagPulg) })}</p>`;
+      mat += `<p class="ayuda">${t('oosReco')}</p>`;
+    } else if (paredes.some(f => f.p.limite) && sel.maxDiagPulgOOS > sel.maxDiagPulg) mat += `<p class="ayuda">${t('oosSugerir', { g: fmtPx(sel.maxDiagPulg), o: fmtPx(sel.maxDiagPulgOOS) })}</p>`;
   }
   // 7) fichas de los equipos elegidos y ayudas
   if (sel) fic += fichaProy(sel, t('fProy'));
@@ -423,6 +440,20 @@ function modElec(c) {
     h += `<div class="fila c2">${tog(e.escalador === 'con', 'data-set="elec.escalador" data-v="con"', t('escCon'))}${tog(e.escalador === 'sin', 'data-set="elec.escalador" data-v="sin"', t('escSin'))}</div>`;
     h += `<div class="fila c2">${tog(e.conexion === 'directo', 'data-set="elec.conexion" data-v="directo"', t('rj45'))}${tog(e.conexion === 'fibra', 'data-set="elec.conexion" data-v="fibra"', t('fibra'))}</div>`;
     if (c.tot) h += (x.procesadores || []).length ? campo(t('procesador'), `<select class="sel" data-sel="elec.sel">${x.procesadores.map(q => `<option value="${q.key}"${x.proc && q.key === x.proc.key ? ' selected' : ''}>${q.marca} ${q.modelo}</option>`).join('')}</select>`) : `<p class="aviso">${t('sinProc')}</p>`;
+  }
+  if (!led) {
+    // v10.39 · proyección: qué equipo reparte la imagen entre los proyectores
+    const eq = e.proyEq || 'media';
+    const op = ([k, l, ti]) => tog(eq === k, `data-set="elec.proyEq" data-v="${k}" title="${ti}"`, l);
+    h += `<div class="fila c2">${[['blend', t('eqBlend'), t('procBlend')], ['media', t('mediaserver'), t('mediaserver')]].map(op).join('')}</div><div class="fila c1">${op(['ninguno', t('mNinguno'), t('mNinguno')])}</div>`;
+    if (eq === 'blend') {
+      h += `<p class="ayuda">${t('blendAyuda')}</p>`;
+      h += (x.blends || []).length ? campo(t('procBlend'), `<select class="sel" data-sel="elec.selBlend">${x.blends.map(m => `<option value="${m.id}"${x.blend && m.id === x.blend.id ? ' selected' : ''}>${m.marca} ${m.modelo} · ${m.cap} ${t('salProy')}</option>`).join('')}</select>`) : `<p class="aviso">${t('sinBlend', { n: x.need || 0 })}</p>`;
+    } else if (eq === 'media') {
+      h += `<p class="ayuda">${t('mediaAyudaProy')}</p><div class="fila c1">${tog(e.dante, 'data-accion="elec-dante"', t('dante'))}</div>`;
+      h += (x.medias || []).length ? campo(t('mediaserver'), `<select class="sel" data-sel="elec.selMedia">${x.medias.map(m => `<option value="${m.id}"${x.media && m.id === x.media.id ? ' selected' : ''}>${m.marca} ${m.modelo} · ${m.out4k}× 4K</option>`).join('')}</select>`) : `<p class="aviso">${t('sinMedia')}</p>`;
+    }
+    return h;
   }
   h += `<div class="etq">${t('mediaserver')}</div><div class="fila c2">${['todos', 'novastar'].map(k => tog(e.marca === k, `data-set="elec.marca" data-v="${k}"`, k === 'todos' ? t('mTodos') : 'NOVASTAR')).join('')}</div><div class="fila c2">${['pixelhue', 'ninguno'].map(k => tog(e.marca === k, `data-set="elec.marca" data-v="${k}"`, k === 'ninguno' ? t('mNinguno') : 'PIXELHUE')).join('')}</div>`;
   if (e.marca !== 'ninguno') {
@@ -536,6 +567,7 @@ function vistaElec(c) {
   const x = c.elec; if (!x) return '';
   const led = E.tecnologia === 'led', fichas = [];
   if (led && x.proc) fichas.push(fichaProc(x.proc));
+  if (x.blend) fichas.push(fichaBlend(x.blend));
   if (x.media) fichas.push(fichaMedia(x.media, x.need, led));
   if (!fichas.length) return '';
   return `<section class="res-sec"><div class="res-tit">${ICO.elec}${t('elecTit')}</div><div class="fichas">${fichas.join('')}</div></section>`;
@@ -668,10 +700,10 @@ function calcularPeticion() {
 const blq = (id, tit, res, cuerpo, reset) => `<section class="mod blq" data-blq="${id}"><div class="mod-tit"><button type="button" class="blq-cab" data-accion="blq" data-id="${id}" aria-expanded="true"><i class="blq-led"></i><span class="blq-nom">${tit}</span><span class="blq-res">${res || ''}</span></button>${reset ? `<button type="button" class="sec-btn reset" data-accion="${reset}">${t('restablecer')}</button>` : ''}</div><div class="blq-cuerpo">${cuerpo}</div></section>`;
 function zonas(c) {
   const led = E.tecnologia === 'led', e = partesEspacio(), q = led ? partesLed(c) : partesProy(c), x = c.elec || {};
-  const rElec = led ? (x.proc ? x.proc.marca + ' ' + x.proc.modelo : '') : (x.media ? x.media.marca + ' ' + x.media.modelo : '');
+  const rElec = led ? (x.proc ? x.proc.marca + ' ' + x.proc.modelo : '') : x.blend ? x.blend.marca + ' ' + x.blend.modelo : x.media ? x.media.marca + ' ' + x.media.modelo : (E.elec.proyEq === 'ninguno' ? t('mNinguno') : '');
   const A = `<div class="zona-cab"><b>A</b>${t('zonaA')}</div>` + blq('a1', t('bTipo'), e.rTipo, e.tipo, led ? 'reset-a1' : '') + blq('a2', t('bTam'), e.rTam, e.tam, 'reset-a2') + (led ? '' : blq('a3', t('bLuz'), q.rLuz, q.luz, 'reset-a3')) + blq('a4', t('bEnt'), e.rEnt, e.ent, 'reset-a4') +
     `<div class="zona-pie"><button type="button" class="pri" data-accion="calc-ir">${t('nlCalc')}</button><button type="button" class="sec-btn reset" data-accion="reset-a">${t('restablecer')}</button></div>`;
-  const B = `<div class="zona-cab"><b>B</b>${t('zonaB')}</div>` + blq('b1', t('bMat'), q.rMat, q.mat, 'reset-b1') + blq('b2', t('bAj'), q.rAj, q.aj, 'reset-b2') + blq('b3', led ? t('elecMod') : t('mediaserver'), rElec, modElec(c), 'reset-elec') +
+  const B = `<div class="zona-cab"><b>B</b>${t('zonaB')}</div>` + blq('b1', t('bMat'), q.rMat, q.mat, 'reset-b1') + blq('b2', t('bAj'), q.rAj, q.aj, 'reset-b2') + blq('b3', led ? t('elecMod') : t('elecProy'), rElec, modElec(c), 'reset-elec') +
     `<div class="zona-pie eleg"><div class="eleg-txt"><small>${t('elegido')}</small><b>${q.eleg ? q.eleg.nom : '—'}</b><span>${q.eleg ? q.eleg.dat : ''}</span></div><button type="button" class="sec-btn" data-accion="ficha-ir"${q.eleg ? '' : ' disabled'}>${t('fichaB')}</button></div>`;
   const equipo = q.fichas ? `<div class="res-sec" id="det-equipo"><div class="res-tit">${led ? ICO.led : ICO.proy}${t('equipoSel')}</div>${q.fichas}</div>` : '';
   return { A, B, equipo };
@@ -802,7 +834,7 @@ document.addEventListener('click', (ev) => {
   if (b.tagName === 'A') ev.preventDefault();
   if (b.dataset.set) { fijar(b.dataset.set, b.dataset.bool ? b.dataset.v === '1' : b.dataset.numV ? Number(b.dataset.v) : b.dataset.v);
     if (/^elec\.(backup|escalador|conexion)$/.test(b.dataset.set)) E.elec.sel = '';
-    if (b.dataset.set === 'elec.marca') E.elec.selMedia = '';
+    if (b.dataset.set === 'elec.marca' || b.dataset.set === 'elec.proyEq') { E.elec.selMedia = ''; E.elec.selBlend = ''; }
     if (/^led\.(clase|tipo|transp|gold|protegido|sol)$/.test(b.dataset.set)) { E.led.crm = ''; if (b.dataset.set === 'led.tipo') { E.led.nitsMin = 0; E.led.sol = ''; } }
     actualizar(b.dataset.set === 'esp.sueltas.disp' ? false : false); return; }
   if (b.dataset.pared) { E.esp.paredes[b.dataset.pared] = !E.esp.paredes[b.dataset.pared]; actualizar(); return; }
@@ -840,8 +872,8 @@ document.addEventListener('click', (ev) => {
     if (k === 'a' || k === 'a2') { cp(E.esp, d.esp, ['ancho', 'fondo', 'alto']); E.esp.paredes = d.esp.paredes; cp(E.esp.sueltas, d.esp.sueltas, ['n', 'disp', 'ancho', 'alto', 'sep', 'angulo', 'central', 'cAncho', 'cAlto']); }
     if ((k === 'a' || k === 'a3') && !led) { cp(E.proy, d.proy, ['lux', 'ganancia']); luzSegunTipo(); }
     if (k === 'a' || k === 'a4') { cp(E.esp, d.esp, ['elev', 'altoCubierto']); cp(E.esp.sueltas, d.esp.sueltas, ['elev', 'dist', 'techo']); E.esp.obst = []; }
-    if (k === 'b1') { if (led) E.led.crm = ''; else cp(E.proy, d.proy, ['cuerpo', 'optica', 'idSuelo']); }
-    if (k === 'b2') { if (led) E.led.ajuste = d.led.ajuste; else cp(E.proy, d.proy, ['solape', 'dist', 'orient', 'montaje', 'altura', 'oos']); }
+    if (k === 'b1') { if (led) E.led.crm = ''; else cp(E.proy, d.proy, ['cuerpo', 'optica', 'idSuelo', 'oos']); }
+    if (k === 'b2') { if (led) E.led.ajuste = d.led.ajuste; else cp(E.proy, d.proy, ['solape', 'dist', 'orient', 'montaje', 'altura']); }
     ajuste.esp = ''; ajuste.obst = ''; actualizar(); return; }
   if (a === 'nits') { const L = [0].concat(nitsLista()), v = +E.led.nitsMin || 0, i = L.indexOf(v) < 0 ? 0 : L.indexOf(v), j = Math.max(0, Math.min(L.length - 1, i + Number(b.dataset.d))); E.led.nitsMin = L[j]; E.led.crm = ''; actualizar(); return; }
   if (a === 'reset-elec') { E.elec = DEF().elec; actualizar(); return; }
@@ -925,7 +957,7 @@ function imprimir() {
   const hoy = new Date(), fecha = hoy.toLocaleDateString(idioma() === 'en' ? 'en-GB' : 'es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' · ' + hoy.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
   // v8.9 · la línea de crédito es la común de AVHUB (credito.js): el texto se edita en AVHUB ADMIN y es el mismo en todas las apps
   const cr = window.AVCREDITO ? window.AVCREDITO.plano('SCREENS', VERSION, idioma()) : null;
-  // v10.38 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito tal cual
+  // v10.39 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito tal cual
   const pie = cr ? cr[0].trim() : `SCREENS ${VERSION} ${hoy.getFullYear()} ${t('pie')}`, web = cr ? cr[1].trim() : 'by mediaservi.com';
   const cred = window.AVCREDITO ? window.AVCREDITO.html('SCREENS', VERSION, idioma(), { sinEnlaces: true }) : `${pie} <i class="ic ic-footer" aria-hidden="true"></i> ${web}`;
   let h = `<header class="im-cab"><img class="im-logo" src="assets/screens-logo-negro.svg" alt="SCREENS"><div class="im-url"><b>avhub.mediaservi.com</b><span>${fecha}</span></div><img class="im-avhub" src="assets/avhub-logo.svg" alt="AVHUB"></header>`;

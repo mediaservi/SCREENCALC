@@ -78,6 +78,23 @@
     { id: 'PHQ8',   marca: 'PIXELHUE', modelo: 'Q8',            out4k: 16, dante: true,  inp: 48, backupNativo: true,  resumen: 'Hasta 48 entradas / 16 salidas 4K · 32 capas 4K · Dante 64×64 · backup de equipo y entradas', url: null }
   ];
 
+  /* v10.39 · procesadores con edge blending de proyectores por hardware (para varios proyectores sin mediaserver): no reproducen
+     contenido, les llega por sus entradas desde un PC o un reproductor. Salidas que pueden alimentar proyectores según su resolución
+     (fichas PIXELHUE, datasheet P20 / P20-DS / P10 V1.7.1 y comparativas P80 y Q8): fhd = hasta 1920×1080, wuxga = hasta 2560×1600, k4 = 4K.
+     P10: 2 HDMI 2.0 + 6 HDMI 1.3 (1080p) · P20: 8 HDMI 2.0, en PGM hasta 8K×4K · P80: 8 HDMI 2.0, 4×4K o 8 DL · Q8: hasta 16 salidas 4K con sus tarjetas. */
+  const ELEC_BLEND = [
+    { id: 'PHP10',  marca: 'PIXELHUE', modelo: 'P10',    fhd: 8,  wuxga: 2,  k4: 2,  inp: 6,  dante: false, resumen: '6 entradas · 2 salidas HDMI 2.0 + 6 HDMI 1.3 (1080p) · edge blending de proyectores', url: null },
+    { id: 'PHP20',  marca: 'PIXELHUE', modelo: 'P20',    fhd: 8,  wuxga: 8,  k4: 4,  inp: 12, dante: false, resumen: '12 entradas · 8 salidas HDMI 2.0 (4K60) · hasta 8K×4K · edge blending de proyectores', url: null },
+    { id: 'PHP20D', marca: 'PIXELHUE', modelo: 'P20-DS', fhd: 8,  wuxga: 8,  k4: 4,  inp: 12, dante: true,  resumen: 'Como P20 + salidas 12G-SDI y audio Dante 32×32 · edge blending de proyectores', url: null },
+    { id: 'PHP80',  marca: 'PIXELHUE', modelo: 'P80',    fhd: 8,  wuxga: 8,  k4: 4,  inp: 12, dante: false, resumen: '12 entradas 4K · 8 salidas HDMI 2.0 (4 × 4K o 8 DL) + 4 flex · edge blending de proyectores', url: null },
+    { id: 'PHQ8',   marca: 'PIXELHUE', modelo: 'Q8',     fhd: 16, wuxga: 16, k4: 16, inp: 48, dante: true,  resumen: 'Modular: hasta 48 entradas y 16 salidas 4K con sus tarjetas · edge blending de proyectores', url: null }
+  ];
+  /* calcularBlending(n, clase): los procesadores que llegan a n proyectores de esa clase de resolución ('fhd' | 'wuxga' | 'k4'), de menos a más salidas */
+  const calcularBlending = (n, clase) => {
+    const k = clase === 'k4' || clase === 'wuxga' ? clase : 'fhd', need = Math.max(1, n || 0);
+    return ELEC_BLEND.filter((m) => m[k] >= need).sort((a, b) => a[k] - b[k]).map((m) => ({ ...m, need, cap: m[k], clase: k }));
+  };
+
   const elecNorm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const elecMpx = (n) => (n / 1000000).toFixed(1).replace('.0', '');
 
@@ -221,5 +238,5 @@
     });
     return out;
   };
-  globalThis.SC_ELEC = { ELEC_PX_PUERTO, ELEC_PX_4K, ELEC_CVT, CHARMEX_NOVASTAR, charmexBusca, ELEC_DEVICES, ELEC_MX_CHASIS, ELEC_MX_TARJ_OUT, ELEC_MX_SFP, ELEC_MX_CVT, ELEC_H_CHASIS, ELEC_H_IN_BASE, ELEC_H_PREVIO, ELEC_H_TARJ_RJ, ELEC_H_TARJ_FIB, ELEC_H_TARJ_IN, ELEC_MEDIASERVERS, elecNorm, elecMpx, elecDeHoja, calcularElectronicas, calcularMediaservers };
+  globalThis.SC_ELEC = { ELEC_BLEND, calcularBlending, ELEC_PX_PUERTO, ELEC_PX_4K, ELEC_CVT, CHARMEX_NOVASTAR, charmexBusca, ELEC_DEVICES, ELEC_MX_CHASIS, ELEC_MX_TARJ_OUT, ELEC_MX_SFP, ELEC_MX_CVT, ELEC_H_CHASIS, ELEC_H_IN_BASE, ELEC_H_PREVIO, ELEC_H_TARJ_RJ, ELEC_H_TARJ_FIB, ELEC_H_TARJ_IN, ELEC_MEDIASERVERS, elecNorm, elecMpx, elecDeHoja, calcularElectronicas, calcularMediaservers };
 })();
