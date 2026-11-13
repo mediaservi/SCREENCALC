@@ -2,10 +2,11 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                SCREENS - INDEX                               ║
-║                          Versión actual: v10.20                            ║
+║                          Versión actual: v10.21                            ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-ÚLTIMA ACTUALIZACIÓN: v10.20
+ÚLTIMA ACTUALIZACIÓN: v10.21
+- v10.21: la portada (una pantalla LED) ya tiene PDF propio, esquema de conexión, lista de material y datos del proyecto; la consola clásica pasa a clasica.html.
 - v10.20 (beta): varias pantallas, sala inmersiva y proyección en la plantilla de bloques (blocks/consola.html).
 - v10.19: la vista en una pantalla (BLOCKS) pasa a ser la portada de SCREENS; la clásica sigue en «?clasica» y con el botón «PDF y versión clásica».
 - v10.18: pie nuevo («… forma parte del proyecto AVHUB ideado por el fundador de mediaservi.com · Aviso legal»); la dirección …/#aviso abre el aviso legal. Incluye BLOCKS beta 16 en blocks/.
@@ -8983,7 +8984,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
 
                   {/* PIE: siempre al final del frame, después de todos los bloques */}
                   <div className="footer-pantalla text-[10px] text-center text-slate-400 pt-4 pb-8 px-4 no-print">
-                    {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v10.20', document.documentElement.lang || 'es')}} /> : <span><a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a></span>}
+                    {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v10.21', document.documentElement.lang || 'es')}} /> : <span><a href="https://screens.mediaservi.com" target="_blank" className="hover:text-gray-500">SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" target="_blank" className="hover:text-gray-500">mediaservi.com</a></span>}
                     <button onClick={() => ADMIN_URL ? window.open(ADMIN_URL, '_blank', 'noopener') : alert('Panel de administrador: pendiente de publicar.')} className="admin-btn" title="Administrador" aria-label="Administrador"><Ic n="admin" /></button>
                   </div>
                   
@@ -8994,7 +8995,7 @@ window.SC_I18N={set:set,tr:tr,normNL:normNL,lang:function(){return cur;},srLang:
                       *Cálculo automático que puede contener errores: verifícalo con tu método habitual o con un técnico antes de presupuestar o instalar.
                     </div>
                     <div className="print-footer-lema" style={{fontSize: '7pt', color: '#333', lineHeight: '1.6'}}>
-                      {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v10.20', document.documentElement.lang || 'es', {sinEnlaces: true})}} /> : <span><a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a></span>} · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
+                      {window.AVCREDITO ? <span dangerouslySetInnerHTML={{__html: window.AVCREDITO.html('SCREENS', 'v10.21', document.documentElement.lang || 'es', {sinEnlaces: true})}} /> : <span><a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>SCREENS</a> v9.3 {new Date().getFullYear()} es un proyecto hecho con <Ic n="footer" /> by <a href="https://mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>mediaservi.com</a></span>} · <a href="https://screens.mediaservi.com" style={{color: 'inherit', textDecoration: 'none'}}>screens.mediaservi.com</a>
                     </div>
                   </div>
               </main>
