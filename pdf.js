@@ -87,13 +87,16 @@
       else { let y = 0; const cs = med.cortes.filter((c) => c > 0 && c < fin); let seguro = 0; while (fin - y > util + 1 && seguro++ < 60) { const tope = y + util, parte = (c) => med.enteros.some((e) => e[0] < c - 1 && e[1] > c + 1 && e[1] - e[0] <= util && e[0] > y + 1), cand = cs.filter((c) => c > y + util * .25 && c <= tope && !parte(c)); const c = cand.length ? cand[cand.length - 1] : tope; trozos.push([y, c]); y = c; } trozos.push([y, fin]); }
       trozos = trozos.filter((t) => t[1] - t[0] > 2); if (!trozos.length) throw new Error('hoja vacía');
       const doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }), tmp = document.createElement('canvas'), q = tmp.getContext('2d');
-      const pega = (y0, y1, xMm, yMm, wMm) => { const h = Math.max(1, Math.round((y1 - y0) * k)); tmp.width = lienzo.width; tmp.height = h; q.fillStyle = '#fff'; q.fillRect(0, 0, tmp.width, h); q.drawImage(lienzo, 0, Math.round(y0 * k), lienzo.width, h, 0, 0, lienzo.width, h); doc.addImage(tmp.toDataURL('image/jpeg', .93), 'JPEG', xMm, yMm, wMm, wMm * h / lienzo.width, undefined, 'FAST'); };
-      trozos.forEach((t, i) => { if (i) doc.addPage(); const altoMm = (t[1] - t[0]) / MM, f = Math.min(1, utilMm / altoMm), w = anchoMm * f; pega(t[0], t[1], M + (anchoMm - w) / 2, M, w);
+      const PV = o.previa ? [] : null, sMm = lienzo.width / anchoMm; let hojaPv = null, qPv = null;
+      const pega = (y0, y1, xMm, yMm, wMm) => { const h = Math.max(1, Math.round((y1 - y0) * k)); tmp.width = lienzo.width; tmp.height = h; q.fillStyle = '#fff'; q.fillRect(0, 0, tmp.width, h); q.drawImage(lienzo, 0, Math.round(y0 * k), lienzo.width, h, 0, 0, lienzo.width, h); doc.addImage(tmp.toDataURL('image/jpeg', .93), 'JPEG', xMm, yMm, wMm, wMm * h / lienzo.width, undefined, 'FAST'); if (qPv) qPv.drawImage(tmp, xMm * sMm, yMm * sMm, wMm * sMm, wMm * h / lienzo.width * sMm); };
+      trozos.forEach((t, i) => { if (i) doc.addPage(); if (PV) { hojaPv = document.createElement('canvas'); hojaPv.width = Math.round(A4[0] * sMm); hojaPv.height = Math.round(A4[1] * sMm); qPv = hojaPv.getContext('2d'); qPv.fillStyle = '#fff'; qPv.fillRect(0, 0, hojaPv.width, hojaPv.height); } const altoMm = (t[1] - t[0]) / MM, f = Math.min(1, utilMm / altoMm), w = anchoMm * f; pega(t[0], t[1], M + (anchoMm - w) / 2, M, w);
         if (med.pie) pega(med.pie[0], med.pie[1], M, A4[1] - M - pieAlto / MM, anchoMm);
-        doc.setFont('courier', 'normal'); doc.setFontSize(8); doc.setTextColor(85); doc.text((i + 1) + '/' + trozos.length, A4[0] - M, A4[1] - M - (pieAlto ? pieAlto / MM / 2 - 2.2 : -4), { align: 'right' }); });
+        doc.setFont('courier', 'normal'); doc.setFontSize(8); doc.setTextColor(85); doc.text((i + 1) + '/' + trozos.length, A4[0] - M, A4[1] - M - (pieAlto ? pieAlto / MM / 2 - 2.2 : -4), { align: 'right' }); if (PV) { qPv.fillStyle = '#555'; qPv.font = Math.round(8 * .3528 * sMm) + 'px Courier, monospace'; qPv.textAlign = 'right'; qPv.fillText((i + 1) + '/' + trozos.length, (A4[0] - M) * sMm, (A4[1] - M - (pieAlto ? pieAlto / MM / 2 - 2.2 : -4)) * sMm); PV.push(hojaPv.toDataURL('image/jpeg', .88)); qPv = null; } });
       if (o.titulo) doc.setProperties({ title: o.titulo, creator: 'SCREENS · mediaservi.com' });
       const nombre = (o.nombre || 'SCREENS') + '.pdf';
       if (o.devuelve) return doc.output('blob');
+      /* vista previa: el PDF y una imagen de cada hoja, tal cual sale (para enseñarla antes de guardar o imprimir) */
+      if (PV) return { blob: doc.output('blob'), nombre, paginas: PV };
       doc.save(nombre); return nombre;
     } finally { velo(false); }
   }
