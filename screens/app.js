@@ -9,7 +9,7 @@ import { interpretar } from './peticion.js';
 import { vistasTecnicas, activarVistas } from './vistas.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v10.40';
+const VERSION = 'v10.41';
 // v8.9 · crédito común de AVHUB (credito.js) y seta de aviso de fallos (fallo.js), los mismos en toda la familia
 if (window.AVCREDITO) window.AVCREDITO.alCambiar(() => { try { pintarCabecera(); } catch (e) {} });
 if (window.AVFALLO) { const bi = document.querySelector('#btn-idioma'); if (bi) { const bf = window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() }); bf.id = 'btn-fallo'; bi.before(bf);
@@ -193,7 +193,7 @@ function electronica(c) {
     out.proc = out.procesadores.find(x => x.key === e.sel) || out.procesadores[0] || null;
     out.need = Math.max(1, c.tot.salidas4k);
   } else if (c.tot) out.need = Math.max(1, c.tot.n);
-  // v10.40 · proyección: procesador con edge blending propio (PIXELHUE, sin mediaserver), mediaserver NovaStar (warping y blending) o nada
+  // v10.41 · proyección: procesador con edge blending propio (PIXELHUE, sin mediaserver), mediaserver NovaStar (warping y blending) o nada
   if (E.tecnologia !== 'led') {
     const eq = e.proyEq || 'media';
     if (eq === 'blend' && out.need) {
@@ -266,7 +266,7 @@ function fichaProc(x) {
     specs: [[t('puertos'), trMotor(x.puertos)], [t('capacidad'), trMotor(x.capacidad)], [t('kEsc'), x.escalador ? t('si') : t('no')]],
     piezas: (x.equipos || []).map(q => ({ cant: q.cant, ref: q.ref, desc: trMotor(q.desc) })), enlace: x.url, enlaceTxt: t('fichaFab') });
 }
-// v10.40 · enlaces de cada equipo: página del fabricante, ficha técnica en PDF y, si la hay, la de Charmex
+// v10.41 · enlaces de cada equipo: página del fabricante, ficha técnica en PDF y, si la hay, la de Charmex
 const enlacesEq = (m) => [[m.pdf, t('fichaPdf')], m.urlFab && m.url ? [m.url, 'Charmex'] : null].filter(x => x && x[0]);
 function fichaBlend(m) {
   return fichaHTML({ cat: t('procBlend'), icono: 'elec', marca: m.marca, modelo: m.modelo, acento: '#ffb000',
@@ -373,7 +373,7 @@ function partesProy(c) {
   const uso = (USOS_LUZ.find(u => u[1] === Number(p.lux)) || [''])[0];
   luz += campo(t('luzUso'), `<select class="sel" data-uso="1"><option value=""${uso ? '' : ' selected'}>${t('uso_personal')}</option>${USOS_LUZ.map(u => `<option value="${u[1]}"${u[0] === uso ? ' selected' : ''}>${t('uso_' + u[0])} · ${u[1]} lx</option>`).join('')}</select>`);
   luz += `<div class="fila c2">${campo(t('luzSala'), numIn('proy.lux', p.lux, 'lx', 10, 0, 5000))}${campo(t('ganancia'), numIn('proy.ganancia', p.ganancia, '×', 0.1, 0.1, 5))}</div>`;
-  // 6) avanzado: modo fuera de especificación (v10.40: en el bloque Material, junto al proyector; en «Ajuste del equipo» quedaba escondido) (imágenes más grandes que las garantizadas), con aviso, cálculo y recomendación
+  // 6) avanzado: modo fuera de especificación (v10.41: en el bloque Material, junto al proyector; en «Ajuste del equipo» quedaba escondido) (imágenes más grandes que las garantizadas), con aviso, cálculo y recomendación
   // v8.4 · fuera de especificación: el botón activo se resalta en ámbar (no es un ajuste normal)
   mat += `<div class="etq">${t('avanzado')}</div><div class="fila c1"><button type="button" class="tog ambar${p.oos ? ' on' : ''}" aria-pressed="${!!p.oos}" data-accion="proy-oos" title="${t('oosTit')}">⚠ ${t('oos')}</button></div>`;
   if (sel) {
@@ -444,7 +444,7 @@ function modElec(c) {
     if (c.tot) h += (x.procesadores || []).length ? campo(t('procesador'), `<select class="sel" data-sel="elec.sel">${x.procesadores.map(q => `<option value="${q.key}"${x.proc && q.key === x.proc.key ? ' selected' : ''}>${q.marca} ${q.modelo}</option>`).join('')}</select>`) : `<p class="aviso">${t('sinProc')}</p>`;
   }
   if (!led) {
-    // v10.40 · proyección: qué equipo reparte la imagen entre los proyectores
+    // v10.41 · proyección: qué equipo reparte la imagen entre los proyectores
     const eq = e.proyEq || 'media';
     const op = ([k, l, ti]) => tog(eq === k, `data-set="elec.proyEq" data-v="${k}" title="${ti}"`, l);
     h += `<div class="fila c2">${[['blend', t('eqBlend'), t('procBlend')], ['media', t('mediaserver'), t('mediaserver')]].map(op).join('')}</div><div class="fila c1">${op(['ninguno', t('mNinguno'), t('mNinguno')])}</div>`;
@@ -478,6 +478,22 @@ function modSuperficies(c) {
 // sin filas: o falta el catálogo LED (cargando / sin conexión) o no hay ninguna superficie activa
 function sinFilas(c) { if (E.tecnologia === 'led' && !c.modelo) return estadoCat === 'cargando' ? t('cargando') : t('sinCat'); return t('nada'); }
 function tarjeta(t1, v, uni, sub, ac) { return `<div class="tar" style="--ac:${ac}"><div class="t">${t1}</div><div class="v">${v}<small>${uni || ''}</small></div>${sub ? `<div class="s">${sub}</div>` : ''}</div>`; }
+// v10.41 · fuera de especificación: el aviso también en la simulación 3D, en los resultados (y su ventana grande) y en el PDF
+function oosDatos(c) {
+  if (E.tecnologia === 'led' || !E.proy.oos || !c || !c.proyector || !c.filas) return null;
+  const sel = c.proyector, usada = Math.max(0, ...c.filas.filter(f => f.s.tipo !== 'suelo' && f.p && f.p.imgW).map(f => Math.hypot(f.p.imgW, f.p.imgH) / 0.0254));
+  return { sel, usada: Math.round(usada), sobre: usada > sel.maxDiagPulg + 0.5 };
+}
+const oosUsaTxt = (o) => (o.sobre ? t('oosUsa', { d: fmtPx(o.usada), g: fmtPx(o.sel.maxDiagPulg) }) : '');
+function avisoOos(c) {
+  const o = oosDatos(c); if (!o) return '';
+  return `<ul class="avisos oos"><li class="mal"><b>⚠ ${t('oos')}.</b> ${t('oosAviso')} ${oosUsaTxt(o)} ${t('oosReco')}</li></ul>`;
+}
+// la banda de la simulación 3D (va con la escena también a la ventana grande)
+function bandaOos() {
+  const b = $('#esc-oos'); if (!b) return; const o = oosDatos(calculo);
+  b.hidden = !o; b.innerHTML = o ? `<b>⚠ ${t('oos')}</b> ${oosUsaTxt(o)} ${t('oosCorto')}` : '';
+}
 function vistaResultados(c) {
   if (!c.filas.length) return `<p class="ayuda">${sinFilas(c)}</p>`;
   let h = '';
@@ -507,6 +523,7 @@ function vistaResultados(c) {
       ${tarjeta(t('distOpticaK'), tiros.length ? fmt(Math.max(...tiros), 2) : '—', 'm', `TR ${fmt(Math.max(...c.filas.filter(f => f.s.tipo !== 'suelo').map(f => f.p.ratio)), 2)}:1`, '#00ff04')}
       ${tarjeta(t('lumenes'), fmtPx(T.lumenes), 'lm', `${fmtPx(T.n)} × ${fmtPx(p.lumens)} lm`, '#ff4d5e')}
     </div>`;
+    h += avisoOos(c);
     h += `<div class="tabla-caja"><table class="tabla"><thead><tr><th>${t('supCol')}</th><th>${t('medida')}</th><th>${t('proyCol')}</th><th>${t('resol')}</th><th>${t('solCol')}</th><th>${t('tiroCol')}</th><th>${t('brCol')}</th></tr></thead><tbody>
       ${c.filas.map(f => { const q = f.p; return `<tr><td>${f.nombre}</td><td>${fmt(f.s.ancho)} × ${fmt(f.s.alto)} m</td><td>${q.cols ? q.cols + '×' + q.rows + ' = ' : ''}${q.n}${q.vert ? ' · ' + t('vert') : ''}</td><td>${q.resW}×${q.resH}</td><td>${fmt(q.solapeRel * 100, 0)} %</td><td>${fmt(q.tiro, 2)} m${q.fuera ? ' ⚠' : ''}</td><td>${fmt(q.nits, 0)} nits</td></tr>`; }).join('')}
     </tbody></table></div>`;
@@ -736,7 +753,7 @@ function vistaTrabajo() {
   return `<div class="trabajo z3"><aside class="panel zona" id="panelA" data-zona="a"></aside><aside class="panel zona" id="panelB" data-zona="b"></aside><main class="vista">
     <div class="escena" id="escena"><canvas id="lienzo3d" aria-label="Simulación 3D"></canvas>
       <div class="esc-barra"><div id="esc-vistas"></div><div id="esc-cont"></div><div id="esc-medio" class="esc-medio"></div></div>
-      <div class="esc-info">${t('vista3d')}</div></div>
+      <div class="esc-abajo"><div class="esc-oos" id="esc-oos" role="note" hidden></div><div class="esc-info">${t('vista3d')}</div></div></div>
     <div class="res" id="res"></div></main></div>`;
 }
 function barraEscena() {
@@ -768,7 +785,7 @@ function actualizar(sinEscena) {
   plegar();
   ['A', 'B'].forEach(k => { if (!sc[k]) return; const m = $(`#panel${k} .blq.act[data-blq="${sc[k][0]}"] .blq-cuerpo`); if (m) m.scrollTop = sc[k][1]; });
   activarVistas($('#res'), calculo, fijarDesdeVistas);
-  barraEscena();
+  barraEscena(); bandaOos();
   if (!sinEscena) { clearTimeout(tEsc); tEsc = setTimeout(construirEscena, 60); }
 }
 function construirEscena() {
@@ -959,12 +976,12 @@ function imprimir() {
   const hoy = new Date(), fecha = hoy.toLocaleDateString(idioma() === 'en' ? 'en-GB' : 'es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' · ' + hoy.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
   // v8.9 · la línea de crédito es la común de AVHUB (credito.js): el texto se edita en AVHUB ADMIN y es el mismo en todas las apps
   const cr = window.AVCREDITO ? window.AVCREDITO.plano('SCREENS', VERSION, idioma()) : null;
-  // v10.40 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito tal cual
+  // v10.41 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito tal cual
   const pie = cr ? cr[0].trim() : `SCREENS ${VERSION} ${hoy.getFullYear()} ${t('pie')}`, web = cr ? cr[1].trim() : 'by mediaservi.com';
   const cred = window.AVCREDITO ? window.AVCREDITO.html('SCREENS', VERSION, idioma(), { sinEnlaces: true }) : `${pie} <i class="ic ic-footer" aria-hidden="true"></i> ${web}`;
   let h = `<header class="im-cab"><img class="im-logo" src="assets/screens-logo-negro.svg" alt="SCREENS"><div class="im-url"><b>avhub.mediaservi.com</b><span>${fecha}</span></div><img class="im-avhub" src="assets/avhub-logo.svg" alt="AVHUB"></header>`;
   h += `<div class="im-titulo">${tituloPdf(c)}</div>`;
-  if (escena) h += `<figure class="im-captura"><img src="${escena.captura(true)}" alt=""></figure>`;
+  { const o = oosDatos(c); if (escena) h += `<figure class="im-captura"><img src="${escena.captura(true)}" alt="">${o ? `<figcaption class="im-oos"><b>⚠ ${t('oos')}</b> ${oosUsaTxt(o)} ${t('oosCorto')}</figcaption>` : ''}</figure>`; }
   h += `<div class="im-res">${vistaResultados(c)}</div>`;
   const fichas = E.tecnologia === 'led' ? (c.modelo ? [fichaCab(c.modelo)] : []) : [fichaProy(c.proyector, t('fProy'))].concat(c.prSuelo && c.prSuelo !== c.proyector && c.filas.some(f => f.s.tipo === 'suelo') ? [fichaProy(c.prSuelo, t('fProySuelo'))] : []);
   if (fichas.length) h += `<section class="res-sec"><div class="res-tit">${t('equipos')}</div><div class="fichas">${fichas.join('')}</div></section>`;
