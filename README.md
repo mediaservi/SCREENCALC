@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.19** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.20** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,13 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.19)
+## Cambios de la versión actual (v10.20, beta)
+
+- **Varias pantallas, sala inmersiva y proyección en una pantalla (BLOCKS, beta 1), en `blocks/consola.html`:** la consola es la de siempre (`screens/app.js`, sin tocar: mismas funciones, mismo cálculo, mismo PDF) colocada en la plantilla de bloques fijos. A la izquierda, los bloques del espacio y de la tecnología; en los dos bloques grandes, **dos vistas distintas**: la simulación 3D y el resultado (tablas, electrónica o vistas técnicas de proyección); abajo, las seis cifras, una por bloque. La plantilla se escala entera a la ventana, así que no hay desplazamiento ni cortes en escritorio y TV; en el móvil se queda la consola apilada de siempre. `?modo=varias-led`, `varias-proy` o `una-proy` abre cada modo.
+- **BLOCKS beta 18:** los botones «Varias» y «Proyección» de la vista de una pantalla llevan a esa consola en bloques (antes, a la clásica). «Una + LED» desde la consola en bloques vuelve a la vista de una pantalla.
+- Solo en `beta`. En `main` sigue la v10.19.
+
+## Cambios de la versión anterior (v10.19)
 
 - **La portada de SCREENS es ahora la vista en una pantalla (BLOCKS):** al abrir screens.mediaservi.com se entra directamente en ella. La consola clásica (varias pantallas, proyección, PDF y esquema de conexión) sigue disponible con el botón «PDF y versión clásica» de la cabecera y en la dirección `…/?clasica`; los enlaces `…/?led` siguen abriendo la clásica.
 - BLOCKS beta 17: los enlaces a la clásica apuntan a `?clasica`.

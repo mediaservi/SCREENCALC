@@ -1,0 +1,35 @@
+/* SCREENS · BLOCKS beta · varias pantallas y proyección · mediaservi.com · GPL-3.0
+   Coloca la consola clásica (screens/estilo.css) en la plantilla de bloques fijos de AVHUB. Solo en escritorio y TV (html.bk, lo pone
+   consola.js, que además escala la plantilla de 1920 × 1080 a la ventana); en el móvil se usa tal cual la consola apilada.
+   Reparto: A (espacio y pantallas) y B (tecnología y electrónica) en las dos columnas de la izquierda; en los dos bloques grandes, dos
+   vistas distintas: la simulación 3D (S1A) y las tablas del resultado (S1B); abajo, las seis cifras, una por bloque. */
+.bk-chip { display: none; }
+html.bk { overflow: hidden; --bg: #0e0e11; --chasis: #1b1b20; --hundido: #101013; --borde: #34343c; }
+html.bk body { overflow: hidden; min-height: 0; transform-origin: 0 0; }
+html.bk .bk-chip { display: inline-block; font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #9a9aa5; border: 1px solid #34343c; border-radius: 99px; padding: 3px 9px; white-space: nowrap; }
+html.bk .cab { min-height: 62px; background: linear-gradient(180deg, #101014, #1b1b21); border-bottom: 1px solid #34343c; }
+html.bk .consola { min-height: 62px; background: #1c1c21; border-bottom: 1px solid #34343c; }
+html.bk .fam-pie { display: none; }
+html.bk .pie { font-size: 12.5px; padding: 5px 10px 6px; }
+html.bk .trabajo.z3 { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 12px 16px; background: var(--bg);
+  grid-template-areas: "za zb s1a s1a s1b s1b" "za zb s1a s1a s1b s1b" "za zb tot tot tot tot"; }
+html.bk #panelA { grid-area: za; } html.bk #panelB { grid-area: zb; }
+html.bk .zona { padding: 0; gap: 10px; background: none; border: 0; overflow-y: auto; scrollbar-width: thin; }
+html.bk .zona-cab { display: none; }
+html.bk .mod.blq, html.bk #bk-tot .tar, html.bk .zona-pie { background: #1b1b20; border: 1px solid #34343c; border-radius: 16px; box-shadow: 0 6px 18px rgba(0, 0, 0, .45); position: relative; overflow: hidden; }
+html.bk .mod.blq { padding: 14px 13px 12px; }
+html.bk .mod.blq::before, html.bk #bk-tot .tar::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--ac, #c6e04a); opacity: .9; }
+html.bk #panelB .mod.blq::before { background: #b566ff; }
+html.bk .zona-pie { padding: 10px 12px; margin-top: 0; }
+html.bk .trabajo.z3 .vista, html.bk .trabajo .vista { display: contents; }
+html.bk #escena { grid-area: s1a; height: auto !important; min-height: 0; border: 1px solid #34343c; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 18px rgba(0, 0, 0, .45); }
+html.bk #res { grid-area: s1b; max-height: none !important; min-height: 0; overflow-y: auto !important; scrollbar-width: thin; border: 1px solid #34343c; border-radius: 16px; background: #1b1b20; box-shadow: 0 6px 18px rgba(0, 0, 0, .45); padding: 12px; align-content: start; }
+html.bk #bk-tot { grid-area: tot; min-width: 0; min-height: 0; display: grid; }
+html.bk #bk-tot .res-tot { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)) !important; gap: 10px; min-height: 0; }
+html.bk #bk-tot .tar { display: flex; flex-direction: column; justify-content: center; padding: 16px 14px 12px; min-width: 0; }
+html.bk #bk-tot .tar .v { font-size: 34px; }
+html.bk #bk-tot .tar .t { font-size: 12px; }
+/* una sola zona de datos (proyección de una pantalla, etc.): la plantilla no deja huecos */
+html.bk .trabajo:not(.z3) { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 12px 16px; background: var(--bg);
+  grid-template-areas: "za za s1a s1a s1b s1b" "za za s1a s1a s1b s1b" "za za tot tot tot tot"; }
+html.bk .trabajo:not(.z3) > .panel { grid-area: za; overflow-y: auto; scrollbar-width: thin; }

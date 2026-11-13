@@ -26,6 +26,8 @@ const MAPA = {
   'Familia AVHUB': ['AVHUB family', 'Família AVHUB'],
   'Una': ['One', 'Una'], 'Varias': ['Several', 'Diverses'], 'LED': ['LED', 'LED'], 'Proyección': ['Projection', 'Projecció'],
   'Varias pantallas: en la versión clásica': ['Several screens: in the classic version', 'Diverses pantalles: a la versió clàssica'],
+  'Varias pantallas y sala inmersiva': ['Several screens and immersive room', 'Diverses pantalles i sala immersiva'],
+  'Proyección': ['Projection', 'Projecció'],
   'Proyección: en la versión clásica': ['Projection: in the classic version', 'Projecció: a la versió clàssica'],
   'Escríbela: «pantalla de 3 x 4 para exterior 3.9p a 8 m»': ['Type it: “3 x 4 screen for outdoor 3.9p at 8 m”', 'Escriu-la: «pantalla de 3 x 4 per a exterior 3.9p a 8 m»'],
   'Describe la pantalla': ['Describe the screen', 'Descriu la pantalla'],
