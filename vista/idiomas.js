@@ -177,6 +177,8 @@ const MAPA = {
   'Resultado copiado: pégalo en WhatsApp o donde quieras.': ['Result copied: paste it into WhatsApp or anywhere.', 'Resultat copiat: enganxa’l a WhatsApp o on vulguis.'],
   'Te escucho: di la pantalla que necesitas y pulsa otra vez el micrófono al acabar.': ['Listening: say the screen you need and press the microphone again when done.', 'T’escolto: digues la pantalla que necessites i torna a prémer el micròfon en acabar.'],
   'SCREENS necesita JavaScript.': ['SCREENS needs JavaScript.', 'SCREENS necessita JavaScript.'],
+  /* v10.26 · backup y manguera */
+  'Con backup': ['With backup', 'Amb backup'], 'Sin backup': ['No backup', 'Sense backup'],
   /* v10.25 · aviso común de las apps de cálculo */
   'Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.': ['Automatic calculation that may contain errors: check it before quoting or installing.', 'Càlcul automàtic que pot contenir errors: revisa’l abans de pressupostar o instal·lar.'],
   /* v10.24 · lista de material y esquema de conexión como en la clásica */
@@ -284,6 +286,12 @@ const MAPA = {
 const k = (l) => (l === 'en' ? 0 : 1);
 // textos con cifras o nombres: [expresión, (trozos, idioma) => texto]
 const REGLAS = [
+  [/^MANGUERA · (Al procesador|Al conversor de fibra|Al cuadro eléctrico)$/, (m, l) => [{ 'Al procesador': 'CABLE BUNDLE · To the processor', 'Al conversor de fibra': 'CABLE BUNDLE · To the fibre converter', 'Al cuadro eléctrico': 'CABLE BUNDLE · To the electrical panel' }, { 'Al procesador': 'MÀNEGA · Al processador', 'Al conversor de fibra': 'MÀNEGA · Al convertidor de fibra', 'Al cuadro eléctrico': 'MÀNEGA · Al quadre elèctric' }][k(l)][m[1]]],
+  [/^(\d+) \+ (\d+) backup = (\d+) cables Cat6$/, (m, l) => [`${m[1]} + ${m[2]} backup = ${m[3]} Cat6 cables`, `${m[1]} + ${m[2]} backup = ${m[3]} cables Cat6`][k(l)]],
+  [/^(\d+) (cable|cables) Cat6$/, (m, l) => m[1] + ' ' + [+m[1] > 1 ? 'Cat6 cables' : 'Cat6 cable', +m[1] > 1 ? 'cables Cat6' : 'cable Cat6'][k(l)]],
+  [/^(\d+) (línea|líneas) de 16 A$/, (m, l) => m[1] + ' ' + [+m[1] > 1 ? '16 A lines' : '16 A line', +m[1] > 1 ? 'línies de 16 A' : 'línia de 16 A'][k(l)]],
+  [/^= (\d+) cables$/, (m) => '= ' + m[1] + ' cables'],
+  [/^Un segundo cable por puerto, que entra por el último cabinet de cada cadena: \+ (\d+) cables Cat6$/, (m, l) => [`A second cable per port, entering at the last cabinet of each chain: + ${m[1]} Cat6 cables`, `Un segon cable per port, que entra per l’últim cabinet de cada cadena: + ${m[1]} cables Cat6`][k(l)]],
   [/^Fuentes de vídeo del cliente \((.+)\)$/, (m, l) => [`Client's video sources (${m[1]})`, `Fonts de vídeo del client (${m[1]})`][k(l)]],
   [/^Cable HDMI PureLink FlexInstall (pasivo|AOC) 8K (.+) m \(fuente → (mediaserver|electrónica)\)( · estándar, distancia no indicada)?$/, (m, l) => [`PureLink FlexInstall HDMI cable ${m[1] === 'pasivo' ? 'passive' : 'AOC'} 8K ${m[2]} m (source → ${m[3] === 'mediaserver' ? 'media server' : 'electronics'})${m[4] ? ' · standard, distance not given' : ''}`, `Cable HDMI PureLink FlexInstall ${m[1] === 'pasivo' ? 'passiu' : 'AOC'} 8K ${m[2]} m (font → ${m[3] === 'mediaserver' ? 'mediaserver' : 'electrònica'})${m[4] ? ' · estàndard, distància no indicada' : ''}`][k(l)]],
   [/^Mediaserver (.+) \(backup nativo\)$/, (m, l) => [`Media server ${m[1]} (native backup)`, `Mediaserver ${m[1]} (backup natiu)`][k(l)]],

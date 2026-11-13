@@ -7,9 +7,9 @@ import { HUMAN_PATH } from '../screens/figura.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.25';
+import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.26';
 idiomaInicial();   /* el idioma guardado de la familia SCREENS o, la primera vez, el del navegador */
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.25';
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.26';
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const SV = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
@@ -261,19 +261,47 @@ function svgSim(prop, anchoPx) {
   if (elev > 0.05) { const ex = px + pw / 2, ey = (py + ph + sueloY) / 2, et = fmt(E.elev) + ' cm', ew = et.length * 13.4 + 22; g += `<line x1="${ex}" y1="${py + ph + 5}" x2="${ex}" y2="${sueloY}" stroke="#fff" stroke-width="4.2"/><line x1="${ex}" y1="${py + ph + 5}" x2="${ex}" y2="${sueloY}" stroke="#7a14d6" stroke-width="2" stroke-dasharray="6 4"/>` + (sueloY - py - ph > 44 ? `<g transform="translate(${ex},${ey})"><rect x="${-ew / 2}" y="-18" width="${ew}" height="36" rx="7" fill="#fff" stroke="#7a14d6" stroke-width="2"/><text y="8" text-anchor="middle" font-size="24" fill="#5a0aa8" font-family="Share Tech Mono, monospace">${et}</text></g>` : ''); }
   return g + '</svg>';
 }
+/* cableado de señal o eléctrico sobre la pantalla vista por detrás: qué cabinets van en cada puerto o línea y por dónde va el cable.
+   v10.26 · para el instalador: cada cable sale de su cabinet de entrada hasta el borde de la pantalla y de ahí, por la MANGUERA (el tubo o caño
+   que reúne todos los cables), hasta el procesador o el cuadro. Con backup, cada puerto lleva un segundo cable (en discontinua) que entra por
+   el ÚLTIMO cabinet de su cadena, así que la manguera tiene que llegar también a ese lado. */
 function svgRejilla(tipo) {
-  const { r, m } = R, W = 1000, H = 620, sen = true, py = 66, k = Math.min(900 / r.ancho, (462 - py) / r.alto), pw = r.ancho * k, ph = r.alto * k, px = (W - pw) / 2, cw = pw / r.cols, chh = ph / r.rows, n = tipo === 'senal' ? r.lineas : R.nLin;
-  const de = tipo === 'senal' ? R.puerto : R.linea, tf = Math.max(9, Math.min(22, Math.min(cw, chh) * .42));
-  let g = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${tipo === 'senal' ? 'Reparto de cabinets por puerto de datos' : 'Reparto de cabinets por línea eléctrica'}">`;
+  const { r } = R, sen = tipo === 'senal', bk = sen && !!E.backup, W = 1000, H = 620, n = sen ? r.lineas : R.nLin, de = sen ? R.puerto : R.linea, rutas = sen ? R.rutas : R.rutasE;
+  const filasLey = Math.ceil(Math.min(n, 12) / 4), pyTop = 84, bajo = 112 + filasLey * 44, k = Math.min(840 / r.ancho, (H - pyTop - bajo) / r.alto), pw = r.ancho * k, ph = r.alto * k, px = (W - pw) / 2, py = pyTop, cw = pw / r.cols, chh = ph / r.rows;
+  const tf = Math.max(9, Math.min(22, Math.min(cw, chh) * .42)), cx = (c) => px + c * cw + cw / 2, cy = (f) => py + (r.rows - 1 - f) * chh + chh / 2, CAB = sen ? COL_SENAL.eth : COL_SENAL.power, tc = 'currentColor';
+  let g = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="color:var(--txt)" role="img" aria-label="${sen ? 'Reparto de cabinets por puerto de datos' : 'Reparto de cabinets por línea eléctrica'}">`;
+  g += `<defs><marker id="fl" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#0b0b10"/></marker></defs>`;
   for (let f = 0; f < r.rows; f++) for (let c = 0; c < r.cols; c++) { const i = de(c, f), col = COLS[i % COLS.length]; g += `<rect x="${px + c * cw + .6}" y="${py + (r.rows - 1 - f) * chh + .6}" width="${cw - 1.2}" height="${chh - 1.2}" fill="${col}" fill-opacity=".8" stroke="rgba(0,0,0,.35)"/>`;
-    if (cw > 20 && chh > 16) g += `<text x="${sen ? px + c * cw + cw * .2 : px + c * cw + cw / 2}" y="${sen ? py + (r.rows - 1 - f) * chh + tf * .62 + chh * .08 : py + (r.rows - 1 - f) * chh + chh / 2 + tf * .36}" text-anchor="middle" font-size="${sen ? tf * .62 : tf}" font-weight="800" fill="#0b0b10" fill-opacity=".72" font-family="Inter, sans-serif">${i + 1}</text>`; }
-  if (sen) { const gr = Math.max(1.6, Math.min(5, Math.min(cw, chh) * .09)), cx = (c) => px + c * cw + cw / 2, cy = (f) => py + (r.rows - 1 - f) * chh + chh / 2;
-    g += `<defs><marker id="fl" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#0b0b10"/></marker></defs>`;
-    (tipo === 'senal' ? R.rutas : R.rutasE).forEach((ru) => { if (!ru.length) return; g += `<polyline points="${ru.map(([c, f]) => cx(c).toFixed(1) + ',' + cy(f).toFixed(1)).join(' ')}" fill="none" stroke="#0b0b10" stroke-opacity=".82" stroke-width="${gr}" stroke-linejoin="round" stroke-linecap="round"${ru.length > 1 ? ' marker-end="url(#fl)"' : ''}/><circle cx="${cx(ru[0][0])}" cy="${cy(ru[0][1])}" r="${gr * 2.1}" fill="#fff" stroke="#0b0b10" stroke-width="${gr * .7}"/>`; }); }
-  const cols = Math.min(n, 4), lw = Math.min(236, 960 / cols), y0 = py + ph + 22;
+    if (cw > 20 && chh > 16) g += `<text x="${px + c * cw + cw * .2}" y="${py + (r.rows - 1 - f) * chh + tf * .62 + chh * .08}" text-anchor="middle" font-size="${tf * .62}" font-weight="800" fill="#0b0b10" fill-opacity=".72" font-family="Inter, sans-serif">${i + 1}</text>`; }
+  const gr = Math.max(1.6, Math.min(5, Math.min(cw, chh) * .09));
+  rutas.forEach((ru) => { if (!ru.length) return; g += `<polyline points="${ru.map(([c, f]) => cx(c).toFixed(1) + ',' + cy(f).toFixed(1)).join(' ')}" fill="none" stroke="#0b0b10" stroke-opacity=".82" stroke-width="${gr}" stroke-linejoin="round" stroke-linecap="round"${ru.length > 1 ? ' marker-end="url(#fl)"' : ''}/>`; });
+  /* entradas de cable: la del cable principal (círculo) en el primer cabinet y, con backup, la del cable de reserva (cuadrado) en el último */
+  const E2 = []; rutas.forEach((ru, i) => { if (!ru.length) return; E2.push({ i, c: ru[0][0], f: ru[0][1], bk: false }); if (bk) { const u = ru[ru.length - 1]; E2.push({ i, c: u[0], f: u[1], bk: true }); } });
+  /* cada entrada sale por el borde que sigue el cosido: con cosido vertical, por abajo o por arriba; con horizontal, por la izquierda o por la derecha */
+  const cos = sen ? R.cosido : R.cosE, borde = (e) => cos === 'vertical' ? (e.f <= (r.rows - 1) / 2 ? 'b' : 't') : cos === 'horizontal' ? (e.c <= (r.cols - 1) / 2 ? 'l' : 'r') : [['b', e.f], ['l', e.c], ['r', r.cols - 1 - e.c], ['t', r.rows - 1 - e.f]].reduce((a, b) => (b[1] < a[1] ? b : a))[0];
+  const yB = py + ph + 22, yT = py - 20, xL = px - 24, xR = px + pw + 24, usa = { b: [], t: [], l: [], r: [] }; E2.forEach((e) => { e.b = borde(e); usa[e.b].push(e); });
+  /* la manguera: tubo gris por los bordes que hace falta y, por abajo, hasta el procesador o el cuadro */
+  const tubo = (d) => `<path d="${d}" fill="none" stroke="${tc}" stroke-opacity=".2" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const lado = usa.r.length > usa.l.length ? 'r' : 'l', izq = usa.l.length || (usa.t.length && lado === 'l'), der = usa.r.length || (usa.t.length && lado === 'r');
+  const xsB = usa.b.map((e) => cx(e.c)).concat([W / 2], izq ? [xL] : [], der ? [xR] : []); g += tubo(`M${Math.min(...xsB)} ${yB}H${Math.max(...xsB)}`);
+  if (usa.t.length) { const xsT = usa.t.map((e) => cx(e.c)); g += tubo(`M${lado === 'l' ? Math.max(...xsT) : Math.min(...xsT)} ${yT}H${lado === 'l' ? xL : xR}`); }
+  if (izq) g += tubo(`M${xL} ${usa.t.length && lado === 'l' ? yT : Math.min(...usa.l.map((e) => cy(e.f)))}V${yB}`);
+  if (der) g += tubo(`M${xR} ${usa.t.length && lado === 'r' ? yT : Math.min(...usa.r.map((e) => cy(e.f)))}V${yB}`);
+  const yP = yB + 30; g += tubo(`M${W / 2} ${yB}V${yP - 4}`);
+  /* cada cable, de su cabinet al tubo: continuo el principal y discontinuo el de backup */
+  E2.forEach((e) => { const x = cx(e.c), y = cy(e.f), col = COLS[e.i % COLS.length], est = ` stroke="${CAB}" stroke-width="2.6" fill="none"${e.bk ? ' stroke-dasharray="6 4"' : ''}`;
+    const d = e.b === 'b' ? `M${x} ${y}V${yB}` : e.b === 't' ? `M${x} ${y}V${yT}` : e.b === 'l' ? `M${x} ${y}H${xL}` : `M${x} ${y}H${xR}`; g += `<path d="${d}"${est}/>`;
+    g += e.bk ? `<rect x="${x - gr * 2.3}" y="${y - gr * 2.3}" width="${gr * 4.6}" height="${gr * 4.6}" fill="#fff" stroke="${CAB}" stroke-width="${gr * .8}" stroke-dasharray="3 2"/>` : `<circle cx="${x}" cy="${y}" r="${gr * 2.1}" fill="#fff" stroke="#0b0b10" stroke-width="${gr * .7}"/>`;
+    if (e.bk && cw > 26 && chh > 22) g += `<text x="${x}" y="${y + gr * .9}" text-anchor="middle" font-size="${gr * 2.6}" font-weight="900" fill="${col}" font-family="Inter, sans-serif">B</text>`; });
+  /* destino de la manguera y cuántos cables lleva */
+  const nC = sen ? r.lineas * (bk ? 2 : 1) : R.nLin, dest = sen ? (E.conexion === 'fibra' ? 'Al conversor de fibra' : 'Al procesador') : 'Al cuadro eléctrico';
+  const cuenta = sen ? (bk ? `${r.lineas} + ${r.lineas} backup = ${nC} cables Cat6` : `${nC} ${nC > 1 ? 'cables' : 'cable'} Cat6`) : `${nC} ${nC > 1 ? 'líneas' : 'línea'} de 16 A`;
+  const bw = 430; g += `<rect x="${W / 2 - bw / 2}" y="${yP}" width="${bw}" height="44" rx="10" fill="${CAB}" fill-opacity=".14" stroke="${CAB}" stroke-width="2"/><text x="${W / 2}" y="${yP + 19}" text-anchor="middle" font-size="16" font-weight="800" fill="${tc}" font-family="Inter, sans-serif">MANGUERA · ${dest}</text><text x="${W / 2}" y="${yP + 37}" text-anchor="middle" font-size="15" fill="${tc}" font-family="Share Tech Mono, monospace">${cuenta}</text>`;
+  /* leyenda de puertos o líneas */
+  const cols = Math.min(n, 4), lw = Math.min(236, 960 / cols), y0 = yP + 58;
   for (let i = 0; i < n && i < 12; i++) { const X = W / 2 - cols * lw / 2 + (i % cols) * lw, Y = y0 + Math.floor(i / cols) * 44, cabs = [...Array(r.cab).keys()].filter((q) => de(q % r.cols, Math.floor(q / r.cols)) === i).length;
-    g += `<rect x="${X + 4}" y="${Y}" width="${lw - 8}" height="36" rx="7" fill="${COLS[i % COLS.length]}"/><text x="${X + lw / 2}" y="${Y + 25}" text-anchor="middle" font-size="21" font-weight="700" fill="#0b0b10" font-family="Share Tech Mono, monospace">${tipo === 'senal' ? 'P' : 'L'}${i + 1} · ${cabs} cab${tipo === 'senal' ? '' : ' · ' + fmt(cabs * R.ampCab, 1) + ' A'}</text>`; }
-  if (n > 12) g += `<text x="${W / 2}" y="${H - 8}" text-anchor="middle" font-size="19" fill="currentColor" font-family="Inter, sans-serif">… y ${n - 12} más</text>`;
+    g += `<rect x="${X + 4}" y="${Y}" width="${lw - 8}" height="36" rx="7" fill="${COLS[i % COLS.length]}"/><text x="${X + lw / 2}" y="${Y + 25}" text-anchor="middle" font-size="21" font-weight="700" fill="#0b0b10" font-family="Share Tech Mono, monospace">${sen ? 'P' : 'L'}${i + 1} · ${cabs} cab${sen ? (bk ? ' · +B' : '') : ' · ' + fmt(cabs * R.ampCab, 1) + ' A'}</text>`; }
+  if (n > 12) g += `<text x="${W / 2}" y="${H - 6}" text-anchor="middle" font-size="19" fill="currentColor" font-family="Inter, sans-serif">… y ${n - 12} más</text>`;
   return g + '</svg>';
 }
 function svgDistancia() {
@@ -338,7 +366,7 @@ function pintaRejilla() {
   /* INSTALACIÓN (M3D): peso, mantenimiento, receiving card y grosor, como la tarjeta de la clásica */
   h += blk('m3d', 'M3D', 'Instalación', 'var(--magenta)', `<div class="gran">${fmt(r.peso, 1)}<small>kg</small></div><div class="nota">peso total de la pantalla</div>${dato('Por cabinet', m.cabKg ? fmt(m.cabKg, 1) + ' kg' : '—')}${dato('Mantenimiento', esc(m.mant || m.mantenimiento || '—'))}${dato('Receiving card', esc(m.card || '—'))}${dato('Grosor', m.thick ? fmt(m.thick) + ' mm' : '—')}`);
   h += blk('m3f', 'M3F', 'Alimentación', 'var(--rojo)', `<div class="gran">${fmt(r.kw, 2)}<small>kW máx.</small></div>${dato('Corriente', fmt(r.cab * R.ampCab, 1) + ' A · 230 V')}${dato('Líneas de 16 A', R.nLin)}${dato('Por cabinet', (m.wMax ? fmt(m.wMax) + ' W' : '—') + (R.ampCab ? ' · ' + fmt(R.ampCab, 2) + ' A' : ''))}`, bt('ojo', 'Ver el reparto eléctrico', 'data-ver="elec"'));
-  h += blk('m3e', 'M3E', 'Señal', 'var(--ambar)', `<div class="gran">${r.lineas}<small>línea${r.lineas > 1 ? 's' : ''} Ethernet</small></div><div class="fila tres op"><span>Backup</span>${tog(E.backup, 'data-set="backup" data-v="1" title="Duplica las líneas de datos: + ' + r.lineas + ' de reserva"', 'Con')}${tog(!E.backup, 'data-set="backup" data-v=""', 'Sin')}</div><div class="fila tres op"><span>Conexión</span>${tog(E.conexion === 'directo', 'data-set="conexion" data-v="directo" title="Del procesador a los cabinets por cable de red"', 'RJ45')}${tog(E.conexion === 'fibra', 'data-set="conexion" data-v="fibra" title="Del procesador a los cabinets por fibra óptica"', 'Fibra')}</div>${dato('Cosido', R.cosido + (E.cosido === 'auto' ? ' (auto)' : ''))}${dato('Salidas 4K', r.salidas4k)}`, bt('ojo', 'Ver el cableado de señal', 'data-ver="senal"'));
+  h += blk('m3e', 'M3E', 'Señal', 'var(--ambar)', `<div class="gran">${r.lineas}<small>línea${r.lineas > 1 ? 's' : ''} Ethernet</small></div><div class="fila dos bkp">${tog(E.backup, 'data-set="backup" data-v="1" title="Un segundo cable por puerto, que entra por el último cabinet de cada cadena: + ' + r.lineas + ' cables Cat6"', 'Con backup')}${tog(!E.backup, 'data-set="backup" data-v=""', 'Sin backup')}</div><div class="fila tres op"><span>Conexión</span>${tog(E.conexion === 'directo', 'data-set="conexion" data-v="directo" title="Del procesador a los cabinets por cable de red"', 'RJ45')}${tog(E.conexion === 'fibra', 'data-set="conexion" data-v="fibra" title="Del procesador a los cabinets por fibra óptica"', 'Fibra')}</div>${dato('Cosido', R.cosido + (E.cosido === 'auto' ? ' (auto)' : ''))}${dato('Salidas 4K', r.salidas4k)}`, bt('ojo', 'Ver el cableado de señal', 'data-ver="senal"'));
   const p = R.proc, me = R.media;
   h += blk('m3b', 'M3B', 'Electrónica', 'var(--marca)', (p ? `<div style="font-weight:800;font-size:calc(var(--u)*19);line-height:1.15">${R.procs.length > 1 ? `<select class="sel" data-proc aria-label="Procesador" title="Elegir otro procesador de los que valen para este proyecto">${R.procs.map((x, i) => `<option value="${esc(x.modelo)}"${x === p ? ' selected' : ''}>${esc(x.modelo)}${i ? '' : ' · recomendado'}</option>`).join('')}</select>` : esc(p.modelo)}<div class="nota">${esc(p.marca)} · ${p.escalador ? 'con escalador' : 'sin escalador'}</div></div>${dato('Puertos', esc(p.puertos))}` : '<div class="nota">Sin procesador que cubra este proyecto con estas opciones: cambia el backup, la conexión o el escalador.</div>') + `<div class="fila tres op"><span>Escalador</span>${tog(E.escalador === 'con', 'data-set="escalador" data-v="con"', 'Con')}${tog(E.escalador === 'sin', 'data-set="escalador" data-v="sin"', 'Sin')}${tog(E.escalador === 'indiferente', 'data-set="escalador" data-v="indiferente" title="Da igual que el procesador lleve escalador o no"', 'Igual')}</div>`, bt('ojo', 'Ver la electrónica completa', 'data-ver="equipo"'));
   /* MEDIASERVER (M3C): bloque propio, con marca, Dante y elección del modelo, como en la clásica */
@@ -590,8 +618,8 @@ function svgEsquema() {
   for (let i = 0; i < n - 1; i++) { const a = keys[i], b = keys[i + 1]; let c, l1, l2, bk;
     if (a === 'fuentes') { c = 'video'; l1 = etqTipo + ' ×' + d.nF; l2 = [etqRes, d.conCable ? (d.cab ? d.cab.ref : 'HDMI > 20 m') : ''].filter(Boolean).join(' · '); bk = false; }
     else if (a === 'media') { c = 'video'; l1 = 'HDMI/DP 4K'; l2 = '×' + (me.need || r.salidas4k || 1); bk = d.backup && !me.backupNativo; }
-    else if (a === 'elec' && b === 'cvt') { c = 'fibra'; l1 = 'Fibra ×' + d.fibras; l2 = 'SM/MM'; bk = d.backup; }
-    else { c = 'eth'; l1 = 'Cat6 ×' + d.lines; l2 = d.backup ? '+ backup' : ''; bk = d.backup; }
+    else if (a === 'elec' && b === 'cvt') { c = 'fibra'; l1 = 'Fibra ×' + d.fibras + (d.backup ? ' (' + d.cvt + ' + ' + d.cvt + ' backup)' : ''); l2 = 'SM/MM'; bk = d.backup; }
+    else { c = 'eth'; l1 = 'Cat6 ×' + d.lines + (d.backup ? ' + ' + d.lines + ' backup' : ''); l2 = d.backup ? '= ' + d.lines * 2 + ' cables' : ''; bk = d.backup; }
     const x1 = X[a] + bw + 2, x2 = X[b] - 4, mid = (x1 + x2) / 2, ly = by + bh + 26 + (n >= 4 && i % 2 ? 40 : 0), mx = Math.min(bw + gx - 16, 230);
     g += linea(x1, cy - (bk ? 12 : 0), x2, cy - (bk ? 12 : 0), c) + (bk ? linea(x1, cy + 14, x2, cy + 14, c, true) : '') + `<line x1="${mid}" y1="${cy + (bk ? 18 : 4)}" x2="${mid}" y2="${ly - 16}" stroke="${S[c]}" stroke-width="1" stroke-dasharray="2 3" stroke-opacity=".7"/>` + tx(mid, ly, l1, { sz: 13.5, w: 800, c: S[c], max: mx, mono: true }) + (l2 ? tx(mid, ly + 18, l2, { sz: 12, c: S[c], max: mx, mono: true }) : ''); }
   /* alimentación (rojo) */
