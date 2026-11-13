@@ -362,6 +362,10 @@ html.piel :is(#app, #bk-velo) .tabla.mat td:first-child { text-align: right; fon
 html.piel .consola .con-ico { border-radius: 50%; }
 /* v10.38 · el candado del panel va a la misma esquina que en la portada: abajo a la izquierda del pie, pequeño y apagado */
 html.piel .f-f1 { position: relative; }
-html.piel .f-f1 .pie .admin-btn { position: absolute; left: 3px; right: auto; bottom: 2px; margin: 0; width: 12px; height: 12px; line-height: 0; opacity: .3; color: var(--tenue); }
-html.piel .f-f1 .pie .admin-btn .ic { width: 12px; height: 12px; vertical-align: top; }
+html.piel .f-f1 .pie .admin-btn { position: absolute; left: 12px; right: auto; bottom: 6px; margin: 0; width: 14px; height: 14px; line-height: 0; opacity: .55; color: var(--tenue); }
+html.piel .f-f1 .pie .admin-btn .ic { width: 14px; height: 14px; vertical-align: top; }
 html.piel .f-f1 .pie .admin-btn:hover, html.piel .f-f1 .pie .admin-btn:focus-visible { opacity: 1; color: var(--marca); }
+/* v10.42 · como en la portada: el último del grupo de la derecha, abajo (consola.js lo lleva allí) */
+html.piel #pie-r .admin-btn { position: static; flex: none; align-self: flex-end; margin: 0 0 6px; width: 14px; height: 14px; display: inline-flex; line-height: 0; opacity: .55; color: var(--tenue); }
+html.piel #pie-r .admin-btn .ic { width: 14px; height: 14px; vertical-align: top; }
+html.piel #pie-r .admin-btn:hover, html.piel #pie-r .admin-btn:focus-visible { opacity: 1; color: var(--marca); }

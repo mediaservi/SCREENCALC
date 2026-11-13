@@ -4,7 +4,7 @@
 
 Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Todo funciona en **una sola pantalla fija**, sin desplazar la página en ordenador ni en TV: cabecera, franja de modo y petición, bloques de mandos, dos vistas grandes, una fila de cifras y pie. En el móvil, las mismas piezas se apilan y se recorren por dentro.
 
-**Versión actual: v10.41** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
+**Versión actual: v10.42** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
 
 - **Una pantalla LED** → la portada (`index.html` + `vista/una-led.js`).
 - **Varias pantallas, sala inmersiva y proyección** → la consola (`vista/consola.html?modo=varias-led | varias-proy | una-proy`, con el cálculo de `screens/app.js`), con el mismo formato.
@@ -68,7 +68,11 @@ Bloques en burbuja sobre gris (tema gris oscuro o gris claro), cabecera oscura c
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.41)
+## Cambios de la versión actual (v10.42)
+
+- **Candado del panel AVHUB ADMIN, otra vez a la vista:** en la esquina inferior izquierda quedaba demasiado apagado y las ventanas con esquinas redondeadas lo recortaban. Ahora va el último del grupo de la derecha del pie, detrás del botón rojo de fallos, pequeño, abajo y algo menos apagado; se ilumina al pasar el ratón. Igual en la portada y en Varias / Proyección.
+
+## Cambios de la v10.41
 
 - **Fuera de especificación, avisado en todas partes:** con el modo activo, la simulación 3D lleva una banda ámbar «⚠ Fuera de especificación» con el tamaño de imagen usado frente al garantizado (por ejemplo 201″ sobre 160″) y lo que se pierde (enfoque en los bordes, uniformidad y brillo); va también en la ventana grande. Los resultados empiezan con el aviso completo y la recomendación, y en el PDF la captura 3D lleva la banda debajo y los resultados el aviso completo. En castellano, inglés y catalán.
 

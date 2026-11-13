@@ -529,7 +529,9 @@ table.mat a { color: inherit; text-decoration: underline; text-underline-offset:
 @media (max-width: 900px), (max-height: 520px) { .fondos { gap: calc(var(--u) * 4); padding: calc(var(--u) * 3); } .fondos button { width: calc(var(--u) * 27); height: calc(var(--u) * 27); } }
 /* v10.38 · candado del panel de administración: pequeño y apagado, en la esquina inferior izquierda del pie (a la derecha choca con la seta) */
 .f-f1 { position: relative; }
-.admin-esq { position: absolute; left: calc(var(--u) * 3); bottom: calc(var(--u) * 2); width: max(9px, calc(var(--u) * 12)); height: max(9px, calc(var(--u) * 12)); padding: 0; display: block; line-height: 0; color: var(--tenue); opacity: .3; }
+/* v10.42 · el último del grupo de la derecha, abajo (en la esquina misma lo recortaban las ventanas con esquinas redondeadas) y algo menos apagado */
+.admin-esq { position: absolute; left: calc(var(--u) * 12); bottom: calc(var(--u) * 6); width: max(11px, calc(var(--u) * 14)); height: max(11px, calc(var(--u) * 14)); padding: 0; display: block; line-height: 0; color: var(--tenue); opacity: .55; }
+.f1r .admin-esq { position: static; flex: none; align-self: flex-end; margin-bottom: calc(var(--u) * 6); }
 .admin-esq svg { width: 100%; height: 100%; display: block; }
 .admin-esq:hover, .admin-esq:focus-visible { opacity: 1; color: var(--marca); }
 :root[data-tema="claro"] .admin-esq:hover, :root[data-tema="claro"] .admin-esq:focus-visible { color: #3d4a00; }
