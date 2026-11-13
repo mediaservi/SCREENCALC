@@ -4,7 +4,7 @@
 
 Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Todo funciona en **una sola pantalla fija**, sin desplazar la página en ordenador ni en TV: cabecera, franja de modo y petición, bloques de mandos, dos vistas grandes, una fila de cifras y pie. En el móvil, las mismas piezas se apilan y se recorren por dentro.
 
-**Versión actual: v10.43** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
+**Versión actual: v10.44** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
 
 - **Una pantalla LED** → la portada (`index.html` + `vista/una-led.js`).
 - **Varias pantallas, sala inmersiva y proyección** → la consola (`vista/consola.html?modo=varias-led | varias-proy | una-proy`, con el cálculo de `screens/app.js`), con el mismo formato.
@@ -68,7 +68,12 @@ Bloques en burbuja sobre gris (tema gris oscuro o gris claro), cabecera oscura c
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.43)
+## Cambios de la versión actual (v10.44)
+
+- **Imagen de otra web en el PDF:** una imagen puesta en la pantalla (o en la pared) con un enlace de una web que no deja copiarla se pide a través de **wsrv.nl**, que la devuelve igual con permiso de copia; así sale en el PDF y en las capturas. wsrv.nl solo recibe la dirección pública de la imagen. Un vídeo de YouTube sale en el PDF con su miniatura. Si aun así no se puede, se avisa.
+- **Foto del cabinet:** si en el catálogo la foto es un enlace para compartir (SharePoint / OneDrive de empresa, Google Drive o Dropbox) se usa su dirección directa de imagen; y si no carga, se ve «sin foto» en vez de una imagen rota.
+
+## Cambios de la v10.43
 
 - **Imagen propia de la pantalla en el PDF:** cada imagen de la simulación entra en el PDF ya reducida (una foto entera de cámara o de móvil podía no dibujarse) y la simulación se pinta dos veces para que Safari no la deje en negro. Si la imagen viene de un enlace de otra web que no deja copiarla, se avisa de que en el PDF la pantalla sale sin ella.
 - **Líneas de los cabinets siempre visibles:** ahora también sobre un contenido propio (imagen o vídeo). En la simulación, con su intensidad normal y un filete oscuro debajo para que se vean sobre cualquier imagen; en el PDF, más suaves.

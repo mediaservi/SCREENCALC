@@ -7,9 +7,9 @@ import { HUMAN_PATH } from '../screens/figura.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.43';
+import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.44';
 idiomaInicial();   /* el idioma guardado de la familia SCREENS o, la primera vez, el del navegador */
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.43';
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.44';
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const SV = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
@@ -103,10 +103,10 @@ function deEnlace(u) {
 const sueltaCont = () => { if (CONT && /^blob:/.test(CONT.url)) URL.revokeObjectURL(CONT.url); };
 let CONT = null;   /* contenido propio que se simula en la pantalla: { url, tipo: 'img' | 'video' } */
 const SUELO = { hormigon: '#bfe6d8', madera: '#bcd9f2', marmol: '#f2c9d4', 'ladrillo-rojo': '#c7e8c0', 'ladrillo-oscuro': '#f3e3a8', 'ladrillo-claro': '#c9c6f0', ninguno: '#cfd3da', propio: '#cfd3da' };
-/* v10.43 · además de las seis paredes: «ninguno» (sin fondo) y «propio» (una imagen subida o un enlace pegado) */
+/* v10.44 · además de las seis paredes: «ninguno» (sin fondo) y «propio» (una imagen subida o un enlace pegado) */
 const FONDOS = ['hormigon', 'madera', 'marmol', 'ladrillo-rojo', 'ladrillo-oscuro', 'ladrillo-claro', 'ninguno', 'propio'];
-const TEXV = '?v=10.43';
-/* v10.43 · candado discreto del pie: abre el panel AVHUB ADMIN (Apps Script), como el de la consola */
+const TEXV = '?v=10.44';
+/* v10.44 · candado discreto del pie: abre el panel AVHUB ADMIN (Apps Script), como el de la consola */
 const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbwkc12y4LODbFe-kQidnR2MbbA6cbW1WbhU3UiqmDmshx-ncAdGYrFRy8PNjm9Wg6Mx3w/exec';   /* rompe la caché del navegador cuando cambia una textura */
 /* fondo propio: la imagen ya reducida (data:) o el enlace, guardado en este navegador */
 const FPROP_K = 'screens-fondo-propio';
@@ -224,11 +224,11 @@ const FIG = (() => { const s = document.createElementNS('http://www.w3.org/2000/
 const figura = (cx, suelo, k, relleno) => { const e = 1.75 * k / FIG.height; return `<g transform="translate(${cx - (FIG.x + FIG.width / 2) * e},${suelo + FIG.y * e}) scale(${e},${-e})" ${relleno}><path d="${HUMAN_PATH}"/></g>`; };
 const COLS = ['#19b5b0', '#c264c8', '#62b85a', '#4b4bc8', '#c2c040', '#e0803a', '#3a9be0', '#d0507a', '#8a8f9a', '#40c090'];
 /* medida real de lo que abarca cada textura de pared (ancho × alto en metros): así los ladrillos, las lamas y las losas salen a la misma escala que la pantalla y la persona, se vea la simulación al tamaño que se vea */
-/* v10.43 · la madera es un friso de tablas de 15 cm (2,40 × 3,00 m por pieza): las lamas finas de antes se veían como palillos a esta escala */
+/* v10.44 · la madera es un friso de tablas de 15 cm (2,40 × 3,00 m por pieza): las lamas finas de antes se veían como palillos a esta escala */
 const PARED = { hormigon: [3.6, 2.39, 1], madera: [2.4, 3.0], marmol: [2.4, 2.4], 'ladrillo-rojo': [1, .64], 'ladrillo-oscuro': [1, .912], 'ladrillo-claro': [1, .64] };
 /* «prop» es ancho / alto del hueco donde se va a ver: el dibujo se hace con esa proporción para llenarlo */
 function svgSim(prop, anchoPx, o) {
-  /* v10.43 · las líneas de los cabinets se ven siempre (también sobre un contenido propio): normales en pantalla, más suaves en el PDF */
+  /* v10.44 · las líneas de los cabinets se ven siempre (también sobre un contenido propio): normales en pantalla, más suaves en el PDF */
   const cabOp = o && o.pdf ? .3 : .55, cabLin = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#000" stroke-opacity="${(cabOp * .6).toFixed(2)}" stroke-width="2.4" pointer-events="none"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#d4ff00" stroke-opacity="${cabOp}" stroke-width="1.1" pointer-events="none"/>`;
   if (!prop) { const c = document.querySelector('[data-blk="S1A"] .blk-cu'); prop = c && c.clientHeight > 40 ? c.clientWidth / c.clientHeight : 1.6; anchoPx = c ? c.clientWidth : 0; }
   /* hueco que hay que dejar arriba para los dos controles que van encima (elevación y pared), que no cambian de tamaño con el dibujo */
@@ -386,7 +386,7 @@ function pintaRejilla() {
   }
   const { m, r } = R, ip = R.pitches.indexOf(R.pitch), ORIG = { pedido: ['ok', 'Pitch pedido por ti', 'Pedido'], cercano: ['av', 'El más cercano al ' + E.pitch + ' que pediste', 'Cercano a ' + E.pitch], distancia: ['ok', 'Elegido por la distancia del público: ' + fmt(E.dist, 1) + ' m', 'Por distancia'], auto: ['av', 'Automático: el más fino', 'Automático'], resolucion: ['ok', 'Elegido para llegar a ' + E.resMin, 'Por ' + E.resMin], sinres: ['av', 'Ningún pitch llega a ' + E.resMin + ' con esta medida: el más fino', 'No llega a ' + E.resMin], elegido: ['ok', 'Elegido a mano', 'A mano'] }[R.origen];
 
-  const foto = m.urlFoto ? `<img src="${esc(m.urlFoto)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<div class="sinfoto">sin foto</div>';
+  const foto = m.urlFoto ? `<img src="${esc(m.urlFoto)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.outerHTML='&lt;div class=&quot;sinfoto&quot;&gt;sin foto&lt;/div&gt;'">` : '<div class="sinfoto">sin foto</div>';
   h += blk('m1b', 'M1B', 'Cabinet', 'var(--violeta)', `<select class="sel" data-crm aria-label="Modelo de cabinet" title="Elegir el cabinet a mano: todos los modelos de este entorno, agrupados por pitch">${R.pitches.map((pt) => `<optgroup label="P${String(pt).replace('.', ',')}">${R.lista.filter((x) => x.pitch === pt).map((x) => `<option value="${esc(x.crm)}"${x.crm === m.crm ? ' selected' : ''}>${esc(x.crm)}${enStock(x) ? ' · stock' : ''}</option>`).join('')}</optgroup>`).join('')}</select><div class="cabmini">${foto}<div style="min-width:0;flex:1">${dato('Cabinet', `${m.cabAncho}×${m.cabAlto} mm${m.girado ? ' ⟳' : ''}`)}${dato('Píxeles', `${m.cabPixAncho}×${m.cabPixAlto}`)}${dato('Brillo', m.nits ? fmt(m.nits) + ' nits' : '—')}${dato('Refresco', m.hz ? fmt(m.hz) + ' Hz' : '—')}</div></div><div class="fila envuelve"><span class="chip ${enStock(m) ? 'ok' : 'no'}">${enStock(m) ? 'En stock' : 'Bajo pedido'}</span><span class="chip">${esc(m.family || '')}</span></div>` + (R.holo ? `<div class="nota">HOLO · ${R.holo.bot ? 'dos filas contrapuestas de ' + R.holo.top + ' + ' + R.holo.bot + ' mm' : 'una fila de ' + R.holo.top + ' mm'} · caja de drivers de ${HOLO_DRIVER} mm${R.holo.comb ? ' · ' + R.holo.comb.cA * r.rows + ' × ' + esc(R.holo.comb.mA.crm) + ' + ' + R.holo.comb.cE * r.rows + ' × ' + esc(R.holo.comb.mE.crm) : ''}</div>` : ''), `<button type="button" class="tog mini" data-set="giro" data-v="${E.giro ? '' : '1'}" aria-pressed="${!!(E.giro && R.giraPosible)}"${R.giraPosible ? '' : ' disabled'} title="${R.giraPosible ? 'Girar el cabinet 90°: se monta tumbado o de pie' : 'Este cabinet es cuadrado: girarlo no cambia nada'}">${IC.gira}90°</button>` + bt('ojo', 'Ver la ficha completa del cabinet', 'data-ver="equipo"'));
   h += blk('s1a', 'S1A', 'Simulación a escala', 'var(--marca)', `<div class="lienzo">${svgSim()}<div class="fondos" role="group" aria-label="Fondo de la pared">${FONDOS.map((f) => f === 'ninguno' ? `<button type="button" class="fo-ico" data-fondo="ninguno" aria-pressed="${E.fondo === f}" aria-label="Sin fondo" title="Sin fondo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M6.3 17.7 17.7 6.3"/></svg></button>` : f === 'propio' ? `<button type="button" class="fo-ico" data-fondo="propio" aria-pressed="${E.fondo === f}" aria-label="Fondo propio: sube una imagen o pega un enlace" title="Fondo propio: sube una imagen o pega un enlace"${FPROP ? ` style="background-image:url(&quot;${esc(FPROP)}&quot;)"` : ''}>${FPROP ? '' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5"/><path d="m7 10 5-5 5 5"/><path d="M5 19h14"/></svg>'}</button>` : `<button type="button" data-fondo="${f}" aria-pressed="${E.fondo === f}" aria-label="Fondo ${f.replace(/-/g, ' ')}" title="${f.replace(/-/g, ' ')}" style="background-image:url(../assets/sim/${f}-mini.jpg${TEXV})"></button>`).join('')}</div><div class="elev" role="group" aria-label="Altura del borde inferior de la pantalla sobre el suelo"><span>Elevación desde el suelo</span><button type="button" data-pm="elev" data-d="-1" aria-label="Bajar la pantalla 10 cm">−</button><b>${fmt(E.elev)} cm</b><button type="button" data-pm="elev" data-d="1" aria-label="Subir la pantalla 10 cm">+</button></div></div>`, bt('contenido', 'Simular contenido: fuentes de prueba, un enlace o un archivo tuyo', 'data-ver="contenido"') + (CONT ? bt('carta', 'Volver a la carta de ajuste', 'data-carta') : '') + bt('copia', 'Copiar una captura de esta pantalla', 'data-copia="S1A"') + bt('ojo', 'Ver en grande', 'data-ver="sim"'), 'pant');
   const V = VISTAS[E.vista] || VISTAS[0];
@@ -576,6 +576,11 @@ function dicta(b) {
   if (oyendo) b.setAttribute('aria-pressed', 'true');
 }
 const aDatos = (url) => fetch(url).then((r) => r.blob()).then((bl) => new Promise((ok) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.readAsDataURL(bl); }));
+/* v10.44 · una imagen de otra web que no deja copiarla (sin CORS) se pide a través de wsrv.nl, que la devuelve igual y con permiso de copia:
+   así sale también en el PDF y en las capturas. wsrv.nl solo ve la dirección pública de la imagen. */
+const VIA_WSRV = (u) => 'https://wsrv.nl/?url=' + encodeURIComponent(u) + '&w=1920&we&output=jpg&q=85';
+const aDatosCors = (u) => { const fuera = /^https?:\/\//i.test(u) && new URL(u).origin !== location.origin, img = (d) => { if (fuera && !/^data:image\//.test(d)) throw new Error('no es una imagen'); return d; };
+  return aDatos(u).then(img).catch((e) => { if (fuera) return aDatos(VIA_WSRV(u)).then(img); throw e; }); };
 const aImagen = (src) => new Promise((ok, no) => { const im = new Image(); im.onload = () => ok(im); im.onerror = no; im.src = src; });
 /* fondo propio de la pared: se reduce a 1920 px de lado como mucho y se guarda como JPEG en este navegador (así sale también en capturas y PDF) */
 const reduceImg = (src) => aImagen(src).then((im) => { const e = Math.min(1, 1920 / Math.max(im.naturalWidth || 1, im.naturalHeight || 1)), c = document.createElement('canvas'); c.width = Math.max(1, Math.round(im.naturalWidth * e)); c.height = Math.max(1, Math.round(im.naturalHeight * e)); const x = c.getContext('2d'); x.fillStyle = '#808080'; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', .84); });
@@ -590,8 +595,8 @@ function fondoArchivo(f) {
 function fondoUrl(u) {
   if (!/^https?:\/\/\S+$/i.test(u)) { tostada('Pega un enlace que empiece por http:// o https://', 4500); return; }
   u = u.replace(/"/g, '%22'); tostada('Cargando la imagen…', 10000);
-  /* si la web deja copiarla, se guarda reducida; si no, se usa el enlace tal cual (se ve en pantalla, pero no en capturas ni PDF) */
-  fetch(u, { mode: 'cors' }).then((r) => { if (!r.ok) throw new Error(r.status); return r.blob(); }).then((bl) => { const o = URL.createObjectURL(bl); return reduceImg(o).finally(() => URL.revokeObjectURL(o)); }).then((d) => ponFondo(d))
+  /* si la web deja copiarla (directamente o a través de wsrv.nl), se guarda reducida; si no, se usa el enlace tal cual (se ve en pantalla, pero no en capturas ni PDF) */
+  aDatosCors(u).then((d) => reduceImg(d)).then((d) => ponFondo(d))
     .catch(() => aImagen(u).then(() => ponFondo(u, 'Fondo puesto. Esa web no deja copiar la imagen: en capturas y PDF la pared saldrá vacía; si la necesitas ahí, descárgala y súbela.')).catch(() => tostada('No se ha podido cargar esa imagen: comprueba que el enlace lleva a una foto.', 5000)));
 }
 let LETRAS = null;
@@ -607,7 +612,7 @@ async function captura(id) {
     c.querySelectorAll('[fill="currentColor"]').forEach((e) => e.setAttribute('fill', getComputedStyle(svg).color)); c.querySelectorAll('[stroke="currentColor"]').forEach((e) => e.setAttribute('stroke', getComputedStyle(svg).color));
     const vid = svg.querySelector('video'), fo = c.querySelector('foreignObject');
     if (fo) { const t = document.createElement('canvas'); t.width = (vid && vid.videoWidth) || 640; t.height = (vid && vid.videoHeight) || 360; try { t.getContext('2d').drawImage(vid, 0, 0, t.width, t.height); } catch (e) {} const im = document.createElementNS('http://www.w3.org/2000/svg', 'image'); ['x', 'y', 'width', 'height'].forEach((a) => im.setAttribute(a, fo.getAttribute(a))); im.setAttribute('preserveAspectRatio', 'xMidYMid slice'); im.setAttribute('href', t.toDataURL('image/jpeg', .9)); fo.replaceWith(im); }
-    for (const im of c.querySelectorAll('image')) { const h = im.getAttribute('href'); if (h && !/^data:/.test(h)) { try { im.setAttribute('href', await aDatos(h)); } catch (e) { im.remove(); } } }
+    for (const im of c.querySelectorAll('image')) { const h = im.getAttribute('href'); if (h && !/^data:/.test(h)) { try { im.setAttribute('href', await aDatosCors(new URL(h, document.baseURI).href)); } catch (e) { im.remove(); } } }
     const st = document.createElementNS('http://www.w3.org/2000/svg', 'style'); st.textContent = await letras(); c.insertBefore(st, c.firstChild);
     const im = await aImagen('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(c))); x.drawImage(im, 0, 0, cv.width, cv.height);
     const png = await new Promise((ok) => cv.toBlob(ok, 'image/png'));
@@ -705,9 +710,13 @@ const AV_TRI = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" widt
 async function svgImg(svgTxt, w, h, fondo, tinta) {
   const caja = document.createElement('div'); caja.innerHTML = svgTxt; const c = caja.querySelector('svg'); c.querySelectorAll('text').forEach((e) => { if (!e.children.length) { const n = tr(e.textContent); if (n !== e.textContent) e.textContent = n; } }); c.setAttribute('width', w); c.setAttribute('height', h); c.removeAttribute('style'); c.setAttribute('color', tinta);
   c.querySelectorAll('[fill="currentColor"]').forEach((e) => e.setAttribute('fill', tinta)); c.querySelectorAll('[stroke="currentColor"]').forEach((e) => e.setAttribute('stroke', tinta));
-  const fo = c.querySelector('foreignObject'); if (fo) { const vid = document.querySelector('[data-blk="S1A"] svg video'), t = document.createElement('canvas'); t.width = (vid && vid.videoWidth) || 640; t.height = (vid && vid.videoHeight) || 360; let ok = false; try { if (vid) { t.getContext('2d').drawImage(vid, 0, 0, t.width, t.height); t.toDataURL(); ok = true; } } catch (e) {} if (ok) { const im = document.createElementNS('http://www.w3.org/2000/svg', 'image'); ['x', 'y', 'width', 'height'].forEach((a) => im.setAttribute(a, fo.getAttribute(a))); im.setAttribute('preserveAspectRatio', 'xMidYMid slice'); im.setAttribute('href', t.toDataURL('image/jpeg', .9)); fo.replaceWith(im); } else fo.remove(); }
-  /* v10.43 · cada imagen va dentro del SVG ya reducida (una foto de móvil entera no se dibujaba en el PDF); la que no se deja copiar se avisa */
-  for (const im of c.querySelectorAll('image')) { const hr = im.getAttribute('href'); if (!hr) continue; try { let d = /^data:/.test(hr) ? hr : await aDatos(new URL(hr, document.baseURI).href); if (d.length > 1500000 || /^data:image\/(heic|heif|webp|avif|tiff)/i.test(d)) d = await reduceImg(d); im.setAttribute('href', d); } catch (e) { if (CONT && hr === CONT.url) SIN_CONT_PDF = true; im.remove(); } }
+  const fo = c.querySelector('foreignObject'); if (fo) { const vid = document.querySelector('[data-blk="S1A"] svg video'), t = document.createElement('canvas'); t.width = (vid && vid.videoWidth) || 640; t.height = (vid && vid.videoHeight) || 360; let ok = false; try { if (vid) { t.getContext('2d').drawImage(vid, 0, 0, t.width, t.height); t.toDataURL(); ok = true; } } catch (e) {} if (ok) { const im = document.createElementNS('http://www.w3.org/2000/svg', 'image'); ['x', 'y', 'width', 'height'].forEach((a) => im.setAttribute(a, fo.getAttribute(a))); im.setAttribute('preserveAspectRatio', 'xMidYMid slice'); im.setAttribute('href', t.toDataURL('image/jpeg', .9)); fo.replaceWith(im); } else {
+    /* un vídeo de YouTube sale en el PDF con su miniatura; otro vídeo que no se deja copiar se avisa */
+    const yt = CONT && CONT.tipo === 'marco' && (String(CONT.url).match(/youtube(?:-nocookie)?\.com\/embed\/([A-Za-z0-9_-]{11})/) || [])[1];
+    if (yt) { const im = document.createElementNS('http://www.w3.org/2000/svg', 'image'); ['x', 'y', 'width', 'height'].forEach((a) => im.setAttribute(a, fo.getAttribute(a))); im.setAttribute('preserveAspectRatio', 'xMidYMid slice'); im.setAttribute('href', 'https://i.ytimg.com/vi/' + yt + '/hqdefault.jpg'); fo.replaceWith(im); }
+    else { if (CONT) SIN_CONT_PDF = true; fo.remove(); } } }
+  /* v10.44 · cada imagen va dentro del SVG ya reducida (una foto de móvil entera no se dibujaba en el PDF); la que no se deja copiar se avisa */
+  for (const im of c.querySelectorAll('image')) { const hr = im.getAttribute('href'); if (!hr) continue; try { let d = /^data:/.test(hr) ? hr : await aDatosCors(new URL(hr, document.baseURI).href); if (d.length > 1500000 || /^data:image\/(heic|heif|webp|avif|tiff)/i.test(d)) d = await reduceImg(d); im.setAttribute('href', d); } catch (e) { if (CONT && (hr === CONT.url || /ytimg\.com/.test(hr))) SIN_CONT_PDF = true; im.remove(); } }
   const st = document.createElementNS('http://www.w3.org/2000/svg', 'style'); st.textContent = await letras(); c.insertBefore(st, c.firstChild);
   const im = await aImagen('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(c))), cv = document.createElement('canvas'), k = 2; cv.width = w * k; cv.height = h * k; const x = cv.getContext('2d');
   try { if (im.decode) await im.decode(); } catch (e) {}
@@ -748,7 +757,7 @@ async function pdf() {
     hoja.innerHTML = `<div class="pdf-p1"><div style="padding:0 0 6px">${p1}</div></div><div style="height:60px"></div><div class="pdf-p2"><div style="padding:0 0 6px">${p2}</div></div>`;
     document.body.appendChild(hoja); await Promise.all([...hoja.querySelectorAll('img')].map((i) => (i.complete ? 0 : new Promise((ok) => { i.onload = i.onerror = ok; })))); await new Promise((ok) => setTimeout(ok, 60));
     const pv = await window.AVPDF.exporta({ previa: true, raiz: hoja, paginas: [['.pdf-p1'], ['.pdf-p2']], margen: 12, claro: false, nombre: window.AVPDF.sello('SCREENS'), titulo: 'SCREENS · ' + (E.proy || m.crm),
-      /* v10.43 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito común */
+      /* v10.44 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito común */
       pieHtml: AV_TRI + tr('Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.') + '\n' + (window.AVCREDITO ? window.AVCREDITO.html('SCREENS', VERSION.split('SCREENS ')[1], idioma(), { sinEnlaces: true }) : VERSION + ' ' + new Date().getFullYear() + ' · mediaservi.com'),
       alClonar: (doc, raiz) => { raiz.style.setProperty('position', 'absolute', 'important'); raiz.style.setProperty('left', '0', 'important'); raiz.style.setProperty('top', '0', 'important'); [...doc.body.children].forEach((e) => { if (e !== raiz && !e.contains(raiz)) e.style.setProperty('display', 'none', 'important'); }); } });
     previa(pv);
@@ -812,7 +821,7 @@ monta(); todo(); vigila(); requestAnimationFrame(ajustaTextos); if (document.fon
 addEventListener('resize', () => { const g = $('#guia'); if (g) { const n = [...g.querySelectorAll('.guia-pie span i')].findIndex((i) => i.classList.contains('on')); guia(Math.max(0, n)); } });
 /* botones comunes de la familia: instalar y avisar de un fallo (los mismos de la versión clásica) */
 { const h = $('#hueco-comun'); if (h) { if (window.AVINSTALA) { try { h.appendChild(window.AVINSTALA.boton({ app: 'SCREENS', idioma: () => idioma(), sw: false })); } catch (e) {} } if (window.AVFALLO) { try { h.appendChild(window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() })); } catch (e) {} }
-  /* v10.43 · el candado del panel, el último del grupo de la derecha (pegado a la esquina lo recortaban las ventanas redondeadas) */
+  /* v10.44 · el candado del panel, el último del grupo de la derecha (pegado a la esquina lo recortaban las ventanas redondeadas) */
   const ae = document.querySelector('.admin-esq'); if (ae) h.appendChild(ae); } }
 cargarCatalogo((lista, origen) => { if (origen === 'error') { if (!CAT.length) ESTADO = 'error'; } else { CAT = lista; ESTADO = origen; } todo(); });
 window.__blocks = { E, get R() { return R; }, todo };
