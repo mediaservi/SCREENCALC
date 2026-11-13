@@ -4,7 +4,7 @@
 
 Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Todo funciona en **una sola pantalla fija**, sin desplazar la página en ordenador ni en TV: cabecera, franja de modo y petición, bloques de mandos, dos vistas grandes, una fila de cifras y pie. En el móvil, las mismas piezas se apilan y se recorren por dentro.
 
-**Versión actual: v10.31** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
+**Versión actual: v10.32** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
 
 - **Una pantalla LED** → la portada (`index.html` + `vista/una-led.js`).
 - **Varias pantallas, sala inmersiva y proyección** → la consola (`vista/consola.html?modo=varias-led | varias-proy | una-proy`, con el cálculo de `screens/app.js`), con el mismo formato.
@@ -68,7 +68,12 @@ Bloques en burbuja sobre gris (tema gris oscuro o gris claro), cabecera oscura c
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.31)
+## Cambios de la versión actual (v10.32)
+
+- **Icono del cubo en todas partes:** la página de configuradores aún llevaba el icono antiguo (las tres pantallas superpuestas). Ahora todas las páginas usan el cubo, y los archivos del icono antiguo (`assets/favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`) pasan a tener también el cubo, por si algún enlace o app instalada los sigue pidiendo. Se añade `favicon.ico` en la raíz (lo piden algunos navegadores y las páginas sin icono propio).
+- **El navegador lo renueva:** los iconos y el manifiesto llevan número de versión (`?v=`), porque los navegadores guardan el icono de cada web aparte de la página (los anticaché no lo borran) y no lo cambian mientras la dirección sea la misma. La app instalada toma el icono nuevo cuando el navegador revisa su manifiesto.
+
+## Cambios de la v10.31
 
 - **Página de configuradores** (`configuradores/`): la minicaptura de SCREENS es nueva: **varias pantallas LED en tema gris claro** (sala inmersiva de 8 × 6 × 3,5 m con el catálogo real de la hoja). El triangulito de aviso solo acompaña al aviso de cálculo automático de SCREENS.
 - **Desplegables que no caben:** si el texto elegido es largo (por ejemplo «[2.5p] MODELO · STOCK»), la letra se reduce hasta que cabe entero.
