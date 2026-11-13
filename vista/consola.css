@@ -88,13 +88,13 @@ html.piel .num .flecha + .flecha { border-top: 1px solid var(--linea); }
 html.piel .num .flecha svg { filter: none; }
 html.piel .num .flecha:hover { background: var(--metal-hi); }
 html.piel select.sel { border: 1px solid var(--verde-txt); border-radius: 9px; background: var(--campo); color: var(--verde-txt); font: 800 14.5px Inter, system-ui, sans-serif; box-shadow: none; padding: 7px 8px; }
-html.piel #app .ayuda { font-size: 13px; line-height: 1.32; color: var(--tenue); }
-html.piel #app .aviso { font-size: 13px; color: var(--ambar); }
-html.piel #app .tenue { color: var(--tenue); }
-html.piel #app .avisos { background: var(--campo); border: 1px solid var(--linea); color: var(--txt); font-size: 13px; }
-html.piel #app .avisos li.ok { color: var(--verde-txt); } html.piel #app .avisos li.ok::marker { color: var(--verde); }
-html.piel #app .avisos li.mal { color: var(--ambar); }
-html.piel #app .sup, html.piel #app .obst, html.piel .tabla-caja, html.piel .vt-fig { background: var(--campo); border: 1px solid var(--linea); border-radius: 10px; }
+html.piel :is(#app, #bk-velo) .ayuda { font-size: 13px; line-height: 1.32; color: var(--tenue); }
+html.piel :is(#app, #bk-velo) .aviso { font-size: 13px; color: var(--ambar); }
+html.piel :is(#app, #bk-velo) .tenue { color: var(--tenue); }
+html.piel :is(#app, #bk-velo) .avisos { background: var(--campo); border: 1px solid var(--linea); color: var(--txt); font-size: 13px; }
+html.piel :is(#app, #bk-velo) .avisos li.ok { color: var(--verde-txt); } html.piel :is(#app, #bk-velo) .avisos li.ok::marker { color: var(--verde); }
+html.piel :is(#app, #bk-velo) .avisos li.mal { color: var(--ambar); }
+html.piel :is(#app, #bk-velo) .sup, html.piel :is(#app, #bk-velo) .obst, html.piel .tabla-caja, html.piel .vt-fig { background: var(--campo); border: 1px solid var(--linea); border-radius: 10px; }
 html.piel .sup-dat b, html.piel .obst-cab b { color: var(--txt); }
 html.piel .candado { border: 1px solid var(--linea); background: var(--blk2); color: var(--tenue); box-shadow: none; }
 html.piel .candado.on { color: var(--verde-txt); border-color: var(--verde-txt); box-shadow: inset 0 0 0 1px var(--verde-txt); }
@@ -102,14 +102,14 @@ html.piel .campo-cab .lab i.auto { border-color: var(--linea); color: var(--tenu
 html.piel .campo-cab .lab i.fijo { background: var(--marca); border-color: var(--marca); color: #1a2000; }
 html.piel .rango input[type="range"], html.piel .vt-shift input[type="range"] { accent-color: var(--marca); }
 html.piel .rango-et, html.piel .vt-shift { color: var(--tenue); }
-html.piel #app .res-tit { color: var(--txt); font-size: 13px; letter-spacing: .12em; text-shadow: none; }
-html.piel #app .res-tit svg { color: var(--verde-txt); }
-html.piel #app .tabla { font-size: 13px; }
-html.piel #app .tabla th { color: var(--tenue); border-bottom-color: var(--violeta); }
-html.piel #app .tabla td { color: var(--txt); border-bottom-color: color-mix(in srgb, var(--linea) 70%, transparent); }
-html.piel #app .tabla td:first-child { color: var(--txt); }
+html.piel :is(#app, #bk-velo) .res-tit { color: var(--txt); font-size: 13px; letter-spacing: .12em; text-shadow: none; }
+html.piel :is(#app, #bk-velo) .res-tit svg { color: var(--verde-txt); }
+html.piel :is(#app, #bk-velo) .tabla { font-size: 13px; }
+html.piel :is(#app, #bk-velo) .tabla th { color: var(--tenue); border-bottom-color: var(--violeta); }
+html.piel :is(#app, #bk-velo) .tabla td { color: var(--txt); border-bottom-color: color-mix(in srgb, var(--linea) 70%, transparent); }
+html.piel :is(#app, #bk-velo) .tabla td:first-child { color: var(--txt); }
 html.piel .vt-fig figcaption { color: var(--tenue); }
-html.piel #app .ficha { background: var(--blk2); color: var(--txt); border-color: var(--linea); box-shadow: none; }
+html.piel :is(#app, #bk-velo) .ficha { background: var(--blk2); color: var(--txt); border-color: var(--linea); box-shadow: none; }
 html.piel .fi-marca, html.piel .fi-desc, html.piel .fi-nota, html.piel .fi-specs dt { color: var(--tenue); }
 html.piel .fi-specs dd, html.piel .fi-modelo { color: var(--txt); }
 html.piel .fi-aviso { color: var(--ambar); }
@@ -118,11 +118,11 @@ html.piel[data-tema="claro"] .fi-cat, html.piel[data-tema="claro"] .fi-piezas b,
 /* ---------- bloques en burbuja con su cabecera (icono + título) ---------- */
 html.piel .zona-cab { display: none; }
 html.piel .panel { background: none; border: 0; }
-html.piel .mod.blq, html.piel .zona-pie, html.piel .bk-marco, html.piel #app .tar { position: relative; border: 0; border-radius: 18px; box-shadow: var(--relieve); overflow: hidden;
+html.piel .mod.blq, html.piel .zona-pie, html.piel .bk-marco, html.piel :is(#app, #bk-velo) .tar { position: relative; border: 0; border-radius: 18px; box-shadow: var(--relieve); overflow: hidden;
   background: linear-gradient(180deg, var(--blk), color-mix(in srgb, var(--blk) 86%, var(--fondo))); }
 html.piel .mod.blq { padding: 0 0 12px; gap: 8px; }
-html.piel .mod.blq::before, html.piel #app .tar::before { display: none; }
-html.piel .blq .mod-tit, html.piel .bk-cab, html.piel #app .tar .t { display: flex; align-items: center; gap: 8px; min-height: 46px; margin: 0; padding: 6px 12px; background: var(--banda);
+html.piel .mod.blq::before, html.piel :is(#app, #bk-velo) .tar::before { display: none; }
+html.piel .blq .mod-tit, html.piel .bk-cab, html.piel :is(#app, #bk-velo) .tar .t { display: flex; align-items: center; gap: 8px; min-height: 46px; margin: 0; padding: 6px 12px; background: var(--banda);
   border-bottom: 1px solid color-mix(in srgb, var(--linea) 60%, transparent); text-shadow: none; }
 html.piel .blq-cab { gap: 8px; font-size: 15px; font-weight: 900; letter-spacing: .11em; color: var(--txt); text-transform: uppercase; }
 html.piel .blq-led { display: none; }
@@ -164,12 +164,12 @@ html.piel .esc-info { font: 400 12.5px/1.4 'Share Tech Mono', ui-monospace, mono
 html.piel .res { background: none; border: 0; grid-auto-rows: max-content; }
 
 /* ---------- las seis cifras: bloques como los de la portada ---------- */
-html.piel #app .tar { padding: 0 0 12px; display: flex; flex-direction: column; gap: 4px; }
-html.piel #app .tar .t { font-size: 13px; font-weight: 900; letter-spacing: .08em; color: var(--txt); white-space: nowrap; overflow: hidden; }
-html.piel #app .tar .t .blk-ic { width: 26px; height: 26px; }
-html.piel #app .tar .v { padding: 8px 14px 2px; font: 400 48px/1.05 'Share Tech Mono', ui-monospace, monospace; color: var(--txt); white-space: nowrap; text-shadow: none; }
-html.piel #app .tar .v small { font: 700 15px Inter, system-ui, sans-serif; color: var(--tenue); margin-left: 5px; letter-spacing: 0; }
-html.piel #app .tar .s { padding: 0 14px; font-size: 14.5px; line-height: 1.3; color: var(--tenue); }
+html.piel :is(#app, #bk-velo) .tar { padding: 0 0 12px; display: flex; flex-direction: column; gap: 4px; }
+html.piel :is(#app, #bk-velo) .tar .t { font-size: 13px; font-weight: 900; letter-spacing: .08em; color: var(--txt); white-space: nowrap; overflow: hidden; }
+html.piel :is(#app, #bk-velo) .tar .t .blk-ic { width: 26px; height: 26px; }
+html.piel :is(#app, #bk-velo) .tar .v { padding: 8px 14px 2px; font: 400 48px/1.05 'Share Tech Mono', ui-monospace, monospace; color: var(--txt); white-space: nowrap; text-shadow: none; }
+html.piel :is(#app, #bk-velo) .tar .v small { font: 700 15px Inter, system-ui, sans-serif; color: var(--tenue); margin-left: 5px; letter-spacing: 0; }
+html.piel :is(#app, #bk-velo) .tar .s { padding: 0 14px; font-size: 14.5px; line-height: 1.3; color: var(--tenue); }
 
 /* ---------- pie (F1): aviso · créditos · instalar y avisar de un fallo ---------- */
 html.piel .fam-pie { display: none !important; }
@@ -246,9 +246,6 @@ html.bk #res { position: relative; grid-area: s1b; grid-auto-rows: max-content; 
 html.bk #bk-tot { grid-area: tot; min-width: 0; min-height: 0; display: grid; }
 html.bk #bk-tot .res-tot { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)) !important; gap: 12px; min-height: 0; }
 html.bk #bk-tot .tar { min-width: 0; min-height: 0; }
-/* la simulación en grande (el ojo de su cabecera) */
-html.bk-grande .bk-marco[data-area="s1a"] { position: fixed; left: 0; top: 0; width: var(--bk-w, 100vw); height: var(--bk-h, 100dvh); z-index: 60; border-radius: 0; }
-html.bk-grande #escena { position: fixed !important; left: 8px; top: 54px; width: calc(var(--bk-w, 100vw) - 16px); height: calc(var(--bk-h, 100dvh) - 62px) !important; margin: 0 !important; z-index: 61; border-radius: 10px; }
 
 /* ---------- móvil y tableta (sin html.bk): las mismas piezas apiladas; cabecera, petición y pie fijos, los bloques se recorren por dentro ---------- */
 html.piel:not(.bk) body { height: 100dvh; min-height: 0; overflow: hidden; }
@@ -265,8 +262,6 @@ html.piel:not(.bk) #res { border-radius: 0 0 18px 18px; padding: 10px; backgroun
 html.piel:not(.bk) .res-tot { gap: 10px; }
 html.piel:not(.bk) .tar .v { font-size: 28px; }
 html.piel:not(.bk) .tar .t { min-height: 40px; font-size: 12px; }
-html.bk-grande:not(.bk) .bk-marco[data-area="s1a"] { position: fixed; left: 0; top: 0; width: 100vw; height: 100dvh; z-index: 60; border-radius: 0; }
-html.bk-grande:not(.bk) #escena { position: fixed !important; left: 6px; top: 52px; width: calc(100vw - 12px); height: calc(100dvh - 58px) !important; z-index: 61; border-radius: 10px; }
 @media (max-width: 1023px) {
   html.piel .cab { display: flex; flex-wrap: wrap; align-items: center; padding: 6px 0; row-gap: 4px; }
   html.piel .cab-izq { flex: 0 0 auto; }
@@ -305,3 +300,45 @@ html.bk-grande:not(.bk) #escena { position: fixed !important; left: 6px; top: 52
   html.piel #pie-l .nota { line-height: 1.25; font-size: 10.8px; } html.piel #pie-l .nota > span { white-space: normal; }
 }
 @media print { html.piel .f-f1, html.piel .bk-marco, .bk-velo, .bk-tostada { display: none !important; } }
+
+/* v10.33 · ventana grande con paginación (el ojo de la simulación, de los resultados, del material y de la electrónica), como el visor de la portada */
+.bk-vent.visor { width: 88vw; height: 86dvh; }
+.bk-vent.visor .bk-vent-cab { gap: 10px; }
+.bk-vent.visor .bk-vent-cab .blk-ic { flex: none; display: inline-flex; width: 26px; height: 26px; color: var(--ac, var(--azul)); }
+.bk-vent.visor .bk-vent-cab .blk-ic svg, .bk-vent.visor .bk-vent-cab .blk-ic .ic { width: 100%; height: 100%; vertical-align: 0; }
+.bk-vent.visor .vis-tit { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bk-vent.visor .vis-pag { flex: none; font: 400 15px 'Share Tech Mono', ui-monospace, monospace; color: var(--tenue); letter-spacing: .04em; }
+.bk-vent.visor .ic-bt { flex: none; width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--linea); background: var(--blk2); color: var(--txt); padding: 0; cursor: pointer; }
+.bk-vent.visor .ic-bt svg { width: 58%; height: 58%; }
+.bk-vent.visor .ic-bt:disabled { opacity: .35; cursor: default; }
+.bk-vent.visor .ic-bt:not(:disabled):hover { border-color: var(--verde); box-shadow: 0 0 0 2px var(--verde); }
+.vis-cu { gap: 12px; }
+.vis-cu.sim { padding: 8px; }
+.vis-zoom { display: grid; gap: 12px; align-content: start; }
+#bk-velo #escena { position: relative; flex: 1; width: 100%; height: 100% !important; min-height: 0; margin: 0 !important; border-radius: 10px; overflow: hidden; grid-area: auto; }
+#bk-velo .esc-barra .tog { font: 800 12px Inter, system-ui, sans-serif; letter-spacing: .04em; }
+#bk-velo .tabla-caja { overflow-x: auto; }
+html.piel .mod-tit .ojo { width: 34px; height: 34px; }
+@media (max-width: 900px), (max-height: 520px) { .bk-vent.visor { width: 96vw; height: 90dvh; } .bk-vent.visor .vis-pag { font-size: 13px; } .bk-vent.visor .bk-vent-cab { padding: 10px; gap: 6px; font-size: 13px; letter-spacing: .06em; } .bk-vent.visor .ic-bt { width: 36px; height: 36px; } }
+/* en la ventana, el título de la parte ya está en su cabecera; las piezas sueltas de los resultados con el aspecto de la portada */
+.vis-zoom > .res-sec > .res-tit:not(.vt-cab), .vis-zoom > .mod > .mod-tit { display: none; }
+html.piel :is(#app, #bk-velo) .mod:not(.blq) { background: var(--campo); border: 1px solid var(--linea); border-radius: 12px; box-shadow: none; }
+/* v10.33 · guía rápida, como la de la portada (fuera del cuerpo escalado, a tamaño real) */
+.guia { position: fixed; inset: 0; z-index: 9200; font-family: Inter, system-ui, sans-serif; }
+.guia-foco { position: fixed; border-radius: 16px; box-shadow: 0 0 0 200vmax rgba(6, 7, 10, .72); outline: 3px solid #c6e04a; pointer-events: none; transition: all .25s; }
+.guia-foco.nada { left: 50%; top: 50%; width: 0; height: 0; outline: 0; }
+.guia-caja { position: fixed; width: min(460px, 92vw); background: #16171b; color: #fff; border: 1px solid #c6e04a; border-radius: 16px; padding: 18px 20px 16px; box-shadow: 0 16px 44px rgba(0, 0, 0, .6); font-size: 16px; line-height: 1.4; }
+.guia-caja b { display: block; font-size: 20px; font-weight: 800; margin-bottom: 6px; color: #c6e04a; }
+.guia-caja p { margin: 0 0 14px; }
+.guia-pie { display: flex; align-items: center; gap: 10px; }
+.guia-pie span { flex: 1; display: flex; gap: 6px; }
+.guia-pie span i { width: 9px; height: 9px; border-radius: 50%; background: #55575f; }
+.guia-pie span i.on { background: #c6e04a; }
+.guia-pie .tog { flex: none; min-height: 40px; padding: 0 12px; border-radius: 9px; border: 1px solid #55575f; background: #2b2c31; color: #d7d8de; font: 800 13px Inter, system-ui, sans-serif; letter-spacing: .05em; text-transform: uppercase; cursor: pointer; }
+.guia-pie .pri { flex: none; min-height: 40px; padding: 0 18px; border: 0; border-radius: 10px; background: linear-gradient(180deg, #b03cff, #7a00e0); color: #fff; font: 900 14px Inter, system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; box-shadow: 0 3px 0 #4a0090; cursor: pointer; }
+.guia-flecha { position: absolute; width: 0; height: 0; border: 12px solid transparent; }
+.guia-flecha.abajo { top: -23px; margin-left: -12px; border-bottom-color: #c6e04a; }
+.guia-flecha.arriba { bottom: -23px; margin-left: -12px; border-top-color: #c6e04a; }
+.guia-flecha.dcha { left: -23px; margin-top: -12px; border-right-color: #c6e04a; }
+.guia-flecha.izda { right: -23px; margin-top: -12px; border-left-color: #c6e04a; }
+@media (max-width: 559px) { .guia-caja { font-size: 14px; } .guia-caja b { font-size: 17px; } .guia-pie .tog { font-size: 11.5px; padding: 0 8px; } .guia-pie .pri { font-size: 12.5px; padding: 0 12px; } }
