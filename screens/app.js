@@ -9,7 +9,7 @@ import { interpretar } from './peticion.js';
 import { vistasTecnicas, activarVistas } from './vistas.js';
 import { t, idiomaInicial, fijarIdioma, idioma, IDIOMAS } from './i18n.js';
 
-const VERSION = 'v10.33';
+const VERSION = 'v10.34';
 // v8.9 · crédito común de AVHUB (credito.js) y seta de aviso de fallos (fallo.js), los mismos en toda la familia
 if (window.AVCREDITO) window.AVCREDITO.alCambiar(() => { try { pintarCabecera(); } catch (e) {} });
 if (window.AVFALLO) { const bi = document.querySelector('#btn-idioma'); if (bi) { const bf = window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() }); bf.id = 'btn-fallo'; bi.before(bf);
@@ -24,7 +24,7 @@ const DEF = () => ({
     paredes: { frontal: true, izquierda: true, derecha: true, trasera: false, suelo: false },
     sueltas: { n: 3, disp: 'arco', ancho: 4, alto: 2.25, elev: 0.6, sep: 0.1, angulo: 25, dist: 5, techo: 3, central: false, cAncho: 6, cAlto: 3.4 },
     obst: [] },
-  led: { clase: 'INSTALL', tipo: 'INDOOR', crm: '', ajuste: 'dentro' },
+  led: { clase: 'INSTALL', tipo: 'INDOOR', crm: '', ajuste: 'dentro', transp: false, gold: false, protegido: false, sol: '', nitsMin: 0 },
   proy: { tipo: 'pared', cuerpo: '', optica: '', idSuelo: '', solape: 15, lux: 140, ganancia: 1, dist: 0, orient: 'auto', montaje: 'auto', altura: 0, oos: false },
   elec: { backup: false, escalador: 'con', conexion: 'directo', sel: '', marca: 'todos', dante: false, selMedia: '' },
   vista: { contenido: 'carta', etiquetas: true, camara: 'exterior', zona: true, modo: 'continuo', tec: 'todas', vtSup: 0 }
@@ -41,6 +41,8 @@ let medio = null;   // vídeo o imagen propios (solo en este navegador, no se gu
 const $ = (s, r = document) => r.querySelector(s);
 const fmt = (v, d = 2) => Number(v || 0).toLocaleString(idioma() === 'en' ? 'en-GB' : 'es-ES', { minimumFractionDigits: 0, maximumFractionDigits: d });
 const fmtPx = (v) => Number(v || 0).toLocaleString(idioma() === 'en' ? 'en-GB' : 'es-ES');
+const SVI = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
+const ICO_EU = { eInt: SVI('<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>'), eExt: SVI('<path d="M2 20h20"/><path d="M5 20l5-9 3 5 2-3 4 7"/><circle cx="17.5" cy="6" r="2"/>'), eEsc: SVI('<path d="M3 9l1.5-5h15L21 9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12.5V20h14v-7.5"/>'), eFija: SVI('<path d="M12 21v-7"/><path d="M8 3h8l-1 6 3 4H6l3-4z"/>'), eAlq: SVI('<rect x="2" y="7" width="11" height="9" rx="1"/><path d="M13 10h4l4 3v3h-8z"/><circle cx="6.5" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/>'), eSol: SVI('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'), eNube: SVI('<path d="M12 3v1.5M5.6 5.6l1 1M3 12h1.5M18.4 5.6l-1 1"/><path d="M8.5 11a4 4 0 0 1 7-2.6"/><path d="M8 20h9a3.5 3.5 0 0 0 .5-7 5 5 0 0 0-9.6 1.3A3 3 0 0 0 8 20z"/>'), eMar: SVI('<path d="M2 16c2 0 2-1.5 4-1.5S8 16 10 16s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5"/><path d="M2 20.5c2 0 2-1.5 4-1.5s2 1.5 4 1.5 2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5"/><path d="M12 3c2 2.5 3 4 3 5.5a3 3 0 0 1-6 0C9 7 10 5.5 12 3z"/>'), eTra: SVI('<rect x="3" y="4" width="18" height="13" rx="1.5" stroke-dasharray="3 2.2"/><path d="M8 21h8M12 17v4"/><path d="M7 13l4-5M11 14l5-6"/>'), ePub: SVI('<path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/>') };
 const ICO = {
   espacio: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>',
   led: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="12" rx="1"/><path d="M9 5v12M15 5v12M3 11h18M8 21h8"/></svg>',
@@ -50,9 +52,29 @@ const ICO = {
 };
 
 // ---------- cálculo ----------
+// v10.34 · entorno y uso como en la portada: interior, exterior o escaparate, transparente, fija o alquiler, sol directo o indirecto,
+// marino / tropical (contactos de oro) y al alcance del público (LED protegido: UfixAvant HOB y UfixCOB). En una sala inmersiva el público
+// siempre está al alcance de las paredes: el LED protegido va siempre. Si no hay modelos que cumplan, se muestran los normales con un aviso.
+const SOL_DIRECTO = 5000, SOL_INDIRECTO = 2500, MIN_NITS = { OUTDOOR: 5000, ESCAPARATE: 2500, INDOOR: 0 };
+const famN = (m) => String(m.family || '').toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g, ''), tecN = (m) => String(m.tech || '').toUpperCase().trim();
+const esTransp = (m) => famN(m).includes('holo') || famN(m) === 'tglass', esProt = (m) => (tecN(m) === 'HOB' && famN(m) === 'ufixavant') || (tecN(m) === 'COB' && famN(m) === 'ufixcob');
+const salaLed = () => E.cantidad === 'varias' && E.esp.tipo === 'sala' && E.tecnologia === 'led';
+const protegidoLed = () => E.led.tipo === 'INDOOR' && (salaLed() || !!E.led.protegido);
+let avisoLed = [];
 function listaLed() {
-  return ordenar(catalogo.filter(m => m.class === E.led.clase && m.tipo === E.led.tipo));
+  const L = E.led; avisoLed = [];
+  let lista = catalogo.filter(m => m.class === L.clase && m.tipo === L.tipo);
+  if (!lista.length) { lista = catalogo.filter(m => m.tipo === L.tipo); if (lista.length) avisoLed.push(t('relClase')); }
+  { const tr = lista.filter(esTransp); if (L.transp) { if (tr.length) lista = tr; else avisoLed.push(t('relTransp')); } else if (tr.length < lista.length) lista = lista.filter(m => !esTransp(m)); }
+  if (L.gold) { const g = lista.filter(m => /gold/i.test(String(m.tech || ''))); if (g.length) lista = g; else avisoLed.push(t('relGold')); }
+  const conSol = L.tipo !== 'INDOOR' ? L.sol : '', base = conSol === 'directo' ? SOL_DIRECTO : conSol === 'indirecto' ? SOL_INDIRECTO : (MIN_NITS[L.tipo] || 0), nits = Math.max(base, +L.nitsMin || 0), tope = conSol === 'indirecto' && nits < SOL_DIRECTO ? SOL_DIRECTO : Infinity;
+  { const enRango = lista.filter(m => m.nits >= nits && m.nits < tope), conNits = lista.filter(m => m.nits >= nits);
+    if (enRango.length) lista = enRango; else if (conNits.length) lista = conNits; else if (nits) avisoLed.push(t('relNits', { n: nits })); }
+  if (protegidoLed()) { const p = lista.filter(esProt); if (p.length) lista = p; else avisoLed.push(t('relProt')); }
+  return ordenar(lista);
 }
+// brillos mínimos que se pueden pedir con − y + (los de los cabinets de este entorno)
+const nitsLista = () => [...new Set(catalogo.filter(m => m.tipo === E.led.tipo && m.nits > 0).map(m => +m.nits))].sort((a, b) => a - b);
 // v8.2 · tipo de proyección y relación de proyección preferida en mapping sin distancia (unas 2 veces el ancho de la imagen)
 const tipoProy = () => (E.cantidad === 'varias' && E.esp.tipo === 'sala' ? 'sala' : E.proy.tipo === 'mapping' ? 'mapping' : 'pared');
 const TR_MAPPING = 2;
@@ -245,8 +267,17 @@ function partesEspacio() {
   if (proy) tipo += bloqueTipo();   // en proyección, el tipo (mapping, pared o sala inmersiva) sustituye a SALA / PANTALLAS
   else {
     if (E.cantidad === 'varias') tipo += `<div class="fila c2">${tog(e.tipo === 'sala', 'data-set="esp.tipo" data-v="sala"', t('sala'))}${tog(e.tipo === 'sueltas', 'data-set="esp.tipo" data-v="sueltas"', t('pantallas'))}</div>`;
-    tipo += `<div class="fila c2">${tog(l.clase === 'INSTALL', 'data-set="led.clase" data-v="INSTALL"', 'INSTALL')}${tog(l.clase === 'RENTAL', 'data-set="led.clase" data-v="RENTAL"', 'RENTAL')}</div>`;
-    tipo += `<div class="fila c2">${tog(l.tipo === 'INDOOR', 'data-set="led.tipo" data-v="INDOOR"', 'INDOOR')}${tog(l.tipo === 'OUTDOOR', 'data-set="led.tipo" data-v="OUTDOOR"', 'OUTDOOR')}</div>`;
+    // v10.34 · entorno y uso, los mismos botones (e iconos) que la portada
+    const ti = (on, attrs, ico, txt, extra) => tog(on, attrs, ICO_EU[ico] + `<span>${txt}</span>`, extra);
+    tipo += `<div class="fila c2 eu">${ti(l.tipo === 'INDOOR', 'data-set="led.tipo" data-v="INDOOR"', 'eInt', t('euInt'))}${ti(l.tipo === 'OUTDOOR', 'data-set="led.tipo" data-v="OUTDOOR"', 'eExt', t('euExt'))}</div>`;
+    tipo += `<div class="fila c2 eu">${ti(l.tipo === 'ESCAPARATE', 'data-set="led.tipo" data-v="ESCAPARATE"', 'eEsc', t('euEsc'))}${ti(!!l.transp, `data-set="led.transp" data-v="${l.transp ? 0 : 1}" data-bool="1" title="${t('euTranspT')}"`, 'eTra', t('euTransp'))}</div>`;
+    tipo += `<div class="fila c2 eu">${ti(l.clase === 'INSTALL', 'data-set="led.clase" data-v="INSTALL"', 'eFija', t('euFija'))}${ti(l.clase === 'RENTAL', 'data-set="led.clase" data-v="RENTAL"', 'eAlq', t('euAlq'))}</div>`;
+    if (l.tipo !== 'INDOOR') tipo += `<div class="fila c2 eu">${ti(l.sol === 'directo', `data-set="led.sol" data-v="${l.sol === 'directo' ? '' : 'directo'}" title="${t('euSolDT', { n: SOL_DIRECTO })}"`, 'eSol', t('euSolD'))}${ti(l.sol === 'indirecto', `data-set="led.sol" data-v="${l.sol === 'indirecto' ? '' : 'indirecto'}" title="${t('euSolIT', { a: SOL_INDIRECTO, b: SOL_DIRECTO })}"`, 'eNube', t('euSolI'))}</div>`;
+    const forzado = salaLed() && l.tipo === 'INDOOR';
+    tipo += `<div class="fila c2 eu">${ti(!!l.gold, `data-set="led.gold" data-v="${l.gold ? 0 : 1}" data-bool="1" title="${t('euMarT')}"`, 'eMar', t('euMar'))}${ti(protegidoLed(), forzado ? `data-nada="1" title="${t('euPubSala')}"` : `data-set="led.protegido" data-v="${l.protegido ? 0 : 1}" data-bool="1" title="${t('euPubT')}"`, 'ePub', t('euPub'), forzado ? 'aria-disabled="true"' : '')}</div>`;
+    const nl = nitsLista(), nv = +l.nitsMin || 0;
+    tipo += `<div class="fila nits"><span class="etq">${t('euNits')}</span><button type="button" class="sec-btn" data-accion="nits" data-d="-1" aria-label="${t('euNitsMenos')}"${nv ? '' : ' disabled'}>−</button><b class="mono">${nv ? nv : t('euNitsAuto')}</b><button type="button" class="sec-btn" data-accion="nits" data-d="1" aria-label="${t('euNitsMas')}"${nl.some(x => x > nv) ? '' : ' disabled'}>+</button></div>`;
+    if (avisoLed.length) tipo += `<p class="aviso">${avisoLed.join(' ')}</p>`;
   }
   if (sala) {
     tam += `<div class="fila c3">${campo(t('ancho'), numIn('esp.ancho', e.ancho, 'm', 0.1, 1, 60))}${campo(t('fondo'), numIn('esp.fondo', e.fondo, 'm', 0.1, 1, 60))}${campo(t('alto'), numIn('esp.alto', e.alto, 'm', 0.1, 1.5, 20))}</div>`;
@@ -271,7 +302,7 @@ function partesEspacio() {
   }
   ent += bloqueObst(sala);
   // resumen de una línea de cada bloque (lo que se lee cuando está plegado)
-  const rTipo = proy ? t('tp_' + tipoProy()) : (E.cantidad === 'varias' ? t(sala ? 'sala' : 'pantallas') + ' · ' : '') + l.clase + ' · ' + l.tipo;
+  const rTipo = proy ? t('tp_' + tipoProy()) : (E.cantidad === 'varias' ? t(sala ? 'sala' : 'pantallas') + ' · ' : '') + t({ INDOOR: 'euInt', OUTDOOR: 'euExt', ESCAPARATE: 'euEsc' }[l.tipo] || 'euInt') + ' · ' + t(l.clase === 'RENTAL' ? 'euAlq' : 'euFija') + (protegidoLed() ? ' · ' + t('euPub') : '') + (l.gold ? ' · ' + t('euMar') : '') + (l.transp ? ' · ' + t('euTransp') : '');
   const rTam = sala ? `${fmt(e.ancho)} × ${fmt(e.fondo)} × ${fmt(e.alto)} m` : `${E.cantidad === 'varias' ? s.n + ' × ' : ''}${fmt(s.ancho)} × ${fmt(s.alto)} m`;
   const rEnt = sala ? `${t('elev')} ${fmt(e.elev)} m` : `${t('elev')} ${fmt(s.elev)} m · ${fmt(s.dist, 1)} m`;
   return { tipo, tam, ent, rTipo, rTam, rEnt, sala };
@@ -739,7 +770,7 @@ document.addEventListener('click', (ev) => {
   if (b.dataset.set) { fijar(b.dataset.set, b.dataset.bool ? b.dataset.v === '1' : b.dataset.numV ? Number(b.dataset.v) : b.dataset.v);
     if (/^elec\.(backup|escalador|conexion)$/.test(b.dataset.set)) E.elec.sel = '';
     if (b.dataset.set === 'elec.marca') E.elec.selMedia = '';
-    if (b.dataset.set === 'led.clase' || b.dataset.set === 'led.tipo') E.led.crm = '';
+    if (/^led\.(clase|tipo|transp|gold|protegido|sol)$/.test(b.dataset.set)) { E.led.crm = ''; if (b.dataset.set === 'led.tipo') { E.led.nitsMin = 0; E.led.sol = ''; } }
     actualizar(b.dataset.set === 'esp.sueltas.disp' ? false : false); return; }
   if (b.dataset.pared) { E.esp.paredes[b.dataset.pared] = !E.esp.paredes[b.dataset.pared]; actualizar(); return; }
   if (b.dataset.cam) { E.vista.camara = b.dataset.cam; if (escena) escena.vista(b.dataset.cam === 'interior' ? 'dentro' : b.dataset.cam); barraEscena(); guardar(); return; }
@@ -772,13 +803,14 @@ document.addEventListener('click', (ev) => {
   if (a === 'calc-ir') { irA('.res-tot'); return; }
   if (a === 'ficha-ir') { irA('#det-equipo'); return; }
   if (/^reset-(a|a\d|b\d)$/.test(a)) { const d = DEF(), k = a.slice(6), cp = (o, src, ks) => ks.forEach(x => { o[x] = src[x]; }), led = E.tecnologia === 'led';
-    if (k === 'a' || k === 'a1') { E.esp.tipo = d.esp.tipo; if (led) { cp(E.led, d.led, ['clase', 'tipo']); E.led.crm = ''; } }
+    if (k === 'a' || k === 'a1') { E.esp.tipo = d.esp.tipo; if (led) { cp(E.led, d.led, ['clase', 'tipo', 'transp', 'gold', 'protegido', 'sol', 'nitsMin']); E.led.crm = ''; } }
     if (k === 'a' || k === 'a2') { cp(E.esp, d.esp, ['ancho', 'fondo', 'alto']); E.esp.paredes = d.esp.paredes; cp(E.esp.sueltas, d.esp.sueltas, ['n', 'disp', 'ancho', 'alto', 'sep', 'angulo', 'central', 'cAncho', 'cAlto']); }
     if ((k === 'a' || k === 'a3') && !led) { cp(E.proy, d.proy, ['lux', 'ganancia']); luzSegunTipo(); }
     if (k === 'a' || k === 'a4') { cp(E.esp, d.esp, ['elev', 'altoCubierto']); cp(E.esp.sueltas, d.esp.sueltas, ['elev', 'dist', 'techo']); E.esp.obst = []; }
     if (k === 'b1') { if (led) E.led.crm = ''; else cp(E.proy, d.proy, ['cuerpo', 'optica', 'idSuelo']); }
     if (k === 'b2') { if (led) E.led.ajuste = d.led.ajuste; else cp(E.proy, d.proy, ['solape', 'dist', 'orient', 'montaje', 'altura', 'oos']); }
     ajuste.esp = ''; ajuste.obst = ''; actualizar(); return; }
+  if (a === 'nits') { const L = [0].concat(nitsLista()), v = +E.led.nitsMin || 0, i = L.indexOf(v) < 0 ? 0 : L.indexOf(v), j = Math.max(0, Math.min(L.length - 1, i + Number(b.dataset.d))); E.led.nitsMin = L[j]; E.led.crm = ''; actualizar(); return; }
   if (a === 'reset-elec') { E.elec = DEF().elec; actualizar(); return; }
   if (a === 'reset-esp') { E.esp = DEF().esp; actualizar(); return; }
   if (a === 'obst-add') { const e = E.esp; e.obst = e.obst || [];
