@@ -448,3 +448,5 @@ select.sel { width: 100%; min-width: 0; border: 1px solid var(--verde-txt); back
 .fila.ico .tog { font-size: calc(var(--u) * 12.6); letter-spacing: 0; gap: calc(var(--u) * 5); padding: 0 calc(var(--u) * 5); }
 .fila.ico .tog svg { width: calc(var(--u) * 17); height: calc(var(--u) * 17); }
 @media (max-width: 900px), (max-height: 520px) { .fila.ico .tog { font-size: calc(var(--u) * 13.5); padding: 0 calc(var(--u) * 8); gap: calc(var(--u) * 7); } }
+/* beta 16 · en el móvil los créditos pueden ir en dos renglones legibles */
+@media (max-width: 559px) { .f-f1 > .f-cred { display: block; white-space: normal; text-align: center; text-wrap: balance; line-height: 1.3; font-size: calc(var(--u) * 10.8) !important; overflow: visible; } }

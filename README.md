@@ -15,7 +15,7 @@ Las dos opciones llevan el mismo logo de SCREENS, con el isotipo del cubo. SCREE
 
 Calculadora web de pantallas LED. A partir de lo que pide el cliente (medidas, uso, distancia de visión, resolución, electrónica) propone el modelo de cabinet, calcula la pantalla y genera un listado completo de proyecto llave en mano, con simulación, electrónica de control, mediaserver, esquema de conexiones y PDF.
 
-**Versión actual: v10.17** (estética AVHUB · consola fija de SCREENS)
+**Versión actual: v10.18** (estética AVHUB · consola fija de SCREENS)
 
 Web principal: **https://screens.mediaservi.com** (dirección definitiva; las antiguas dejan de usarse). Con `?led` la consola se abre ya en «Una + LED»; el cálculo de una pantalla LED solo, con su propia cabecera: https://screens.mediaservi.com/led.html
 
@@ -92,7 +92,14 @@ La estética clara anterior (verdes `#73ac44`, `#00a792`, `#0f584c` y `#ccff00`)
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.17 · beta)
+## Cambios de la versión actual (v10.18)
+
+- **Pie nuevo en toda la app** (clásica, consola y BLOCKS): «SCREENS vX.Y AAAA forma parte del proyecto AVHUB ideado por el fundador de mediaservi.com · Aviso legal». Es el texto de fábrica de `credito.js`; si el navegador o el panel traen el texto anterior, se sustituye por este. La portada AVHUB llevará «AVHUB es una idea del fundador de mediaservi.com · Aviso legal».
+- **La dirección `…/#aviso` abre el aviso legal** al cargar la página.
+- **BLOCKS beta 16** (`blocks/`): en el móvil la línea de créditos puede ocupar dos renglones para que se lea. Decisiones confirmadas por Josep: Sol directo = 5000 nits o más y Sol indirecto = de 2500 a 5000; HOLO y T·Glass solo se proponen con Transparente activado.
+- Esta versión pasa a `main` con todo lo acumulado desde la v10.3: PDF directo, petición con pitch «3.9p», orden por stock y prioridad, panel de administración v1.5, idioma del navegador, bocadillo del botón de instalar y BLOCKS en `blocks/`.
+
+### v10.17 (beta)
 
 - **BLOCKS beta 15** (`blocks/`):
   - **Entorno y uso** con botones más grandes y letra mayor: dos por fila, con el icono a la izquierda, y las filas se reparten todo el alto del bloque.
