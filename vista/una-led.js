@@ -7,9 +7,9 @@ import { HUMAN_PATH } from '../screens/figura.js';
 import '../comun/electronica.js';
 import '../comun/ficha.js';
 import '../comun/voz.js';
-import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.42';
+import { idiomaInicial, idioma, fijaIdioma, vigila, tr, IDIOMAS, NOMBRE } from './idiomas.js?v=10.43';
 idiomaInicial();   /* el idioma guardado de la familia SCREENS o, la primera vez, el del navegador */
-const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.42';
+const ELEC = globalThis.SC_ELEC, FICHA = globalThis.SC_FICHA, VERSION = 'SCREENS v10.43';
 const $ = (s, r = document) => r.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmt = (v, d = 0) => Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
 const SV = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
@@ -103,10 +103,10 @@ function deEnlace(u) {
 const sueltaCont = () => { if (CONT && /^blob:/.test(CONT.url)) URL.revokeObjectURL(CONT.url); };
 let CONT = null;   /* contenido propio que se simula en la pantalla: { url, tipo: 'img' | 'video' } */
 const SUELO = { hormigon: '#bfe6d8', madera: '#bcd9f2', marmol: '#f2c9d4', 'ladrillo-rojo': '#c7e8c0', 'ladrillo-oscuro': '#f3e3a8', 'ladrillo-claro': '#c9c6f0', ninguno: '#cfd3da', propio: '#cfd3da' };
-/* v10.42 · además de las seis paredes: «ninguno» (sin fondo) y «propio» (una imagen subida o un enlace pegado) */
+/* v10.43 · además de las seis paredes: «ninguno» (sin fondo) y «propio» (una imagen subida o un enlace pegado) */
 const FONDOS = ['hormigon', 'madera', 'marmol', 'ladrillo-rojo', 'ladrillo-oscuro', 'ladrillo-claro', 'ninguno', 'propio'];
-const TEXV = '?v=10.42';
-/* v10.42 · candado discreto del pie: abre el panel AVHUB ADMIN (Apps Script), como el de la consola */
+const TEXV = '?v=10.43';
+/* v10.43 · candado discreto del pie: abre el panel AVHUB ADMIN (Apps Script), como el de la consola */
 const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbwkc12y4LODbFe-kQidnR2MbbA6cbW1WbhU3UiqmDmshx-ncAdGYrFRy8PNjm9Wg6Mx3w/exec';   /* rompe la caché del navegador cuando cambia una textura */
 /* fondo propio: la imagen ya reducida (data:) o el enlace, guardado en este navegador */
 const FPROP_K = 'screens-fondo-propio';
@@ -224,10 +224,12 @@ const FIG = (() => { const s = document.createElementNS('http://www.w3.org/2000/
 const figura = (cx, suelo, k, relleno) => { const e = 1.75 * k / FIG.height; return `<g transform="translate(${cx - (FIG.x + FIG.width / 2) * e},${suelo + FIG.y * e}) scale(${e},${-e})" ${relleno}><path d="${HUMAN_PATH}"/></g>`; };
 const COLS = ['#19b5b0', '#c264c8', '#62b85a', '#4b4bc8', '#c2c040', '#e0803a', '#3a9be0', '#d0507a', '#8a8f9a', '#40c090'];
 /* medida real de lo que abarca cada textura de pared (ancho × alto en metros): así los ladrillos, las lamas y las losas salen a la misma escala que la pantalla y la persona, se vea la simulación al tamaño que se vea */
-/* v10.42 · la madera es un friso de tablas de 15 cm (2,40 × 3,00 m por pieza): las lamas finas de antes se veían como palillos a esta escala */
+/* v10.43 · la madera es un friso de tablas de 15 cm (2,40 × 3,00 m por pieza): las lamas finas de antes se veían como palillos a esta escala */
 const PARED = { hormigon: [3.6, 2.39, 1], madera: [2.4, 3.0], marmol: [2.4, 2.4], 'ladrillo-rojo': [1, .64], 'ladrillo-oscuro': [1, .912], 'ladrillo-claro': [1, .64] };
 /* «prop» es ancho / alto del hueco donde se va a ver: el dibujo se hace con esa proporción para llenarlo */
-function svgSim(prop, anchoPx) {
+function svgSim(prop, anchoPx, o) {
+  /* v10.43 · las líneas de los cabinets se ven siempre (también sobre un contenido propio): normales en pantalla, más suaves en el PDF */
+  const cabOp = o && o.pdf ? .3 : .55, cabLin = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#000" stroke-opacity="${(cabOp * .6).toFixed(2)}" stroke-width="2.4" pointer-events="none"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#d4ff00" stroke-opacity="${cabOp}" stroke-width="1.1" pointer-events="none"/>`;
   if (!prop) { const c = document.querySelector('[data-blk="S1A"] .blk-cu'); prop = c && c.clientHeight > 40 ? c.clientWidth / c.clientHeight : 1.6; anchoPx = c ? c.clientWidth : 0; }
   /* hueco que hay que dejar arriba para los dos controles que van encima (elevación y pared), que no cambian de tamaño con el dibujo */
   const uPx = parseFloat(getComputedStyle(document.documentElement).fontSize) / 17 || 1, ARRIBA = anchoPx > 0 ? Math.max(120, Math.min(260, 92 * uPx / (anchoPx / 860) + 28)) : 150;
@@ -244,8 +246,10 @@ function svgSim(prop, anchoPx) {
   /* el suelo es una banda de color pastel que contrasta con la pared, no una continuación de su textura */
   g += `<rect data-suelo x="-4000" y="${sueloY}" width="9000" height="900" fill="${SUELO[E.fondo] || '#bfe6d8'}"/><rect x="-4000" y="${sueloY}" width="9000" height="5" fill="#000" fill-opacity=".28"/>`;
   g += `<rect x="${px - 5}" y="${py - 5}" width="${pw + 10}" height="${ph + 10}" fill="#050506" rx="3"/>` + (CONT && CONT.tipo === 'marco' ? (() => { const e = Math.max(pw / 16, ph / 9), iw = 16 * e, ih = 9 * e; return `<foreignObject x="${px}" y="${py}" width="${pw}" height="${ph}"><div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;overflow:hidden;position:relative;background:#000"><iframe src="${esc(CONT.url)}" title="Contenido simulado" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;left:${(pw - iw) / 2}px;top:${(ph - ih) / 2}px;width:${iw}px;height:${ih}px;border:0;pointer-events:none"></iframe></div></foreignObject>`; })() : CONT && CONT.tipo === 'video' ? `<foreignObject x="${px}" y="${py}" width="${pw}" height="${ph}"><video src="${CONT.url}" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;background:#000"></video></foreignObject>` : `<image href="${CONT ? CONT.url : '../assets/SCCHART.jpg'}" x="${px}" y="${py}" width="${pw}" height="${ph}" preserveAspectRatio="${CONT ? 'xMidYMid slice' : 'none'}" clip-path="url(#cp)"/>`);
-  if (!CONT && !R.holo) for (let c = 1; c < r.cols; c++) g += `<line x1="${px + c * pw / r.cols}" y1="${py}" x2="${px + c * pw / r.cols}" y2="${py + ph}" stroke="#d4ff00" stroke-opacity=".55" stroke-width="1"/>`;
-  if (!CONT && !R.holo) for (let f = 1; f < r.rows; f++) g += `<line x1="${px}" y1="${py + f * ph / r.rows}" x2="${px + pw}" y2="${py + f * ph / r.rows}" stroke="#d4ff00" stroke-opacity=".55" stroke-width="1"/>`;
+  /* con un contenido propio cada línea lleva un filete oscuro debajo para que se vea sobre cualquier imagen; sobre la carta, como siempre */
+  const linCab = CONT ? cabLin : (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#d4ff00" stroke-opacity="${cabOp}" stroke-width="1" pointer-events="none"/>`;
+  if (!R.holo) for (let c = 1; c < r.cols; c++) g += linCab(px + c * pw / r.cols, py, px + c * pw / r.cols, py + ph);
+  if (!R.holo) for (let f = 1; f < r.rows; f++) g += linCab(px, py + f * ph / r.rows, px + pw, py + f * ph / r.rows);
   g += figura(hx, sueloY, k, /marmol|claro/.test(E.fondo) || (E.fondo === 'ninguno' && E.tema === 'claro') ? 'fill="#3f4149" fill-opacity=".9"' : 'fill="#d5d5db" fill-opacity=".92" stroke="#1c1d22" stroke-opacity=".6" stroke-width="1.5" vector-effect="non-scaling-stroke"') + `<text x="${hx - .3 * k}" y="${sueloY - 9}" text-anchor="end" font-size="17" fill="#fff" stroke="#000" stroke-opacity=".6" stroke-width="3.2" paint-order="stroke" font-family="Share Tech Mono, monospace">175 cm</text>`;
   { const t1 = `PANTALLA LED ${esc(m.crm)} · ${fmt(r.ancho * 100)} × ${fmt(r.alto * 100)} cm · ${fmt(R.diag / .0254)}″ · ${r.cols}×${r.rows} = ${r.cab} cabinets · ${r.resW}×${r.resH} px`, f1 = Math.min(19, 1.72 * (W - 24) / t1.length);
     g += `<text x="${W / 2}" y="${sueloY + 35}" text-anchor="middle" font-size="${f1.toFixed(1)}" font-weight="800" fill="#1c1d22" font-family="Inter, sans-serif">${t1}</text>`; }
@@ -702,20 +706,25 @@ async function svgImg(svgTxt, w, h, fondo, tinta) {
   const caja = document.createElement('div'); caja.innerHTML = svgTxt; const c = caja.querySelector('svg'); c.querySelectorAll('text').forEach((e) => { if (!e.children.length) { const n = tr(e.textContent); if (n !== e.textContent) e.textContent = n; } }); c.setAttribute('width', w); c.setAttribute('height', h); c.removeAttribute('style'); c.setAttribute('color', tinta);
   c.querySelectorAll('[fill="currentColor"]').forEach((e) => e.setAttribute('fill', tinta)); c.querySelectorAll('[stroke="currentColor"]').forEach((e) => e.setAttribute('stroke', tinta));
   const fo = c.querySelector('foreignObject'); if (fo) { const vid = document.querySelector('[data-blk="S1A"] svg video'), t = document.createElement('canvas'); t.width = (vid && vid.videoWidth) || 640; t.height = (vid && vid.videoHeight) || 360; let ok = false; try { if (vid) { t.getContext('2d').drawImage(vid, 0, 0, t.width, t.height); t.toDataURL(); ok = true; } } catch (e) {} if (ok) { const im = document.createElementNS('http://www.w3.org/2000/svg', 'image'); ['x', 'y', 'width', 'height'].forEach((a) => im.setAttribute(a, fo.getAttribute(a))); im.setAttribute('preserveAspectRatio', 'xMidYMid slice'); im.setAttribute('href', t.toDataURL('image/jpeg', .9)); fo.replaceWith(im); } else fo.remove(); }
-  for (const im of c.querySelectorAll('image')) { const hr = im.getAttribute('href'); if (hr && !/^data:/.test(hr)) { try { im.setAttribute('href', await aDatos(new URL(hr, document.baseURI).href)); } catch (e) { im.remove(); } } }
+  /* v10.43 · cada imagen va dentro del SVG ya reducida (una foto de móvil entera no se dibujaba en el PDF); la que no se deja copiar se avisa */
+  for (const im of c.querySelectorAll('image')) { const hr = im.getAttribute('href'); if (!hr) continue; try { let d = /^data:/.test(hr) ? hr : await aDatos(new URL(hr, document.baseURI).href); if (d.length > 1500000 || /^data:image\/(heic|heif|webp|avif|tiff)/i.test(d)) d = await reduceImg(d); im.setAttribute('href', d); } catch (e) { if (CONT && hr === CONT.url) SIN_CONT_PDF = true; im.remove(); } }
   const st = document.createElementNS('http://www.w3.org/2000/svg', 'style'); st.textContent = await letras(); c.insertBefore(st, c.firstChild);
-  const im = await aImagen('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(c))), cv = document.createElement('canvas'), k = 2; cv.width = w * k; cv.height = h * k; const x = cv.getContext('2d'); x.fillStyle = fondo; x.fillRect(0, 0, cv.width, cv.height); x.drawImage(im, 0, 0, cv.width, cv.height);
+  const im = await aImagen('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(c))), cv = document.createElement('canvas'), k = 2; cv.width = w * k; cv.height = h * k; const x = cv.getContext('2d');
+  try { if (im.decode) await im.decode(); } catch (e) {}
+  /* Safari puede pintar el SVG antes de tener sus imágenes interiores: se pinta, se espera un momento y se vuelve a pintar */
+  const pinta = () => { x.fillStyle = fondo; x.fillRect(0, 0, cv.width, cv.height); x.drawImage(im, 0, 0, cv.width, cv.height); };
+  pinta(); await new Promise((ok) => setTimeout(ok, 150)); pinta();
   return cv.toDataURL('image/jpeg', .9);
 }
 /* PDF del proyecto en dos hojas: 1) la pantalla, la simulación y todos sus datos; 2) el esquema de conexión, el cableado y la lista de material */
-let HACIENDO_PDF = false;
+let HACIENDO_PDF = false, SIN_CONT_PDF = false;
 async function pdf() {
   if (!R || !R.r) { tostada('Calcula primero una pantalla.'); return; } if (!window.AVPDF) { tostada('No se ha podido cargar el módulo de PDF.'); return; } if (HACIENDO_PDF) return; HACIENDO_PDF = true;
-  const hoja = document.createElement('div');
+  const hoja = document.createElement('div'); SIN_CONT_PDF = false;
   try {
     if (VENT) cierra(); const { m, r } = R, p = R.proc, me = R.media, TI = '#17181c', G = '#c9ccd3', hoy = new Date().toLocaleDateString(idioma() === 'en' ? 'en-GB' : idioma() === 'ca' ? 'ca-ES' : 'es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
     const img = async (svg, w, h, bg) => `<img src="${await svgImg(svg, w, h, bg, TI)}" alt="" style="display:block;width:100%;height:auto;border:1px solid ${G};border-radius:6px">`;
-    const sim = await img(svgSim(1.5, 0), 860, 573, '#1a1a1d'), sen = await img(svgRejilla('senal'), 1000, 620, '#f4f5f7'), ele = await img(svgRejilla('elec'), 1000, 620, '#f4f5f7'), esq = await img(svgEsquema(), 1000, 620, '#f4f5f7');
+    const sim = await img(svgSim(1.5, 0, { pdf: true }), 860, 573, '#1a1a1d'), sen = await img(svgRejilla('senal'), 1000, 620, '#f4f5f7'), ele = await img(svgRejilla('elec'), 1000, 620, '#f4f5f7'), esq = await img(svgEsquema(), 1000, 620, '#f4f5f7');
     const fila = (k, v) => (v === '' || v == null ? '' : `<tr><td style="padding:1.5px 0;color:#555">${k}</td><td style="padding:1.5px 0 1.5px 8px;font-weight:700;text-align:right">${v}</td></tr>`), rot = (s) => `<div style="font:800 8.5px/1.2 Inter,Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#555;margin:0 0 3px">${s}</div>`;
     const caja = (tit, filas) => `<div style="border:1px solid ${G};border-radius:6px;padding:6px 9px;background:#fff">${rot(tit)}<table style="width:100%;border-collapse:collapse;font:400 9.5px/1.35 Inter,Arial,sans-serif">${filas}</table></div>`;
     const cab = (sub) => `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:2px solid ${TI};padding-bottom:7px;margin-bottom:9px"><img src="../assets/screens-logo-claro.svg" alt="SCREENS" style="height:30px;width:auto"><div style="text-align:right;font:400 9.5px/1.35 Inter,Arial,sans-serif"><div style="font:800 13px/1.2 Inter,Arial,sans-serif" data-crudo>${esc(E.proy || 'Pantalla LED ' + m.crm)}</div><div>${E.cliente ? '<span data-crudo>' + esc(E.cliente) + '</span> · ' : ''}${hoy}</div></div></div>`;
@@ -739,10 +748,11 @@ async function pdf() {
     hoja.innerHTML = `<div class="pdf-p1"><div style="padding:0 0 6px">${p1}</div></div><div style="height:60px"></div><div class="pdf-p2"><div style="padding:0 0 6px">${p2}</div></div>`;
     document.body.appendChild(hoja); await Promise.all([...hoja.querySelectorAll('img')].map((i) => (i.complete ? 0 : new Promise((ok) => { i.onload = i.onerror = ok; })))); await new Promise((ok) => setTimeout(ok, 60));
     const pv = await window.AVPDF.exporta({ previa: true, raiz: hoja, paginas: [['.pdf-p1'], ['.pdf-p2']], margen: 12, claro: false, nombre: window.AVPDF.sello('SCREENS'), titulo: 'SCREENS · ' + (E.proy || m.crm),
-      /* v10.42 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito común */
+      /* v10.43 · el pie del PDF es el mismo que el de la pantalla: aviso con su triángulo y, debajo, la línea de crédito común */
       pieHtml: AV_TRI + tr('Cálculo automático que puede contener errores: revísalo antes de presupuestar o instalar.') + '\n' + (window.AVCREDITO ? window.AVCREDITO.html('SCREENS', VERSION.split('SCREENS ')[1], idioma(), { sinEnlaces: true }) : VERSION + ' ' + new Date().getFullYear() + ' · mediaservi.com'),
       alClonar: (doc, raiz) => { raiz.style.setProperty('position', 'absolute', 'important'); raiz.style.setProperty('left', '0', 'important'); raiz.style.setProperty('top', '0', 'important'); [...doc.body.children].forEach((e) => { if (e !== raiz && !e.contains(raiz)) e.style.setProperty('display', 'none', 'important'); }); } });
     previa(pv);
+    if (SIN_CONT_PDF) tostada('La imagen de la pantalla viene de una web que no deja copiarla: en el PDF la pantalla sale sin ella. Descárgala y súbela.', 6500);
   } catch (e) { console.warn('pdf', e); tostada('No se ha podido generar el PDF.', 5000); }
   finally { hoja.remove(); HACIENDO_PDF = false; }
 }
@@ -802,7 +812,7 @@ monta(); todo(); vigila(); requestAnimationFrame(ajustaTextos); if (document.fon
 addEventListener('resize', () => { const g = $('#guia'); if (g) { const n = [...g.querySelectorAll('.guia-pie span i')].findIndex((i) => i.classList.contains('on')); guia(Math.max(0, n)); } });
 /* botones comunes de la familia: instalar y avisar de un fallo (los mismos de la versión clásica) */
 { const h = $('#hueco-comun'); if (h) { if (window.AVINSTALA) { try { h.appendChild(window.AVINSTALA.boton({ app: 'SCREENS', idioma: () => idioma(), sw: false })); } catch (e) {} } if (window.AVFALLO) { try { h.appendChild(window.AVFALLO.boton({ app: 'SCREENS', version: VERSION, idioma: () => idioma() })); } catch (e) {} }
-  /* v10.42 · el candado del panel, el último del grupo de la derecha (pegado a la esquina lo recortaban las ventanas redondeadas) */
+  /* v10.43 · el candado del panel, el último del grupo de la derecha (pegado a la esquina lo recortaban las ventanas redondeadas) */
   const ae = document.querySelector('.admin-esq'); if (ae) h.appendChild(ae); } }
 cargarCatalogo((lista, origen) => { if (origen === 'error') { if (!CAT.length) ESTADO = 'error'; } else { CAT = lista; ESTADO = origen; } todo(); });
 window.__blocks = { E, get R() { return R; }, todo };

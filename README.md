@@ -4,7 +4,7 @@
 
 Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Todo funciona en **una sola pantalla fija**, sin desplazar la página en ordenador ni en TV: cabecera, franja de modo y petición, bloques de mandos, dos vistas grandes, una fila de cifras y pie. En el móvil, las mismas piezas se apilan y se recorren por dentro.
 
-**Versión actual: v10.42** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
+**Versión actual: v10.43** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
 
 - **Una pantalla LED** → la portada (`index.html` + `vista/una-led.js`).
 - **Varias pantallas, sala inmersiva y proyección** → la consola (`vista/consola.html?modo=varias-led | varias-proy | una-proy`, con el cálculo de `screens/app.js`), con el mismo formato.
@@ -68,7 +68,12 @@ Bloques en burbuja sobre gris (tema gris oscuro o gris claro), cabecera oscura c
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.42)
+## Cambios de la versión actual (v10.43)
+
+- **Imagen propia de la pantalla en el PDF:** cada imagen de la simulación entra en el PDF ya reducida (una foto entera de cámara o de móvil podía no dibujarse) y la simulación se pinta dos veces para que Safari no la deje en negro. Si la imagen viene de un enlace de otra web que no deja copiarla, se avisa de que en el PDF la pantalla sale sin ella.
+- **Líneas de los cabinets siempre visibles:** ahora también sobre un contenido propio (imagen o vídeo). En la simulación, con su intensidad normal y un filete oscuro debajo para que se vean sobre cualquier imagen; en el PDF, más suaves.
+
+## Cambios de la v10.42
 
 - **Candado del panel AVHUB ADMIN, otra vez a la vista:** en la esquina inferior izquierda quedaba demasiado apagado y las ventanas con esquinas redondeadas lo recortaban. Ahora va el último del grupo de la derecha del pie, detrás del botón rojo de fallos, pequeño, abajo y algo menos apagado; se ilumina al pasar el ratón. Igual en la portada y en Varias / Proyección.
 
