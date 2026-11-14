@@ -4,7 +4,7 @@
 
 Web app de mediaservi.com para calcular pantallas LED y de proyección, desde una sola pantalla hasta salas inmersivas de 4 paredes y suelo. Todo funciona en **una sola pantalla fija**, sin desplazar la página en ordenador ni en TV: cabecera, franja de modo y petición, bloques de mandos, dos vistas grandes, una fila de cifras y pie. En el móvil, las mismas piezas se apilan y se recorren por dentro.
 
-**Versión actual: v10.45** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
+**Versión actual: v10.46** · Web: **https://screens.mediaservi.com** · Licencia GPL-3.0
 
 - **Una pantalla LED** → la portada (`index.html` + `vista/una-led.js`).
 - **Varias pantallas, sala inmersiva y proyección** → la consola (`vista/consola.html?modo=varias-led | varias-proy | una-proy`, con el cálculo de `screens/app.js`), con el mismo formato.
@@ -68,7 +68,11 @@ Bloques en burbuja sobre gris (tema gris oscuro o gris claro), cabecera oscura c
 
 Los calculadores de audio y escenario que nacieron aquí (primero como «Hardware») son ya una app propia, **SYSTEMS**, con su repositorio (`mediaservi/SYSTEMS`) y su dirección (systems.mediaservi.com). Este repositorio vuelve a contener solo SCREENS.
 
-## Cambios de la versión actual (v10.45)
+## Cambios de la versión actual (v10.46)
+
+- Logo de MSGAME de la barra de apps con la calavera nueva: el ojo derecho es una cruceta de mando, como si guiñara.
+
+### v10.45
 
 - **Equipos en listas por marca, gestionables desde el panel admin.** La electrónica ya no depende de la hoja: cada marca (NOVASTAR, PIXELHUE…) tiene su lista con sus modelos, tipo (controladora, reproductor con controladora, chasis H, mediaserver o switcher) y sus datos de cálculo (puertos, capacidad, ancho y alto máximos, escalador, salidas…), además del resumen y los enlaces oficiales de su ficha. En el panel AVHUB ADMIN → EQUIPOS se activan o desactivan modelos, se editan, se ordenan y se añaden modelos o marcas; al guardar, la app lo aplica en la siguiente carga. Sin lista guardada, la app usa la de fábrica (`comun/equipos.js`).
 - **Catálogo NovaStar completo, solo de las fuentes oficiales** (novastar.show y novastar.tech): MCTRL 300, 600, 660, 660 PRO, 700, 700 Pro, R5 y 4K; VX400, VX600, VX1000 y VX2000 Pro; NovaPro UHD Jr; COEX KU20, MX20, MX30, MX40 Pro, MX2000 Pro y MX6000 Pro; MBOX600 Pro; reproductores Taurus TB10 Plus, TB20 Plus, TB30, TB50, TB60 y TCC160 y TU15 Pro, TU20 Pro y TU4K Pro; H Series H2, H5, H9, H15 y H20; mediaservers ET1S-G a ET16S-G.
